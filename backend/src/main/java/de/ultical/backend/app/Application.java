@@ -29,11 +29,18 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 			@Override
 			protected void configure() {
 				bindFactory(new Factory<DataStore>() {
+
+					private DataStore internalDStore = null;
+
 					public DataStore provide() {
-						return new DataStore();
+						if (this.internalDStore == null) {
+							this.internalDStore = new DataStore();
+						}
+						return this.internalDStore;
 					}
 
-					public void dispose(DataStore instance) { }
+					public void dispose(DataStore instance) {
+					}
 				}).to(DataStore.class);
 
 			}

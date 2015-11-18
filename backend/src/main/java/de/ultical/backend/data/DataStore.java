@@ -88,9 +88,9 @@ public class DataStore {
 	}
 
 	public NavigableSet<Event> getEvents(final Date startInteravl, final Date endInterval) {
-		final Event firstEvent = startInteravl == null ? this.orderedEvents.first()
+		final Event firstEvent = startInteravl != null ? this.orderedEvents.first()
 				: this.orderedEvents.floor(fakeEvent(startInteravl));
-		final Event lastEvent = endInterval == null ? this.orderedEvents.last()
+		final Event lastEvent = endInterval != null ? this.orderedEvents.last()
 				: this.orderedEvents.ceiling(fakeEvent(endInterval));
 		NavigableSet<Event> result;
 		if (firstEvent == null && lastEvent == null) {

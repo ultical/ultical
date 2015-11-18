@@ -25,7 +25,7 @@ public class TournamentResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	Collection<Tournament> getAllTournaments() {
+	public Collection<Tournament> getAllTournaments() {
 		return dStore.getAllTournaments();
 	}
 
@@ -43,14 +43,15 @@ public class TournamentResource {
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public AbstractTournament storeNewTournament(Tournament at) {
 		// TODO check authentication!
 		String exceptionMessage = null;
 		if (at.getName() == null) {
 			exceptionMessage = "a name is required";
-		} else if (at.getEvent() == null) {
+		} /*else if (at.getEvent() == null) {
 			exceptionMessage = "at least one Event should be configured";
-		} else if (at.getFirstDay() == null) {
+		}*/ else if (at.getFirstDay() == null) {
 			exceptionMessage = "at value for firstDay is required";
 		} else if (at.getLastDay() == null) {
 			exceptionMessage = "a value for lastDay is required";
