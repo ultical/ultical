@@ -30,6 +30,33 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 
 });
 
+//translation provider
+app.config(function ($translateProvider) {
+	angular.forEach(CONFIG_OBJECT.general.availableLanguages, function(language) {
+		$translateProvider
+		.translations(language, window['TRANSLATIONS_'+language.toUpperCase()]);
+	});
+
+	$translateProvider
+	.fallbackLanguage('de')
+	.useSanitizeValueStrategy('escaped');
+
+	if (CONFIG_OBJECT.general.defaultLanguage.toLowerCase() == "auto") {
+		$translateProvider
+		.registerAvailableLanguageKeys(CONFIG_OBJECT.general.availableLanguages, {
+			'en_US': 'en',
+			'en_UK': 'en',
+			'de_DE': 'de',
+			'de_CH': 'de',
+			'de_AT': 'de',
+		})
+		.determinePreferredLanguage();
+	} else {
+		$translateProvider
+		.preferredLanguage(CONFIG_OBJECT.general.language);
+	}
+});
+
 //config element service
 app.factory('CONFIG', function() {
 	return CONFIG_OBJECT;

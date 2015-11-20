@@ -6,4 +6,12 @@ var CONFIG_OBJECT = {
 
 angular.extend(CONFIG_OBJECT, {
 	// put default values for the app
+	general: {
+		// list of two-letter country codes
+		availableLanguages: ['DE'],
+		// can be any two-letter country code or 'auto'
+		defaultLanguage: 'de',
+	},
+
+
 });
