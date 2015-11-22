@@ -4,5 +4,3 @@ dependency-reduced-pom.xml
 .classpath
 target/
 *~
-start-server.sh
-
