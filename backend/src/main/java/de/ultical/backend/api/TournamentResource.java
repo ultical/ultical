@@ -24,14 +24,15 @@ public class TournamentResource {
 	DataStore dStore;
 
 	@GET
+	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<Tournament> getAllTournaments() {
 		return dStore.getAllTournaments();
 	}
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{tName}")
+	@Produces(MediaType.APPLICATION_JSON)
 	public AbstractTournament getTournamentByName(@PathParam("tName") String tName) {
 		AbstractTournament result = this.dStore.getTournamentByName(tName);
 		if (result == null) {
@@ -42,6 +43,7 @@ public class TournamentResource {
 	}
 
 	@POST
+	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public AbstractTournament storeNewTournament(Tournament at) {

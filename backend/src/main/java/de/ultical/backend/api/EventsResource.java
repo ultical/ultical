@@ -18,21 +18,24 @@ import de.ultical.backend.model.Event;
 @Path("/events")
 public class EventsResource {
 
-	@Inject DataStore dStore;
-	
+	@Inject
+	DataStore dStore;
+
 	@GET
+	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Set<Event> getAllEvents(@QueryParam("from") Date from, @QueryParam("to") Date to) {
 		// I think we should ignore from and to for the moment ;)
-		
+
 		return this.dStore.getEvents(from, to);
 	}
-	
+
 	@POST
+	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void createNewEvent(Event t) {
-		//TODO check authorisation
+		// TODO check authorisation
 		this.dStore.storeEvent(t);
 	}
-	
+
 }
