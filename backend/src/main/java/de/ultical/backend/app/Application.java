@@ -28,10 +28,11 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
 			@Override
 			protected void configure() {
-				bindFactory(new Factory<DataStore>() {
+				this.bindFactory(new Factory<DataStore>() {
 
 					private DataStore internalDStore = null;
 
+					@Override
 					public DataStore provide() {
 						if (this.internalDStore == null) {
 							this.internalDStore = new DataStore();
@@ -39,12 +40,14 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 						return this.internalDStore;
 					}
 
+					@Override
 					public void dispose(DataStore instance) {
 					}
 				}).to(DataStore.class);
 
 			}
 		});
+
 		env.jersey().register(EventsResource.class);
 		env.jersey().register(TournamentResource.class);
 	}

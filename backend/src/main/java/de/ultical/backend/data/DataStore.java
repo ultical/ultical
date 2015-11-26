@@ -2,7 +2,6 @@ package de.ultical.backend.data;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableSet;
@@ -11,21 +10,22 @@ import java.util.TreeSet;
 
 import javax.inject.Singleton;
 
-import de.ultical.backend.model.AbstractTournament;
+import org.apache.ibatis.session.SqlSession;
+import org.joda.time.LocalDate;
+
 import de.ultical.backend.model.Event;
-import de.ultical.backend.model.League;
-import de.ultical.backend.model.Tournament;
+import de.ultical.backend.model.TournamentEdition;
 
 /**
  * the cloud
- * 
+ *
  * @author bbe
  *
  */
 @Singleton
 public class DataStore {
 
-	private Map<String, Tournament> tournamentPerName;
+	private Map<String, TournamentEdition> tournamentPerName;
 	private TreeSet<Event> orderedEvents;
 
 	public DataStore() {
@@ -33,65 +33,77 @@ public class DataStore {
 	}
 
 	protected void fillDataStore() {
-		this.tournamentPerName = new HashMap<String, Tournament>();
+		this.tournamentPerName = new HashMap<String, TournamentEdition>();
 		this.orderedEvents = new TreeSet<Event>(new EventDateComparator());
 	}
 
-	public boolean storeTournament(final Tournament t) {
-		Objects.requireNonNull(t);
-		if (t.getName() == null || t.getName().isEmpty()) {
+	public boolean storeTournament(final TournamentEdition tournamentEdition) {
+		Objects.requireNonNull(tournamentEdition);
+		if (tournamentEdition.getTournamentFormat().getName() == null
+				|| tournamentEdition.getTournamentFormat().getName().isEmpty()) {
 			throw new IllegalArgumentException("A tournament's name must not be null or empty!");
 		}
 		// TODO further validations?
-		if (this.tournamentPerName.containsKey(t.getName())) {
-			throw new IllegalArgumentException(
-					String.format("A tournament with the name %s already exists!", t.getName()));
+		if (this.tournamentPerName.containsKey(tournamentEdition.getTournamentFormat().getName())) {
+			throw new IllegalArgumentException(String.format("A tournament with the name %s already exists!",
+					tournamentEdition.getTournamentFormat().getName()));
 		}
-		this.tournamentPerName.put(t.getName(), t);
+		this.tournamentPerName.put(tournamentEdition.getTournamentFormat().getName(), tournamentEdition);
 		return true;
 	}
 
-	public AbstractTournament getTournamentByName(final String tName) {
-		Objects.requireNonNull(tName);
-		AbstractTournament result = this.tournamentPerName.get(tName);
+	public TournamentEdition getTournamentByName(final String tournamentName) {
+		Objects.requireNonNull(tournamentName);
+
+		TournamentEdition result = this.tournamentPerName.get(tournamentName);
 		return result;
 	}
-	
-	public Collection<Tournament> getAllTournaments() {
+
+	public Collection<TournamentEdition> getAllTournaments() {
 		return this.tournamentPerName.values();
 	}
 
 	public boolean storeEvent(Event event) {
 		Objects.requireNonNull(event);
-		Objects.requireNonNull(event.getTournament(),
+		Objects.requireNonNull(event.getTournamentEdition(),
 				"a corresponding Tournament or League is required for each Event");
-		final AbstractTournament tournament = event.getTournament();
-		if (tournament instanceof Tournament) {
-			if (!event.equals(((Tournament) tournament).getEvent())) {
-				throw new IllegalStateException("Reference between Tournament and Event do not match");
-			}
-		} else if (tournament instanceof League) {
-			if (!((League) tournament).getLeagueEvents().contains(event)) {
-				throw new IllegalStateException("Reference between League and Even do not match");
-			}
-		}
+		// final TournamentFormat tournament =
+		// event.getTournamentEdition().getTournamentFormat();
+		// if (tournament instanceof TournamentFormat) {
+		// if (!event.equals(((TournamentFormat) tournament).getEvent())) {
+		// throw new IllegalStateException("Reference between Tournament and
+		// Event do not match");
+		// }
+		// } else if (tournament instanceof League) {
+		// if (!((League) tournament).getLeagueEvents().contains(event)) {
+		// throw new IllegalStateException("Reference between League and Even do
+		// not match");
+		// }
+		// }
 		Objects.requireNonNull(event.getStartDate(), "StartDate must not be null");
 		Objects.requireNonNull(event.getEndDate(), "EndDate must not be null");
 		this.orderedEvents.add(event);
 		return true;
 	}
 
-	private Event fakeEvent(final Date fakeStartDate) {
+	private Event fakeEvent(final LocalDate fakeStartDate) {
 		final Event result = new Event();
 		result.setStartDate(fakeStartDate);
 		return result;
 	}
 
-	public NavigableSet<Event> getEvents(final Date startInterval, final Date endInterval) {
+	public Event getEvent(int eventId) {
+		SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession();
+		EventMapper eventMapper = sqlSession.getMapper(EventMapper.class);
+		Event event = eventMapper.getEvent(eventId);
+		return event;
+	}
+
+	public NavigableSet<Event> getEvents(final LocalDate startInterval, final LocalDate endInterval) {
 		final Event firstEvent = startInterval != null ? this.orderedEvents.first()
-				: this.orderedEvents.floor(fakeEvent(startInterval));
+				: this.orderedEvents.floor(this.fakeEvent(startInterval));
 		final Event lastEvent = endInterval != null ? this.orderedEvents.last()
-				: this.orderedEvents.ceiling(fakeEvent(endInterval));
+				: this.orderedEvents.ceiling(this.fakeEvent(endInterval));
 		NavigableSet<Event> result;
 		if (firstEvent == null && lastEvent == null) {
 			result = Collections.emptyNavigableSet();

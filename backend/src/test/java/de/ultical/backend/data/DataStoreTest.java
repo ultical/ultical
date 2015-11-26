@@ -13,15 +13,15 @@ import org.mockito.MockitoAnnotations;
 
 import de.ultical.backend.model.AbstractTournament;
 import de.ultical.backend.model.Event;
-import de.ultical.backend.model.Tournament;
+import de.ultical.backend.model.TournamentEdition;
 
 public class DataStoreTest {
 
 	private DataStore ds;
 	@Mock
-	Tournament mockedTournament;
+	TournamentEdition mockedTournament;
 	@Mock
-	Tournament completeTournament;
+	TournamentEdition completeTournament;
 	@Mock
 	Event eventStartDatenull;
 	@Mock
@@ -33,7 +33,7 @@ public class DataStoreTest {
 		this.ds = new DataStore();
 		MockitoAnnotations.initMocks(this);
 		when(completeTournament.getName()).thenReturn("FooBar Tournament");
-		Tournament tournamenMock = mock(Tournament.class);
+		TournamentEdition tournamenMock = mock(TournamentEdition.class);
 		when(tournamenMock.getEvent()).thenReturn(eventStartDatenull);
 		when(eventStartDatenull.getTournament()).thenReturn(tournamenMock);
 		when(wrongTournamentEvent.getTournament()).thenReturn(tournamenMock);
@@ -63,7 +63,7 @@ public class DataStoreTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testStoreTournamentNameExists() throws Exception {
 		this.ds.storeTournament(completeTournament);
-		Tournament otherTournament = Mockito.mock(Tournament.class);
+		TournamentEdition otherTournament = Mockito.mock(TournamentEdition.class);
 		when(otherTournament.getName()).thenReturn("FooBar Tournament");
 		this.ds.storeTournament(otherTournament);
 	}
