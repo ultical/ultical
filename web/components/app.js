@@ -16,7 +16,7 @@ var app = angular.module('ultical',
 //router ui route
 app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 	// For any unmatched url, redirect to /start
-	$urlRouterProvider.otherwise("/start");
+	$urlRouterProvider.otherwise("/tournaments");
 
 	var version = '1';
 
@@ -38,7 +38,7 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 app.config(function ($translateProvider) {
 	angular.forEach(CONFIG_OBJECT.general.availableLanguages, function(language) {
 		$translateProvider
-		.translations(language, window['TRANSLATIONS_'+language.toUpperCase()]);
+		.translations(language.toLowerCase(), window['TRANSLATIONS_'+language.toUpperCase()]);
 	});
 
 	$translateProvider
@@ -57,7 +57,7 @@ app.config(function ($translateProvider) {
 		.determinePreferredLanguage();
 	} else {
 		$translateProvider
-		.preferredLanguage(CONFIG_OBJECT.general.language);
+		.preferredLanguage(CONFIG_OBJECT.general.defaultLanguage);
 	}
 });
 
