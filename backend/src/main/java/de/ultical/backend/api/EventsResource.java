@@ -1,6 +1,8 @@
 package de.ultical.backend.api;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -19,10 +21,12 @@ public class EventsResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Set<Event> getAllEvents(@QueryParam("from") LocalDate from, @QueryParam("to") LocalDate to) {
+	public Set<Event> getAllEvents(@QueryParam("from") Date from, @QueryParam("to") Date to) {
 		// I think we should ignore from and to for the moment ;)
+		LocalDate ldFrom = from != null ? from.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
+		LocalDate ldTo = to != null ? to.toInstant().atZone(ZoneId.systemDefault()).toLocalDate() : null;
 
-		return this.dStore.getEvents(from, to);
+		return this.dStore.getEvents(ldFrom, ldTo);
 	}
 
 	@POST

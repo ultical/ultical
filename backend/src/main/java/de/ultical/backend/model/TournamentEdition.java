@@ -1,26 +1,22 @@
 package de.ultical.backend.model;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.Set;
 
-import org.joda.time.LocalDate;
-
+import io.dropwizard.validation.MinSize;
 import lombok.Data;
 
 @Data
-public class TournamentEdition {
+public abstract class TournamentEdition {
 
 	private TournamentFormat tournamentFormat;
 
 	private String alternativeName;
 	private Season season;
 
-	// TODO: really right here?
 	private LocalDate registrationStart;
 	private LocalDate registrationStop;
 
-	private Set<Division> divisions;
-
-	private List<Event> events;
-
+	@MinSize(1)
+	private Set<DivisionRegistration> divisionRegistrations;
 }

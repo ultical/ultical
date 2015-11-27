@@ -9,8 +9,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.*;
 import org.mockito.*;
 
-import de.ultical.backend.model.Event;
-import de.ultical.backend.model.TournamentEdition;
+import de.ultical.backend.model.*;
 
 public class DataStoreTest {
 
@@ -23,15 +22,16 @@ public class DataStoreTest {
 	Event eventStartDatenull;
 	@Mock
 	Event mockOnlyEvent;
-	@Mock Event wrongTournamentEvent;
+	@Mock
+	Event wrongTournamentEvent;
 
 	@Before
 	public void setUp() {
 		this.ds = new DataStore();
 		MockitoAnnotations.initMocks(this);
 		when(completeTournament.getAlternativeName()).thenReturn("FooBar Tournament");
-		TournamentEdition tournamenMock = mock(TournamentEdition.class);
-		when(tournamenMock.getEvents()).thenReturn(Collections.singletonList(eventStartDatenull));
+		TournamentEditionSingle tournamenMock = mock(TournamentEditionSingle.class);
+		when(tournamenMock.getEvent()).thenReturn(eventStartDatenull);
 		when(eventStartDatenull.getTournamentEdition()).thenReturn(tournamenMock);
 		when(wrongTournamentEvent.getTournamentEdition()).thenReturn(tournamenMock);
 	}
@@ -43,7 +43,7 @@ public class DataStoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testStoreTournamentNameNull() throws Exception {
-		this.ds.storeTournament(mockedTournament);
+		this.ds.storeTournament(this.mockedTournament);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -54,12 +54,12 @@ public class DataStoreTest {
 
 	@Test
 	public void testStoreTournamentSuccess() throws Exception {
-		Assert.assertTrue(this.ds.storeTournament(completeTournament));
+		Assert.assertTrue(this.ds.storeTournament(this.completeTournament));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testStoreTournamentNameExists() throws Exception {
-		this.ds.storeTournament(completeTournament);
+		this.ds.storeTournament(this.completeTournament);
 		TournamentEdition otherTournament = Mockito.mock(TournamentEdition.class);
 		when(otherTournament.getAlternativeName()).thenReturn("FooBar Tournament");
 		this.ds.storeTournament(otherTournament);
@@ -91,12 +91,12 @@ public class DataStoreTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testStoreEventStartDateNull() throws Exception {
-		this.ds.storeEvent(eventStartDatenull);
+		this.ds.storeEvent(this.eventStartDatenull);
 	}
-	
+
 	@Test(expected = IllegalStateException.class)
 	public void testStoreEventWrongTournament() throws Exception {
-		this.ds.storeEvent(wrongTournamentEvent);
+		this.ds.storeEvent(this.wrongTournamentEvent);
 	}
 
 }
