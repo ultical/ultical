@@ -1,10 +1,10 @@
 {
-  "name": "faku",
+  "name": "ultical",
   "version": "0.1.0",
   "authors": [
     "bas <sebastian.trapp@gmail.com>"
   ],
-  "description": "Fahrtkostenumverteilung für offizielle DFV Turniere",
+  "description": "Ultimate Tournament Management",
   "main": "index.html",
   "moduleType": [
     "amd",
