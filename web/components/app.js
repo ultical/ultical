@@ -24,6 +24,10 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 	.state('start', {
 		url: "/start",
 		templateUrl: "pages/start/start.html?v="+version,
+	})
+	.state('tournaments', {
+		url: "/tournaments",
+		templateUrl: "pages/tournaments/list.html?v="+version,
 	});
 	
 	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|blob):/);

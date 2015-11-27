@@ -12,6 +12,10 @@ angular.extend(CONFIG_OBJECT, {
 		// can be any two-letter country code or 'auto'
 		defaultLanguage: 'de',
 	},
+	
+	api: {
+		hostname: 'http://localhost:8765',
+	},
 
 
 });
