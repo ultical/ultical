@@ -1,5 +1,6 @@
 package de.ultical.backend.api;
 
+import java.util.Date;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -25,10 +26,12 @@ public class EventsResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Set<Event> getAllEvents(@QueryParam("from") LocalDate from, @QueryParam("to") LocalDate to) {
+	public Set<Event> getAllEvents(@QueryParam("from") Date from, @QueryParam("to") Date to) {
 		// I think we should ignore from and to for the moment ;)
+		LocalDate ldFrom = new LocalDate(from);
+		LocalDate ldTo = new LocalDate(to);
 
-		return this.dStore.getEvents(from, to);
+		return this.dStore.getEvents(ldFrom, ldTo);
 	}
 
 	@POST

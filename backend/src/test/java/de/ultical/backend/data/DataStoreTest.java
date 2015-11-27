@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import de.ultical.backend.model.AbstractTournament;
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.TournamentEdition;
 
@@ -26,17 +25,18 @@ public class DataStoreTest {
 	Event eventStartDatenull;
 	@Mock
 	Event mockOnlyEvent;
-	@Mock Event wrongTournamentEvent;
+	@Mock
+	Event wrongTournamentEvent;
 
 	@Before
 	public void setUp() {
 		this.ds = new DataStore();
 		MockitoAnnotations.initMocks(this);
-		when(completeTournament.getName()).thenReturn("FooBar Tournament");
+		when(this.completeTournament.getName()).thenReturn("FooBar Tournament");
 		TournamentEdition tournamenMock = mock(TournamentEdition.class);
-		when(tournamenMock.getEvent()).thenReturn(eventStartDatenull);
-		when(eventStartDatenull.getTournament()).thenReturn(tournamenMock);
-		when(wrongTournamentEvent.getTournament()).thenReturn(tournamenMock);
+		when(tournamenMock.getEvent()).thenReturn(this.eventStartDatenull);
+		when(this.eventStartDatenull.getTournament()).thenReturn(tournamenMock);
+		when(this.wrongTournamentEvent.getTournament()).thenReturn(tournamenMock);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -46,23 +46,23 @@ public class DataStoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testStoreTournamentNameNull() throws Exception {
-		this.ds.storeTournament(mockedTournament);
+		this.ds.storeTournament(this.mockedTournament);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testStoreTournamentNameEmpty() throws Exception {
-		when(mockedTournament.getName()).thenReturn("");
-		this.ds.storeTournament(mockedTournament);
+		when(this.mockedTournament.getName()).thenReturn("");
+		this.ds.storeTournament(this.mockedTournament);
 	}
 
 	@Test
 	public void testStoreTournamentSuccess() throws Exception {
-		Assert.assertTrue(this.ds.storeTournament(completeTournament));
+		Assert.assertTrue(this.ds.storeTournament(this.completeTournament));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testStoreTournamentNameExists() throws Exception {
-		this.ds.storeTournament(completeTournament);
+		this.ds.storeTournament(this.completeTournament);
 		TournamentEdition otherTournament = Mockito.mock(TournamentEdition.class);
 		when(otherTournament.getName()).thenReturn("FooBar Tournament");
 		this.ds.storeTournament(otherTournament);
@@ -81,7 +81,7 @@ public class DataStoreTest {
 
 	@Test
 	public void testStoreAndGetTournament() throws Exception {
-		this.ds.storeTournament(completeTournament);
+		this.ds.storeTournament(this.completeTournament);
 		AbstractTournament t = this.ds.getTournamentByName("FooBar Tournament");
 		Assert.assertNotNull(t);
 		Assert.assertThat(t.getName(), CoreMatchers.equalTo("FooBar Tournament"));
@@ -94,12 +94,12 @@ public class DataStoreTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testStoreEventStartDateNull() throws Exception {
-		this.ds.storeEvent(eventStartDatenull);
+		this.ds.storeEvent(this.eventStartDatenull);
 	}
-	
+
 	@Test(expected = IllegalStateException.class)
 	public void testStoreEventWrongTournament() throws Exception {
-		this.ds.storeEvent(wrongTournamentEvent);
+		this.ds.storeEvent(this.wrongTournamentEvent);
 	}
 
 }

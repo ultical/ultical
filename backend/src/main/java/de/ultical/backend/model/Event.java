@@ -14,14 +14,12 @@ public class Event {
 
 	private Location location;
 
-	// subset of the tournaments divisions
+	// subset of the tournaments divisions and participants
 	@MinSize(1)
-	private Set<Division> divisions;
+	private Set<DivisionConfirmation> divisionConfirmations;
 
 	private LocalDate startDate;
 	private LocalDate endDate;
-
-	private Set<TeamPlayerAssignment> players;
 
 	private Set<User> admins;
 
