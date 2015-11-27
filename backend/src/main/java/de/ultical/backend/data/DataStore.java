@@ -1,17 +1,11 @@
 package de.ultical.backend.data;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NavigableSet;
-import java.util.Objects;
-import java.util.TreeSet;
+import java.time.LocalDate;
+import java.util.*;
 
-import javax.inject.Singleton;
+import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
-import org.joda.time.LocalDate;
 
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.TournamentEdition;
@@ -22,9 +16,10 @@ import de.ultical.backend.model.TournamentEdition;
  * @author bbe
  *
  */
-@Singleton
 public class DataStore {
 
+	@Inject SqlSession sqlSession;
+	
 	private Map<String, TournamentEdition> tournamentPerName;
 	private TreeSet<Event> orderedEvents;
 
@@ -93,10 +88,15 @@ public class DataStore {
 	}
 
 	public Event getEvent(int eventId) {
-		SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession();
 		EventMapper eventMapper = sqlSession.getMapper(EventMapper.class);
-		Event event = eventMapper.getEvent(eventId);
+		final Event event = eventMapper.getEvent(eventId);
 		return event;
+	}
+	
+	public List<Event> getAllEvents() {
+		EventMapper eventMapper = sqlSession.getMapper(EventMapper.class);
+		final List<Event> result = eventMapper.getEvents();
+		return result;
 	}
 
 	public NavigableSet<Event> getEvents(final LocalDate startInterval, final LocalDate endInterval) {

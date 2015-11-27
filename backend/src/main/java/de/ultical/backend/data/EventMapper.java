@@ -1,5 +1,7 @@
 package de.ultical.backend.data;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 
@@ -12,4 +14,7 @@ public interface EventMapper {
 
 	@Select("SELECT * FROM event WHERE id = #{id}")
 	public Event getEvent(int id);
+	
+	@Select("SELECT * FROM event")
+	public List<Event> getEvents();
 }

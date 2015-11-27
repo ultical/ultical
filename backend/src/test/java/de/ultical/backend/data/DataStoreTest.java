@@ -3,15 +3,12 @@ package de.ultical.backend.data;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import java.util.Collections;
 
-import de.ultical.backend.model.AbstractTournament;
+import org.hamcrest.CoreMatchers;
+import org.junit.*;
+import org.mockito.*;
+
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.TournamentEdition;
 
@@ -32,11 +29,11 @@ public class DataStoreTest {
 	public void setUp() {
 		this.ds = new DataStore();
 		MockitoAnnotations.initMocks(this);
-		when(completeTournament.getName()).thenReturn("FooBar Tournament");
+		when(completeTournament.getAlternativeName()).thenReturn("FooBar Tournament");
 		TournamentEdition tournamenMock = mock(TournamentEdition.class);
-		when(tournamenMock.getEvent()).thenReturn(eventStartDatenull);
-		when(eventStartDatenull.getTournament()).thenReturn(tournamenMock);
-		when(wrongTournamentEvent.getTournament()).thenReturn(tournamenMock);
+		when(tournamenMock.getEvents()).thenReturn(Collections.singletonList(eventStartDatenull));
+		when(eventStartDatenull.getTournamentEdition()).thenReturn(tournamenMock);
+		when(wrongTournamentEvent.getTournamentEdition()).thenReturn(tournamenMock);
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -51,7 +48,7 @@ public class DataStoreTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testStoreTournamentNameEmpty() throws Exception {
-		when(mockedTournament.getName()).thenReturn("");
+		when(mockedTournament.getAlternativeName()).thenReturn("");
 		this.ds.storeTournament(mockedTournament);
 	}
 
@@ -64,7 +61,7 @@ public class DataStoreTest {
 	public void testStoreTournamentNameExists() throws Exception {
 		this.ds.storeTournament(completeTournament);
 		TournamentEdition otherTournament = Mockito.mock(TournamentEdition.class);
-		when(otherTournament.getName()).thenReturn("FooBar Tournament");
+		when(otherTournament.getAlternativeName()).thenReturn("FooBar Tournament");
 		this.ds.storeTournament(otherTournament);
 	}
 
@@ -75,16 +72,16 @@ public class DataStoreTest {
 
 	@Test
 	public void testGetTournamentNameUnknown() throws Exception {
-		AbstractTournament t = this.ds.getTournamentByName("unknown Tournament");
+		TournamentEdition t = this.ds.getTournamentByName("unknown Tournament");
 		Assert.assertNull(t);
 	}
 
 	@Test
 	public void testStoreAndGetTournament() throws Exception {
 		this.ds.storeTournament(completeTournament);
-		AbstractTournament t = this.ds.getTournamentByName("FooBar Tournament");
+		TournamentEdition t = this.ds.getTournamentByName("FooBar Tournament");
 		Assert.assertNotNull(t);
-		Assert.assertThat(t.getName(), CoreMatchers.equalTo("FooBar Tournament"));
+		Assert.assertThat(t.getAlternativeName(), CoreMatchers.equalTo("FooBar Tournament"));
 	}
 
 	@Test(expected = NullPointerException.class)

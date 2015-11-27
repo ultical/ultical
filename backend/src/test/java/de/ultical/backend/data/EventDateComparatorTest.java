@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +29,10 @@ public class EventDateComparatorTest {
 		MockitoAnnotations.initMocks(this);
 		this.edc = new EventDateComparator();
 		final Instant now = Instant.now();
-		when(eventStartsNow.getStartDate()).thenReturn(Date.from(now));
+		
+		when(eventStartsNow.getStartDate()).thenReturn(LocalDate.from(now));
 		final Instant fiveHoursLater = now.plusSeconds(5*60*60);
-		when(eventStartsLater.getStartDate()).thenReturn(Date.from(fiveHoursLater));
+		when(eventStartsLater.getStartDate()).thenReturn(LocalDate.from(fiveHoursLater));
 	}
 
 	@Test

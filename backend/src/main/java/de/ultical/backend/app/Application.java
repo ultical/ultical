@@ -1,5 +1,6 @@
 package de.ultical.backend.app;
 
+import org.apache.ibatis.session.SqlSession;
 import org.glassfish.hk2.api.Factory;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
@@ -24,10 +25,22 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
 	@Override
 	public void run(UltiCalConfig config, Environment env) throws Exception {
+		/*
+		 * We create a MyBatisManager and register it with the
+		 * dropwizard-lifecylce system. This ensures that MYBatis is started,
+		 * when the dropwizard environment starts and stopped accordingly.
+		 */
+		final MyBatisManager mbm = new MyBatisManager();
+		env.lifecycle().manage(mbm);
 		env.jersey().register(new AbstractBinder() {
 
 			@Override
 			protected void configure() {
+				/*
+				 * we use the MyBatisManager as a factory to provide access to a
+				 * SqlSession.
+				 */
+				this.bindFactory(mbm).to(SqlSession.class);
 				this.bindFactory(new Factory<DataStore>() {
 
 					private DataStore internalDStore = null;
