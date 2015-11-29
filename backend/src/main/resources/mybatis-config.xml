@@ -4,6 +4,13 @@
 	  "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<properties resource="jdbc.properties" />
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL" />
+	</settings>
+	<typeHandlers>
+		<typeHandler handler="de.ultical.backend.data.mapper.LocalDateTypeHandler" javaType="java.time.LocalDate"/>
+	</typeHandlers>
+
 	<environments default="development">
 		<environment id="development">
 			<transactionManager type="JDBC" />
@@ -14,8 +21,19 @@
 				<property name="password" value="${jdbc.password}" />
 			</dataSource>
 		</environment>
+		<environment id="inmemory-test">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="org.apache.derby.jdbc.EmbeddedDriver" />
+				<property name="url" value="jdbc:derby:memory:test;create=true" />
+				<property name="username" value="APP" />
+				<property name="password" value="APP" />
+			</dataSource>
+		</environment>
 	</environments>
 	<mappers>
-		<mapper resource="com/sivalabs/mybatisdemo/mappers/UserMapper.xml" />
+		<mapper class="de.ultical.backend.data.mapper.DfvPlayerMapper" />
+		<mapper class="de.ultical.backend.data.mapper.UserMapper" />
+		<mapper class="de.ultical.backend.data.mapper.UnregisteredPlayerMapper" />
 	</mappers>
 </configuration>

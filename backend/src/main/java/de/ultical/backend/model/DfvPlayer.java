@@ -2,6 +2,7 @@ package de.ultical.backend.model;
 
 import java.time.LocalDate;
 
+import de.ultical.backend.data.mapper.DfvPlayerMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,8 +10,12 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class DfvPlayer extends Player {
 	private String dfvNumber;
-	private int id;
 	private String biography;
 	private LocalDate birthDate;
-	private Gender gender;
+	
+	@Override
+	public Class<DfvPlayerMapper> getMapper() {
+		// TODO Auto-generated method stub
+		return DfvPlayerMapper.class;
+	}
 }

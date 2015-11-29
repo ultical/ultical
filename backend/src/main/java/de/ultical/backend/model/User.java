@@ -1,11 +1,12 @@
 package de.ultical.backend.model;
 
+import de.ultical.backend.data.mapper.UserMapper;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class User {
-
-	private int id;
+@EqualsAndHashCode(callSuper=true)
+public class User extends Identifiable{
 
 	private String username;
 	private String email;
@@ -13,4 +14,9 @@ public class User {
 	private String password;
 
 	private DfvPlayer dfvPlayer;
+
+	@Override
+	public Class<UserMapper> getMapper() {
+		return UserMapper.class;
+	}
 }

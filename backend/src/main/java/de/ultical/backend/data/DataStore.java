@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
 
+import de.ultical.backend.data.mapper.EventMapper;
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.TournamentEdition;
 
@@ -89,13 +90,13 @@ public class DataStore {
 
 	public Event getEvent(int eventId) {
 		EventMapper eventMapper = sqlSession.getMapper(EventMapper.class);
-		final Event event = eventMapper.getEvent(eventId);
+		final Event event = eventMapper.get(eventId);
 		return event;
 	}
 	
 	public List<Event> getAllEvents() {
 		EventMapper eventMapper = sqlSession.getMapper(EventMapper.class);
-		final List<Event> result = eventMapper.getEvents();
+		final List<Event> result = eventMapper.getAll();
 		return result;
 	}
 
