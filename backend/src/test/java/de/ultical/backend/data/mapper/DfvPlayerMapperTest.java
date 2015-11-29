@@ -38,7 +38,7 @@ public class DfvPlayerMapperTest {
 			final DerbyDatabase derbyDatabase = new DerbyDatabase();
 			final DatabaseConnection liquibaseConnection = new DerbyConnection(dbCon);
 			derbyDatabase.setConnection(liquibaseConnection);
-			liquibase = new Liquibase("de/ultical/backend/data/db/db.changelog-1.0.xml",
+			liquibase = new Liquibase("db.changelog-1.0.xml",
 					new ClassLoaderResourceAccessor(), derbyDatabase);
 			liquibase.getLog().setLogLevel(LogLevel.DEBUG);
 			liquibase.update((Contexts) null);
