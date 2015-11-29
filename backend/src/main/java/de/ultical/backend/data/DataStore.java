@@ -30,7 +30,7 @@ public class DataStore {
 
 	protected void fillDataStore() {
 		this.tournamentPerName = new HashMap<String, TournamentEdition>();
-		this.orderedEvents = new TreeSet<Event>(new EventDateComparator());
+		this.orderedEvents = new TreeSet<Event>();
 	}
 
 	public boolean storeTournament(final TournamentEdition tournamentEdition) {

@@ -3,8 +3,6 @@ package de.ultical.backend.data;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
-
 import org.hamcrest.CoreMatchers;
 import org.junit.*;
 import org.mockito.*;
@@ -41,30 +39,6 @@ public class DataStoreTest {
 		this.ds.storeTournament(null);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testStoreTournamentNameNull() throws Exception {
-		this.ds.storeTournament(this.mockedTournament);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testStoreTournamentNameEmpty() throws Exception {
-		when(mockedTournament.getAlternativeName()).thenReturn("");
-		this.ds.storeTournament(mockedTournament);
-	}
-
-	@Test
-	public void testStoreTournamentSuccess() throws Exception {
-		Assert.assertTrue(this.ds.storeTournament(this.completeTournament));
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testStoreTournamentNameExists() throws Exception {
-		this.ds.storeTournament(this.completeTournament);
-		TournamentEdition otherTournament = Mockito.mock(TournamentEdition.class);
-		when(otherTournament.getAlternativeName()).thenReturn("FooBar Tournament");
-		this.ds.storeTournament(otherTournament);
-	}
-
 	@Test(expected = NullPointerException.class)
 	public void testGetTournamentNameNull() throws Exception {
 		this.ds.getTournamentByName(null);
@@ -76,14 +50,6 @@ public class DataStoreTest {
 		Assert.assertNull(t);
 	}
 
-	@Test
-	public void testStoreAndGetTournament() throws Exception {
-		this.ds.storeTournament(completeTournament);
-		TournamentEdition t = this.ds.getTournamentByName("FooBar Tournament");
-		Assert.assertNotNull(t);
-		Assert.assertThat(t.getAlternativeName(), CoreMatchers.equalTo("FooBar Tournament"));
-	}
-
 	@Test(expected = NullPointerException.class)
 	public void testStoreEventNull() throws Exception {
 		this.ds.storeEvent(null);
@@ -92,11 +58,6 @@ public class DataStoreTest {
 	@Test(expected = NullPointerException.class)
 	public void testStoreEventStartDateNull() throws Exception {
 		this.ds.storeEvent(this.eventStartDatenull);
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void testStoreEventWrongTournament() throws Exception {
-		this.ds.storeEvent(this.wrongTournamentEvent);
 	}
 
 }
