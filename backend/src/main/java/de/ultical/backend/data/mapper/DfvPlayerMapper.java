@@ -18,6 +18,8 @@ public interface DfvPlayerMapper extends BaseMapper<DfvPlayer> {
 	
 	@Override
 	@Insert("INSERT INTO DFV_PLAYER (first_name, last_name, dfv_number, gender, birth_date, biography) VALUES (#{firstName},#{lastName},#{dfvNumber},#{gender},#{birthDate},#{biography})")
+//	@SelectKey(statement="SELECT LAST_INSERT_ID() as id", resultType=int.class, keyProperty="id", before=false, keyColumn="id")
+	@Options(useGeneratedKeys=true, keyProperty="id")
 	Integer insert(DfvPlayer entity);
 	
 	@Override

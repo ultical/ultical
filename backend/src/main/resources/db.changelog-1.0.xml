@@ -139,19 +139,6 @@
 		<addForeignKeyConstraint constraintName="fk_tournament_edition_tournament_format" referencedTableName="TOURNAMENT_FORMAT" baseColumnNames="tournament_format" baseTableName="TOURNAMENT_EDITION" referencedColumnNames="id"/>
 	</changeSet>
 	<changeSet id="7" author="basil">
-		<createTable tableName="TOURNAMENT_FORMAT_TOURNAMENT_EDITION">
-			<column name="tournament_format" type="BIGINT">
-				<constraints nullable="false"/>
-			</column>
-			<column name="tournament_edition" type="BIGINT">
-			<constraints nullable="false"/>
-			</column>
-		</createTable>
-		<addUniqueConstraint columnNames="tournament_edition" tableName="TOURNAMENT_FORMAT_TOURNAMENT_EDITION"/>
-		<addForeignKeyConstraint constraintName="fk_tournament_format_tournament_edition_tournament_format" referencedTableName="TOURNAMENT_FORMAT" baseColumnNames="tournament_format" baseTableName="TOURNAMENT_FORMAT_TOURNAMENT_EDITION" referencedColumnNames="id"/>
-		<addForeignKeyConstraint constraintName="fk_tournament_format_tournament_edition_tournament_edition" referencedTableName="TOURNAMENT_EDITION" baseColumnNames="tournament_edition" baseTableName="TOURNAMENT_FORMAT_TOURNAMENT_EDITION" referencedColumnNames="id"/>
-	</changeSet>
-	<changeSet id="8" author="basil">
 		<createTable tableName="TOURNAMENT_FORMAT_ULTICAL_USERS">
 			<column name="tournament_format" type="BIGINT">
 			<constraints nullable="false" foreignKeyName="fk_tournament_format_ultical_users_tournament_format" referencedColumnNames="id" referencedTableName="TOURNAMENT_FORMAT"/>
@@ -161,7 +148,7 @@
 			</column>
 		</createTable>
 	</changeSet>
-	<changeSet id="9" author="basil">
+	<changeSet id="8" author="basil">
 		<createTable tableName="SEASON">
 		<column name="id" type="BIGINT" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />

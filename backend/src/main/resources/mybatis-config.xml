@@ -35,5 +35,6 @@
 		<mapper class="de.ultical.backend.data.mapper.DfvPlayerMapper" />
 		<mapper class="de.ultical.backend.data.mapper.UserMapper" />
 		<mapper class="de.ultical.backend.data.mapper.UnregisteredPlayerMapper" />
+		<mapper class="de.ultical.backend.data.mapper.SeasonMapper" />
 	</mappers>
 </configuration>
