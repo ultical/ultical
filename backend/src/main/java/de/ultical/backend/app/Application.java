@@ -1,6 +1,12 @@
 package de.ultical.backend.app;
 
+import java.util.EnumSet;
+
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
+
 import org.apache.ibatis.session.SqlSession;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.api.Factory;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
@@ -61,8 +67,26 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 			}
 		});
 
+		this.addCorsFilter(env);
+
 		env.jersey().register(EventsResource.class);
 		env.jersey().register(TournamentResource.class);
+	}
+
+	/*
+	 * Add CORS filter to allow frontend to send requests to server
+	 */
+	private void addCorsFilter(Environment env) {
+		FilterRegistration.Dynamic corsFilter = env.servlets().addFilter("CORSFilter", CrossOriginFilter.class);
+
+		// Add URL mapping
+		corsFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
+		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,PUT,POST,DELETE,OPTIONS");
+		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
+		corsFilter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
+		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM,
+				"Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
+		corsFilter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER, "true");
 	}
 
 }
