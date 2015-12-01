@@ -172,13 +172,13 @@
 			<column name="surface" type="VARCHAR(10)" defaultValue="TURF">
 				<constraints nullable="false"/>
 			</column>
-			<column name="season_year" type="BIGINT">
+			<column name="season_year" type="SMALLINT">
 				<constraints nullable="false" />
 			</column>
 			<column name="plusOneYear" type="BOOLEAN" defaultValueBoolean="false">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>
-		<addForeignKeyConstraint constraintName="fk_tournament_edition_season" referencedTableName="SEASON" baseColumnNames="season" baseTableName="TOURNAMENT_EDITION" referencedColumnNames="id"/>
+		<addForeignKeyConstraint constraintName="fk_tournament_edition_season" referencedTableName="SEASON" referencedColumnNames="id" baseTableName="TOURNAMENT_EDITION" baseColumnNames="season" />
 	</changeSet>
 </databaseChangeLog>
