@@ -8,7 +8,8 @@ import de.ultical.backend.model.User;
 
 public interface UserMapper extends BaseMapper<User> {
 
-	@Insert("INSERT INTO ULTICAL_USER (user_name, password, email, dfv_player) VALUES (#{username},#{password},#{email},#{dfvPlayer.id})")	
+	@Insert("INSERT INTO ULTICAL_USER (user_name, password, email, dfv_player) VALUES (#{username},#{password},#{email},#{dfvPlayer.id})")
+	@Options(useGeneratedKeys=true, keyProperty="id")
 	Integer insert(User entity);
 
 	@Update({"UPDATE ULTICAL_USER SET version = version + 1, user_name = #{username}, password = #{password}, email=#{email}, dfv_player=#{dfvPlayer.id}",

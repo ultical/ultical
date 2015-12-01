@@ -19,6 +19,7 @@ public interface UnregisteredPlayerMapper extends BaseMapper<UnregisteredPlayer>
 		"(first_name, last_name, email, gender)",
 		"VALUES",
 		"(#{firstName},#{lastName},#{email},#{gender})"})
+	@Options(useGeneratedKeys=true, keyProperty="id")
 	Integer insert(UnregisteredPlayer entity);
 	
 	@Update({"UPDATE UNREGISTERED_PLAYER SET",
