@@ -12,7 +12,7 @@ public class DfvPlayer extends Player {
 	private String dfvNumber;
 	private String biography;
 	private LocalDate birthDate;
-	
+
 	@Override
 	public Class<DfvPlayerMapper> getMapper() {
 		// TODO Auto-generated method stub

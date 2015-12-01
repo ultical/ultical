@@ -1,5 +1,6 @@
 package de.ultical.backend.data;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +16,6 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
-import org.joda.time.LocalDate;
 
 import de.ultical.backend.data.mapper.EventMapper;
 import de.ultical.backend.model.DivisionAge;
@@ -61,14 +61,12 @@ public class DataStore {
 
 	public boolean storeTournament(final TournamentEdition tournamentEdition) {
 		Objects.requireNonNull(tournamentEdition);
-		if (tournamentEdition.getTournamentFormat().getName() == null
-				|| tournamentEdition.getTournamentFormat().getName().isEmpty()) {
+		if (tournamentEdition.getTournamentFormat().getName() == null || tournamentEdition.getTournamentFormat().getName().isEmpty()) {
 			throw new IllegalArgumentException("A tournament's name must not be null or empty!");
 		}
 		// TODO further validations?
 		if (this.tournamentPerName.containsKey(tournamentEdition.getTournamentFormat().getName())) {
-			throw new IllegalArgumentException(String.format("A tournament with the name %s already exists!",
-					tournamentEdition.getTournamentFormat().getName()));
+			throw new IllegalArgumentException(String.format("A tournament with the name %s already exists!", tournamentEdition.getTournamentFormat().getName()));
 		}
 		this.tournamentPerName.put(tournamentEdition.getTournamentFormat().getName(), tournamentEdition);
 		return true;
@@ -87,8 +85,7 @@ public class DataStore {
 
 	public boolean storeEvent(Event event) {
 		Objects.requireNonNull(event);
-		Objects.requireNonNull(event.getTournamentEdition(),
-				"a corresponding Tournament or League is required for each Event");
+		Objects.requireNonNull(event.getTournamentEdition(), "a corresponding Tournament or League is required for each Event");
 		// final TournamentFormat tournament =
 		// event.getTournamentEdition().getTournamentFormat();
 		// if (tournament instanceof TournamentFormat) {
@@ -120,20 +117,19 @@ public class DataStore {
 		return event;
 	}
 
-	public List<Event> getAllEvents() {
+	public List<Event> getAllEvents(LocalDate from, LocalDate to) {
 		List<Event> list = new ArrayList<Event>();
 		list.addAll(this.events);
 		return list;
-		// EventMapper eventMapper = this.sqlSession.getMapper(EventMapper.class);
+		// EventMapper eventMapper =
+		// this.sqlSession.getMapper(EventMapper.class);
 		// final List<Event> result = eventMapper.getAll();
 		// return result;
 	}
 
 	public NavigableSet<Event> getEvents(final LocalDate startInterval, final LocalDate endInterval) {
-		final Event firstEvent = startInterval != null ? this.orderedEvents.first()
-				: this.orderedEvents.floor(this.fakeEvent(startInterval));
-		final Event lastEvent = endInterval != null ? this.orderedEvents.last()
-				: this.orderedEvents.ceiling(this.fakeEvent(endInterval));
+		final Event firstEvent = startInterval != null ? this.orderedEvents.first() : this.orderedEvents.floor(this.fakeEvent(startInterval));
+		final Event lastEvent = endInterval != null ? this.orderedEvents.last() : this.orderedEvents.ceiling(this.fakeEvent(endInterval));
 		NavigableSet<Event> result;
 		if (firstEvent == null && lastEvent == null) {
 			result = Collections.emptyNavigableSet();
@@ -177,9 +173,9 @@ public class DataStore {
 		season16.setPlusOneYear(false);
 
 		Season season1516 = new Season();
-		season16.setSurface(Surface.GYM);
-		season16.setYear(2015);
-		season16.setPlusOneYear(true);
+		season1516.setSurface(Surface.GYM);
+		season1516.setYear(2015);
+		season1516.setPlusOneYear(true);
 
 		/* LOCATIONS */
 		Location loc1 = new Location();
@@ -205,8 +201,8 @@ public class DataStore {
 		TournamentEditionSingle te = new TournamentEditionSingle();
 		te.setSeason(season16);
 		te.setTournamentFormat(tf);
-		te.setRegistrationStart(new LocalDate(2016, 3, 1));
-		te.setRegistrationStop(new LocalDate(2016, 4, 30));
+		te.setRegistrationStart(LocalDate.parse("2016-03-01"));
+		te.setRegistrationStop(LocalDate.of(2016, 4, 30));
 
 		DivisionRegistration drt = new DivisionRegistrationTeams();
 		drt.setDivisionAge(DivisionAge.REGULAR);
@@ -225,8 +221,8 @@ public class DataStore {
 
 		Event e = new Event();
 		e.setId(1);
-		e.setStartDate(new LocalDate(2016, 6, 13));
-		e.setEndDate(new LocalDate(2016, 6, 14));
+		e.setStartDate(LocalDate.of(2016, 6, 13));
+		e.setEndDate(LocalDate.of(2016, 6, 14));
 		e.setLocation(loc2);
 		e.setTournamentEdition(te);
 
@@ -247,8 +243,8 @@ public class DataStore {
 		tel.setAlternativeMatchdayName("Spültag");
 		tel.setSeason(season16);
 		tel.setTournamentFormat(tf);
-		tel.setRegistrationStart(new LocalDate(2016, 1, 1));
-		tel.setRegistrationStop(new LocalDate(2016, 3, 30));
+		tel.setRegistrationStart(LocalDate.of(2016, 1, 1));
+		tel.setRegistrationStop(LocalDate.of(2016, 3, 30));
 
 		drt = new DivisionRegistrationTeams();
 		drt.setDivisionAge(DivisionAge.REGULAR);
@@ -262,17 +258,17 @@ public class DataStore {
 		Event e1 = new Event();
 		e1.setId(2);
 		e1.setMatchdayNumber(1);
-		e1.setStartDate(new LocalDate(2016, 5, 13));
-		e1.setEndDate(new LocalDate(2016, 5, 14));
+		e1.setStartDate(LocalDate.of(2016, 5, 13));
+		e1.setEndDate(LocalDate.of(2016, 5, 14));
 		e1.setLocation(loc1);
 		e1.setTournamentEdition(tel);
 
 		Event e2 = new Event();
 		e2.setId(3);
 		e2.setMatchdayNumber(2);
-		e2.setStartDate(new LocalDate(2016, 7, 3));
-		e2.setEndDate(new LocalDate(2016, 7, 4));
-		e2.setLocation(loc2);
+		e2.setStartDate(LocalDate.of(2016, 7, 3));
+		e2.setEndDate(LocalDate.of(2016, 7, 4));
+		// e2.setLocation(loc2);
 		e2.setTournamentEdition(tel);
 		e2.setAdmins(altAdmins);
 
@@ -288,7 +284,7 @@ public class DataStore {
 		/* WINTERLIGA */
 
 		tf = new TournamentFormat();
-		tf.setId(2);
+		tf.setId(3);
 		tf.setName("Winterliga Berlin/Brandenburg");
 		tf.setAdmins(admins);
 		tf.setDescription("Ein Indoor Spaß für groß und klein!");
@@ -296,8 +292,8 @@ public class DataStore {
 		tel = new TournamentEditionLeague();
 		tel.setSeason(season1516);
 		tel.setTournamentFormat(tf);
-		tel.setRegistrationStart(new LocalDate(2015, 11, 12));
-		tel.setRegistrationStop(new LocalDate(2015, 12, 24));
+		// tel.setRegistrationStart(new LocalDate(2015, 11, 12));
+		// tel.setRegistrationStop(new LocalDate(2015, 12, 24));
 
 		drt = new DivisionRegistrationTeams();
 		drt.setDivisionAge(DivisionAge.REGULAR);
@@ -313,18 +309,18 @@ public class DataStore {
 		tel.setDivisionRegistrations(divs);
 
 		e1 = new Event();
-		e1.setId(2);
+		e1.setId(4);
 		e1.setMatchdayNumber(1);
-		e1.setStartDate(new LocalDate(2016, 1, 13));
-		e1.setEndDate(new LocalDate(2016, 1, 14));
+		e1.setStartDate(LocalDate.of(2016, 1, 13));
+		e1.setEndDate(LocalDate.of(2016, 1, 14));
 		e1.setLocation(loc1);
 		e1.setTournamentEdition(tel);
 
 		e2 = new Event();
-		e2.setId(3);
+		e2.setId(5);
 		e2.setMatchdayNumber(2);
-		e2.setStartDate(new LocalDate(2016, 2, 3));
-		e2.setEndDate(new LocalDate(2016, 2, 4));
+		e2.setStartDate(LocalDate.of(2016, 2, 3));
+		e2.setEndDate(LocalDate.of(2016, 2, 4));
 		e2.setLocation(loc2);
 		e2.setTournamentEdition(tel);
 		e2.setAdmins(altAdmins);

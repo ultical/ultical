@@ -1,8 +1,7 @@
 package de.ultical.backend.model;
 
+import java.time.LocalDate;
 import java.util.Set;
-
-import org.joda.time.LocalDate;
 
 import io.dropwizard.validation.MinSize;
 import lombok.Data;
