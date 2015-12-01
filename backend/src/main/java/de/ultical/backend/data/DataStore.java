@@ -117,7 +117,7 @@ public class DataStore {
 		return event;
 	}
 
-	public List<Event> getAllEvents(LocalDate from, LocalDate to) {
+	public List<Event> getAllEvents() {
 		List<Event> list = new ArrayList<Event>();
 		list.addAll(this.events);
 		return list;
