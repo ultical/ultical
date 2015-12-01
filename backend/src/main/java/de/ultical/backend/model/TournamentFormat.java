@@ -11,6 +11,9 @@ public class TournamentFormat {
 	private int id;
 
 	private String name;
+
+	private String description;
+
 	private List<TournamentEdition> editions;
 
 	private Set<User> admins;
