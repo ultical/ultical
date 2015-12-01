@@ -21,7 +21,6 @@ public class TournamentResource {
 	DataStore dStore;
 
 	@GET
-	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Collection<TournamentEdition> getAllTournaments() {
 		return this.dStore.getAllTournaments();
