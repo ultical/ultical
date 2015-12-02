@@ -17,5 +17,4 @@ public class TournamentFormat {
 	private List<TournamentEdition> editions;
 
 	private Set<User> admins;
-
 }

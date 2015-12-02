@@ -25,6 +25,18 @@ public class Event {
 	private LocalDate startDate;
 	private LocalDate endDate;
 
+	private int feePerTeam;
+	private int feePerPlayer;
+	private int feePerGuest;
+	private int feePerBreakfast;
+	private int feePerLunch;
+	private int feePerDinner;
+	private int feePerNight;
+
 	private Set<User> admins;
+
+	private String localOrganizerName;
+	private String localOrganizerEmail;
+	private String localOrganizerPhone;
 
 }

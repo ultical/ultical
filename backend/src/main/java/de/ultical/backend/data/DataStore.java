@@ -201,8 +201,11 @@ public class DataStore {
 		TournamentEditionSingle te = new TournamentEditionSingle();
 		te.setSeason(season16);
 		te.setTournamentFormat(tf);
-		te.setRegistrationStart(LocalDate.parse("2016-03-01"));
-		te.setRegistrationStop(LocalDate.of(2016, 4, 30));
+		te.setRegistrationStart(LocalDate.parse("2015-10-01"));
+		te.setRegistrationEnd(LocalDate.of(2016, 4, 30));
+		te.setOrganizerName("Hässlicher Sportverband");
+		te.setOrganizerEmail("info@ferkels.de");
+		te.setOrganizerPhone("0211/123123123");
 
 		DivisionRegistration drt = new DivisionRegistrationTeams();
 		drt.setDivisionAge(DivisionAge.REGULAR);
@@ -225,6 +228,8 @@ public class DataStore {
 		e.setEndDate(LocalDate.of(2016, 6, 14));
 		e.setLocation(loc2);
 		e.setTournamentEdition(te);
+		e.setFeePerPlayer(13);
+		e.setFeePerTeam(50);
 
 		// te.setEvent(e);
 
@@ -232,6 +237,7 @@ public class DataStore {
 		this.events.add(e);
 
 		/* A-RELI */
+
 		tf = new TournamentFormat();
 		tf.setId(2);
 		tf.setName("A-Reli");
@@ -243,8 +249,11 @@ public class DataStore {
 		tel.setAlternativeMatchdayName("Spültag");
 		tel.setSeason(season16);
 		tel.setTournamentFormat(tf);
-		tel.setRegistrationStart(LocalDate.of(2016, 1, 1));
-		tel.setRegistrationStop(LocalDate.of(2016, 3, 30));
+		tel.setRegistrationStart(LocalDate.of(2016, 1, 2));
+		tel.setRegistrationEnd(LocalDate.of(2016, 3, 30));
+		tel.setOrganizerName("Deutscher Frisbeesport Verband e.V.");
+		tel.setOrganizerEmail("info@frisbeesportverband.de");
+		tel.setOrganizerPhone("0211/123123123");
 
 		drt = new DivisionRegistrationTeams();
 		drt.setDivisionAge(DivisionAge.REGULAR);
@@ -262,6 +271,9 @@ public class DataStore {
 		e1.setEndDate(LocalDate.of(2016, 5, 14));
 		e1.setLocation(loc1);
 		e1.setTournamentEdition(tel);
+		e1.setLocalOrganizerName("Bas Trapp");
+		e1.setLocalOrganizerEmail("bas@ultical.com");
+		e1.setLocalOrganizerPhone("(030) 577 0692815");
 
 		Event e2 = new Event();
 		e2.setId(3);
@@ -294,6 +306,12 @@ public class DataStore {
 		tel.setTournamentFormat(tf);
 		// tel.setRegistrationStart(new LocalDate(2015, 11, 12));
 		// tel.setRegistrationStop(new LocalDate(2015, 12, 24));
+		tel.setOrganizerName("Boris und Walter");
+		tel.setOrganizerEmail("kryptisch@donttrackme.kr");
+		tel.setOrganizerPhone("-");
+		tel.setFeePerGuest(16);
+		tel.setFeePerPlayer(20);
+		tel.setFeePerTeam(100);
 
 		drt = new DivisionRegistrationTeams();
 		drt.setDivisionAge(DivisionAge.REGULAR);
@@ -311,10 +329,18 @@ public class DataStore {
 		e1 = new Event();
 		e1.setId(4);
 		e1.setMatchdayNumber(1);
-		e1.setStartDate(LocalDate.of(2016, 1, 13));
-		e1.setEndDate(LocalDate.of(2016, 1, 14));
+		e1.setStartDate(LocalDate.of(2015, 1, 13));
+		e1.setEndDate(LocalDate.of(2015, 1, 14));
 		e1.setLocation(loc1);
 		e1.setTournamentEdition(tel);
+		e1.setLocalOrganizerName("Bas Trapp");
+		e1.setLocalOrganizerEmail("bas@ultical.com");
+		e1.setLocalOrganizerPhone("(030) 577 0692815");
+		e1.setFeePerGuest(5);
+		e1.setFeePerPlayer(9);
+		e1.setFeePerTeam(40);
+		e1.setFeePerLunch(3);
+		e1.setFeePerDinner(14);
 
 		e2 = new Event();
 		e2.setId(5);
@@ -324,6 +350,11 @@ public class DataStore {
 		e2.setLocation(loc2);
 		e2.setTournamentEdition(tel);
 		e2.setAdmins(altAdmins);
+		e2.setLocalOrganizerName("Erdferkel Marburg e.V.");
+		e2.setLocalOrganizerEmail("ferkel@haesslich.de");
+		e2.setFeePerBreakfast(5);
+		e2.setFeePerPlayer(11);
+		e2.setFeePerTeam(50);
 
 		Set<Event> winterligaEvents = new HashSet<Event>();
 		winterligaEvents.add(e1);
