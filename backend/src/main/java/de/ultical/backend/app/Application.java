@@ -1,5 +1,6 @@
 package de.ultical.backend.app;
 
+import java.time.LocalDate;
 import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
@@ -10,9 +11,12 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.api.Factory;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.ultical.backend.api.EventsResource;
 import de.ultical.backend.api.TournamentResource;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.LocalDateMixIn;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
@@ -27,6 +31,9 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 	public void initialize(Bootstrap<UltiCalConfig> bootstrap) {
 		// TODO Auto-generated method stub
 		super.initialize(bootstrap);
+
+		ObjectMapper objectMapper = bootstrap.getObjectMapper();
+		objectMapper.addMixIn(LocalDate.class, LocalDateMixIn.class);
 	}
 
 	@Override
@@ -84,8 +91,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,PUT,POST,DELETE,OPTIONS");
 		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
 		corsFilter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
-		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM,
-				"Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
+		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
 		corsFilter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER, "true");
 	}
 
