@@ -1,6 +1,14 @@
 .view-container {
-	margin-top: 50px;
+	margin-top: 55px;
 	margin-bottom: 40px;
 	min-width: 1000px;
 }
 
+.navbar {
+	background-color: white;
+}
+
+.navbar h3 {
+    margin-top: 13px;
+    font-weight: 700;
+}

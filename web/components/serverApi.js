@@ -12,11 +12,11 @@ app.factory('serverApi', ['CONFIG', '$http', function(CONFIG, $http) {
 
 	return {
 		getEvent: function(eventId, callback) {
-			this.get('event/' + eventId, callback);
+			get('event/' + eventId, callback);
 		},
 		
 		getEvents: function(callback) {
-			this.get('events', callback);
+			get('events', callback);
 		},
 	};
 

@@ -1,0 +1,136 @@
+<div id="start" ng-controller="EventShowCtrl">
+
+	<div class="row">
+		<div class="col-md-12">
+			<h3>{{ event | eventname }}</h3>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+
+			<div class="row margin-top">
+				<div class="col-md-12">{{ event.tournamentEdition.tournamentFormat.description }}</div>
+			</div>
+
+			<hr>
+
+			<div class="row margin-top">
+				<div class="col-md-12">{{ 'season.season' | translate }}: {{ event.tournamentEdition.season | season }}</div>
+			</div>
+
+			<div class="row margin-top">
+				<div class="col-md-12">
+					{{ 'event.organizer' | translate }}: {{ event.tournamentEdition.organizerName }} (<a ng-href="mailto:{{ event.tournamentEdition.organizerEmail }}">{{ 'general.email' | translate }}</a>, {{ 'general.phone' | translate }}: {{ event.tournamentEdition.organizerPhone }})
+				</div>
+			</div>
+
+			<div class="row margin-top">
+				<div class="col-md-12">
+					<div ng-if="event.tournamentEdition.registrationIsOpen">
+						<!-- Registration is going on right now -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="btn btn-default">{{ 'event.registration' | translate }}</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<small>{{ 'event.registrationEndsAt' | translate }} {{ event.tournamentEdition.registrationEnd | customDate: 'date_medium' }}</small>
+							</div>
+						</div>
+					</div>
+					<div ng-if="!event.tournamentEdition.registrationIsOpen">
+						<!-- Registration is not open - why? -->
+						<div ng-if="event.tournamentEdition.registrationTime == 'future'">{{ 'event.registration' | translate }} {{ 'event.registrationStartsAt' | translate }} {{ event.tournamentEdition.registrationStart | customDate : 'date_medium' }}</div>
+						<div ng-if="event.tournamentEdition.registrationTime == 'past'">{{ 'event.registration' | translate }} {{ 'event.registrationIsOverSince' | translate }} {{ event.tournamentEdition.registrationEnd | customDate : 'date_medium' }}</div>
+						<div ng-if="event.tournamentEdition.registrationTime == 'never'">{{ 'event.registrationUndefined' | translate }}</div>
+					</div>
+				</div>
+			</div>
+
+			<div ng-if="event.tournamentEdition.hasFees" class="row margin-top">
+				<div class="col-md-12">
+					<div class="row">
+						<div class="col-md-12">{{ 'event.feesLeagueLabel' | translate }}</div>
+					</div>
+					<div class="row" ng-if="event.tournamentEdition.feePerTeam != 0">
+						<div class="col-md-12">{{ 'event.feePerTeam' | translate }}: {{ event.tournamentEdition.feePerTeam }} {{ event.tournamentEdition.currency | currencySymbol }}</div>
+					</div>
+					<div class="row" ng-if="event.tournamentEdition.feePerPlayer != 0">
+						<div class="col-md-12">{{ 'event.feePerPlayer' | translate }}: {{ event.tournamentEdition.feePerPlayer }} {{ event.tournamentEdition.currency | currencySymbol }}</div>
+					</div>
+					<div class="row" ng-if="event.tournamentEdition.feePerGuest != 0">
+						<div class="col-md-12">{{ 'event.feePerGuest' | translate }}: {{ event.tournamentEdition.feePerGuest }} {{ event.tournamentEdition.currency | currencySymbol }}</div>
+					</div>
+				</div>
+			</div>
+
+			<hr>
+
+			<div class="row margin-top" ng-if="event.location">
+				<div class="col-md-12">
+					<div class="row" ng-if="event.location.street">
+						<div class="col-md-12">
+							{{ event.location.street }}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							{{ event.location.zipcode }} {{ event.location.city }}
+						</div>
+					</div>
+					<div class="row" ng-if="event.location.country">
+						<div class="col-md-12">
+							{{ event.location.country }}
+						</div>
+					</div>
+					<div class="row" ng-if="event.location.additionalInfo">
+						<div class="col-md-12">
+							{{ event.location.additionalInfo }}
+						</div>
+					</div>
+</div>
+			</div>
+
+			<div class="row margin-top" ng-if="event.localOrganizerName">
+				<div class="col-md-12">
+					{{ 'event.localOrganizer' | translate }}: {{ event.localOrganizerName }} (<a ng-href="mailto:{{ event.localOrganizerEmail }}">{{ 'general.email' | translate }}</a>, {{ 'general.phone' | translate }}: {{ event.localOrganizerPhone }})
+				</div>
+			</div>
+
+			<div ng-if="event.hasFees" class="row margin-top">
+				<div class="col-md-12">
+					<div class="row">
+						<div class="col-md-12">
+							<div ng-if="event.matchdayNumber == -1")>{{ 'event.feesEventLabel' | translate }}</div>
+							<div ng-if="event.matchdayNumber != -1">{{ 'event.feesMatchdayLabel' | translate }} {{ event | matchdayname }}</div>
+						</div>
+					</div>
+					<div class="row" ng-if="event.feePerTeam != 0">
+						<div class="col-md-12">{{ 'event.feePerTeam' | translate }}: {{ event.feePerTeam }} {{ event.tournamentEdition.currency | currencySymbol }}</div>
+					</div>
+					<div class="row" ng-if="event.feePerPlayer != 0">
+						<div class="col-md-12">{{ 'event.feePerPlayer' | translate }}: {{ event.feePerPlayer }} {{ event.tournamentEdition.currency | currencySymbol }}</div>
+					</div>
+					<div class="row" ng-if="event.feePerGuest != 0">
+						<div class="col-md-12">{{ 'event.feePerGuest' | translate }}: {{ event.feePerGuest }} {{ event.tournamentEdition.currency | currencySymbol }}</div>
+					</div>
+					<div class="row" ng-if="event.feePerBreakfast != 0">
+						<div class="col-md-12">{{ 'event.feePerBreakfast' | translate }}: {{ event.feePerBreakfast }} {{ event.tournamentEdition.currency | currencySymbol }}</div>
+					</div>
+					<div class="row" ng-if="event.feePerLunch != 0">
+						<div class="col-md-12">{{ 'event.feePerLunch' | translate }}: {{ event.feePerLunch }} {{ event.tournamentEdition.currency | currencySymbol }}</div>
+					</div>
+					<div class="row" ng-if="event.feePerDinner != 0">
+						<div class="col-md-12">{{ 'event.feePerDinner' | translate }}: {{ event.feePerDinner }} {{ event.tournamentEdition.currency | currencySymbol }}</div>
+					</div>
+					<div class="row" ng-if="event.feePerNight != 0">
+						<div class="col-md-12">{{ 'event.feePerNight' | translate }}: {{ event.feePerNight }} {{ event.tournamentEdition.currency | currencySymbol }}</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>

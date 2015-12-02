@@ -1,0 +1,21 @@
+<div id="start" ng-controller="EventListCtrl">
+
+	<div class="row">
+		<div class="col-md-12"><h3>{{ 'event.list.title' | translate }}</h3></div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="row" ng-repeat="event in events">
+				<a ui-sref='showEvent({eventId: event.id})'>
+				<div class="col-md-12">{{ event.startDate | customDate : 'date_medium' }} - {{ event | eventname }}</div>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12"></div>
+	</div>
+
+</div>

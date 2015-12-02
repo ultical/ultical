@@ -8,28 +8,30 @@ var app = angular.module('ultical',
 		 'pascalprecht.translate',
 		 'ngSanitize',
 		 'ultical.start',
+		 'ultical.events',
 		 ]);
-
-
-
 
 //router ui route
 app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
-	// For any unmatched url, redirect to /start
-	$urlRouterProvider.otherwise("/tournaments");
+	// For any unmatched url, redirect to:
+	$urlRouterProvider.otherwise("/calendar");
 
 	var version = '1';
 
 	$stateProvider
-	.state('start', {
+	.state('startalt', {
 		url: "/start",
 		templateUrl: "pages/start/start.html?v="+version,
 	})
-	.state('tournaments', {
-		url: "/tournaments",
-		templateUrl: "pages/tournaments/list.html?v="+version,
+	.state('start', {
+		url: "/calendar",
+		templateUrl: "pages/event/list.html?v="+version,
+	})
+	.state('showEvent', {
+		url: "/event/{eventId:int}/show",
+		templateUrl: "pages/event/show.html?v="+version,
 	});
-	
+
 	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|blob):/);
 
 });
@@ -59,6 +61,12 @@ app.config(function ($translateProvider) {
 		$translateProvider
 		.preferredLanguage(CONFIG_OBJECT.general.defaultLanguage);
 	}
+});
+
+//make sure http(s) and mailto links are valid and not escaped for security reasons
+app.config(function($compileProvider) {   
+	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|mailto):/);
+	// Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
 });
 
 //config element service

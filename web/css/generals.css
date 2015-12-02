@@ -1,0 +1,71 @@
+.margin-top-small {
+	margin-top: 0.5em;
+}
+
+.margin-top {
+	margin-top: 1em;
+}
+
+.margin-top-big {
+	margin-top: 1.5em;
+}
+
+.margin-top-huge {
+	margin-top: 2.5em;
+}
+
+.margin-left-small {
+	margin-left: 0.5em;
+}
+
+.margin-left {
+	margin-left: 1em;
+}
+
+.margin-left-big {
+	margin-left: 1.5em;
+}
+
+.margin-bottom-small {
+	margin-bottom: 0.5em;
+}
+
+.margin-bottom {
+	margin-bottom: 1em;
+}
+
+.margin-bottom-big {
+	margin-bottom: 1.5em;
+}
+
+.margin-bottom-huge {
+	margin-bottom: 2.5em;
+}
+
+.padding-top {
+	padding-top: 1em;
+}
+
+.padding-top-big {
+	padding-top: 1.5em;
+}
+
+.prinz_darkblue {
+	color: #0049A4;
+}
+
+.prinz_lightblue {
+	color: "#658CAE";
+}
+
+.prinz_grey {
+	color: "#AFB0B0";
+}
+
+.cursor-pointer {
+	cursor: pointer;
+}
+
+.background, .fade.background {
+	opacity: 0.2;
+}
