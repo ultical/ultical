@@ -1,3 +1,7 @@
+*:focus {
+    outline: 0;
+}
+
 .margin-top-small {
 	margin-top: 0.5em;
 }
@@ -69,3 +73,5 @@
 .background, .fade.background {
 	opacity: 0.2;
 }
+
+

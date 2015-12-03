@@ -6,9 +6,42 @@
 
 .navbar {
 	background-color: white;
+	color: black;
 }
 
 .navbar h3 {
-    margin-top: 13px;
-    font-weight: 700;
+	margin-top: 13px;
+	font-weight: 700;
+}
+
+#navbar-language-icon {
+	float: left;
+	font-size: 25px;
+	margin-top: 1px;
+}
+
+#navbar-language-code {
+	float: right;
+	margin-top: 9px;
+	margin-right: 20px;
+	margin-left: 3px;
+}
+
+.navbar-language {
+	cursor: pointer;
+}
+
+.navbar-language:hover #navbar-language-icon, .navbar-language:hover #navbar-language-code {
+	color: #0049A4;
+}
+
+ul.navbar-nav li {
+	margin-right: 7px;
+	color: #777;
+	margin-top: 7px;
+}
+
+.navbar-right ul.dropdown-menu {
+	width: 120px;
+	padding: 0 0 5px 0;
 }

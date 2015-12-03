@@ -9,6 +9,8 @@ angular.extend(CONFIG_OBJECT, {
 	general: {
 		// list of two-letter country codes
 		availableLanguages: ['DE'],
+		// map availableLanguages to its name (in this language, so it can be found
+		availableLanguagesFull: ['deutsch'],
 		// can be any two-letter country code or 'auto'
 		defaultLanguage: 'de',
 	},

@@ -7,5 +7,16 @@
 			</h3>
 		</div>
 
+		<ul class="nav navbar-nav navbar-right">
+			<li ng-show="languageSelector.length > 1" class="navbar-language" bs-dropdown="languageSelector" data-placement="bottom-left">
+				<div id="navbar-language-icon" class="fade">
+					<i class="fa fa-globe"></i>
+				</div>
+				<div id="navbar-language-code" class="fade">{{ selectedLanguage }}</div>
+			</li>
+			<li ng-if="!loggedIn">
+				<button type="button" class="btn btn-primary" data-animation="am-fade-and-slide-top" data-template-url="modal/docs/modal.demo.tpl.html" bs-modal="modal">Custom Modal</button>
+			</li>
+		</ul>
 	</div>
 </div>
