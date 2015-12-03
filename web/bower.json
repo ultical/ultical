@@ -29,6 +29,7 @@
     "angular-animate": "*",    
     "bootstrap": "*",
     "normalize-css": "*",
-    "respond": "*"
+    "respond": "*",
+    "fontawesome": "*"
   }
 }
