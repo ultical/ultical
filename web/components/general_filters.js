@@ -1,10 +1,29 @@
 'use strict';
 
+app.filter('range', function() {
+	return function(input, total) {
+		var from = 0, to = 0;
+
+		if (angular.isObject(total)) {
+			from = parseInt(total.from);
+			to = parseInt(total.to) + 5;
+		} else {
+			to = parseInt(total);
+		}
+
+		for (var i = from; i < to; i++) {
+			input.push(i);
+		}
+
+		return input;
+	};
+});
+
 app.filter('capitalize', function() {
-  return function(input, all) {
-    var reg = (all) ? /([^\W_]+[^\s-]*) */g : /([^\W_]+[^\s-]*)/;
-    return (!!input) ? input.replace(reg, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}) : '';
-  }
+	return function(input, all) {
+		var reg = (all) ? /([^\W_]+[^\s-]*) */g : /([^\W_]+[^\s-]*)/;
+		return (!!input) ? input.replace(reg, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}) : '';
+	}
 });
 
 app.filter('numberFixedLen', function () {

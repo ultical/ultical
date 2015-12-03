@@ -9,6 +9,7 @@ var app = angular.module('ultical',
 		 'ngSanitize',
 		 'ultical.start',
 		 'ultical.events',
+		 'ultical.user',
 		 ]);
 
 //router ui route
@@ -73,3 +74,10 @@ app.config(function($compileProvider) {
 app.factory('CONFIG', function() {
 	return CONFIG_OBJECT;
 });
+
+app.config(function($modalProvider) {
+  angular.extend($modalProvider.defaults, {
+    animation: 'am-flip-x',
+    container: 'body',
+  });
+})

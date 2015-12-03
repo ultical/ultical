@@ -9,6 +9,14 @@ app.factory('serverApi', ['CONFIG', '$http', function(CONFIG, $http) {
 		$http.get(CONFIG.api.hostname + '/' + resource)
 		.then(successCallback, errorCallback);
 	}
+	
+	function post(recourse, data, successCallback, errorCallback) {
+		if (undefined === errorCallback) {
+			errorCallback = function() {};
+		}
+		$http.post(CONFIG.api.hostname + '/' + resource)
+		.then(successCallback, errorCallback);
+	}
 
 	return {
 		getEvent: function(eventId, callback) {
@@ -17,6 +25,10 @@ app.factory('serverApi', ['CONFIG', '$http', function(CONFIG, $http) {
 		
 		getEvents: function(callback) {
 			get('events', callback);
+		},
+		
+		registerUser: function(user) {
+			post('user', user, callback);
 		},
 	};
 

@@ -1,0 +1,76 @@
+<div class="modal" tabindex="-1" role="dialog" aria-hidden="true" ng-controller="RegistrationCtrl">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" aria-label="Close" ng-click="$hide()">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title">{{ 'user.registration.title' | translate }}</h4>
+			</div>
+			<div class="modal-body">
+				<form name="registrationForm" class="form-horizontal">
+
+							<div class="form-group">
+						<label class="col-sm-3 control-label">{{ 'user.registration.dfvLabel' | translate }}</label>
+						<div class="col-sm-8">{{ 'user.registration.dfvDescription' | translate }}</div>
+
+					</div>
+					<div class="row margin-top-big">
+						<div class="col-sm-12">
+
+							<div class="form-group">
+								<label for="user-input-firstname" class="col-sm-3 control-label">{{ 'user.firstname' | translate }}</label>
+								<div class="col-sm-7">
+									<input ng-model="user.firstname" ng-required="true" type="text" class="form-control" id="user-input-firstname" placeholder="{{ 'user.firstname' | translate }}">
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label for="user-input-lastname" class="col-sm-3 control-label">{{ 'user.lastname' | translate }}</label>
+								<div class="col-sm-7">
+									<input ng-model="user.lastname" ng-required="true" type="text" class="form-control" id="user-input-lastname" placeholder="{{ 'user.lastname' | translate }}">
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label for="user-input-dob" class="col-sm-3 control-label">{{ 'user.dob' | translate }}</label>
+								<div class="col-sm-2">
+									<select class="form-control" ng-model="user.dob.day">
+										<option ng-repeat="i in [] | range : 31" value="{{ i + 1 | numberFixedLen : 2 }}">{{ i + 1 }}</option>
+									</select>
+								</div>
+								<div class="col-sm-2">
+									<select class="form-control" ng-model="user.dob.month">
+										<option ng-repeat="i in [] | range : 12" value="{{ i + 1 | numberFixedLen : 2 }}">{{ i + 1 }}</option>
+									</select>
+								</div>
+								<div class="col-sm-2">
+									<select class="form-control" ng-model="user.dob.year">
+										<option ng-repeat="i in [] | range : {'from': 1900, 'to': 2015}" value="{{ i }}">{{ i }}</option>
+									</select>
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label for="user-input-email" class="col-sm-3 control-label">{{ 'user.email' | translate }}</label>
+								<div class="col-sm-7">
+									<input ng-model="user.email" ng-required="true" type="email" class="form-control" id="user-input-email" placeholder="{{ 'user.email' | translate }}">
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</form>
+
+				<div class="row margin-top-big">
+					<div class="col-sm-12">
+						<button ng-disabled="!registrationForm.$valid" type="button" class="btn btn-primary center-block" ng-click="doRegister()">{{ 'user.registration.register' | translate }}</button>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" ng-click="$hide()">{{ 'general.close' | translate | capitalize }}</button>
+			</div>
+		</div>
+	</div>
+</div>

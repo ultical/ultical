@@ -6,12 +6,15 @@ var TRANSLATIONS_DE = {
 			dateFormatShort: "dd.MM.yy",
 			datetimeFormat : "dd.MM.yy - HH:mm",
 			na: 'Noch keine Informationen',
-			email: 'Email',
+			close: 'schließen',
+			email: 'E-Mail',
 			phone: 'Telefon',
 		},
 
 		nav: {
 			title: 'UltiCal',
+			login: 'Login',
+			register: 'Registrieren',
 		},
 		
 		season: {
@@ -26,6 +29,19 @@ var TRANSLATIONS_DE = {
 		
 		tournaments: {
 			
+		},
+		
+		user: {
+			registration: {
+				title: 'Neuen Benutzer registrieren',
+				dfvLabel: 'Hinweis',
+				dfvDescription: 'Nur DFV Mitglieder können sich hier registrieren. Bitte fülle die Felder so aus, wie sie auch durch deinen Verein beim DFV angegeben worden sind',
+				register: 'Benutzer registrieren',
+			},
+			firstname: 'Vorname',
+			lastname: 'Nachname',
+			email: 'E-Mail-Adresse',
+			dob: 'Geburtsdatum',
 		},
 		
 		event: {

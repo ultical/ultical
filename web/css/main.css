@@ -27,6 +27,10 @@
 	margin-left: 3px;
 }
 
+#navbar-register {
+	margin-top: 8px;	
+}
+
 .navbar-language {
 	cursor: pointer;
 }

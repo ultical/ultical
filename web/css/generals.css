@@ -30,6 +30,18 @@
 	margin-left: 1.5em;
 }
 
+.margin-right-small {
+	margin-right: 0.5em;
+}
+
+.margin-right {
+	margin-right: 1em;
+}
+
+.margin-right-big {
+	margin-right: 1.5em;
+}
+
 .margin-bottom-small {
 	margin-bottom: 0.5em;
 }
@@ -73,5 +85,4 @@
 .background, .fade.background {
 	opacity: 0.2;
 }
-
 
