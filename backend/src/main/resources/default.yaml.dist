@@ -5,3 +5,8 @@ server:
   adminConnectors:
     - type: http
       port: 8766
+dfvapi: 
+  token: token
+  secret: secret
+  url: https://dfv-mv.de/api
+ 
