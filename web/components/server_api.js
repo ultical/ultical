@@ -10,11 +10,11 @@ app.factory('serverApi', ['CONFIG', '$http', function(CONFIG, $http) {
 		.then(successCallback, errorCallback);
 	}
 	
-	function post(recourse, data, successCallback, errorCallback) {
+	function post(resource, data, successCallback, errorCallback) {
 		if (undefined === errorCallback) {
 			errorCallback = function() {};
 		}
-		$http.post(CONFIG.api.hostname + '/' + resource)
+		$http.post(CONFIG.api.hostname + '/' + resource, data)
 		.then(successCallback, errorCallback);
 	}
 
@@ -27,8 +27,8 @@ app.factory('serverApi', ['CONFIG', '$http', function(CONFIG, $http) {
 			get('events', callback);
 		},
 		
-		registerUser: function(user) {
-			post('user', user, callback);
+		registerUser: function(user, callback) {
+			post('register', user, callback);
 		},
 	};
 

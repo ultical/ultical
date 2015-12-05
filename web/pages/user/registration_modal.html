@@ -58,13 +58,27 @@
 								</div>
 							</div>
 							
+							<div class="form-group">
+								<label for="user-input-password" class="col-sm-3 control-label">{{ 'user.password' | translate }}</label>
+								<div class="col-sm-7">
+									<input ng-model="user.password" ng-minlength="{{ minPasswordLength }}" ng-required="true" type="password" class="form-control" id="user-input-password" placeholder="{{ 'user.password' | translate }}">
+								</div>
+							</div>
+							
+							<div class="form-group">
+								<label for="user-input-password-check" class="col-sm-3 control-label">{{ 'user.passwordCheck' | translate }}</label>
+								<div class="col-sm-7">
+									<input ng-model="user.passwordCheck" ng-minlength="{{ minPasswordLength }}" ng-required="true" type="password" class="form-control" id="user-input-password-check" placeholder="{{ 'user.password' | translate }}">
+								</div>
+							</div>
+							
 						</div>
 					</div>
 				</form>
 
 				<div class="row margin-top-big">
 					<div class="col-sm-12">
-						<button ng-disabled="!registrationForm.$valid" type="button" class="btn btn-primary center-block" ng-click="doRegister()">{{ 'user.registration.register' | translate }}</button>
+						<button ng-disabled="!registrationForm.$valid || user.password != user.passwordCheck" type="button" class="btn btn-primary center-block" ng-click="doRegister()">{{ 'user.registration.register' | translate }}</button>
 					</div>
 				</div>
 			</div>

@@ -79,5 +79,6 @@ app.config(function($modalProvider) {
   angular.extend($modalProvider.defaults, {
     animation: 'am-flip-x',
     container: 'body',
+    keyboard: false,
   });
 })

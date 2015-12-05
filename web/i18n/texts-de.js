@@ -42,6 +42,8 @@ var TRANSLATIONS_DE = {
 			lastname: 'Nachname',
 			email: 'E-Mail-Adresse',
 			dob: 'Geburtsdatum',
+			password: 'Passwort',
+			passwordCheck: 'Passwort wiederholen',
 		},
 		
 		event: {
