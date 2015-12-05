@@ -5,14 +5,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper=true)
-public class User extends Identifiable{
+@EqualsAndHashCode(callSuper = true)
+public class User extends Identifiable {
 
-	private String username;
 	private String email;
-
 	private String password;
-
 	private DfvPlayer dfvPlayer;
 
 	@Override

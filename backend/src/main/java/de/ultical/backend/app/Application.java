@@ -5,6 +5,7 @@ import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
+import javax.ws.rs.client.Client;
 
 import org.apache.ibatis.session.SqlSession;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -13,10 +14,15 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.spinscale.dropwizard.jobs.JobsBundle;
 import de.ultical.backend.api.EventsResource;
+import de.ultical.backend.api.RegisterResource;
+import de.ultical.backend.api.TempInitResource;
 import de.ultical.backend.api.TournamentResource;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.LocalDateMixIn;
+import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
@@ -29,11 +35,13 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
 	@Override
 	public void initialize(Bootstrap<UltiCalConfig> bootstrap) {
-		// TODO Auto-generated method stub
 		super.initialize(bootstrap);
 
 		ObjectMapper objectMapper = bootstrap.getObjectMapper();
 		objectMapper.addMixIn(LocalDate.class, LocalDateMixIn.class);
+
+		// add Jobs bundle to provide schedules tasks
+		bootstrap.addBundle(new JobsBundle("de.ultical.backend.jobs"));
 	}
 
 	@Override
@@ -71,6 +79,25 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 					}
 				}).to(DataStore.class);
 
+				// Create factory to inject Client
+				this.bindFactory(new Factory<Client>() {
+
+					private Client internalClient = null;
+
+					@Override
+					public void dispose(Client instance) {
+					}
+
+					@Override
+					public Client provide() {
+						if (this.internalClient == null) {
+							this.internalClient = new JerseyClientBuilder(env).using(new JerseyClientConfiguration()).using(env).build("dfvApi");
+						}
+						return this.internalClient;
+					}
+
+				}).to(Client.class);
+
 			}
 		});
 
@@ -78,6 +105,10 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
 		env.jersey().register(EventsResource.class);
 		env.jersey().register(TournamentResource.class);
+
+		// TODO inject config?!
+		env.jersey().register(new RegisterResource(config));
+		env.jersey().register(new TempInitResource(config));
 	}
 
 	/*

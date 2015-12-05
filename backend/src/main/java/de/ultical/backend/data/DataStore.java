@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import org.apache.ibatis.session.SqlSession;
 
 import de.ultical.backend.data.mapper.EventMapper;
+import de.ultical.backend.model.ApiDfvMvName;
 import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
@@ -46,6 +47,8 @@ public class DataStore {
 	private Map<String, TournamentEdition> tournamentPerName;
 	private TreeSet<Event> orderedEvents;
 	private Set<Event> events;
+
+	private List<ApiDfvMvName> dfvNames;
 
 	public DataStore() {
 		this.fillDataStore();
@@ -143,13 +146,28 @@ public class DataStore {
 		return Collections.unmodifiableNavigableSet(result);
 	}
 
+	public void refreshDfvNames(List<ApiDfvMvName> dfvNames) {
+		this.dfvNames = dfvNames;
+	}
+
+	public Set<ApiDfvMvName> getDfvNames(String firstname, String lastname) {
+		Set<ApiDfvMvName> names = new HashSet<ApiDfvMvName>();
+
+		for (ApiDfvMvName dfvName : this.dfvNames) {
+			if (dfvName.getVorname().equalsIgnoreCase(firstname) && dfvName.getNachname().equalsIgnoreCase(lastname)) {
+				names.add(dfvName);
+			}
+		}
+
+		return names;
+	}
+
 	private void fillForTesting() {
 
 		/* USERS */
 		User bas = new User();
 		bas.setId(1);
 		bas.setVersion(1);
-		bas.setUsername("bas");
 		bas.setEmail("bas@knallbude.de");
 		bas.setPassword("password");
 
@@ -159,7 +177,6 @@ public class DataStore {
 		User basil = new User();
 		basil.setId(2);
 		basil.setVersion(1);
-		basil.setUsername("basil");
 		basil.setEmail("kaffee@trinkr.com");
 		basil.setPassword("password2");
 
