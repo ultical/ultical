@@ -19,6 +19,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import de.ultical.backend.data.mapper.EventMapper;
 import de.ultical.backend.model.ApiDfvMvName;
+import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
@@ -47,6 +48,8 @@ public class DataStore {
 	private Map<String, TournamentEdition> tournamentPerName;
 	private TreeSet<Event> orderedEvents;
 	private Set<Event> events;
+	private Set<User> users;
+	private Set<DfvPlayer> dfvPlayers;
 
 	private List<ApiDfvMvName> dfvNames;
 
@@ -58,6 +61,8 @@ public class DataStore {
 		this.tournamentPerName = new HashMap<String, TournamentEdition>();
 		this.orderedEvents = new TreeSet<Event>();
 		this.events = new HashSet<Event>();
+		this.users = new HashSet<User>();
+		this.dfvPlayers = new HashSet<DfvPlayer>();
 
 		this.fillForTesting();
 	}
@@ -160,6 +165,13 @@ public class DataStore {
 		}
 
 		return names;
+	}
+
+	public void storeUser(User user) {
+		// first store dfvPlayer
+		this.dfvPlayers.add(user.getDfvPlayer());
+		// then store user
+		this.users.add(user);
 	}
 
 	private void fillForTesting() {
