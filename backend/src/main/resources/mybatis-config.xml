@@ -9,6 +9,7 @@
 	</settings>
 	<typeHandlers>
 		<typeHandler handler="de.ultical.backend.data.mapper.LocalDateTypeHandler" javaType="java.time.LocalDate"/>
+		<typeHandler handler="de.ultical.backend.data.mapper.LocalDateTimeHandler" javaType="java.time.LocalDateTime"/>
 	</typeHandlers>
 
 	<environments default="development">
@@ -34,7 +35,15 @@
 	<mappers>
 		<mapper class="de.ultical.backend.data.mapper.DfvPlayerMapper" />
 		<mapper class="de.ultical.backend.data.mapper.UserMapper" />
+		<mapper class="de.ultical.backend.data.mapper.PlayerMapper" />
 		<mapper class="de.ultical.backend.data.mapper.UnregisteredPlayerMapper" />
 		<mapper class="de.ultical.backend.data.mapper.SeasonMapper" />
+		<mapper class="de.ultical.backend.data.mapper.TournamentFormatMapper" />
+		<mapper class="de.ultical.backend.data.mapper.EventMapper" />
+		<mapper class="de.ultical.backend.data.mapper.LocationMapper" />
+		<mapper class="de.ultical.backend.data.mapper.TournamentEditionMapper" />
+		<mapper class="de.ultical.backend.data.mapper.DivisionRegistrationMapper" />
+		<mapper class="de.ultical.backend.data.mapper.TeamMapper" />
+		<mapper class="de.ultical.backend.data.mapper.TeamRegistrationMapper" />
 	</mappers>
 </configuration>

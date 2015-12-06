@@ -14,10 +14,14 @@ public class LocalDateTypeHandler implements TypeHandler<LocalDate> {
 	@Override
 	public void setParameter(PreparedStatement ps, int i, LocalDate parameter, JdbcType jdbcType)
 			throws SQLException {
+		if (parameter != null) {
 		StringBuilder result = new StringBuilder(10);
 		result.append(parameter.getYear()).append('-').append(parameter.getMonthValue()).append('-')
 				.append(parameter.getDayOfMonth());
 		ps.setString(i, result.toString());
+		} else {
+			ps.setNull(i, Types.DATE);
+		}
 	}
 
 	@Override

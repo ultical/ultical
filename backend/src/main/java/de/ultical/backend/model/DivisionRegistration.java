@@ -1,9 +1,11 @@
 package de.ultical.backend.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public abstract class DivisionRegistration {
+@EqualsAndHashCode(callSuper=true)
+public abstract class DivisionRegistration extends Identifiable {
 	// define division about gender and age
 	private DivisionType divisionType;
 	private DivisionAge divisionAge;

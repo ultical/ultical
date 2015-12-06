@@ -199,14 +199,14 @@ public class DataStore {
 		loc1.setCity("Berlin");
 		loc1.setCountry("DE");
 		loc1.setStreet("Weserstr. 37");
-		loc1.setZipcode(12045);
+		loc1.setZipCode(12045);
 		loc1.setAdditionalInfo("Nicht abbiegen");
 
 		Location loc2 = new Location();
 		loc2.setCity("Marburg");
 		loc2.setCountry("DE");
 		loc2.setStreet("Afföllerwiesen 2");
-		loc2.setZipcode(12345);
+		loc2.setZipCode(12345);
 
 		/* 4 FERKEL */
 		TournamentFormat tf = new TournamentFormat();

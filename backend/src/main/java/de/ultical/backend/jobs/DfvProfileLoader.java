@@ -1,5 +1,8 @@
 package de.ultical.backend.jobs;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.spinscale.dropwizard.jobs.Job;
 import de.spinscale.dropwizard.jobs.annotations.On;
 import de.spinscale.dropwizard.jobs.annotations.OnApplicationStart;
@@ -15,10 +18,13 @@ import de.spinscale.dropwizard.jobs.annotations.OnApplicationStart;
 @On("0 0 3 * * ?")
 public class DfvProfileLoader extends Job {
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(DfvProfileLoader.class);
+	
 	@Override
 	public void doJob() {
-
-		// logic run once on application start
+		LOGGER.info("Job started ...");
+		
+		LOGGER.info("... Job finished!");
 	}
 
 }

@@ -5,9 +5,11 @@ import java.util.Set;
 
 import io.dropwizard.validation.MinSize;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public abstract class TournamentEdition {
+@EqualsAndHashCode(callSuper=true)
+public abstract class TournamentEdition extends Identifiable{
 
 	private TournamentFormat tournamentFormat;
 

@@ -1,6 +1,6 @@
 package de.ultical.backend.model;
 
-import de.ultical.backend.data.mapper.UnregisteredPlayerMapper;
+import de.ultical.backend.data.mapper.PlayerMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,8 +10,8 @@ public class UnregisteredPlayer extends Player {
 	private String email;
 
 	@Override
-	public Class<UnregisteredPlayerMapper> getMapper() {
-		return UnregisteredPlayerMapper.class;
+	public Class<PlayerMapper> getMapper() {
+		return PlayerMapper.class;
 	}
 	
 	
