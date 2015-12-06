@@ -7,21 +7,21 @@ import org.apache.ibatis.annotations.*;
 import de.ultical.backend.model.DfvPlayer;
 
 public interface DfvPlayerMapper extends BaseMapper<DfvPlayer> {
-
+	
+	final String SELECT_STMT = "SELECT id, version, dfv_number as dfvNumber, first_name as firstName, last_name as lastName, gender, birth_date as birthDate from PLAYER INNER JOIN DFV_PLAYER ON PLAYER.id = DFV_PLAYER.player_id";
+	
 	@Override
-	@Select("SELECT id, version, dfv_number as dfvNumber, first_name as firstName, last_name as lastName, gender, biography, birth_date as birthDate from DFV_PLAYER WHERE id = #{pk}")
-	@ResultType(value=DfvPlayer.class)
+	@Select({SELECT_STMT,"WHERE id = #{pk} AND is_registered=true"})
 	DfvPlayer get(int pk);
 	
-	@Select("SELECT * from DFV_PLAYER")
+	@Select(SELECT_STMT)
 	List<DfvPlayer> getAll();
 	
 	@Override
-	@Insert("INSERT INTO DFV_PLAYER (first_name, last_name, dfv_number, gender, birth_date, biography) VALUES (#{firstName},#{lastName},#{dfvNumber},#{gender},#{birthDate},#{biography})")
-	@Options(useGeneratedKeys=true, keyProperty="id")
+	@Insert("INSERT INTO DFV_PLAYER (player_id, dfv_number, birth_date) VALUES (#{id},#{dfvNumber},#{birthDate})")
 	Integer insert(DfvPlayer entity);
 	
 	@Override
-	@Update("UPDATE DFV_PLAYER SET version = version + 1, dfv_number = #{dfvNumber}, biography = #{biography}, birth_date = #{birthDate}, first_name = #{firstName}, last_name = #{lastName}, gender = #{gender} WHERE id = #{id} AND version = #{version}")
+	@Update("UPDATE DFV_PLAYER SET dfv_number = #{dfvNumber}, birth_date = #{birthDate} WHERE player_id = #{id}")
 	Integer update(DfvPlayer entity);
 }

@@ -1,15 +1,22 @@
 package de.ultical.backend.model;
 
+import de.ultical.backend.data.mapper.LocationMapper;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class Location {
+@EqualsAndHashCode(callSuper=true)
+public class Location extends Identifiable{
 
 	private double longitude, latitude;
 	private String city;
 	private String country;
 	private String street;
-	private int zipcode;
+	private int zipCode;
 	private String additionalInfo;
-
+	
+	@Override
+	public Class<LocationMapper> getMapper() {
+		return LocationMapper.class;
+	}
 }

@@ -15,10 +15,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.spinscale.dropwizard.jobs.JobsBundle;
-import de.ultical.backend.api.EventsResource;
-import de.ultical.backend.api.RegisterResource;
-import de.ultical.backend.api.TempInitResource;
-import de.ultical.backend.api.TournamentResource;
+import de.ultical.backend.api.*;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.LocalDateMixIn;
 import io.dropwizard.client.JerseyClientBuilder;
@@ -109,6 +106,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 		// TODO inject config?!
 		env.jersey().register(new RegisterResource(config));
 		env.jersey().register(new TempInitResource(config));
+		
 	}
 
 	/*

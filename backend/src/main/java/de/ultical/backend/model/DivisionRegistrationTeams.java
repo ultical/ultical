@@ -1,7 +1,8 @@
 package de.ultical.backend.model;
 
-import java.util.Map;
+import java.util.List;
 
+import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -11,5 +12,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class DivisionRegistrationTeams extends DivisionRegistration {
 	// ordered list of registered teams
-	private Map<Integer, TeamRegistration> registeredTeams;
+	// BB I think it is sufficient to use a List here, which is inherently ordered.
+	private List<TeamRegistration> registeredTeams;
+
+	public Class<DivisionRegistrationMapper> getMapper() {
+		return DivisionRegistrationMapper.class;
+	}
 }
