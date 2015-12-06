@@ -45,7 +45,8 @@ public class UnregisteredPlayerMapperTest {
 	public void test() {
 		this.mapper.insert(unregisteredPlayer);
 		this.unRegMapper.insert(unregisteredPlayer);
-		final Player foundPlayer = this.mapper.get(1);
+		final int unregPlayerId = unregisteredPlayer.getId();
+		final Player foundPlayer = this.mapper.get(unregPlayerId);
 		assertNotNull(foundPlayer);
 		assertTrue(foundPlayer instanceof UnregisteredPlayer);
 		assertEquals(FIRSTNAME, foundPlayer.getFirstName());
@@ -72,7 +73,7 @@ public class UnregisteredPlayerMapperTest {
 		final int updateCount = this.mapper.update(foundPlayer);
 		this.unRegMapper.update((UnregisteredPlayer) foundPlayer);
 		assertEquals(1, updateCount);
-		Player updatedPlayer = this.mapper.get(1);
+		Player updatedPlayer = this.mapper.get(unregPlayerId);
 		assertNotNull(updatedPlayer);
 		assertTrue(updatedPlayer instanceof UnregisteredPlayer);
 		assertEquals(2, updatedPlayer.getVersion());
@@ -91,9 +92,8 @@ public class UnregisteredPlayerMapperTest {
 		 * test delete
 		 */
 		this.mapper.delete(foundPlayer);
-		assertNull(this.mapper.get(1));
-		assertNotNull(this.mapper.get(2));
-		assertNotNull(this.mapper.get(3));
+		assertNull(this.mapper.get(unregPlayerId));
+		
 	}
 
 }

@@ -56,8 +56,9 @@ public class TournamentEditionMapperTest {
 	public void test() {
 		assertEquals(0, edition.getId());
 		mapper.insert(edition);
-		assertEquals(1,edition.getId());
-		TournamentEdition readEdition = mapper.get(1);
+		final int editionId = edition.getId();
+
+		TournamentEdition readEdition = mapper.get(editionId);
 		assertNotNull(readEdition);
 		assertTrue(readEdition instanceof TournamentEditionSingle);
 		assertNotNull(readEdition.getTournamentFormat());
@@ -79,7 +80,7 @@ public class TournamentEditionMapperTest {
 		readEdition.setCurrency("GBP");
 		updateCount = mapper.update(readEdition);
 		assertEquals(1, updateCount);
-		readEdition = mapper.get(edition.getId());
+		readEdition = mapper.get(editionId);
 		assertNotNull(readEdition);
 		assertTrue(readEdition instanceof TournamentEditionSingle);
 		assertNotNull(readEdition.getTournamentFormat());

@@ -56,9 +56,10 @@ public class LocationMapperTest {
 		assertEquals(0, location.getId());
 		mapper.insert(location);
 		DBRULE.getSession().commit();
-		assertEquals(1, location.getId());
+//		assertEquals(1, location.getId());
 		
-		Location readLocation = mapper.get(1);
+		final int locationId = location.getId();
+		Location readLocation = mapper.get(locationId);
 		assertNotNull(readLocation);
 		assertEquals(CITY, readLocation.getCity());
 		assertEquals(STREET, readLocation.getStreet());
@@ -75,22 +76,22 @@ public class LocationMapperTest {
 		updCount = mapper.update(readLocation);
 		assertEquals(1, updCount);
 		
-		readLocation = mapper.get(1);
+		readLocation = mapper.get(location.getId());
 		assertNotNull(readLocation);
 		assertEquals(2, readLocation.getVersion());
 		assertEquals("Berlin", readLocation.getCity());
 		assertEquals(ZIPCODE, readLocation.getZipCode());
 		
 		mapper.insert(readLocation);
+		final int secondLocationId = readLocation.getId();
 		DBRULE.getSession().commit();
-		assertEquals(2, readLocation.getId());
 		
 		List<Location> allLocations = mapper.getAll();
 		assertNotNull(allLocations);
 		assertEquals(2, allLocations.size());
 		
 		mapper.delete(readLocation);
-		assertNull(mapper.get(2));
+		assertNull(mapper.get(secondLocationId));
 		DBRULE.getSession().commit();
 		
 		allLocations = mapper.getAll();

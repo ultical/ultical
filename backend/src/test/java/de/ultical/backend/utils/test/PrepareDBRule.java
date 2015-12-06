@@ -1,7 +1,6 @@
 package de.ultical.backend.utils.test;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.*;
 import java.util.Objects;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
@@ -11,7 +10,6 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import de.ultical.backend.model.Identifiable;
 import liquibase.Contexts;
 import liquibase.Liquibase;
 import liquibase.database.DatabaseConnection;
@@ -74,6 +72,21 @@ public class PrepareDBRule implements TestRule {
 					PrepareDBRule.this.myBatisEnvironment);
 
 			this.chainedStatement.evaluate();
+
+			try {
+				/*
+				 * we drop the db again in order to clean up for other tests running in the same vm.
+				 */
+				DriverManager.getConnection("jdbc:derby:memory:test;drop=true");
+			} catch (SQLException dropEx) {
+				/*
+				 * derby per specification throws an SQLExcpetion upon success of the drop-operation
+				 * At least the SQLState is known and hence we can mask this exception.
+				 */
+				if (!"08006".equals(dropEx.getSQLState())) {
+					throw dropEx;
+				}
+			}
 		}
 	}
 
