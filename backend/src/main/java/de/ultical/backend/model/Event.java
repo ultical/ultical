@@ -3,6 +3,8 @@ package de.ultical.backend.model;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import de.ultical.backend.data.mapper.EventMapper;
 import io.dropwizard.validation.MinSize;
 import lombok.Data;
@@ -15,6 +17,7 @@ public class Event extends Identifiable{
 	// keep on -1 for single tournaments
 	private int matchdayNumber = -1;
 
+	@JsonBackReference
 	private TournamentEdition tournamentEdition;
 
 	private Location location;

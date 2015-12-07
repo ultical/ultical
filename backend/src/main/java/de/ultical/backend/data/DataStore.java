@@ -1,37 +1,15 @@
 package de.ultical.backend.data;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
 
 import de.ultical.backend.data.mapper.EventMapper;
-import de.ultical.backend.model.ApiDfvMvName;
-import de.ultical.backend.model.DivisionAge;
-import de.ultical.backend.model.DivisionRegistration;
-import de.ultical.backend.model.DivisionRegistrationTeams;
-import de.ultical.backend.model.DivisionType;
-import de.ultical.backend.model.Event;
-import de.ultical.backend.model.Location;
-import de.ultical.backend.model.Season;
-import de.ultical.backend.model.Surface;
-import de.ultical.backend.model.TournamentEdition;
-import de.ultical.backend.model.TournamentEditionLeague;
-import de.ultical.backend.model.TournamentEditionSingle;
-import de.ultical.backend.model.TournamentFormat;
-import de.ultical.backend.model.User;
+import de.ultical.backend.data.mapper.SeasonMapper;
+import de.ultical.backend.model.*;
 
 /**
  * the cloud
@@ -160,6 +138,32 @@ public class DataStore {
 		}
 
 		return names;
+	}
+	
+	public List<Season> getAllSeaoson() {
+		SeasonMapper sm = this.sqlSession.getMapper(SeasonMapper.class);
+		return sm.getAll();
+	}
+	
+	public Season getSeason(final int id) {
+		SeasonMapper sm = this.sqlSession.getMapper(SeasonMapper.class);
+		return sm.get(id);
+	}
+	
+	public Season addSeason(final Season newSeason) {
+		Season checkedSeason = Objects.requireNonNull(newSeason);
+		SeasonMapper mapper = this.sqlSession.getMapper(checkedSeason.getMapper());
+		mapper.insert(checkedSeason);
+		return checkedSeason;
+	}
+	
+	public boolean updateSeason(final Season updSeason) {
+		boolean result = false;
+		Objects.requireNonNull(updSeason);
+		SeasonMapper mapper = this.sqlSession.getMapper(updSeason.getMapper());
+		final int updateCount = mapper.update(updSeason);
+		result = updateCount == 1;
+		return result;
 	}
 
 	private void fillForTesting() {
