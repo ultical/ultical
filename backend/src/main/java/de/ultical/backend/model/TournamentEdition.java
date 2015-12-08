@@ -3,6 +3,8 @@ package de.ultical.backend.model;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import io.dropwizard.validation.MinSize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,6 +13,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=true)
 public abstract class TournamentEdition extends Identifiable{
 
+	@JsonBackReference
 	private TournamentFormat tournamentFormat;
 
 	private String alternativeName;

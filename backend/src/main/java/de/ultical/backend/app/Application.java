@@ -59,6 +59,10 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 				 * SqlSession.
 				 */
 				this.bindFactory(mbm).to(SqlSession.class);
+				/*
+				 * TODO: This factory could be changed once the datastore does
+				 * completey rely on the database instead of private collections
+				 */
 				this.bindFactory(new Factory<DataStore>() {
 
 					private DataStore internalDStore = null;
@@ -79,18 +83,17 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 				// Create factory to inject Client
 				this.bindFactory(new Factory<Client>() {
 
-					private Client internalClient = null;
-
 					@Override
 					public void dispose(Client instance) {
+						if (instance != null) {
+							instance.close();
+						}
 					}
 
 					@Override
 					public Client provide() {
-						if (this.internalClient == null) {
-							this.internalClient = new JerseyClientBuilder(env).using(new JerseyClientConfiguration()).using(env).build("dfvApi");
-						}
-						return this.internalClient;
+							return new JerseyClientBuilder(env).using(new JerseyClientConfiguration())
+									.using(env).build("dfvApi");
 					}
 
 				}).to(Client.class);
@@ -102,11 +105,12 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
 		env.jersey().register(EventsResource.class);
 		env.jersey().register(TournamentResource.class);
+		env.jersey().register(SeasonResource.class);
 
 		// TODO inject config?!
 		env.jersey().register(new RegisterResource(config));
 		env.jersey().register(new TempInitResource(config));
-		
+
 	}
 
 	/*
@@ -120,7 +124,8 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,PUT,POST,DELETE,OPTIONS");
 		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
 		corsFilter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
-		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
+		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM,
+				"Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
 		corsFilter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER, "true");
 	}
 

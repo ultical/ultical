@@ -18,7 +18,7 @@ public class MyBatisManager implements Managed, Factory<SqlSession> {
 		Reader reader = null;
 		try {
 			reader = Resources.getResourceAsReader("mybatis-config.xml");
-			this.sessionFactory = new SqlSessionFactoryBuilder().build(reader);
+			this.sessionFactory = new SqlSessionFactoryBuilder().build(reader, "production");
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage());
 		}
