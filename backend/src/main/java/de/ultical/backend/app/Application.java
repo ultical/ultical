@@ -15,7 +15,11 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.spinscale.dropwizard.jobs.JobsBundle;
-import de.ultical.backend.api.*;
+import de.ultical.backend.api.EventsResource;
+import de.ultical.backend.api.RegisterResource;
+import de.ultical.backend.api.SeasonResource;
+import de.ultical.backend.api.TempInitResource;
+import de.ultical.backend.api.TournamentResource;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.LocalDateMixIn;
 import io.dropwizard.client.JerseyClientBuilder;
@@ -59,6 +63,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 				 * SqlSession.
 				 */
 				this.bindFactory(mbm).to(SqlSession.class);
+
 				/*
 				 * TODO: This factory could be changed once the datastore does
 				 * completey rely on the database instead of private collections
@@ -83,6 +88,8 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 				// Create factory to inject Client
 				this.bindFactory(new Factory<Client>() {
 
+					private Client clientInstance;
+
 					@Override
 					public void dispose(Client instance) {
 						if (instance != null) {
@@ -92,8 +99,10 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
 					@Override
 					public Client provide() {
-							return new JerseyClientBuilder(env).using(new JerseyClientConfiguration())
-									.using(env).build("dfvApi");
+						if (this.clientInstance == null) {
+							this.clientInstance = new JerseyClientBuilder(env).using(new JerseyClientConfiguration()).using(env).build("dfvApi");
+						}
+						return this.clientInstance;
 					}
 
 				}).to(Client.class);
@@ -124,8 +133,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,PUT,POST,DELETE,OPTIONS");
 		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
 		corsFilter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
-		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM,
-				"Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
+		corsFilter.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
 		corsFilter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER, "true");
 	}
 
