@@ -7,6 +7,7 @@
 	<name>UltiCal Backend</name>
 	<properties>
 		<dw.version>0.9.1</dw.version>
+		<liquibase.version>3.4.1</liquibase.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
@@ -68,7 +69,7 @@
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-			<version>3.4.1</version>
+			<version>${liquibase.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -152,6 +153,22 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>${liquibase.version}</version>
+				<configuration>
+					<changeLogFile>src/main/resources/database/db.changelog-1.0.xml</changeLogFile>
+					<propertyFile>src/main/resources/database/liquibase.properties</propertyFile>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>5.1.37</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>

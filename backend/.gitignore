@@ -7,3 +7,4 @@ target/
 start-server.sh
 derby.log
 *default.yaml
+liquibase.properties

@@ -1,0 +1,4 @@
+driver: com.mysql.jdbc.Driver
+url: jdbc:mysql://localhost:8889/ultical
+username: root
+password: root
