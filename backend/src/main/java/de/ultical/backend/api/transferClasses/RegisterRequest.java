@@ -1,4 +1,4 @@
-package de.ultical.backend.model;
+package de.ultical.backend.api.transferClasses;
 
 import java.util.Date;
 
@@ -11,7 +11,7 @@ import lombok.Data;
  *
  */
 @Data
-public class ApiRegisterRequest {
+public class RegisterRequest {
 	private String email;
 	private String password;
 	private String firstName;

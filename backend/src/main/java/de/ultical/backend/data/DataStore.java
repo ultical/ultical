@@ -14,12 +14,13 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
+import javax.ws.rs.client.Client;
 
 import org.apache.ibatis.session.SqlSession;
 
+import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.data.mapper.EventMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
-import de.ultical.backend.model.ApiDfvMvName;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionRegistration;
@@ -46,13 +47,16 @@ public class DataStore {
 	@Inject
 	SqlSession sqlSession;
 
+	@Inject
+	Client client;
+
 	private Map<String, TournamentEdition> tournamentPerName;
 	private TreeSet<Event> orderedEvents;
 	private Set<Event> events;
 	private Set<User> users;
 	private Set<DfvPlayer> dfvPlayers;
 
-	private List<ApiDfvMvName> dfvNames;
+	private List<DfvMvName> dfvNames;
 
 	public DataStore() {
 		this.fillDataStore();
@@ -129,6 +133,8 @@ public class DataStore {
 	public List<Event> getAllEvents() {
 		List<Event> list = new ArrayList<Event>();
 		list.addAll(this.events);
+
+		System.out.println("getAllEvents() - " + list);
 		return list;
 		// EventMapper eventMapper =
 		// this.sqlSession.getMapper(EventMapper.class);
@@ -152,14 +158,14 @@ public class DataStore {
 		return Collections.unmodifiableNavigableSet(result);
 	}
 
-	public void refreshDfvNames(List<ApiDfvMvName> dfvNames) {
+	public void refreshDfvNames(List<DfvMvName> dfvNames) {
 		this.dfvNames = dfvNames;
 	}
 
-	public Set<ApiDfvMvName> getDfvNames(String firstname, String lastname) {
-		Set<ApiDfvMvName> names = new HashSet<ApiDfvMvName>();
+	public Set<DfvMvName> getDfvNames(String firstname, String lastname) {
+		Set<DfvMvName> names = new HashSet<DfvMvName>();
 
-		for (ApiDfvMvName dfvName : this.dfvNames) {
+		for (DfvMvName dfvName : this.dfvNames) {
 			if (dfvName.getVorname().equalsIgnoreCase(firstname) && dfvName.getNachname().equalsIgnoreCase(lastname)) {
 				names.add(dfvName);
 			}
@@ -168,7 +174,7 @@ public class DataStore {
 		return names;
 	}
 
-	public List<Season> getAllSeaoson() {
+	public List<Season> getAllSeasons() {
 		SeasonMapper sm = this.sqlSession.getMapper(SeasonMapper.class);
 		return sm.getAll();
 	}
@@ -224,17 +230,20 @@ public class DataStore {
 
 		/* SEASONS */
 		Season season16 = new Season();
+		season16.setId(0);
 		season16.setSurface(Surface.TURF);
 		season16.setYear(2016);
 		season16.setPlusOneYear(false);
 
 		Season season1516 = new Season();
+		season1516.setId(1);
 		season1516.setSurface(Surface.GYM);
 		season1516.setYear(2015);
 		season1516.setPlusOneYear(true);
 
 		/* LOCATIONS */
 		Location loc1 = new Location();
+		loc1.setId(0);
 		loc1.setCity("Berlin");
 		loc1.setCountry("DE");
 		loc1.setStreet("Weserstr. 37");
@@ -242,6 +251,7 @@ public class DataStore {
 		loc1.setAdditionalInfo("Nicht abbiegen");
 
 		Location loc2 = new Location();
+		loc2.setId(1);
 		loc2.setCity("Marburg");
 		loc2.setCountry("DE");
 		loc2.setStreet("Afföllerwiesen 2");
@@ -255,6 +265,7 @@ public class DataStore {
 		tf.setDescription(
 				"Das 4 Ferkel ist ein Turnier der Superlative. Nicht nur alteingesessene Hasen kommen ins Schwärmen, wenn sie auf die Afföllerwiesen im schönen Marburg auflaufen.\n\n Ein Genuss für die ganze Familie");
 		TournamentEditionSingle te = new TournamentEditionSingle();
+		te.setId(0);
 		te.setSeason(season16);
 		te.setTournamentFormat(tf);
 		te.setRegistrationStart(LocalDate.parse("2015-10-01"));
@@ -301,6 +312,7 @@ public class DataStore {
 		tf.setDescription("Ein Turnier der Ultimate Abteilung des DFV");
 
 		TournamentEditionLeague tel = new TournamentEditionLeague();
+		tel.setId(1);
 		tel.setAlternativeName("32. A-Relegation");
 		tel.setAlternativeMatchdayName("Spültag");
 		tel.setSeason(season16);
@@ -358,6 +370,7 @@ public class DataStore {
 		tf.setDescription("Ein Indoor Spaß für groß und klein!");
 
 		tel = new TournamentEditionLeague();
+		tel.setId(2);
 		tel.setSeason(season1516);
 		tel.setTournamentFormat(tf);
 		// tel.setRegistrationStart(new LocalDate(2015, 11, 12));

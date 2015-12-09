@@ -1,9 +1,9 @@
-package de.ultical.backend.model;
+package de.ultical.backend.api.transferClasses;
 
 import lombok.Data;
 
 @Data
-public class ApiDfvMvPlayer {
+public class DfvMvPlayer {
 	private String geburtsdatum;
 	private String verein;
 	private boolean ruht;

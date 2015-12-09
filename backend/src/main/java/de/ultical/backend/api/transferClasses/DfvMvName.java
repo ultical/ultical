@@ -1,9 +1,9 @@
-package de.ultical.backend.model;
+package de.ultical.backend.api.transferClasses;
 
 import lombok.Data;
 
 @Data
-public class ApiDfvMvName {
+public class DfvMvName {
 	private String nachname;
 	private String vorname;
 	private boolean dse;
