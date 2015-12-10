@@ -9,7 +9,9 @@ app.factory('storage', ['$filter', 'serverApi',
 			event: {},
 		},
 
-		allEvents: [],
+		events: {},
+		tournamentEditions: {},
+		tournamentFormats: {},
 
 		getEvent: function(eventId, callback) {
 			this.getEvents(function(events) {
@@ -27,16 +29,20 @@ app.factory('storage', ['$filter', 'serverApi',
 			if (isEmpty(this.allEvents)) {
 				// make API call
 				serverApi.getEvents(function(data) {
-					that.allEvents = data.data;
+//					that.allEvents = data;
 
 					// add some fields
 					var todayDateString = $filter('date')(new Date(), 'yyyy-MM-dd');
 
-					angular.forEach(data.data, function(event) {
+					angular.forEach(data, function(event) {
+
+						storeEvent(that, event);
+
 						console.log("event.te", event.tournamentEdition);
-						event.tournamentEdition.a = 1;
+
 						event.tournamentEdition.registrationIsOpen = !isEmpty(event.tournamentEdition.registrationStart) && event.tournamentEdition.registrationStart.string <= todayDateString && event.tournamentEdition.registrationEnd.string >= todayDateString;
 						event.tournamentEdition.registrationTime = isEmpty(event.tournamentEdition.registrationStart) ? 'never' : (event.tournamentEdition.registrationStart.string > todayDateString ? 'future' : 'past');
+
 
 						var hasEditionFee = false;
 						var hasEventFee = false;
@@ -56,18 +62,51 @@ app.factory('storage', ['$filter', 'serverApi',
 
 						event.tournamentEdition.hasFees = hasEditionFee;
 						event.hasFees = hasEventFee;
-					
-					});
-					
-					console.log("events", data.data);
 
-					callback(data.data);
+					});
+
+					console.log("events", that.events);
+
+					callback(that.events);
 				});
 			} else {
-				callback(this.allEvents);
+				callback(this.events);
 			}
-		},
-
+		}
 
 	};
+
+	function storeEvent(that, event) {
+		that.events[event.id] = event;
+
+		if (angular.isObject(event.tournamentEdition)) {
+			storeTournamentEdition(that, event.tournamentEdition);
+		} else {
+			if (event.tournamentEdition in that.tournamentEditions) {
+				event.tournamentEdition = that.tournamentEditions[event.tournamentEdition];
+			} else {
+				alert("Missing an edition: " + event.tournamentEdition);
+			}
+
+		}
+	}
+
+	function storeTournamentEdition(that, edition) {
+		that.tournamentEditions[edition.id] = edition;
+
+		if (angular.isObject(edition.tournamentFormat)) {
+			storeTournamentFormat(that, edition.tournamentFormat);
+		} else {
+			if (edition.tournamentFormat in that.tournamentFormats) {
+				edition.tournamentFormat = that.tournamentFormats[edition.tournamentFormat];
+			} else {
+				alert("Missing a format: " + edition.tournamentFormat);
+			}
+		}
+	}
+
+	function storeTournamentFormat(that, format) {
+		that.tournamentFormats[format.id] = format;
+	}
+
 }]);
