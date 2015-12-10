@@ -7,9 +7,14 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
 
-import de.ultical.backend.model.*;
+import de.ultical.backend.model.DfvPlayer;
+import de.ultical.backend.model.Gender;
+import de.ultical.backend.model.Player;
 import de.ultical.backend.utils.test.PrepareDBRule;
 
 public class DfvPlayerMapperTest {
@@ -22,13 +27,13 @@ public class DfvPlayerMapperTest {
 	@Before
 	public void setUp() throws Exception {
 		dbRule.getSession();
-		dfvPlayer = new DfvPlayer();
-		dfvPlayer.setDfvNumber("123456");
-		dfvPlayer.setFirstName("Brodie");
-		dfvPlayer.setLastName("Smith");
-		dfvPlayer.setGender(Gender.MALE);
+		this.dfvPlayer = new DfvPlayer();
+		this.dfvPlayer.setDfvNumber(123456);
+		this.dfvPlayer.setFirstName("Brodie");
+		this.dfvPlayer.setLastName("Smith");
+		this.dfvPlayer.setGender(Gender.MALE);
 
-		dfvPlayer.setBirthDate(LocalDate.now());
+		this.dfvPlayer.setBirthDate(LocalDate.now());
 	}
 
 	@After
@@ -40,9 +45,9 @@ public class DfvPlayerMapperTest {
 	public void test() {
 		PlayerMapper playerMapper = dbRule.getSession().getMapper(PlayerMapper.class);
 		DfvPlayerMapper mapper = dbRule.getSession().getMapper(DfvPlayerMapper.class);
-		playerMapper.insert(dfvPlayer);
-		final int insertedId = dfvPlayer.getId();
-		mapper.insert(dfvPlayer);
+		playerMapper.insert(this.dfvPlayer);
+		final int insertedId = this.dfvPlayer.getId();
+		mapper.insert(this.dfvPlayer);
 		dbRule.getSession().commit();
 		List<Player> allPlayers = playerMapper.getAll();
 		assertNotNull(allPlayers);
@@ -54,39 +59,39 @@ public class DfvPlayerMapperTest {
 		assertEquals(1, foundPlayer.getVersion());
 		assertEquals(insertedId, foundPlayer.getId());
 		assertNotNull(foundPlayer.getFirstName());
-		assertEquals(dfvPlayer.getGender(), foundPlayer.getGender());
-		assertEquals(dfvPlayer.getBirthDate(), foundPlayer.getBirthDate());
-		assertEquals(dfvPlayer.getFirstName(), foundPlayer.getFirstName());
-		assertEquals(dfvPlayer.getLastName(), foundPlayer.getLastName());
+		assertEquals(this.dfvPlayer.getGender(), foundPlayer.getGender());
+		assertEquals(this.dfvPlayer.getBirthDate(), foundPlayer.getBirthDate());
+		assertEquals(this.dfvPlayer.getFirstName(), foundPlayer.getFirstName());
+		assertEquals(this.dfvPlayer.getLastName(), foundPlayer.getLastName());
 
 		/*
 		 * test update of players
 		 */
-		
+
 		Integer shouldBeOne = playerMapper.update(foundPlayer);
 		mapper.update(foundPlayer);
-		assertEquals(Integer.valueOf(1),shouldBeOne);
+		assertEquals(Integer.valueOf(1), shouldBeOne);
 		dbRule.getSession().commit();
 		DfvPlayer updatedPlayer = (DfvPlayer) playerMapper.get(insertedId);
-		checkUpdatedPlayer(updatedPlayer);
+		this.checkUpdatedPlayer(updatedPlayer);
 
 		// update again, but using the foundPlayer instance, which has the wrong
 		// version set by now.
-		Integer shouldBeZero= playerMapper.update(foundPlayer);
-		assertEquals(Integer.valueOf(0),shouldBeZero);
+		Integer shouldBeZero = playerMapper.update(foundPlayer);
+		assertEquals(Integer.valueOf(0), shouldBeZero);
 		// as update is supposed to not succeed, we can check the player using
 		// the same checks as after the first update
 		updatedPlayer = (DfvPlayer) playerMapper.get(insertedId);
-		checkUpdatedPlayer(updatedPlayer);
+		this.checkUpdatedPlayer(updatedPlayer);
 	}
 
 	private void checkUpdatedPlayer(final DfvPlayer updatedPlayer) {
 		assertNotNull(updatedPlayer);
 		assertEquals(2, updatedPlayer.getVersion());
-		assertEquals(dfvPlayer.getGender(), updatedPlayer.getGender());
-		assertEquals(dfvPlayer.getBirthDate(), updatedPlayer.getBirthDate());
-		assertEquals(dfvPlayer.getFirstName(), updatedPlayer.getFirstName());
-		assertEquals(dfvPlayer.getLastName(), updatedPlayer.getLastName());
+		assertEquals(this.dfvPlayer.getGender(), updatedPlayer.getGender());
+		assertEquals(this.dfvPlayer.getBirthDate(), updatedPlayer.getBirthDate());
+		assertEquals(this.dfvPlayer.getFirstName(), updatedPlayer.getFirstName());
+		assertEquals(this.dfvPlayer.getLastName(), updatedPlayer.getLastName());
 	}
 
 }
