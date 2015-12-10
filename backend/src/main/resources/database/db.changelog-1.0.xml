@@ -60,6 +60,8 @@
 			<column name="dfv_player" type="BIGINT">
 				<constraints nullable="true" />
 			</column>
+			<column name="email_confirmed" type="BOOLEAN" defaultValueBoolean="false"></column>
+			<column name="dfv_email_opt_in" type="BOOLEAN" defaultValueBoolean="false"></column>
 		</createTable>
 		<addForeignKeyConstraint constraintName="fk_ultical_user_dfv_player"
 			referencedTableName="PLAYER" baseColumnNames="dfv_player"
@@ -293,8 +295,8 @@
 			<column name="division_registration" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
-			<column name="sequence" type="BIGINT" autoIncrement="true" startWith="1" incrementBy="1">
-				<constraints nullable="false" />
+			<column name="sequence" type="BIGINT" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
 			</column>
 			<column name="time_registered" type="TIMESTAMP">
 				<constraints nullable="false" />

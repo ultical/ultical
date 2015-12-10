@@ -9,9 +9,13 @@ import java.util.List;
 
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
 
-import de.ultical.backend.model.*;
+import de.ultical.backend.model.DfvPlayer;
+import de.ultical.backend.model.Gender;
+import de.ultical.backend.model.User;
 import de.ultical.backend.utils.test.PrepareDBRule;
 
 public class UserMapperTest {
@@ -21,51 +25,55 @@ public class UserMapperTest {
 	private static final String PASSWORD = "secret";
 	private SqlSession session;
 	private User user;
-	
+
 	@ClassRule
 	public static PrepareDBRule DBRULE = new PrepareDBRule();
-	
+
 	@Before
 	public void setUp() throws Exception {
-		session = DBRULE.getSession();
-		user = new User();
-		user.setEmail(EMAIL);
-		user.setPassword(PASSWORD);
-		
+		this.session = DBRULE.getSession();
+		this.user = new User();
+		this.user.setEmail(EMAIL);
+		this.user.setPassword(PASSWORD);
+		this.user.setEmailConfirmed(true);
+		this.user.setDfvEmailOptIn(true);
+
 		final DfvPlayer player = new DfvPlayer();
 		player.setFirstName("Brodie");
 		player.setLastName("Smith");
 		player.setGender(Gender.MALE);
-		player.setDfvNumber("123456");
+		player.setDfvNumber(123456);
 		player.setBirthDate(LocalDate.of(1979, 1, 25));
-		
-		DfvPlayerMapper playerMapper = session.getMapper(DfvPlayerMapper.class);
-		PlayerMapper pMapper = session.getMapper(PlayerMapper.class);
+
+		DfvPlayerMapper playerMapper = this.session.getMapper(DfvPlayerMapper.class);
+		PlayerMapper pMapper = this.session.getMapper(PlayerMapper.class);
 		pMapper.insert(player);
 		playerMapper.insert(player);
-		
-		user.setDfvPlayer(player);
-		session.commit();
+
+		this.user.setDfvPlayer(player);
+		this.session.commit();
 	}
-	
+
 	public void tearDown() throws Exception {
 		DBRULE.closeSession();
-		session= null;
+		this.session = null;
 	}
 
 	@Test
 	public void test() {
-		UserMapper userMapper = session.getMapper(UserMapper.class);
-		userMapper.insert(user);
-		session.commit();
-		
+		UserMapper userMapper = this.session.getMapper(UserMapper.class);
+		userMapper.insert(this.user);
+		this.session.commit();
+
 		User foundUser = userMapper.get(1);
 		assertNotNull(foundUser);
 		assertEquals(PASSWORD, foundUser.getPassword());
 		assertEquals(EMAIL, foundUser.getEmail());
 		assertEquals(1, foundUser.getVersion());
+		assertEquals(true, foundUser.isEmailConfirmed());
+		assertEquals(true, foundUser.isDfvEmailOptIn());
 		assertNotNull(foundUser.getDfvPlayer());
-		
+
 		/*
 		 * test getAll
 		 */
@@ -73,11 +81,11 @@ public class UserMapperTest {
 		assertNotNull(allUsers);
 		assertEquals(1, allUsers.size());
 		// inserting the user once again, and check if getAll still works.
-		userMapper.insert(user);
+		userMapper.insert(this.user);
 		allUsers = userMapper.getAll();
 		assertNotNull(allUsers);
 		assertEquals(2, allUsers.size());
-		
+
 		/*
 		 * test update of user
 		 */
@@ -88,7 +96,7 @@ public class UserMapperTest {
 		assertNotNull(foundUser);
 		assertEquals(UPDATED_PASSWORD, foundUser.getPassword());
 		assertEquals(2, foundUser.getVersion());
-		
+
 		/*
 		 * test delete
 		 */
@@ -98,7 +106,7 @@ public class UserMapperTest {
 
 	@Test(expected = PersistenceException.class)
 	public void violateForeignKey() {
-		UserMapper userMapper = session.getMapper(UserMapper.class);
+		UserMapper userMapper = this.session.getMapper(UserMapper.class);
 		DfvPlayer nonExistingPlayer = new DfvPlayer();
 		nonExistingPlayer.setId(1024);
 		this.user.setDfvPlayer(nonExistingPlayer);

@@ -11,6 +11,8 @@ public class User extends Identifiable {
 	private String email;
 	private String password;
 	private DfvPlayer dfvPlayer;
+	private boolean emailConfirmed;
+	private boolean dfvEmailOptIn;
 
 	@Override
 	public Class<UserMapper> getMapper() {
