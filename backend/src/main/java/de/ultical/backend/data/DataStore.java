@@ -74,12 +74,14 @@ public class DataStore {
 
 	public boolean storeTournament(final TournamentEdition tournamentEdition) {
 		Objects.requireNonNull(tournamentEdition);
-		if (tournamentEdition.getTournamentFormat().getName() == null || tournamentEdition.getTournamentFormat().getName().isEmpty()) {
+		if (tournamentEdition.getTournamentFormat().getName() == null
+				|| tournamentEdition.getTournamentFormat().getName().isEmpty()) {
 			throw new IllegalArgumentException("A tournament's name must not be null or empty!");
 		}
 		// TODO further validations?
 		if (this.tournamentPerName.containsKey(tournamentEdition.getTournamentFormat().getName())) {
-			throw new IllegalArgumentException(String.format("A tournament with the name %s already exists!", tournamentEdition.getTournamentFormat().getName()));
+			throw new IllegalArgumentException(String.format("A tournament with the name %s already exists!",
+					tournamentEdition.getTournamentFormat().getName()));
 		}
 		this.tournamentPerName.put(tournamentEdition.getTournamentFormat().getName(), tournamentEdition);
 		return true;
@@ -98,7 +100,8 @@ public class DataStore {
 
 	public boolean storeEvent(Event event) {
 		Objects.requireNonNull(event);
-		Objects.requireNonNull(event.getTournamentEdition(), "a corresponding Tournament or League is required for each Event");
+		Objects.requireNonNull(event.getTournamentEdition(),
+				"a corresponding Tournament or League is required for each Event");
 		// final TournamentFormat tournament =
 		// event.getTournamentEdition().getTournamentFormat();
 		// if (tournament instanceof TournamentFormat) {
@@ -143,8 +146,10 @@ public class DataStore {
 	}
 
 	public NavigableSet<Event> getEvents(final LocalDate startInterval, final LocalDate endInterval) {
-		final Event firstEvent = startInterval != null ? this.orderedEvents.first() : this.orderedEvents.floor(this.fakeEvent(startInterval));
-		final Event lastEvent = endInterval != null ? this.orderedEvents.last() : this.orderedEvents.ceiling(this.fakeEvent(endInterval));
+		final Event firstEvent = startInterval != null ? this.orderedEvents.first()
+				: this.orderedEvents.floor(this.fakeEvent(startInterval));
+		final Event lastEvent = endInterval != null ? this.orderedEvents.last()
+				: this.orderedEvents.ceiling(this.fakeEvent(endInterval));
 		NavigableSet<Event> result;
 		if (firstEvent == null && lastEvent == null) {
 			result = Collections.emptyNavigableSet();
@@ -205,6 +210,26 @@ public class DataStore {
 		this.dfvPlayers.add(user.getDfvPlayer());
 		// then store user
 		this.users.add(user);
+	}
+
+	public User getUserByDfvNr(int dfvNumber) {
+
+		for (User user : this.users) {
+			if (user.getDfvPlayer() != null && user.getDfvPlayer().getDfvNumber() == dfvNumber) {
+				return user;
+			}
+		}
+		return null;
+	}
+
+	public User getUserByEmail(String email) {
+
+		for (User user : this.users) {
+			if (user.getEmail().equalsIgnoreCase(email)) {
+				return user;
+			}
+		}
+		return null;
 	}
 
 	private void fillForTesting() {
