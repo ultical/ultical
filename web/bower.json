@@ -29,7 +29,6 @@
     "angular-animate": "*",
     "angular-motion": "*",
     "bootstrap": "*",
-    "normalize-css": "*",
     "respond": "*",
     "fontawesome": "*"
   }
