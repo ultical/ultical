@@ -2,31 +2,60 @@
 
 app.factory('serverApi', ['CONFIG', '$http', function(CONFIG, $http) {
 
-	function get(resource, successCallback, errorCallback) {
-		if (undefined === errorCallback) {
-			errorCallback = function() {};
-		}
-		$http.get(CONFIG.api.hostname + '/' + resource)
-		.then(successCallback, errorCallback);
+	function get(resource, successCallback, errorCallback, includeHeader) {
+		doHttp(resource, 'GET', null, successCallback, errorCallback, includeHeader);
 	}
-	
-	function post(resource, data, successCallback, errorCallback) {
-		if (undefined === errorCallback) {
-			errorCallback = function() {};
+
+	function post(resource, data, successCallback, errorCallback, includeHeader) {
+		doHttp(resource, 'POST', data, successCallback, errorCallback, includeHeader);
+	}
+
+	function doHttp(resource, method, data, successCallback, errorCallback, includeHeader) {
+		var config = {
+				method: method,
+				url: CONFIG.api.hostname + '/' + resource,
+		};
+
+		if (method != 'GET') {
+			config.data = data;
 		}
-		$http.post(CONFIG.api.hostname + '/' + resource, data)
-		.then(successCallback, errorCallback);
+		$http(config).then(
+				function (response) {
+					// success callback
+					callCallback(successCallback, response, includeHeader);
+				}, function (response) {
+					// error callback
+					callCallback(errorCallback, response, includeHeader);
+				}
+		);
+	}
+
+	function callCallback(callback, response, includeHeader) {
+		if (undefined === callback) {
+			callback = function() {};
+		}
+		if (undefined === includeHeader) {
+			includeHeader = false;
+		}
+
+		if (includeHeader) {
+			// send complete response
+			callback(response);
+		} else {
+			// only send payload data
+			callback(response.data);
+		}
 	}
 
 	return {
 		getEvent: function(eventId, callback) {
 			get('event/' + eventId, callback);
 		},
-		
+
 		getEvents: function(callback) {
 			get('events', callback);
 		},
-		
+
 		registerUser: function(user, callback) {
 			post('register', user, callback);
 		},
