@@ -14,7 +14,11 @@ angular.extend(CONFIG_OBJECT, {
 		// can be any two-letter country code or 'auto'
 		defaultLanguage: 'de',
 	},
-	
+
+	registration: {
+		minPasswordLength: 8,
+	},
+
 	api: {
 		hostname: 'http://localhost:8765',
 	},

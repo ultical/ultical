@@ -18,11 +18,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<link href="bower_components/bootstrap/dist/css/bootstrap.min.css"
-	rel="stylesheet" type="text/css" />
+<link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 
 <!-- bower:css -->
-<link rel="stylesheet" href="bower_components/normalize-css/normalize.css" />
 <link rel="stylesheet" href="bower_components/fontawesome/css/font-awesome.min.css" type="text/css" />
 <link rel="stylesheet" href="bower_components/angular-motion/dist/angular-motion.min.css" type="text/css" />
 <!-- endbower -->
@@ -37,7 +35,10 @@
 <body>
 
 	<div ng-include="'html/nav.html'" ng-controller="NavBarCtrl"></div>
-	<div class="container view-container" ng-cloak ui-view></div>
+	<div class="container">
+		<div id="pageAlertSpace"></div>
+		<div class="view-container" ng-cloak ui-view></div>
+	</div>
 
 	<!-- bower:js -->
 	<script src="bower_components/angular/angular.js"></script>
@@ -61,7 +62,7 @@
 	<script src="pages/user/registration.js"></script>
 
 	<script src="components/app.js"></script>
-	
+
 	<script src="components/storage.js"></script>
 	<script src="components/server_api.js"></script>
 	<script src="components/authorizer.js"></script>

@@ -1,7 +1,11 @@
 .view-container {
-	margin-top: 55px;
+	margin-top: -5px;
 	margin-bottom: 40px;
 	min-width: 1000px;
+}
+
+#pageAlertSpace {
+	margin-top: 60px;
 }
 
 .navbar {
@@ -28,14 +32,15 @@
 }
 
 #navbar-register {
-	margin-top: 8px;	
+	margin-top: 8px;
 }
 
 .navbar-language {
 	cursor: pointer;
 }
 
-.navbar-language:hover #navbar-language-icon, .navbar-language:hover #navbar-language-code {
+.navbar-language:hover #navbar-language-icon, .navbar-language:hover #navbar-language-code
+	{
 	color: #0049A4;
 }
 

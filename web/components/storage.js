@@ -33,6 +33,8 @@ app.factory('storage', ['$filter', 'serverApi',
 					var todayDateString = $filter('date')(new Date(), 'yyyy-MM-dd');
 
 					angular.forEach(data.data, function(event) {
+						console.log("event.te", event.tournamentEdition);
+						event.tournamentEdition.a = 1;
 						event.tournamentEdition.registrationIsOpen = !isEmpty(event.tournamentEdition.registrationStart) && event.tournamentEdition.registrationStart.string <= todayDateString && event.tournamentEdition.registrationEnd.string >= todayDateString;
 						event.tournamentEdition.registrationTime = isEmpty(event.tournamentEdition.registrationStart) ? 'never' : (event.tournamentEdition.registrationStart.string > todayDateString ? 'future' : 'past');
 
