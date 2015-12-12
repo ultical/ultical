@@ -22,7 +22,7 @@ public class PrepareDBRule implements TestRule {
 
 	private static final String DEFAULT_MYBATIS_ENV = "inmemory-test";
 	private static final String DEFAULT_MYBATIS_CONFIG = "mybatis-config.xml";
-	private static final String DEFAULT_CHANGELOG = "db.changelog-1.0.xml";
+	private static final String DEFAULT_CHANGELOG = "database/db.changelog-1.0.xml";
 	private SqlSessionFactory sessionFactory;
 	private final String changeLogFile;
 	private final String myBatisConfigFile;

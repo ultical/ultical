@@ -31,7 +31,7 @@ public class SeasonResource {
 	DataStore dataStore;
 
 	@GET
-	@Path("/{seasonId]")
+	@Path("/{seasonId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Season getSeasonById(@PathParam("seasonId") Integer id) {
 		if (this.dataStore == null) {

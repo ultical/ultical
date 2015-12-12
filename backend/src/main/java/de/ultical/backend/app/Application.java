@@ -15,11 +15,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.spinscale.dropwizard.jobs.JobsBundle;
-import de.ultical.backend.api.EventsResource;
-import de.ultical.backend.api.RegisterResource;
-import de.ultical.backend.api.SeasonResource;
-import de.ultical.backend.api.TempInitResource;
-import de.ultical.backend.api.TournamentResource;
+import de.ultical.backend.api.*;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.LocalDateMixIn;
 import io.dropwizard.client.JerseyClientBuilder;
@@ -63,27 +59,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 				 * SqlSession.
 				 */
 				this.bindFactory(mbm).to(SqlSession.class);
-
-				/*
-				 * TODO: This factory could be changed once the datastore does
-				 * completey rely on the database instead of private collections
-				 */
-				this.bindFactory(new Factory<DataStore>() {
-
-					private DataStore internalDStore = null;
-
-					@Override
-					public DataStore provide() {
-						if (this.internalDStore == null) {
-							this.internalDStore = new DataStore();
-						}
-						return this.internalDStore;
-					}
-
-					@Override
-					public void dispose(DataStore instance) {
-					}
-				}).to(DataStore.class);
+				this.bindFactory(DataStoreFactory.class).to(DataStore.class);
 
 				// Create factory to inject Client
 				this.bindFactory(new Factory<Client>() {
