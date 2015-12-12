@@ -20,6 +20,7 @@ import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.LocalDateMixIn;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
+import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
@@ -43,12 +44,14 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
 	@Override
 	public void run(UltiCalConfig config, Environment env) throws Exception {
+		ManagedDataSource mds = config.getDatabase().build(env.metrics(), "UltiCal DataSource");
+		env.lifecycle().manage(mds);
 		/*
 		 * We create a MyBatisManager and register it with the
 		 * dropwizard-lifecylce system. This ensures that MYBatis is started,
 		 * when the dropwizard environment starts and stopped accordingly.
 		 */
-		final MyBatisManager mbm = new MyBatisManager();
+		final MyBatisManager mbm = new MyBatisManager(mds);
 		env.lifecycle().manage(mbm);
 		env.jersey().register(new AbstractBinder() {
 
@@ -87,6 +90,9 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 		});
 
 		this.addCorsFilter(env);
+		
+		//add healthcheck
+		env.healthChecks().register("Database healthcheck", new DatabaseHealthCheck(mds));
 
 		env.jersey().register(EventsResource.class);
 		env.jersey().register(TournamentResource.class);

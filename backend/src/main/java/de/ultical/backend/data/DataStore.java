@@ -16,7 +16,9 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
+import org.glassfish.jersey.process.internal.RequestScoped;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.data.mapper.EventMapper;
@@ -42,6 +44,7 @@ import de.ultical.backend.model.User;
  * @author bbe
  *
  */
+@RequestScoped
 public class DataStore {
 
 	@Inject
@@ -180,27 +183,61 @@ public class DataStore {
 	}
 
 	public List<Season> getAllSeasons() {
-		SeasonMapper sm = this.sqlSession.getMapper(SeasonMapper.class);
-		return sm.getAll();
+		try {
+			SeasonMapper sm = this.sqlSession.getMapper(SeasonMapper.class);
+			return sm.getAll();
+		} finally {
+			if (this.sqlSession != null) {
+				this.sqlSession.close();
+			}
+		}
 	}
 
 	public Season getSeason(final int id) {
-		SeasonMapper sm = this.sqlSession.getMapper(SeasonMapper.class);
-		return sm.get(id);
+		try {
+			SeasonMapper sm = this.sqlSession.getMapper(SeasonMapper.class);
+			return sm.get(id);
+		} finally {
+			if (this.sqlSession != null) {
+				this.sqlSession.close();
+			}
+		}
 	}
 
 	public Season addSeason(final Season newSeason) {
 		Season checkedSeason = Objects.requireNonNull(newSeason);
-		SeasonMapper mapper = this.sqlSession.getMapper(checkedSeason.getMapper());
-		mapper.insert(checkedSeason);
-		return checkedSeason;
+		try {
+			SeasonMapper mapper = this.sqlSession.getMapper(checkedSeason.getMapper());
+			mapper.insert(checkedSeason);
+			this.sqlSession.commit();
+			return checkedSeason;
+		} catch (PersistenceException pe) {
+			this.sqlSession.rollback();
+			throw pe;
+		} finally {
+
+			if (this.sqlSession != null) {
+				this.sqlSession.close();
+			}
+		}
 	}
 
 	public boolean updateSeason(final Season updSeason) {
 		boolean result = false;
 		Objects.requireNonNull(updSeason);
-		SeasonMapper mapper = this.sqlSession.getMapper(updSeason.getMapper());
-		final int updateCount = mapper.update(updSeason);
+		int updateCount = 0;
+		try {
+			SeasonMapper mapper = this.sqlSession.getMapper(updSeason.getMapper());
+			updateCount = mapper.update(updSeason);
+			this.sqlSession.commit();
+		} catch (PersistenceException pe) {
+			this.sqlSession.rollback();
+			throw pe;
+		} finally {
+			if (this.sqlSession != null) {
+				this.sqlSession.close();
+			}
+		}
 		result = updateCount == 1;
 		return result;
 	}

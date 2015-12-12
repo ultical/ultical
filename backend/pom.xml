@@ -72,6 +72,17 @@
 			<version>${liquibase.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.dropwizard</groupId>
+			<artifactId>dropwizard-db</artifactId>
+			<version>${dw.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.37</version>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
