@@ -13,7 +13,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class TournamentFormat extends Identifiable {
 
-	private int id;
 
 	private String name;
 

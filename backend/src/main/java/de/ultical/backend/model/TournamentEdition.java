@@ -4,8 +4,11 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import io.dropwizard.validation.MinSize;
+import de.ultical.backend.app.LocalDateDeserializer;
+import de.ultical.backend.app.LocalDateSerializer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,8 +21,12 @@ public abstract class TournamentEdition extends Identifiable{
 
 	private String alternativeName;
 	private Season season;
-
+	
+	@JsonSerialize(using=LocalDateSerializer.class)
+	@JsonDeserialize(using=LocalDateDeserializer.class)
 	private LocalDate registrationStart;
+	@JsonSerialize(using=LocalDateSerializer.class)
+	@JsonDeserialize(using=LocalDateDeserializer.class)
 	private LocalDate registrationEnd;
 
 	// fees should only be put here for a general league fee
@@ -33,6 +40,5 @@ public abstract class TournamentEdition extends Identifiable{
 	private String organizerEmail;
 	private String organizerPhone;
 
-	@MinSize(1)
 	private Set<DivisionRegistration> divisionRegistrations;
 }

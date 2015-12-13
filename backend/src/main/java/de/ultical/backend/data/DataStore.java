@@ -1,17 +1,7 @@
 package de.ultical.backend.data;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -21,22 +11,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
-import de.ultical.backend.data.mapper.EventMapper;
-import de.ultical.backend.data.mapper.SeasonMapper;
-import de.ultical.backend.model.DfvPlayer;
-import de.ultical.backend.model.DivisionAge;
-import de.ultical.backend.model.DivisionRegistration;
-import de.ultical.backend.model.DivisionRegistrationTeams;
-import de.ultical.backend.model.DivisionType;
-import de.ultical.backend.model.Event;
-import de.ultical.backend.model.Location;
-import de.ultical.backend.model.Season;
-import de.ultical.backend.model.Surface;
-import de.ultical.backend.model.TournamentEdition;
-import de.ultical.backend.model.TournamentEditionLeague;
-import de.ultical.backend.model.TournamentEditionSingle;
-import de.ultical.backend.model.TournamentFormat;
-import de.ultical.backend.model.User;
+import de.ultical.backend.data.mapper.*;
+import de.ultical.backend.model.*;
 
 /**
  * the cloud
@@ -75,19 +51,58 @@ public class DataStore {
 		this.fillForTesting();
 	}
 
-	public boolean storeTournament(final TournamentEdition tournamentEdition) {
-		Objects.requireNonNull(tournamentEdition);
-		if (tournamentEdition.getTournamentFormat().getName() == null
-				|| tournamentEdition.getTournamentFormat().getName().isEmpty()) {
-			throw new IllegalArgumentException("A tournament's name must not be null or empty!");
+	public <T extends Identifiable> List<T> getAll(Class<T> clazz) {
+		try {
+			T instance = clazz.newInstance();
+			BaseMapper<T> mapper = (BaseMapper<T>) this.sqlSession.getMapper(instance.getMapper());
+
+			return mapper.getAll();
+		} catch (IllegalAccessException | InstantiationException iae) {
+			throw new PersistenceException(iae);
+		} finally {
+			this.sqlSession.close();
 		}
-		// TODO further validations?
-		if (this.tournamentPerName.containsKey(tournamentEdition.getTournamentFormat().getName())) {
-			throw new IllegalArgumentException(String.format("A tournament with the name %s already exists!",
-					tournamentEdition.getTournamentFormat().getName()));
+	}
+	
+	public <T extends Identifiable> T addNew(T newInstance) {
+		try {
+			BaseMapper<T> mapper = (BaseMapper<T>) this.sqlSession.getMapper(newInstance.getMapper());
+			mapper.insert(newInstance);
+			this.sqlSession.commit();
+			return newInstance;
+		} catch (PersistenceException pe) {
+			this.sqlSession.rollback();
+			throw pe;
+		} finally {
+			this.sqlSession.close();
 		}
-		this.tournamentPerName.put(tournamentEdition.getTournamentFormat().getName(), tournamentEdition);
-		return true;
+	}
+	
+	public <T extends Identifiable> boolean update(T updatedInstance) {
+		try {
+			BaseMapper<T> mapper = (BaseMapper<T>) this.sqlSession.getMapper(updatedInstance.getMapper());
+			Integer updateCount = mapper.update(updatedInstance);
+			this.sqlSession.commit();
+			return updateCount == 1;
+		} catch (PersistenceException pe) {
+			this.sqlSession.rollback();
+			throw pe;
+		} finally {
+			this.sqlSession.close();
+		}
+	}
+	
+	public <T extends Identifiable> T get(Integer id, Class<T> clazz) {
+		try {
+			T instance = clazz.newInstance();
+			BaseMapper<T> mapper = (BaseMapper<T>)this.sqlSession.getMapper(instance.getMapper());
+			return mapper.get(id);
+		} catch (InstantiationException | IllegalAccessException e) {
+			this.sqlSession.rollback();
+			throw new PersistenceException(e);
+		} finally {
+			this.sqlSession.close();
+		}
 	}
 
 	public TournamentEdition getTournamentByName(final String tournamentName) {
@@ -101,51 +116,10 @@ public class DataStore {
 		return this.tournamentPerName.values();
 	}
 
-	public boolean storeEvent(Event event) {
-		Objects.requireNonNull(event);
-		Objects.requireNonNull(event.getTournamentEdition(),
-				"a corresponding Tournament or League is required for each Event");
-		// final TournamentFormat tournament =
-		// event.getTournamentEdition().getTournamentFormat();
-		// if (tournament instanceof TournamentFormat) {
-		// if (!event.equals(((TournamentFormat) tournament).getEvent())) {
-		// throw new IllegalStateException("Reference between Tournament and
-		// Event do not match");
-		// }
-		// } else if (tournament instanceof League) {
-		// if (!((League) tournament).getLeagueEvents().contains(event)) {
-		// throw new IllegalStateException("Reference between League and Even do
-		// not match");
-		// }
-		// }
-		Objects.requireNonNull(event.getStartDate(), "StartDate must not be null");
-		Objects.requireNonNull(event.getEndDate(), "EndDate must not be null");
-		this.orderedEvents.add(event);
-		return true;
-	}
-
 	private Event fakeEvent(final LocalDate fakeStartDate) {
 		final Event result = new Event();
 		result.setStartDate(fakeStartDate);
 		return result;
-	}
-
-	public Event getEvent(int eventId) {
-		EventMapper eventMapper = this.sqlSession.getMapper(EventMapper.class);
-		final Event event = eventMapper.get(eventId);
-		return event;
-	}
-
-	public List<Event> getAllEvents() {
-		List<Event> list = new ArrayList<Event>();
-		list.addAll(this.events);
-
-		System.out.println("getAllEvents() - " + list);
-		return list;
-		// EventMapper eventMapper =
-		// this.sqlSession.getMapper(EventMapper.class);
-		// final List<Event> result = eventMapper.getAll();
-		// return result;
 	}
 
 	public NavigableSet<Event> getEvents(final LocalDate startInterval, final LocalDate endInterval) {

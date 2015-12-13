@@ -97,6 +97,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 		env.jersey().register(EventsResource.class);
 		env.jersey().register(TournamentResource.class);
 		env.jersey().register(SeasonResource.class);
+		env.jersey().register(TournamentFormatResource.class);
 
 		// TODO inject config?!
 		env.jersey().register(new RegisterResource(config));

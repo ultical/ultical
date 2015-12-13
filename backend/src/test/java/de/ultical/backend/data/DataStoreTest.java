@@ -3,9 +3,9 @@ package de.ultical.backend.data;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.*;
-import org.mockito.*;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import de.ultical.backend.model.*;
 
@@ -34,10 +34,6 @@ public class DataStoreTest {
 		when(wrongTournamentEvent.getTournamentEdition()).thenReturn(tournamenMock);
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testStoreTournamentNull() throws Exception {
-		this.ds.storeTournament(null);
-	}
 
 	@Test(expected = NullPointerException.class)
 	public void testGetTournamentNameNull() throws Exception {
@@ -48,16 +44,6 @@ public class DataStoreTest {
 	public void testGetTournamentNameUnknown() throws Exception {
 		TournamentEdition t = this.ds.getTournamentByName("unknown Tournament");
 		Assert.assertNull(t);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void testStoreEventNull() throws Exception {
-		this.ds.storeEvent(null);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void testStoreEventStartDateNull() throws Exception {
-		this.ds.storeEvent(this.eventStartDatenull);
 	}
 
 }
