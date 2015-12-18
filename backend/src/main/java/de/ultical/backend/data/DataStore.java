@@ -104,6 +104,18 @@ public class DataStore {
 			this.sqlSession.close();
 		}
 	}
+	
+	public void addDivisionToEdition(final TournamentEdition edition, final DivisionRegistration division) {
+		Objects.requireNonNull(division);
+		Objects.requireNonNull(edition);
+		try {
+			DivisionRegistrationMapper drm = this.sqlSession.getMapper(DivisionRegistrationMapper.class);
+			drm.insert(division, edition);
+			
+		} finally {
+			this.sqlSession.close();
+		}
+	}
 
 	public TournamentEdition getTournamentByName(final String tournamentName) {
 		Objects.requireNonNull(tournamentName);

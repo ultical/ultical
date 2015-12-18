@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.ibatis.exceptions.PersistenceException;
 
 import de.ultical.backend.data.DataStore;
-import de.ultical.backend.model.Event;
+import de.ultical.backend.model.*;
 
 @Path("/events")
 public class EventsResource {
@@ -86,4 +86,31 @@ public class EventsResource {
 		}
 	}
 
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{eventId}/divisions")
+	public void addDivision(@PathParam("{eventId}") Integer eventId, DivisionRegistration div) {
+		checkDatatStore();
+		/*
+		 * we only need the event's id, thus we build a fake-event instead of
+		 * reading it from the db. If the event does not exist the database's
+		 * foreign key constraints will fail.
+		 */
+		TournamentEdition fakeEdition = new TournamentEditionSingle();
+		fakeEdition.setId(eventId);
+		try {
+			this.dStore.addDivisionToEdition(fakeEdition, div);
+		} catch (PersistenceException pe) {
+			throw new WebApplicationException(pe);
+		}
+	}
+
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{eventId}/divisions")
+	public void updateDivsion(@PathParam("{eventId}") Integer eventId, DivisionRegistration div) {
+		checkDatatStore();
+		//TODO similar to addDivsion
+		throw new WebApplicationException("not implemented, yet!");
+	}
 }
