@@ -28,6 +28,10 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		url: "/calendar",
 		templateUrl: "pages/event/list.html?v="+version,
 	})
+	.state('events.list', {
+		url: "/calendar",
+		templateUrl: "pages/event/list.html?v="+version,
+	})
 	.state('showEvent', {
 		url: "/event/{eventId:int}/show",
 		templateUrl: "pages/event/show.html?v="+version,
