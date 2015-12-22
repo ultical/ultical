@@ -1,7 +1,16 @@
 package de.ultical.backend.data;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -11,8 +20,25 @@ import org.apache.ibatis.session.SqlSession;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
-import de.ultical.backend.data.mapper.*;
-import de.ultical.backend.model.*;
+import de.ultical.backend.api.transferClasses.DfvMvNameMapper;
+import de.ultical.backend.data.mapper.BaseMapper;
+import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
+import de.ultical.backend.data.mapper.SeasonMapper;
+import de.ultical.backend.model.DfvPlayer;
+import de.ultical.backend.model.DivisionAge;
+import de.ultical.backend.model.DivisionRegistration;
+import de.ultical.backend.model.DivisionRegistrationTeams;
+import de.ultical.backend.model.DivisionType;
+import de.ultical.backend.model.Event;
+import de.ultical.backend.model.Identifiable;
+import de.ultical.backend.model.Location;
+import de.ultical.backend.model.Season;
+import de.ultical.backend.model.Surface;
+import de.ultical.backend.model.TournamentEdition;
+import de.ultical.backend.model.TournamentEditionLeague;
+import de.ultical.backend.model.TournamentEditionSingle;
+import de.ultical.backend.model.TournamentFormat;
+import de.ultical.backend.model.User;
 
 /**
  * the cloud
@@ -47,15 +73,12 @@ public class DataStore {
 		this.events = new HashSet<Event>();
 		this.users = new HashSet<User>();
 		this.dfvPlayers = new HashSet<DfvPlayer>();
-
-		this.fillForTesting();
 	}
 
 	public <T extends Identifiable> List<T> getAll(Class<T> clazz) {
 		try {
 			T instance = clazz.newInstance();
 			BaseMapper<T> mapper = (BaseMapper<T>) this.sqlSession.getMapper(instance.getMapper());
-
 			return mapper.getAll();
 		} catch (IllegalAccessException | InstantiationException iae) {
 			throw new PersistenceException(iae);
@@ -63,7 +86,7 @@ public class DataStore {
 			this.sqlSession.close();
 		}
 	}
-	
+
 	public <T extends Identifiable> T addNew(T newInstance) {
 		try {
 			BaseMapper<T> mapper = (BaseMapper<T>) this.sqlSession.getMapper(newInstance.getMapper());
@@ -77,7 +100,7 @@ public class DataStore {
 			this.sqlSession.close();
 		}
 	}
-	
+
 	public <T extends Identifiable> boolean update(T updatedInstance) {
 		try {
 			BaseMapper<T> mapper = (BaseMapper<T>) this.sqlSession.getMapper(updatedInstance.getMapper());
@@ -91,11 +114,11 @@ public class DataStore {
 			this.sqlSession.close();
 		}
 	}
-	
+
 	public <T extends Identifiable> T get(Integer id, Class<T> clazz) {
 		try {
 			T instance = clazz.newInstance();
-			BaseMapper<T> mapper = (BaseMapper<T>)this.sqlSession.getMapper(instance.getMapper());
+			BaseMapper<T> mapper = (BaseMapper<T>) this.sqlSession.getMapper(instance.getMapper());
 			return mapper.get(id);
 		} catch (InstantiationException | IllegalAccessException e) {
 			this.sqlSession.rollback();
@@ -104,14 +127,14 @@ public class DataStore {
 			this.sqlSession.close();
 		}
 	}
-	
+
 	public void addDivisionToEdition(final TournamentEdition edition, final DivisionRegistration division) {
 		Objects.requireNonNull(division);
 		Objects.requireNonNull(edition);
 		try {
 			DivisionRegistrationMapper drm = this.sqlSession.getMapper(DivisionRegistrationMapper.class);
 			drm.insert(division, edition);
-			
+
 		} finally {
 			this.sqlSession.close();
 		}
@@ -135,10 +158,8 @@ public class DataStore {
 	}
 
 	public NavigableSet<Event> getEvents(final LocalDate startInterval, final LocalDate endInterval) {
-		final Event firstEvent = startInterval != null ? this.orderedEvents.first()
-				: this.orderedEvents.floor(this.fakeEvent(startInterval));
-		final Event lastEvent = endInterval != null ? this.orderedEvents.last()
-				: this.orderedEvents.ceiling(this.fakeEvent(endInterval));
+		final Event firstEvent = startInterval != null ? this.orderedEvents.first() : this.orderedEvents.floor(this.fakeEvent(startInterval));
+		final Event lastEvent = endInterval != null ? this.orderedEvents.last() : this.orderedEvents.ceiling(this.fakeEvent(endInterval));
 		NavigableSet<Event> result;
 		if (firstEvent == null && lastEvent == null) {
 			result = Collections.emptyNavigableSet();
@@ -153,7 +174,14 @@ public class DataStore {
 	}
 
 	public void refreshDfvNames(List<DfvMvName> dfvNames) {
-		this.dfvNames = dfvNames;
+		DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
+		nameMapper.deleteAll();
+
+		for (DfvMvName name : dfvNames) {
+			if (name.getDfvnr() != 0 && name.isDse()) {
+				nameMapper.insert(name);
+			}
+		}
 	}
 
 	public Set<DfvMvName> getDfvNames(String firstname, String lastname) {
@@ -255,7 +283,7 @@ public class DataStore {
 		return null;
 	}
 
-	private void fillForTesting() {
+	public void fillForTesting() {
 
 		/* USERS */
 		User bas = new User();
@@ -264,7 +292,10 @@ public class DataStore {
 		bas.setEmail("bas@knallbude.de");
 		bas.setPassword("password");
 
+		this.addNew(bas);
+
 		Set<User> admins = new HashSet<User>();
+
 		admins.add(bas);
 
 		User basil = new User();
@@ -272,6 +303,8 @@ public class DataStore {
 		basil.setVersion(1);
 		basil.setEmail("kaffee@trinkr.com");
 		basil.setPassword("password2");
+
+		this.addNew(basil);
 
 		Set<User> altAdmins = new HashSet<User>();
 		altAdmins.add(basil);
@@ -283,11 +316,15 @@ public class DataStore {
 		season16.setYear(2016);
 		season16.setPlusOneYear(false);
 
+		this.addNew(season16);
+
 		Season season1516 = new Season();
 		season1516.setId(1);
 		season1516.setSurface(Surface.GYM);
 		season1516.setYear(2015);
 		season1516.setPlusOneYear(true);
+
+		this.addNew(season1516);
 
 		/* LOCATIONS */
 		Location loc1 = new Location();
@@ -298,12 +335,16 @@ public class DataStore {
 		loc1.setZipCode(12045);
 		loc1.setAdditionalInfo("Nicht abbiegen");
 
+		this.addNew(loc1);
+
 		Location loc2 = new Location();
 		loc2.setId(1);
 		loc2.setCity("Marburg");
 		loc2.setCountry("DE");
 		loc2.setStreet("Afföllerwiesen 2");
 		loc2.setZipCode(12345);
+
+		this.addNew(loc2);
 
 		/* 4 FERKEL */
 		TournamentFormat tf = new TournamentFormat();
@@ -348,8 +389,9 @@ public class DataStore {
 
 		// te.setEvent(e);
 
-		this.tournamentPerName.put(tf.getName(), te);
-		this.events.add(e);
+		// this.dataStore.addNew(tf);
+		// this.dataStore.addNew(te);
+		// this.dataStore.addNew(e);
 
 		/* A-RELI */
 
@@ -405,9 +447,12 @@ public class DataStore {
 		aReliEvents.add(e2);
 		// tel.setEvents(aReliEvents);
 
-		this.tournamentPerName.put(tf.getName(), te);
-		this.events.add(e1);
-		this.events.add(e2);
+		// this.tournamentPerName.put(tf.getName(), te);
+		// this.events.add(e1);
+		// this.events.add(e2);
+		// this.dataStore.addNew(tf);
+		// this.dataStore.addNew(e1);
+		// this.dataStore.addNew(e2);
 
 		/* WINTERLIGA */
 
@@ -478,9 +523,12 @@ public class DataStore {
 		winterligaEvents.add(e2);
 		// tel.setEvents(winterligaEvents);
 
-		this.tournamentPerName.put(tf.getName(), te);
-		this.events.add(e1);
-		this.events.add(e2);
+		// this.tournamentPerName.put(tf.getName(), te);
+		// this.events.add(e1);
+		// this.events.add(e2);
 
+		// this.dataStore.addNew(tf);
+		// this.dataStore.addNew(e1);
+		// this.dataStore.addNew(e2);
 	}
 }
