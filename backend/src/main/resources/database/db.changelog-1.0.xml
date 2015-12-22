@@ -60,12 +60,14 @@
 			<column name="dfv_player" type="BIGINT">
 				<constraints nullable="true" />
 			</column>
-			<column name="email_confirmed" type="BOOLEAN" defaultValueBoolean="false"></column>
-			<column name="dfv_email_opt_in" type="BOOLEAN" defaultValueBoolean="false"></column>
+			<column name="email_confirmed" type="BOOLEAN"
+				defaultValueBoolean="false"></column>
+			<column name="dfv_email_opt_in" type="BOOLEAN"
+				defaultValueBoolean="false"></column>
 		</createTable>
 		<addForeignKeyConstraint constraintName="fk_ultical_user_dfv_player"
 			referencedTableName="PLAYER" baseColumnNames="dfv_player"
-			baseTableName="ULTICAL_USER" referencedColumnNames="id" onDelete="SET NULL"/>
+			baseTableName="ULTICAL_USER" referencedColumnNames="id" onDelete="SET NULL" />
 	</changeSet>
 	<changeSet id="3" author="basil">
 		<createTable tableName="UNREGISTERED_PLAYER">
@@ -113,7 +115,7 @@
 			<column name="currency" type="VARCHAR(3)" defaultValue="EUR" />
 			<column name="organizer_name" type="VARCHAR(50)" />
 			<column name="organizer_email" type="VARCHAR(50)" />
-			<column name="organizer_phone" type="VARCHAR(15)" />
+			<column name="organizer_phone" type="VARCHAR(25)" />
 			<column name="is_league" type="BOOLEAN" defaultValueBoolean="false">
 				<constraints nullable="false" />
 			</column>
@@ -232,7 +234,7 @@
 			<column name="local_organizer_email" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
-			<column name="local_organizer_phone" type="VARCHAR(15)" />
+			<column name="local_organizer_phone" type="VARCHAR(25)" />
 		</createTable>
 		<addForeignKeyConstraint constraintName="fk_event_tournament_edition"
 			referencedTableName="TOURNAMENT_EDITION" baseColumnNames="tournament_edition"
@@ -330,5 +332,19 @@
 			referencedTableName="DIVISION_REGISTRATION" baseColumnNames="division_registration"
 			baseTableName="TEAM_REGISTRATION" referencedColumnNames="id"
 			onDelete="CASCADE" />
+	</changeSet>
+	<changeSet id="17" author="bas">
+		<createTable tableName="DFV_MV_NAME">
+			<column name="dfv_number" type="BIGINT">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="first_name" type="VARCHAR(255)">
+			</column>
+			<column name="last_name" type="VARCHAR(255)">
+			</column>
+			<column name="dse" type="BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
 	</changeSet>
 </databaseChangeLog>
