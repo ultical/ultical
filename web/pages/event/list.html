@@ -7,7 +7,7 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="row" ng-repeat="event in events">
-				<a ui-sref='showEvent({eventId: event.id})'>
+				<a ui-sref='eventShow({eventId: event.id})'>
 				<div class="col-md-12">{{ event.startDate | customDate : 'date_medium' }} - {{ event | eventname }}</div>
 				</a>
 			</div>

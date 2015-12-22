@@ -10,7 +10,7 @@ angular.extend(CONFIG_OBJECT, {
 		// list of two-letter country codes
 		availableLanguages: ['DE'],
 		// map availableLanguages to its name (in this language, so it can be found
-		availableLanguagesFull: ['deutsch'],
+		availableLanguagesFull: ['deutsch', 'spanisch'],
 		// can be any two-letter country code or 'auto'
 		defaultLanguage: 'de',
 	},

@@ -1,25 +1,31 @@
 <div class="navbar navbar-default navbar-fixed-top" role="banner" bs-navbar ng-cloak>
 	<div class="container">
 		<div class="navbar-header">
-			<h3>
-				{{ 'nav.title' | translate }}
-				<small class='small'>{{ version }}</small>
-			</h3>
+			<h3>{{ 'nav.title' | translate }}</h3>
 		</div>
 
+		<ul class="nav navbar-nav">
+			<li class="navbar-button" data-animation="am-flip-x" bs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
+				<div class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</div>
+			</li>
+		</ul>
+
 		<ul class="nav navbar-right navbar-nav">
-			<li ng-show="languageSelector.length > 1" class="navbar-nav navbar-language" bs-dropdown="languageSelector" data-placement="bottom-left">
-				<div id="navbar-language-icon" class="fade">
+
+			<li ng-show="languageSelector.length > 1" class="navbar-nav navbar-button navbar-language" bs-dropdown="languageSelector" data-animation="am-flip-x" data-placement="bottom-left">
+				<div id="navbar-language-icon">
 					<i class="fa fa-globe"></i>
 				</div>
-				<div id="navbar-language-code" class="fade">{{ selectedLanguage }}</div>
+				<div id="navbar-language-code">{{ selectedLanguage }}</div>
 			</li>
 
-			<li ng-show="!loggedIn">
-				<div class="cursor-pointer" id="navbar-register" data-animation="am-fade-and-slide-top" data-template-url="pages/user/registration_modal.html?v=4" bs-modal="modal">{{ 'nav.register' | translate }}</div>
+			<li class="navbar-button" ng-show="!loggedIn">
+				<div class="navbar-text" data-animation="am-fade-and-slide-top" data-template-url="pages/user/registration_modal.html?v=4" bs-modal="modal">{{ 'nav.register' | translate }}</div>
 			</li>
-			<li ng-show="!loggedIn">
-				<button type="button" class="btn btn-primary" data-animation="am-fade-and-slide-top" data-template-url="pages/user/login_modal.html" bs-modal="modal">{{ 'nav.login' | translate }}</button>
+			<li class="navbar-button navbar-button-strong" ng-show="!loggedIn">
+				<div class="navbar-text" data-animation="am-fade-and-slide-top" data-template-url="pages/user/login_modal.html" bs-modal="modal">
+					{{ 'nav.login' | translate }}
+					</button>
 			</li>
 		</ul>
 	</div>

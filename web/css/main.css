@@ -10,29 +10,52 @@
 
 .navbar {
 	background-color: white;
-	color: black;
+	color: #666666;
+}
+
+.navbar .navbar-header {
+	color: #333333;
+	margin-right: 20px;
 }
 
 .navbar h3 {
-	margin-top: 13px;
+	margin-top: 10px;
 	font-weight: 700;
 }
 
 #navbar-language-icon {
 	float: left;
 	font-size: 25px;
-	margin-top: 1px;
+	margin-top: 6px;
+	margin-left: 20px;
 }
 
 #navbar-language-code {
 	float: right;
-	margin-top: 9px;
+	margin-top: 15px;
+	margin-bottom: 15px;
 	margin-right: 20px;
 	margin-left: 3px;
 }
 
-#navbar-register {
-	margin-top: 8px;
+.navbar-button {
+	cursor: pointer;
+}
+
+.navbar-button:hover {
+	background-color: #C2DAF3;
+}
+
+.navbar-button:hover .navbar-text {
+	color: #000000;
+}
+
+.navbar-button-strong {
+	background-color: #DBEBFB;
+}
+
+.navbar-button-strong:hover {
+	background-color: #C2DAF3;
 }
 
 .navbar-language {
@@ -40,14 +63,8 @@
 }
 
 .navbar-language:hover #navbar-language-icon, .navbar-language:hover #navbar-language-code
-	{
-	color: #0049A4;
-}
-
-ul.navbar-nav li {
-	margin-right: 7px;
-	color: #777;
-	margin-top: 7px;
+{
+	color: #000000;
 }
 
 .navbar-right ul.dropdown-menu {

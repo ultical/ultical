@@ -1,12 +1,31 @@
 'use strict';
 
 //nav bar controller
-app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate',
-                              function($scope, CONFIG, $filter, $translate) {
+app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state',
+                              function($scope, CONFIG, $filter, $translate, $state) {
 
 	$scope.version = '0.1';
 
 	$scope.loggedIn = false;
+
+	/* *** Menu ***/
+	$scope.eventDropdown =
+		[{
+			'text': $translate.instant('nav.eventDropdown.newEvent'),
+			'click': 'createEvent()',
+		},
+		{
+		    'divider': true
+		  },
+		  {
+			'text': $translate.instant('nav.eventDropdown.listEvents'),
+			'href': $state.href('eventsList'),
+		  },
+		];
+
+	$scope.createEvent = function() {
+		console.log("Create an event");
+	};
 
 	/* *** Language Selector ****/
 	$scope.selectedLanguage = $translate.use().toUpperCase();

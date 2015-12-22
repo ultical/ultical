@@ -15,6 +15,11 @@ var TRANSLATIONS_DE = {
 			title: 'UltiCal',
 			login: 'Login',
 			register: 'Registrieren',
+			eventDropdown: {
+				label: 'Turniere',
+				newEvent: 'Neues Turnier',
+				listEvents: 'Turniere anzeigen',
+			},
 		},
 		
 		season: {
