@@ -12,20 +12,16 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 	$scope.eventDropdown =
 		[{
 			'text': $translate.instant('nav.eventDropdown.newEvent'),
-			'click': 'createEvent()',
+			'href': $state.href('editionEdit', { eventId: 'new' }),
 		},
 		{
-		    'divider': true
-		  },
-		  {
+			'divider': true
+		},
+		{
 			'text': $translate.instant('nav.eventDropdown.listEvents'),
 			'href': $state.href('eventsList'),
-		  },
+		},
 		];
-
-	$scope.createEvent = function() {
-		console.log("Create an event");
-	};
 
 	/* *** Language Selector ****/
 	$scope.selectedLanguage = $translate.use().toUpperCase();
