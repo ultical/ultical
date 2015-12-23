@@ -54,6 +54,6 @@
 		<mapper class="de.ultical.backend.data.mapper.DivisionRegistrationMapper" />
 		<mapper class="de.ultical.backend.data.mapper.TeamMapper" />
 		<mapper class="de.ultical.backend.data.mapper.TeamRegistrationMapper" />
-		<mapper class="de.ultical.backend.api.transferClasses.DfvMvNameMapper" />
+		<mapper class="de.ultical.backend.data.mapper.DfvMvNameMapper" />
 	</mappers>
 </configuration>
