@@ -1,4 +1,4 @@
-package de.ultical.backend.api.transferClasses;
+package de.ultical.backend.data.mapper;
 
 import java.util.List;
 
@@ -7,11 +7,13 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
+import de.ultical.backend.api.transferClasses.DfvMvName;
+
 public interface DfvMvNameMapper {
 
 	final String SELECT_STMT = "SELECT dfv_number as dfvnr, first_name as vorname, last_name as nachname, dse from DFV_MV_NAME";
 
-	@Select({ SELECT_STMT, "WHERE dfv_number = #{dfvNumber}" })
+	@Select({ SELECT_STMT, "WHERE dfv_number = #{pk}" })
 	DfvMvName get(int pk);
 
 	@Select(SELECT_STMT)
