@@ -20,10 +20,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
-import de.ultical.backend.api.transferClasses.DfvMvNameMapper;
-import de.ultical.backend.data.mapper.BaseMapper;
-import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
-import de.ultical.backend.data.mapper.SeasonMapper;
+import de.ultical.backend.data.mapper.*;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionRegistration;
