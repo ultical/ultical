@@ -2,6 +2,8 @@ package de.ultical.backend.app;
 
 import javax.validation.constraints.NotNull;
 
+import com.google.common.cache.CacheBuilderSpec;
+
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import lombok.*;
@@ -10,9 +12,10 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode(callSuper = false)
 public class UltiCalConfig extends Configuration {
-	private DfvApiConfig dfvApi;
+    private DfvApiConfig dfvApi;
 
-	@NotNull
-	private DataSourceFactory database;
+    @NotNull
+    private DataSourceFactory database;
 
+    private CacheBuilderSpec authenticationCache = CacheBuilderSpec.parse("maximuSize:1000");
 }
