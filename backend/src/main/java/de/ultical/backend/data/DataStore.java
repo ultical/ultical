@@ -1,7 +1,16 @@
 package de.ultical.backend.data;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableSet;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -11,8 +20,25 @@ import org.apache.ibatis.session.SqlSession;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
-import de.ultical.backend.data.mapper.*;
-import de.ultical.backend.model.*;
+import de.ultical.backend.data.mapper.BaseMapper;
+import de.ultical.backend.data.mapper.DfvMvNameMapper;
+import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
+import de.ultical.backend.data.mapper.SeasonMapper;
+import de.ultical.backend.model.DfvPlayer;
+import de.ultical.backend.model.DivisionAge;
+import de.ultical.backend.model.DivisionRegistration;
+import de.ultical.backend.model.DivisionRegistrationTeams;
+import de.ultical.backend.model.DivisionType;
+import de.ultical.backend.model.Event;
+import de.ultical.backend.model.Identifiable;
+import de.ultical.backend.model.Location;
+import de.ultical.backend.model.Season;
+import de.ultical.backend.model.Surface;
+import de.ultical.backend.model.TournamentEdition;
+import de.ultical.backend.model.TournamentEditionLeague;
+import de.ultical.backend.model.TournamentEditionSingle;
+import de.ultical.backend.model.TournamentFormat;
+import de.ultical.backend.model.User;
 
 /**
  * the cloud
@@ -66,7 +92,7 @@ public class DataStore {
      * <p>
      * By default the <code>DataStore</code> closes the session automatically.
      * </p>
-     * 
+     *
      * @param newACS
      *            whether or not the auto-close feature should be used.
      */
@@ -82,7 +108,7 @@ public class DataStore {
      * <code>false</code>. If the session's close method has been invoked, this
      * method returns <code>true</code>, otherwise <code>false</code>.
      * </p>
-     * 
+     *
      * @return <code>true</code> if the session has been closed, otherwise
      *         <code>false</code>.
      */
@@ -205,14 +231,22 @@ public class DataStore {
         return Collections.unmodifiableNavigableSet(result);
     }
 
+    /*
+     * clear and refill the DfvMvName table
+     */
     public void refreshDfvNames(List<DfvMvName> dfvNames) {
+
         DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
         nameMapper.deleteAll();
-
         for (DfvMvName name : dfvNames) {
+
             if (name.getDfvnr() != 0 && name.isDse()) {
                 nameMapper.insert(name);
             }
+        }
+        this.sqlSession.commit();
+        if (this.autoCloseSession) {
+            this.sqlSession.close();
         }
     }
 

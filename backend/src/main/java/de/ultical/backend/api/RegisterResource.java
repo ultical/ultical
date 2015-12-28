@@ -22,7 +22,6 @@ import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.api.transferClasses.RegisterRequest;
 import de.ultical.backend.api.transferClasses.RegisterResponse;
 import de.ultical.backend.api.transferClasses.RegisterResponse.RegisterResponseStatus;
-import de.ultical.backend.app.DfvApiConfig;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.DfvPlayer;
@@ -44,11 +43,8 @@ public class RegisterResource {
 	@Inject
 	private DataStore dataStore;
 
-	private DfvApiConfig dfvApi;
-
-	public RegisterResource(UltiCalConfig conf) {
-		this.dfvApi = conf.getDfvApi();
-	}
+	@Inject
+	private UltiCalConfig config;
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -73,10 +69,10 @@ public class RegisterResource {
 
 		for (DfvMvName name : names) {
 			WebTarget target = this.client
-					.target(this.dfvApi.getUrl()).path("profil")
+					.target(this.config.getDfvApi().getUrl()).path("profil")
 					.path(String.valueOf(name.getDfvnr()))
-					.queryParam("token", this.dfvApi.getToken())
-					.queryParam("secret", this.dfvApi.getSecret());
+					.queryParam("token", this.config.getDfvApi().getToken())
+					.queryParam("secret", this.config.getDfvApi().getSecret());
 
 			Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 			DfvMvPlayer player = invocationBuilder.get(DfvMvPlayer.class);

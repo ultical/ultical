@@ -17,12 +17,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 
 import de.spinscale.dropwizard.jobs.JobsBundle;
-import de.ultical.backend.api.*;
+import de.ultical.backend.api.EventsResource;
+import de.ultical.backend.api.RegisterResource;
+import de.ultical.backend.api.SeasonResource;
+import de.ultical.backend.api.TeamResource;
+import de.ultical.backend.api.TempInitResource;
+import de.ultical.backend.api.TournamentFormatResource;
+import de.ultical.backend.api.TournamentResource;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.LocalDateMixIn;
 import de.ultical.backend.data.mapper.UserMapper;
 import de.ultical.backend.model.User;
-import io.dropwizard.auth.*;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.AuthenticationException;
+import io.dropwizard.auth.Authenticator;
+import io.dropwizard.auth.CachingAuthenticator;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.client.JerseyClientBuilder;
@@ -51,6 +61,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
     @Override
     public void run(UltiCalConfig config, Environment env) throws Exception {
+
         ManagedDataSource mds = config.getDatabase().build(env.metrics(), "UltiCal DataSource");
         env.lifecycle().manage(mds);
         /*
@@ -94,6 +105,19 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
                 }).to(Client.class);
 
+                this.bindFactory(new Factory<UltiCalConfig>() {
+
+                    @Override
+                    public UltiCalConfig provide() {
+                        return config;
+                    }
+
+                    @Override
+                    public void dispose(UltiCalConfig instance) {
+                    }
+
+                }).to(UltiCalConfig.class);
+
             }
         });
 
@@ -107,10 +131,8 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         env.jersey().register(SeasonResource.class);
         env.jersey().register(TournamentFormatResource.class);
         env.jersey().register(TeamResource.class);
-
-        // TODO inject config?!
-        env.jersey().register(new RegisterResource(config));
-        env.jersey().register(new TempInitResource(config));
+        env.jersey().register(TempInitResource.class);
+        env.jersey().register(RegisterResource.class);
 
         /*
          * Authentication stuff. Basically the authenticator looksup the
