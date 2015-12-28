@@ -6,7 +6,9 @@ import com.google.common.cache.CacheBuilderSpec;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @ToString
@@ -17,5 +19,5 @@ public class UltiCalConfig extends Configuration {
     @NotNull
     private DataSourceFactory database;
 
-    private CacheBuilderSpec authenticationCache = CacheBuilderSpec.parse("maximuSize:1000");
+    private CacheBuilderSpec authenticationCache = CacheBuilderSpec.parse(""); // maximumSize:1000");
 }
