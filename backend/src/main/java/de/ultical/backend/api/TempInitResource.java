@@ -1,14 +1,19 @@
 package de.ultical.backend.api;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
 
-import de.ultical.backend.app.DfvApiConfig;
+import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
-import de.ultical.backend.model.User;
 
 /**
  * Temporary resource to init server
@@ -22,58 +27,28 @@ public class TempInitResource {
 	@Inject
 	private Client client;
 
-	private DfvApiConfig dfvApi;
+	@Inject
+	private UltiCalConfig config;
 
 	@Inject
 	private DataStore dataStore;
 
-	public TempInitResource(UltiCalConfig conf) {
-		this.dfvApi = conf.getDfvApi();
-	}
-
 	@GET
 	public boolean initRequest() {
 
-		/* USER 1 */
-		User bas = new User();
-		bas.setVersion(1);
-		bas.setEmail("bas@knallbude.de");
-		bas.setPassword("password");
-		this.dataStore.addNew(bas);
+		this.dataStore.setAutoCloseSession(false);
 
-		/* USER 2 */
-		User basil = new User();
-		basil.setVersion(2);
-		basil.setEmail("kaffeeee@trinkr.com");
-		basil.setPassword("pw2");
-		this.dataStore.addNew(basil);
+		WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profile").queryParam("token",
+				this.config.getDfvApi().getToken()).queryParam("secret",
+						this.config.getDfvApi().getSecret());
 
-		/* DFV MV NAME */
-		// List<DfvMvName> dfvNames = new ArrayList<DfvMvName>();
-		//
-		// DfvMvName dfvName = new DfvMvName();
-		// dfvName.setDfvnr(999);
-		// dfvName.setVorname("Sebastian");
-		// dfvName.setNachname("Trappi");
-		// dfvName.setDse(true);
-		//
-		// dfvNames.add(dfvName);
-		// this.dataStore.refreshDfvNames(dfvNames);
+		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 
-		//
-		// WebTarget target =
-		// this.client.target(this.dfvApi.getUrl()).path("profile").queryParam("token",
-		// this.dfvApi.getToken()).queryParam("secret",
-		// this.dfvApi.getSecret());
-		//
-		// Invocation.Builder invocationBuilder =
-		// target.request(MediaType.APPLICATION_JSON);
-		//
-		// List<DfvMvName> response = invocationBuilder.get(new
-		// GenericType<List<DfvMvName>>() {
-		// });
-		//
-		// this.dataStore.refreshDfvNames(response);
+		List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {
+		});
+
+		this.dataStore.refreshDfvNames(response);
+		this.dataStore.closeSession();
 
 		return true;
 	}

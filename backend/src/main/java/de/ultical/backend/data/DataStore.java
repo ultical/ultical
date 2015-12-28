@@ -239,10 +239,7 @@ public class DataStore {
         DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
         nameMapper.deleteAll();
         for (DfvMvName name : dfvNames) {
-
-            if (name.getDfvnr() != 0 && name.isDse()) {
-                nameMapper.insert(name);
-            }
+            nameMapper.insert(name);
         }
         this.sqlSession.commit();
         if (this.autoCloseSession) {
