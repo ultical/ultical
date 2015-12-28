@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -57,7 +56,7 @@ public class RegisterResource {
 		}
 
 		// check if a user with this properties exist in the dfv db
-		Set<DfvMvName> names = this.dataStore.getDfvNames(registerRequest.getFirstName(),
+		List<DfvMvName> names = this.dataStore.getDfvNames(registerRequest.getFirstName(),
 				registerRequest.getLastName());
 
 		// now we have zero or more matches
