@@ -24,7 +24,6 @@ import de.ultical.backend.data.mapper.BaseMapper;
 import de.ultical.backend.data.mapper.DfvMvNameMapper;
 import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
-import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
@@ -32,6 +31,7 @@ import de.ultical.backend.model.DivisionType;
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.Identifiable;
 import de.ultical.backend.model.Location;
+import de.ultical.backend.model.Player;
 import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Surface;
 import de.ultical.backend.model.TournamentEdition;
@@ -58,9 +58,6 @@ public class DataStore {
     private Map<String, TournamentEdition> tournamentPerName;
     private TreeSet<Event> orderedEvents;
     private Set<User> users;
-    private Set<DfvPlayer> dfvPlayers;
-
-    private List<DfvMvName> dfvNames;
 
     /**
      * set to <code>false</code> if you want to perform more then one dataStore
@@ -77,7 +74,6 @@ public class DataStore {
         this.tournamentPerName = new HashMap<String, TournamentEdition>();
         this.orderedEvents = new TreeSet<Event>();
         this.users = new HashSet<User>();
-        this.dfvPlayers = new HashSet<DfvPlayer>();
     }
 
     /**
@@ -247,16 +243,9 @@ public class DataStore {
         }
     }
 
-    public Set<DfvMvName> getDfvNames(String firstname, String lastname) {
-        Set<DfvMvName> names = new HashSet<DfvMvName>();
-
-        for (DfvMvName dfvName : this.dfvNames) {
-            if (dfvName.getVorname().equalsIgnoreCase(firstname) && dfvName.getNachname().equalsIgnoreCase(lastname)) {
-                names.add(dfvName);
-            }
-        }
-
-        return names;
+    public List<DfvMvName> getDfvNames(String firstname, String lastname) {
+        DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
+        return nameMapper.getByName(firstname, lastname);
     }
 
     public List<Season> getAllSeasons() {
@@ -321,9 +310,15 @@ public class DataStore {
 
     public void storeUser(User user) {
         // first store dfvPlayer
-        this.dfvPlayers.add(user.getDfvPlayer());
+        // to do so, first store superclass Player
+        Player player = user.getDfvPlayer();
+
+        this.addNew(player);
+        this.addNew(user.getDfvPlayer());
+        // this.dfvPlayers.add(user.getDfvPlayer());
         // then store user
-        this.users.add(user);
+        this.addNew(user);
+        // this.users.add(user);
     }
 
     public User getUserByDfvNr(int dfvNumber) {

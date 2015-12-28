@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
@@ -18,6 +19,9 @@ public interface DfvMvNameMapper {
 
 	@Select(SELECT_STMT)
 	List<DfvMvName> getAll();
+
+	@Select({ SELECT_STMT, "WHERE first_name = #{firstname} AND last_name = #{lastname}" })
+	List<DfvMvName> getByName(@Param("firstname") String firstname, @Param("lastname") String lastname);
 
 	@Insert("INSERT INTO DFV_MV_NAME (dfv_number, first_name, last_name, dse) VALUES (#{dfvnr},#{vorname},#{nachname},#{dse})")
 	@Options(flushCache = true)
