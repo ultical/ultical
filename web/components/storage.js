@@ -29,7 +29,6 @@ app.factory('storage', ['$filter', 'serverApi',
 			if (isEmpty(this.allEvents)) {
 				// make API call
 				serverApi.getEvents(function(data) {
-//					that.allEvents = data;
 
 					// add some fields
 					var todayDateString = $filter('date')(new Date(), 'yyyy-MM-dd');
@@ -42,7 +41,6 @@ app.factory('storage', ['$filter', 'serverApi',
 
 						event.tournamentEdition.registrationIsOpen = !isEmpty(event.tournamentEdition.registrationStart) && event.tournamentEdition.registrationStart.string <= todayDateString && event.tournamentEdition.registrationEnd.string >= todayDateString;
 						event.tournamentEdition.registrationTime = isEmpty(event.tournamentEdition.registrationStart) ? 'never' : (event.tournamentEdition.registrationStart.string > todayDateString ? 'future' : 'past');
-
 
 						var hasEditionFee = false;
 						var hasEventFee = false;

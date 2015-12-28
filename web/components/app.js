@@ -9,6 +9,7 @@ var app = angular.module('ultical',
 		 'ngSanitize',
 		 'ultical.start',
 		 'ultical.events',
+		 'ultical.team',
 		 'ultical.user',
 		 ]);
 
@@ -39,6 +40,14 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 	.state('eventShow', {
 		url: "/event/{eventId:int}/show",
 		templateUrl: "pages/event/show.html?v="+version,
+	})
+	.state('teamEdit', {
+		url: "/team/edit",
+		templateUrl: "pages/team/edit.html?v="+version,
+	})
+	.state('teamList', {
+		url: "/teams",
+		templateUrl: "pages/team/list.html?v="+version,
 	});
 
 	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|blob):/);
@@ -84,9 +93,9 @@ app.factory('CONFIG', function() {
 });
 
 app.config(function($modalProvider) {
-  angular.extend($modalProvider.defaults, {
-    animation: 'am-flip-x',
-    container: 'body',
-    keyboard: false,
-  });
+	angular.extend($modalProvider.defaults, {
+		animation: 'am-flip-x',
+		container: 'body',
+		keyboard: false,
+	});
 })

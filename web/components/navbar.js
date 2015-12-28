@@ -23,6 +23,20 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 		  },
 		];
 
+	$scope.teamDropdown =
+		[{
+			'text': $translate.instant('nav.teamDropdown.newTeam'),
+			'click': 'createTeam()',
+		},
+		{
+		    'divider': true
+		  },
+		  {
+			'text': $translate.instant('nav.eventDropdown.listTeams'),
+			'href': $state.href('teamsList'),
+		  },
+		];
+
 	$scope.createEvent = function() {
 		console.log("Create an event");
 	};
