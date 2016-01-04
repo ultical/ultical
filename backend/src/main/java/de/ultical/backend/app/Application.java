@@ -101,8 +101,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
                         conf.setTimeout(Duration.milliseconds(7000));
 
                         if (this.clientInstance == null) {
-                            this.clientInstance = new JerseyClientBuilder(env).using(conf)
-                                    .using(env).build("dfvApi");
+                            this.clientInstance = new JerseyClientBuilder(env).using(conf).using(env).build("dfvApi");
                         }
                         return this.clientInstance;
                     }
@@ -139,16 +138,16 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         env.jersey().register(RegisterResource.class);
 
         /*
-         * Authentication stuff. Basically the authenticator looksup the
-         * provided user-name in the databse and compares the password stored in
-         * the db with the provided password. If these two match, it returns the
-         * corresponding user object. In order to reduced database access the
+         * Authentication stuff. Basically the authenticator looks up the
+         * provided user-name in the database and compares the password stored
+         * in the db with the provided password. If these two match, it returns
+         * the corresponding user object. In order to reduce database access the
          * results are cached by a CachingAuthenticator. The
          * AuthValueFactoryProvider could be used to inject the current user
          * into resource methods that need access to the current user. TODO: An
          * authorizer is still missing that assigns each user a role. However,
          * except for a few users which will be always admins the admin role
-         * depends on the tournament-format or tournament-editino that is to be
+         * depends on the tournament-format or tournament-edition that is to be
          * changed.
          */
         Authenticator<BasicCredentials, User> authenticator = new Authenticator<BasicCredentials, User>() {
@@ -174,6 +173,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
                 return result;
             }
         };
+
         CachingAuthenticator<BasicCredentials, User> cachingAuthenticator = new CachingAuthenticator<BasicCredentials, User>(
                 env.metrics(), authenticator, config.getAuthenticationCache());
         env.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
