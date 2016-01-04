@@ -10,6 +10,12 @@
 			</li>
 		</ul>
 
+		<ul class="nav navbar-nav">
+			<li ng-click="$state.go('teamList')" class="navbar-button">
+				<div class="navbar-text">{{ 'nav.teams' | translate }}</div>
+			</li>
+		</ul>
+
 		<ul class="nav navbar-right navbar-nav">
 
 			<li ng-show="languageSelector.length > 1" class="navbar-nav navbar-button navbar-language" bs-dropdown="languageSelector" data-animation="am-flip-x" data-placement="bottom-left">

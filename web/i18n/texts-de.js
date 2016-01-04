@@ -20,6 +20,7 @@ var TRANSLATIONS_DE = {
 				newEvent: 'Neues Turnier',
 				listEvents: 'Turniere anzeigen',
 			},
+			teams: 'Teams',
 		},
 		
 		season: {
@@ -90,5 +91,15 @@ var TRANSLATIONS_DE = {
 			feePerLunch: 'Pro Mittagessen',
 			feePerDinner: 'Pro Abendessen',
 			feePerNight: 'Pro Nacht',
+		},
+		
+		team: {
+			list: {
+				title: 'Teams',
+				own: 'Meine Teams',
+				all: 'Alle Teams',
+				newTeam: 'Neues Team erstellen',
+				save: 'Team speichern',
+			},
 		},
 };

@@ -33,17 +33,13 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		url: "/calendar",
 		templateUrl: "pages/event/list.html?v="+version,
 	})
-	.state('eventEdit', {
-		url: "/event/edit",
+	.state('editionEdit', {
+		url: "/tournament/edit/{editionId}/{eventId}",
 		templateUrl: "pages/event/edit.html?v="+version,
 	})
 	.state('eventShow', {
 		url: "/event/{eventId:int}/show",
 		templateUrl: "pages/event/show.html?v="+version,
-	})
-	.state('teamEdit', {
-		url: "/team/edit",
-		templateUrl: "pages/team/edit.html?v="+version,
 	})
 	.state('teamList', {
 		url: "/teams",

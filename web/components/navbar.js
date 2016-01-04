@@ -6,35 +6,23 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 
 	$scope.version = '0.1';
 
+	$scope.$state = $state;
+	
 	$scope.loggedIn = false;
 
 	/* *** Menu ***/
 	$scope.eventDropdown =
 		[{
 			'text': $translate.instant('nav.eventDropdown.newEvent'),
-			'click': 'createEvent()',
+			'href': $state.href('editionEdit', { eventId: 'new' }),
 		},
 		{
-		    'divider': true
-		  },
-		  {
+			'divider': true
+		},
+		{
 			'text': $translate.instant('nav.eventDropdown.listEvents'),
 			'href': $state.href('eventsList'),
-		  },
-		];
-
-	$scope.teamDropdown =
-		[{
-			'text': $translate.instant('nav.teamDropdown.newTeam'),
-			'click': 'createTeam()',
 		},
-		{
-		    'divider': true
-		  },
-		  {
-			'text': $translate.instant('nav.eventDropdown.listTeams'),
-			'href': $state.href('teamsList'),
-		  },
 		];
 
 	$scope.createEvent = function() {

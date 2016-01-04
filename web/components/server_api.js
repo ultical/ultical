@@ -55,6 +55,10 @@ app.factory('serverApi', ['CONFIG', '$http', function(CONFIG, $http) {
 		getEvents: function(callback) {
 			get('events', callback);
 		},
+		
+		getTeam: function(teamId, callback) {
+			get('team/' + teamId, callback);
+		},
 
 		registerUser: function(user, callback) {
 			post('register', user, callback);
