@@ -23,7 +23,9 @@ import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.data.mapper.BaseMapper;
 import de.ultical.backend.data.mapper.DfvMvNameMapper;
 import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
+import de.ultical.backend.data.mapper.PlayerMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
+import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
@@ -31,7 +33,6 @@ import de.ultical.backend.model.DivisionType;
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.Identifiable;
 import de.ultical.backend.model.Location;
-import de.ultical.backend.model.Player;
 import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Surface;
 import de.ultical.backend.model.TournamentEdition;
@@ -308,17 +309,49 @@ public class DataStore {
         return result;
     }
 
-    public void storeUser(User user) {
-        // first store dfvPlayer
-        // to do so, first store superclass Player
-        Player player = user.getDfvPlayer();
+    public void storeDfvPlayer(DfvPlayer dfvPlayer) {
+        this.storeDfvPlayer(dfvPlayer, true);
+    }
 
-        this.addNew(player);
-        this.addNew(user.getDfvPlayer());
-        // this.dfvPlayers.add(user.getDfvPlayer());
-        // then store user
+    public void storeDfvPlayer(DfvPlayer dfvPlayer, boolean closeSession) {
+        /**
+         * A DfvPlayer has to be stored in two steps
+         * First Player (superclass) then DfvPlayer (subclass)
+         */
+
+        // only close session at the end
+        this.setAutoCloseSession(false);
+
+        // insert Player with corresponding mapper
+        PlayerMapper playerMapper = this.sqlSession.getMapper(PlayerMapper.class);
+        playerMapper.insert(dfvPlayer);
+
+        // request id to store it in dfvPlayer object
+        dfvPlayer.getId();
+
+        if (closeSession) {
+            // close session after next request
+            this.setAutoCloseSession(true);
+        }
+
+        // insert DfvPlayer
+        this.addNew(dfvPlayer);
+
+    }
+
+    public void storeUser(User user) {
+        /**
+         * A user has to be stored in two steps
+         * First DfvPlayer, then User
+         */
+
+        this.storeDfvPlayer(user.getDfvPlayer(), false);
+
+        // close session after next request
+        this.setAutoCloseSession(true);
+
+        // insert User
         this.addNew(user);
-        // this.users.add(user);
     }
 
     public User getUserByDfvNr(int dfvNumber) {
