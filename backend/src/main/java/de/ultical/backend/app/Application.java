@@ -40,6 +40,7 @@ import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
 
 public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
@@ -96,8 +97,11 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
                     @Override
                     public Client provide() {
+                        JerseyClientConfiguration conf = new JerseyClientConfiguration();
+                        conf.setTimeout(Duration.milliseconds(7000));
+
                         if (this.clientInstance == null) {
-                            this.clientInstance = new JerseyClientBuilder(env).using(new JerseyClientConfiguration())
+                            this.clientInstance = new JerseyClientBuilder(env).using(conf)
                                     .using(env).build("dfvApi");
                         }
                         return this.clientInstance;
