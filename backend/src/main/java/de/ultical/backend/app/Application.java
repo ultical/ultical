@@ -160,7 +160,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
                 User user = null;
                 try {
                     UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-                    user = userMapper.getUserForEMail(providedUserName);
+                    user = userMapper.getUserByEmail(providedUserName);
                 } catch (PersistenceException pe) {
                     throw new AuthenticationException("Accessing the database failed", pe);
                 } finally {

@@ -2,7 +2,14 @@ package de.ultical.backend.data.mapper;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.One;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import de.ultical.backend.model.User;
 
@@ -59,6 +66,6 @@ public interface UserMapper extends BaseMapper<User> {
             @Result(column = "email", property = "email"), @Result(column = "password", property = "password"),
             @Result(column = "email_confirmed", property = "emailConfirmed"),
             @Result(column = "dfv_email_opt_in", property = "dfvEmailOptIn") })
-    User getUserForEMail(final String eMail);
+    User getUserByEmail(final String eMail);
 
 }
