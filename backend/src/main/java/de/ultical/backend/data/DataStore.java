@@ -1,16 +1,9 @@
 package de.ultical.backend.data;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableSet;
 import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -28,19 +21,10 @@ import de.ultical.backend.data.mapper.PlayerMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
 import de.ultical.backend.data.mapper.UserMapper;
 import de.ultical.backend.model.DfvPlayer;
-import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionRegistration;
-import de.ultical.backend.model.DivisionRegistrationTeams;
-import de.ultical.backend.model.DivisionType;
-import de.ultical.backend.model.Event;
 import de.ultical.backend.model.Identifiable;
-import de.ultical.backend.model.Location;
 import de.ultical.backend.model.Season;
-import de.ultical.backend.model.Surface;
 import de.ultical.backend.model.TournamentEdition;
-import de.ultical.backend.model.TournamentEditionLeague;
-import de.ultical.backend.model.TournamentEditionSingle;
-import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.model.User;
 
 /**
@@ -59,7 +43,6 @@ public class DataStore {
     Client client;
 
     private Map<String, TournamentEdition> tournamentPerName;
-    private TreeSet<Event> orderedEvents;
 
     /**
      * set to <code>false</code> if you want to perform more then one dataStore
@@ -74,7 +57,6 @@ public class DataStore {
 
     protected void fillDataStore() {
         this.tournamentPerName = new HashMap<String, TournamentEdition>();
-        this.orderedEvents = new TreeSet<Event>();
     }
 
     /**
@@ -179,13 +161,14 @@ public class DataStore {
         }
     }
 
-    public void addDivisionToEdition(final TournamentEdition edition, final DivisionRegistration division) {
+    public DivisionRegistration addDivisionToEdition(final TournamentEdition edition,
+            final DivisionRegistration division) {
         Objects.requireNonNull(division);
         Objects.requireNonNull(edition);
         try {
             DivisionRegistrationMapper drm = this.sqlSession.getMapper(DivisionRegistrationMapper.class);
             drm.insert(division, edition);
-
+            return division;
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();
@@ -198,34 +181,6 @@ public class DataStore {
 
         TournamentEdition result = this.tournamentPerName.get(tournamentName);
         return result;
-    }
-
-    public Collection<TournamentEdition> getAllTournaments() {
-        return this.tournamentPerName.values();
-    }
-
-    private Event fakeEvent(final LocalDate fakeStartDate) {
-        final Event result = new Event();
-        result.setStartDate(fakeStartDate);
-        return result;
-    }
-
-    public NavigableSet<Event> getEvents(final LocalDate startInterval, final LocalDate endInterval) {
-        final Event firstEvent = startInterval != null ? this.orderedEvents.first()
-                : this.orderedEvents.floor(this.fakeEvent(startInterval));
-        final Event lastEvent = endInterval != null ? this.orderedEvents.last()
-                : this.orderedEvents.ceiling(this.fakeEvent(endInterval));
-        NavigableSet<Event> result;
-        if (firstEvent == null && lastEvent == null) {
-            result = Collections.emptyNavigableSet();
-        } else if (firstEvent == null && lastEvent != null) {
-            result = this.orderedEvents.headSet(lastEvent, true);
-        } else if (firstEvent != null && lastEvent == null) {
-            result = this.orderedEvents.tailSet(firstEvent, true);
-        } else {
-            result = this.orderedEvents.subSet(lastEvent, true, lastEvent, true);
-        }
-        return Collections.unmodifiableNavigableSet(result);
     }
 
     /*
@@ -368,7 +323,7 @@ public class DataStore {
 
     public User getUserByDfvNr(int dfvNumber) {
 
-        boolean orgCloseSession = this.autoCloseSession;
+        final boolean orgCloseSession = this.autoCloseSession;
 
         // only close session at the end
         this.setAutoCloseSession(false);
@@ -396,7 +351,7 @@ public class DataStore {
     }
 
     public User getUserByEmail(String email) {
-        boolean orgCloseSession = this.autoCloseSession;
+        final boolean orgCloseSession = this.autoCloseSession;
 
         // only close session at the end
         this.setAutoCloseSession(false);
@@ -416,252 +371,14 @@ public class DataStore {
         return user;
     }
 
-    public void fillForTesting() {
-
-        /* USERS */
-        User bas = new User();
-        bas.setId(1);
-        bas.setVersion(1);
-        bas.setEmail("bas@knallbude.de");
-        bas.setPassword("password");
-
-        this.addNew(bas);
-
-        Set<User> admins = new HashSet<User>();
-
-        admins.add(bas);
-
-        User basil = new User();
-        basil.setId(2);
-        basil.setVersion(1);
-        basil.setEmail("kaffee@trinkr.com");
-        basil.setPassword("password2");
-
-        this.addNew(basil);
-
-        Set<User> altAdmins = new HashSet<User>();
-        altAdmins.add(basil);
-
-        /* SEASONS */
-        Season season16 = new Season();
-        season16.setId(0);
-        season16.setSurface(Surface.TURF);
-        season16.setYear(2016);
-        season16.setPlusOneYear(false);
-
-        this.addNew(season16);
-
-        Season season1516 = new Season();
-        season1516.setId(1);
-        season1516.setSurface(Surface.GYM);
-        season1516.setYear(2015);
-        season1516.setPlusOneYear(true);
-
-        this.addNew(season1516);
-
-        /* LOCATIONS */
-        Location loc1 = new Location();
-        loc1.setId(0);
-        loc1.setCity("Berlin");
-        loc1.setCountry("DE");
-        loc1.setStreet("Weserstr. 37");
-        loc1.setZipCode(12045);
-        loc1.setAdditionalInfo("Nicht abbiegen");
-
-        this.addNew(loc1);
-
-        Location loc2 = new Location();
-        loc2.setId(1);
-        loc2.setCity("Marburg");
-        loc2.setCountry("DE");
-        loc2.setStreet("Afföllerwiesen 2");
-        loc2.setZipCode(12345);
-
-        this.addNew(loc2);
-
-        /* 4 FERKEL */
-        TournamentFormat tf = new TournamentFormat();
-        tf.setId(1);
-        tf.setName("4 Ferkel");
-        tf.setAdmins(admins);
-        tf.setDescription(
-                "Das 4 Ferkel ist ein Turnier der Superlative. Nicht nur alteingesessene Hasen kommen ins Schwärmen, wenn sie auf die Afföllerwiesen im schönen Marburg auflaufen.\n\n Ein Genuss für die ganze Familie");
-        TournamentEditionSingle te = new TournamentEditionSingle();
-        te.setId(0);
-        te.setSeason(season16);
-        te.setTournamentFormat(tf);
-        te.setRegistrationStart(LocalDate.parse("2015-10-01"));
-        te.setRegistrationEnd(LocalDate.of(2016, 4, 30));
-        te.setOrganizerName("Hässlicher Sportverband");
-        te.setOrganizerEmail("info@ferkels.de");
-        te.setOrganizerPhone("0211/123123123");
-
-        DivisionRegistration drt = new DivisionRegistrationTeams();
-        drt.setDivisionAge(DivisionAge.REGULAR);
-        drt.setDivisionType(DivisionType.OPEN);
-
-        Set<DivisionRegistration> divs = new HashSet<DivisionRegistration>();
-        divs.add(drt);
-
-        drt = new DivisionRegistrationTeams();
-        drt.setDivisionAge(DivisionAge.U17);
-        drt.setDivisionType(DivisionType.WOMEN);
-
-        divs.add(drt);
-
-        te.setDivisionRegistrations(divs);
-
-        Event e = new Event();
-        e.setId(1);
-        e.setStartDate(LocalDate.of(2016, 6, 13));
-        e.setEndDate(LocalDate.of(2016, 6, 14));
-        e.setLocation(loc2);
-        e.setTournamentEdition(te);
-        e.setFeePerPlayer(13);
-        e.setFeePerTeam(50);
-
-        // te.setEvent(e);
-
-        // this.dataStore.addNew(tf);
-        // this.dataStore.addNew(te);
-        // this.dataStore.addNew(e);
-
-        /* A-RELI */
-
-        tf = new TournamentFormat();
-        tf.setId(2);
-        tf.setName("A-Reli");
-        tf.setAdmins(admins);
-        tf.setDescription("Ein Turnier der Ultimate Abteilung des DFV");
-
-        TournamentEditionLeague tel = new TournamentEditionLeague();
-        tel.setId(1);
-        tel.setAlternativeName("32. A-Relegation");
-        tel.setAlternativeMatchdayName("Spültag");
-        tel.setSeason(season16);
-        tel.setTournamentFormat(tf);
-        tel.setRegistrationStart(LocalDate.of(2016, 1, 2));
-        tel.setRegistrationEnd(LocalDate.of(2016, 3, 30));
-        tel.setOrganizerName("Deutscher Frisbeesport Verband e.V.");
-        tel.setOrganizerEmail("info@frisbeesportverband.de");
-        tel.setOrganizerPhone("0211/123123123");
-
-        drt = new DivisionRegistrationTeams();
-        drt.setDivisionAge(DivisionAge.REGULAR);
-        drt.setDivisionType(DivisionType.OPEN);
-
-        divs = new HashSet<DivisionRegistration>();
-        divs.add(drt);
-
-        tel.setDivisionRegistrations(divs);
-
-        Event e1 = new Event();
-        e1.setId(2);
-        e1.setMatchdayNumber(1);
-        e1.setStartDate(LocalDate.of(2016, 5, 13));
-        e1.setEndDate(LocalDate.of(2016, 5, 14));
-        e1.setLocation(loc1);
-        e1.setTournamentEdition(tel);
-        e1.setLocalOrganizerName("Bas Trapp");
-        e1.setLocalOrganizerEmail("bas@ultical.com");
-        e1.setLocalOrganizerPhone("(030) 577 0692815");
-
-        Event e2 = new Event();
-        e2.setId(3);
-        e2.setMatchdayNumber(2);
-        e2.setStartDate(LocalDate.of(2016, 7, 3));
-        e2.setEndDate(LocalDate.of(2016, 7, 4));
-        // e2.setLocation(loc2);
-        e2.setTournamentEdition(tel);
-        e2.setAdmins(altAdmins);
-
-        Set<Event> aReliEvents = new HashSet<Event>();
-        aReliEvents.add(e1);
-        aReliEvents.add(e2);
-        // tel.setEvents(aReliEvents);
-
-        // this.tournamentPerName.put(tf.getName(), te);
-        // this.events.add(e1);
-        // this.events.add(e2);
-        // this.dataStore.addNew(tf);
-        // this.dataStore.addNew(e1);
-        // this.dataStore.addNew(e2);
-
-        /* WINTERLIGA */
-
-        tf = new TournamentFormat();
-        tf.setId(3);
-        tf.setName("Winterliga Berlin/Brandenburg");
-        tf.setAdmins(admins);
-        tf.setDescription("Ein Indoor Spaß für groß und klein!");
-
-        tel = new TournamentEditionLeague();
-        tel.setId(2);
-        tel.setSeason(season1516);
-        tel.setTournamentFormat(tf);
-        // tel.setRegistrationStart(new LocalDate(2015, 11, 12));
-        // tel.setRegistrationStop(new LocalDate(2015, 12, 24));
-        tel.setOrganizerName("Boris und Walter");
-        tel.setOrganizerEmail("kryptisch@donttrackme.kr");
-        tel.setOrganizerPhone("-");
-        tel.setFeePerGuest(16);
-        tel.setFeePerPlayer(20);
-        tel.setFeePerTeam(100);
-
-        drt = new DivisionRegistrationTeams();
-        drt.setDivisionAge(DivisionAge.REGULAR);
-        drt.setDivisionType(DivisionType.OPEN);
-
-        drt = new DivisionRegistrationTeams();
-        drt.setDivisionAge(DivisionAge.REGULAR);
-        drt.setDivisionType(DivisionType.MIXED);
-
-        divs = new HashSet<DivisionRegistration>();
-        divs.add(drt);
-
-        tel.setDivisionRegistrations(divs);
-
-        e1 = new Event();
-        e1.setId(4);
-        e1.setMatchdayNumber(1);
-        e1.setStartDate(LocalDate.of(2015, 1, 13));
-        e1.setEndDate(LocalDate.of(2015, 1, 14));
-        e1.setLocation(loc1);
-        e1.setTournamentEdition(tel);
-        e1.setLocalOrganizerName("Bas Trapp");
-        e1.setLocalOrganizerEmail("bas@ultical.com");
-        e1.setLocalOrganizerPhone("(030) 577 0692815");
-        e1.setFeePerGuest(5);
-        e1.setFeePerPlayer(9);
-        e1.setFeePerTeam(40);
-        e1.setFeePerLunch(3);
-        e1.setFeePerDinner(14);
-
-        e2 = new Event();
-        e2.setId(5);
-        e2.setMatchdayNumber(2);
-        e2.setStartDate(LocalDate.of(2016, 2, 3));
-        e2.setEndDate(LocalDate.of(2016, 2, 4));
-        e2.setLocation(loc2);
-        e2.setTournamentEdition(tel);
-        e2.setAdmins(altAdmins);
-        e2.setLocalOrganizerName("Erdferkel Marburg e.V.");
-        e2.setLocalOrganizerEmail("ferkel@haesslich.de");
-        e2.setFeePerBreakfast(5);
-        e2.setFeePerPlayer(11);
-        e2.setFeePerTeam(50);
-
-        Set<Event> winterligaEvents = new HashSet<Event>();
-        winterligaEvents.add(e1);
-        winterligaEvents.add(e2);
-        // tel.setEvents(winterligaEvents);
-
-        // this.tournamentPerName.put(tf.getName(), te);
-        // this.events.add(e1);
-        // this.events.add(e2);
-
-        // this.dataStore.addNew(tf);
-        // this.dataStore.addNew(e1);
-        // this.dataStore.addNew(e2);
+    public void deleteDivision(final DivisionRegistration reg) {
+        try {
+            DivisionRegistrationMapper mapper = this.sqlSession.getMapper(DivisionRegistrationMapper.class);
+            mapper.delete(reg);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 }

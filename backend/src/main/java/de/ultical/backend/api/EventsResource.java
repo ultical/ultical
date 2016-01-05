@@ -5,14 +5,28 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
 
 import de.ultical.backend.data.DataStore;
-import de.ultical.backend.model.*;
+import de.ultical.backend.model.DivisionRegistration;
+import de.ultical.backend.model.DivisionRegistrationTeams;
+import de.ultical.backend.model.Event;
+import de.ultical.backend.model.TournamentEdition;
+import de.ultical.backend.model.TournamentEditionSingle;
+import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
 
 @Path("/events")
@@ -90,8 +104,9 @@ public class EventsResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/{eventId}/divisions")
-    public void addDivision(@PathParam("{eventId}") Integer eventId, DivisionRegistration div,
+    public DivisionRegistration addDivision(@PathParam("{eventId}") Integer eventId, DivisionRegistration div,
             @Auth @NotNull User currentUser) {
         this.checkDatatStore();
         /*
@@ -101,20 +116,45 @@ public class EventsResource {
          */
         TournamentEdition fakeEdition = new TournamentEditionSingle();
         fakeEdition.setId(eventId);
+        DivisionRegistration storedDiv;
         try {
-            this.dStore.addDivisionToEdition(fakeEdition, div);
+            storedDiv = this.dStore.addDivisionToEdition(fakeEdition, div);
         } catch (PersistenceException pe) {
             throw new WebApplicationException(pe);
         }
+        return storedDiv;
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/{eventId}/divisions")
+    @Path("/{eventId}/divisions/{divisionId}")
     public void updateDivsion(@PathParam("{eventId}") Integer eventId, DivisionRegistration div,
-            @Auth @NotNull User currentUser) {
+            @PathParam("{divisionId}") Integer divId, @Auth @NotNull User currentUser) {
         this.checkDatatStore();
-        // TODO similar to addDivsion
-        throw new WebApplicationException("not implemented, yet!");
+        if (!Integer.valueOf(div.getId()).equals(divId)) {
+            throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
+        }
+        try {
+            final boolean updated = this.dStore.update(div);
+            if (!updated) {
+                throw new WebApplicationException(
+                        "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
+            }
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DELETE
+    @Path("/{eventId}/divisions/{divisionId}")
+    public void deleteDivision(@PathParam("{divisionId}") Integer divId, @Auth @NotNull User currentUser) {
+        this.checkDatatStore();
+        try {
+            DivisionRegistrationTeams fakeDiv = new DivisionRegistrationTeams();
+            fakeDiv.setId(divId.intValue());
+            this.dStore.deleteDivision(fakeDiv);
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
+        }
     }
 }
