@@ -22,9 +22,11 @@ import org.glassfish.jersey.process.internal.RequestScoped;
 import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.data.mapper.BaseMapper;
 import de.ultical.backend.data.mapper.DfvMvNameMapper;
+import de.ultical.backend.data.mapper.DfvPlayerMapper;
 import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
 import de.ultical.backend.data.mapper.PlayerMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
+import de.ultical.backend.data.mapper.UserMapper;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionRegistration;
@@ -58,7 +60,6 @@ public class DataStore {
 
     private Map<String, TournamentEdition> tournamentPerName;
     private TreeSet<Event> orderedEvents;
-    private Set<User> users;
 
     /**
      * set to <code>false</code> if you want to perform more then one dataStore
@@ -74,7 +75,6 @@ public class DataStore {
     protected void fillDataStore() {
         this.tournamentPerName = new HashMap<String, TournamentEdition>();
         this.orderedEvents = new TreeSet<Event>();
-        this.users = new HashSet<User>();
     }
 
     /**
@@ -232,21 +232,29 @@ public class DataStore {
      * clear and refill the DfvMvName table
      */
     public void refreshDfvNames(List<DfvMvName> dfvNames) {
-
-        DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
-        nameMapper.deleteAll();
-        for (DfvMvName name : dfvNames) {
-            nameMapper.insert(name);
-        }
-        this.sqlSession.commit();
-        if (this.autoCloseSession) {
-            this.sqlSession.close();
+        try {
+            DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
+            nameMapper.deleteAll();
+            for (DfvMvName name : dfvNames) {
+                nameMapper.insert(name);
+            }
+            this.sqlSession.commit();
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
         }
     }
 
     public List<DfvMvName> getDfvNames(String firstname, String lastname) {
-        DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
-        return nameMapper.getByName(firstname, lastname);
+        try {
+            DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
+            return nameMapper.getByName(firstname, lastname);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 
     public List<Season> getAllSeasons() {
@@ -282,7 +290,6 @@ public class DataStore {
             this.sqlSession.rollback();
             throw pe;
         } finally {
-
             if (this.sqlSession != null && this.autoCloseSession) {
                 this.sqlSession.close();
             }
@@ -310,14 +317,11 @@ public class DataStore {
     }
 
     public void storeDfvPlayer(DfvPlayer dfvPlayer) {
-        this.storeDfvPlayer(dfvPlayer, true);
-    }
-
-    public void storeDfvPlayer(DfvPlayer dfvPlayer, boolean closeSession) {
         /**
-         * A DfvPlayer has to be stored in two steps
-         * First Player (superclass) then DfvPlayer (subclass)
+         * A DfvPlayer has to be stored in two steps First Player (superclass)
+         * then DfvPlayer (subclass)
          */
+        boolean orgCloseSession = this.autoCloseSession;
 
         // only close session at the end
         this.setAutoCloseSession(false);
@@ -329,49 +333,87 @@ public class DataStore {
         // request id to store it in dfvPlayer object
         dfvPlayer.getId();
 
-        if (closeSession) {
-            // close session after next request
-            this.setAutoCloseSession(true);
-        }
-
         // insert DfvPlayer
         this.addNew(dfvPlayer);
 
+        // set autoclose to original value
+        this.setAutoCloseSession(orgCloseSession);
+
+        if (this.sqlSession != null && this.autoCloseSession) {
+            this.sqlSession.close();
+        }
     }
 
     public void storeUser(User user) {
         /**
-         * A user has to be stored in two steps
-         * First DfvPlayer, then User
+         * A user has to be stored in two steps First DfvPlayer, then User
          */
+        boolean orgCloseSession = this.autoCloseSession;
 
-        this.storeDfvPlayer(user.getDfvPlayer(), false);
+        // only close session at the end
+        this.setAutoCloseSession(false);
 
-        // close session after next request
-        this.setAutoCloseSession(true);
+        this.storeDfvPlayer(user.getDfvPlayer());
 
         // insert User
         this.addNew(user);
+
+        // set autoclose to original value
+        this.setAutoCloseSession(orgCloseSession);
+
+        if (this.sqlSession != null && this.autoCloseSession) {
+            this.sqlSession.close();
+        }
     }
 
     public User getUserByDfvNr(int dfvNumber) {
 
-        for (User user : this.users) {
-            if (user.getDfvPlayer() != null && user.getDfvPlayer().getDfvNumber() == dfvNumber) {
-                return user;
-            }
+        boolean orgCloseSession = this.autoCloseSession;
+
+        // only close session at the end
+        this.setAutoCloseSession(false);
+
+        DfvPlayerMapper dfvPlayerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
+        DfvPlayer dfvPlayer = dfvPlayerMapper.getByDfvNumber(dfvNumber);
+
+        if (dfvPlayer == null) {
+            return null;
         }
-        return null;
+
+        UserMapper userMapper = this.sqlSession.getMapper(UserMapper.class);
+        User user = userMapper.getByDfvPlayer(dfvPlayer.getId());
+
+        user.setDfvPlayer(dfvPlayer);
+
+        // set autoclose to original value
+        this.setAutoCloseSession(orgCloseSession);
+
+        if (this.sqlSession != null && this.autoCloseSession) {
+            this.sqlSession.close();
+        }
+
+        return user;
     }
 
     public User getUserByEmail(String email) {
+        boolean orgCloseSession = this.autoCloseSession;
 
-        for (User user : this.users) {
-            if (user.getEmail().equalsIgnoreCase(email)) {
-                return user;
-            }
+        // only close session at the end
+        this.setAutoCloseSession(false);
+
+        UserMapper userMapper = this.sqlSession.getMapper(UserMapper.class);
+        User user = userMapper.getByEmail(email);
+
+        // TODO: get and assign corresponding dfvPlayer
+
+        // set autoclose to original value
+        this.setAutoCloseSession(orgCloseSession);
+
+        if (this.sqlSession != null && this.autoCloseSession) {
+            this.sqlSession.close();
         }
-        return null;
+
+        return user;
     }
 
     public void fillForTesting() {

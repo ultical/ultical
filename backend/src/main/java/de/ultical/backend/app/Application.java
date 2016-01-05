@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 
 import de.spinscale.dropwizard.jobs.JobsBundle;
+import de.ultical.backend.api.AuthResource;
 import de.ultical.backend.api.EventsResource;
 import de.ultical.backend.api.RegisterResource;
 import de.ultical.backend.api.SeasonResource;
@@ -99,6 +100,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
                     public Client provide() {
                         JerseyClientConfiguration conf = new JerseyClientConfiguration();
                         conf.setTimeout(Duration.milliseconds(7000));
+                        conf.setConnectionTimeout(Duration.milliseconds(7000));
 
                         if (this.clientInstance == null) {
                             this.clientInstance = new JerseyClientBuilder(env).using(conf).using(env).build("dfvApi");
@@ -136,6 +138,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         env.jersey().register(TeamResource.class);
         env.jersey().register(TempInitResource.class);
         env.jersey().register(RegisterResource.class);
+        env.jersey().register(AuthResource.class);
 
         /*
          * Authentication stuff. Basically the authenticator looks up the
@@ -160,7 +163,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
                 User user = null;
                 try {
                     UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-                    user = userMapper.getUserByEmail(providedUserName);
+                    user = userMapper.getByEmail(providedUserName);
                 } catch (PersistenceException pe) {
                     throw new AuthenticationException("Accessing the database failed", pe);
                 } finally {

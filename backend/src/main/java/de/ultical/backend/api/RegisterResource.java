@@ -16,6 +16,8 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.api.transferClasses.RegisterRequest;
@@ -50,9 +52,11 @@ public class RegisterResource {
     public RegisterResponse registerRequest(RegisterRequest registerRequest) {
 
         // validate data
-        if (registerRequest.getPassword().length() < 8) {
+        if (registerRequest.getPassword().length() < 10) {
             return new RegisterResponse(RegisterResponseStatus.VALIDATION_ERROR);
         }
+
+        this.dataStore.setAutoCloseSession(false);
 
         // check if a user with this properties exist in the dfv db
         List<DfvMvName> names = this.dataStore.getDfvNames(registerRequest.getFirstName(),
@@ -81,13 +85,14 @@ public class RegisterResource {
 
         if (foundPlayers.size() == 0) {
             // no matching players found
+            this.dataStore.closeSession();
             return new RegisterResponse(RegisterResponseStatus.NOT_FOUND);
         }
 
         /*
-         * we now have a set of players - most likely filled with one or none
-         * entity, however, if we encounter more than one entity we check
-         * whether the email addresses match
+         * we now have a set of players - most likely filled with one entity,
+         * however, if we encounter more than one entity we check whether the
+         * email addresses match
          */
         if (foundPlayers.size() > 1) {
             Iterator<DfvMvPlayer> playerIterator = foundPlayers.iterator();
@@ -114,16 +119,19 @@ public class RegisterResource {
             // birthday and email (not very realistic,
             // but who knows)
             if (foundPlayers.size() > 1) {
+                this.dataStore.closeSession();
                 return new RegisterResponse(RegisterResponseStatus.AMBIGUOUS);
             }
 
             if (dfvEmailMissingForAll) {
                 // none of the found players had an dfv email set
+                this.dataStore.closeSession();
                 return new RegisterResponse(RegisterResponseStatus.NO_DFV_EMAIL);
             }
 
             if (foundPlayers.size() == 0) {
                 // there were players but the email did not match
+                this.dataStore.closeSession();
                 return new RegisterResponse(RegisterResponseStatus.EMAIL_NOT_FOUND);
             }
         }
@@ -131,19 +139,22 @@ public class RegisterResource {
         // one exact match found
         DfvMvPlayer playerToRegister = foundPlayers.get(0);
 
+        // check if an email is stored at dfv database
+        if (playerToRegister.getEmail().isEmpty()) {
+            this.dataStore.closeSession();
+            return new RegisterResponse(RegisterResponseStatus.NO_DFV_EMAIL);
+        }
+
         // check if this dfv-player (dfvNummer) is already registered in our
         // system
         if (this.dataStore.getUserByDfvNr(playerToRegister.getDfvnr()) != null) {
+            this.dataStore.closeSession();
             return new RegisterResponse(RegisterResponseStatus.USER_ALREADY_REGISTERED);
-        }
-
-        // check if an email is stored at dfv database
-        if (playerToRegister.getEmail().isEmpty()) {
-            return new RegisterResponse(RegisterResponseStatus.NO_DFV_EMAIL);
         }
 
         // check if this email address is already taken in the system
         if (this.dataStore.getUserByEmail(registerRequest.getEmail()) != null) {
+            this.dataStore.closeSession();
             return new RegisterResponse(RegisterResponseStatus.EMAIL_ALREADY_TAKEN);
         }
 
@@ -159,7 +170,7 @@ public class RegisterResource {
 
         User user = new User();
         user.setEmail(registerRequest.getEmail());
-        user.setPassword(registerRequest.getPassword());
+        user.setPassword(BCrypt.hashpw(registerRequest.getPassword(), BCrypt.gensalt(11)));
         user.setDfvPlayer(dfvPlayer);
         user.setEmailConfirmed(false);
 
@@ -174,8 +185,7 @@ public class RegisterResource {
 
         this.dataStore.storeUser(user);
 
-        System.out.println(dfvPlayer);
-        System.out.println("found: " + playerToRegister);
+        this.dataStore.closeSession();
 
         // return success code
         RegisterResponse response = new RegisterResponse(RegisterResponseStatus.SUCCESS);

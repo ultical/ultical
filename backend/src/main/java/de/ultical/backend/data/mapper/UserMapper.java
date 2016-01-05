@@ -66,6 +66,14 @@ public interface UserMapper extends BaseMapper<User> {
             @Result(column = "email", property = "email"), @Result(column = "password", property = "password"),
             @Result(column = "email_confirmed", property = "emailConfirmed"),
             @Result(column = "dfv_email_opt_in", property = "dfvEmailOptIn") })
-    User getUserByEmail(final String eMail);
+    User getByEmail(final String eMail);
+
+    @Select({ "SELECT u.id, u.email, u.password, u.email_confirmed, u.dfv_email_opt_in, u.version",
+            "FROM ULTICAL_USER u", "WHERE u.dfv_player = #{dfvPlayerId}" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "email", property = "email"), @Result(column = "password", property = "password"),
+            @Result(column = "email_confirmed", property = "emailConfirmed"),
+            @Result(column = "dfv_email_opt_in", property = "dfvEmailOptIn") })
+    User getByDfvPlayer(final int dfvPlayerId);
 
 }
