@@ -24,33 +24,33 @@ import de.ultical.backend.data.DataStore;
 @Path("/init")
 public class TempInitResource {
 
-	@Inject
-	private Client client;
+    @Inject
+    private Client client;
 
-	@Inject
-	private UltiCalConfig config;
+    @Inject
+    private UltiCalConfig config;
 
-	@Inject
-	private DataStore dataStore;
+    @Inject
+    private DataStore dataStore;
 
-	@GET
-	public boolean initRequest() {
+    @GET
+    public boolean initRequest() {
 
-		this.dataStore.setAutoCloseSession(false);
+        this.dataStore.setAutoCloseSession(false);
 
-		WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profile").queryParam("token",
-				this.config.getDfvApi().getToken()).queryParam("secret",
-						this.config.getDfvApi().getSecret());
+        WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profile")
+                .queryParam("token", this.config.getDfvApi().getToken())
+                .queryParam("secret", this.config.getDfvApi().getSecret());
 
-		Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
+        Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 
-		List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {
-		});
+        List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {
+        });
 
-		this.dataStore.refreshDfvNames(response);
-		this.dataStore.closeSession();
+        this.dataStore.refreshDfvNames(response);
+        this.dataStore.closeSession();
 
-		return true;
-	}
+        return true;
+    }
 
 }
