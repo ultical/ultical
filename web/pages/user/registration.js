@@ -55,6 +55,10 @@ angular.module('ultical.user', [])
 				}
 				$alert({title: $translate.instant('user.registration.success.title'), content: alertContent, container: '#pageAlertSpace', placement: 'top', type: 'success', show: true});
 
+				// overwrite plain text passwords
+				$scope.user.password = 'XXX';
+				$scope.user.passwordCheck = 'XXX';
+
 				$scope.$hide();
 			}
 		});

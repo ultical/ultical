@@ -28,7 +28,6 @@
     "angular-strap": "*",
     "angular-animate": "*",
     "angular-motion": "*",
-    "angular-bcrypt":"*",
     "bootstrap": "*",
     "respond": "*",
     "fontawesome": "*"
