@@ -16,7 +16,7 @@ angular.extend(CONFIG_OBJECT, {
 	},
 
 	registration: {
-		minPasswordLength: 8,
+		minPasswordLength: 10,
 	},
 
 	api: {
