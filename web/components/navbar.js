@@ -1,14 +1,20 @@
 'use strict';
 
 //nav bar controller
-app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state',
-                              function($scope, CONFIG, $filter, $translate, $state) {
+app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer',
+                              function($scope, CONFIG, $filter, $translate, $state, authorizer) {
 
 	$scope.version = '0.1';
 
 	$scope.$state = $state;
-	
-	$scope.loggedIn = false;
+
+	$scope.loggedIn = function() {
+		return authorizer.loggedIn();
+	}
+
+	$scope.getUser = function() {
+		return authorizer.getUser();
+	}
 
 	/* *** Menu ***/
 	$scope.eventDropdown =
@@ -27,6 +33,21 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 
 	$scope.createEvent = function() {
 		console.log("Create an event");
+	};
+
+	$scope.profileDropdown =
+		[{
+			'text': $translate.instant('nav.profileDropdown.ownTeams'),
+			'click': 'goTo("teamsOwn")',
+		},
+		{
+			'text': $translate.instant('nav.profileDropdown.ownEvents'),
+			'href': $state.href('eventsList'),
+		},
+		];
+
+	$scope.goTo = function(stateName) {
+		$state.go(stateName);
 	};
 
 	/* *** Language Selector ****/

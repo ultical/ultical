@@ -1,6 +1,7 @@
 'use strict';
 
-app.factory('serverApi', ['CONFIG', '$http', function(CONFIG, $http) {
+app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'Authorizer', 
+                          function(CONFIG, $http, Base64, Authorizer) {
 
 	function get(resource, successCallback, errorCallback, includeHeader) {
 		doHttp(resource, 'GET', null, successCallback, errorCallback, includeHeader);
@@ -16,9 +17,14 @@ app.factory('serverApi', ['CONFIG', '$http', function(CONFIG, $http) {
 				url: CONFIG.api.hostname + '/' + resource,
 		};
 
+		if (authorizer.loggedIn()) {
+			config.headers = { Authorization: 'Basic ' + Base64.encode(authorizer.getUser().email + ':' + authorizer.getUser().password)};
+		}
+
 		if (method != 'GET') {
 			config.data = data;
 		}
+
 		$http(config).then(
 				function (response) {
 					// success callback
@@ -55,14 +61,26 @@ app.factory('serverApi', ['CONFIG', '$http', function(CONFIG, $http) {
 		getEvents: function(callback) {
 			get('events', callback);
 		},
-		
+
 		getTeam: function(teamId, callback) {
-			get('team/' + teamId, callback);
+			get('teams/' + teamId, callback);
+		},
+
+		getAllTeams: function(callback) {
+			get('teams', callback);
+		},
+
+		getOwnTeams: function(callback) {
+			get('teams/own', callback);
 		},
 
 		registerUser: function(user, callback) {
 			post('register', user, callback);
 		},
+
+		login: function(user, callback) {
+			post('auth', user, callback);
+		}
 	};
 
 }]);

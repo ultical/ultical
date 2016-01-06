@@ -14,6 +14,7 @@ var TRANSLATIONS_DE = {
 		nav: {
 			title: 'UltiCal',
 			login: 'Login',
+			loginFail: 'Email oder Passwort fehlerhaft!',
 			register: 'Registrieren',
 			eventDropdown: {
 				label: 'Turniere',
@@ -21,6 +22,10 @@ var TRANSLATIONS_DE = {
 				listEvents: 'Turniere anzeigen',
 			},
 			teams: 'Teams',
+			profileDropdown: {
+				ownTeams: 'Meine Teams',
+				ownEvents: 'Meine Turniere',
+			},
 		},
 		
 		season: {

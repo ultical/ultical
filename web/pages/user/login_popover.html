@@ -1,0 +1,26 @@
+<div class="popover" tabindex="-1" ng-controller="LoginCtrl" id="login-popover" ng-class="{ 'login-error': loginFail}">
+	<div class="arrow"></div>
+	<!-- 	<h3 class="popover-title"></h3> -->
+	<div class="popover-content" id="login-popover-content">
+		<div class="row margin-bottom error-text" ng-if="loginFail">
+			<div class="col-sm-12">
+				{{ 'nav.loginFail' | translate }}				
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<input type="text" ng-model="login.email" placeholder="{{ 'general.email' | translate }}" />
+			</div>
+		</div>
+		<div class="row margin-top-small margin-bottom">
+			<div class="col-sm-12">
+				<input type="password" ng-model="login.password" placeholder="{{ 'user.password' | translate }}" />
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<div class="btn btn-default" ng-click="doLogin(login)">{{ 'nav.login' | translate }}</div>
+			</div>
+		</div>
+	</div>
+</div>

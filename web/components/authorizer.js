@@ -2,8 +2,20 @@
 
 app.factory('authorizer', [function() {
 
+	// init structures
+	var activeUser = {};
+
 	return  {
-		// init structures
-		activeUser: {},
+		setUser: function(user) {
+			this.activeUser = user;
+		},
+
+		getUser: function() {
+			return this.activeUser;
+		},
+
+		loggedIn: function() {
+			return !isEmpty(this.activeUser);
+		},
 	};
 }]);

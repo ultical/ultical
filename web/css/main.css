@@ -51,7 +51,8 @@
 }
 
 .navbar-button-strong {
-	background-color: #DBEBFB;
+	background-color: #D9EDF7;
+/* 	#DBEBFB; */
 }
 
 .navbar-button-strong:hover {
@@ -72,4 +73,21 @@
 	padding: 0 0 5px 0;
 }
 
-info
+#login-popover {
+	background-color: #D9EDF7;
+}
+#login-popover.login-error {
+	background-color: #E49B9B;
+}
+
+#login-popover input {
+	width: 100%;
+}
+
+#login-popover-content {
+	width: 250px;
+}
+
+#login-popover-content .error-text {
+	color: white;
+}
