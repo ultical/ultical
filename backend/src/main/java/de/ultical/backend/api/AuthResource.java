@@ -33,14 +33,16 @@ public class AuthResource {
         }
 
         User foundUser = this.dataStore.getUserByEmail(requestedUser.getEmail());
-        System.out.println("Requested User" + requestedUser);
 
-        if (BCrypt.checkpw(requestedUser.getPassword(), foundUser.getPassword())) {
-            System.out.println("TRUE");
-            return foundUser;
+        if (foundUser == null) {
+            return null;
         }
 
-        return null;
+        if (!BCrypt.checkpw(requestedUser.getPassword(), foundUser.getPassword())) {
+            return null;
+        }
+
+        return foundUser;
     }
 
 }
