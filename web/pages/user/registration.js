@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('ultical.user', [])
+angular.module('ultical.user')
 
 .controller('RegistrationCtrl', ['$scope', 'serverApi', 'CONFIG', '$alert', '$translate',
                                  function($scope, serverApi, CONFIG, $alert, $translate) {
@@ -8,7 +8,7 @@ angular.module('ultical.user', [])
 	$scope.minPasswordLength = CONFIG.registration.minPasswordLength;
 	$scope.error = {};
 	$scope.registrationPending = false;
-	
+
 	$scope.user = {
 			dob: {day: '01', month: '01', year: '1990' },
 			getDob: function() {
@@ -21,6 +21,8 @@ angular.module('ultical.user', [])
 			$scope.error.personals = true;
 			return;
 		}
+
+		$scope.registrationPending = true;
 
 		if ($scope.user.password != $scope.user.passwordCheck ||
 				$scope.user.password.length < CONFIG.general.minPasswordLength) {
@@ -41,10 +43,8 @@ angular.module('ultical.user', [])
 		}
 
 		$scope.registrationPending = true;
-		
-		serverApi.registerUser(userRequest, function(userResponse) {
-			$scope.registrationPending = false;
 
+		serverApi.registerUser(userRequest, function(userResponse) {
 			if (userResponse.status != 'SUCCESS') {
 				// registration was not successful
 				createError(userResponse.status.toLowerCase());
@@ -56,11 +56,13 @@ angular.module('ultical.user', [])
 				$alert({title: $translate.instant('user.registration.success.title'), content: alertContent, container: '#pageAlertSpace', placement: 'top', type: 'success', show: true});
 
 				// overwrite plain text passwords
-				$scope.user.password = 'XXX';
-				$scope.user.passwordCheck = 'XXX';
-
+				$scope.user.password = '';
+				$scope.user.passwordCheck = '';
+				console.log("userResponse", userResponse);
 				$scope.$hide();
 			}
+
+			$scope.registrationPending = false;
 		});
 	};
 
