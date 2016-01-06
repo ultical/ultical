@@ -19,5 +19,5 @@ public class UltiCalConfig extends Configuration {
     @NotNull
     private DataSourceFactory database;
 
-    private CacheBuilderSpec authenticationCache = CacheBuilderSpec.parse(""); // maximumSize:1000");
+    private CacheBuilderSpec authenticationCache = CacheBuilderSpec.parse("maximumSize = 1000");
 }
