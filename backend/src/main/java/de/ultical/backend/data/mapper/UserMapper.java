@@ -58,14 +58,14 @@ public interface UserMapper extends BaseMapper<User> {
             "FROM ULTICAL_USER u", "WHERE u.email = #{eMail}" })
     @Results({ @Result(column = "id"), @Result(column = "email_confirmed", property = "emailConfirmed"),
             @Result(column = "dfv_email_opt_in", property = "dfvEmailOptIn"),
-            @Result(column = "{id=dfv_player}", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ) })
+            @Result(column = "{dfv_player}", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ) })
     User getByEmail(final String eMail);
 
     @Select({ "SELECT u.id, u.email, u.password, u.email_confirmed, u.dfv_email_opt_in, u.version",
             "FROM ULTICAL_USER u", "WHERE u.dfv_player = #{dfvPlayerId}" })
     @Results({ @Result(column = "email_confirmed", property = "emailConfirmed"),
             @Result(column = "dfv_email_opt_in", property = "dfvEmailOptIn"),
-            @Result(column = "{id=dfv_player}", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ) })
+            @Result(column = "{dfv_player}", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ) })
     User getByDfvPlayer(final int dfvPlayerId);
 
 }
