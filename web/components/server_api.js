@@ -1,7 +1,7 @@
 'use strict';
 
-app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'Authorizer', 
-                          function(CONFIG, $http, Base64, Authorizer) {
+app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', 
+                          function(CONFIG, $http, Base64, authorizer) {
 
 	function get(resource, successCallback, errorCallback, includeHeader) {
 		doHttp(resource, 'GET', null, successCallback, errorCallback, includeHeader);
@@ -25,11 +25,21 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'Authorizer',
 			config.data = data;
 		}
 
+		if (CONFIG.debug) {
+			console.log("API Request", config.method, config.url);
+		}
+
 		$http(config).then(
 				function (response) {
+					if (CONFIG.debug) {
+						console.log("API Response", response.data);
+					}
 					// success callback
 					callCallback(successCallback, response, includeHeader);
 				}, function (response) {
+					if (CONFIG.debug) {
+						console.log("API fail");
+					}
 					// error callback
 					callCallback(errorCallback, response, includeHeader);
 				}

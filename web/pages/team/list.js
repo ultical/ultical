@@ -2,22 +2,36 @@
 
 angular.module('ultical.team', [])
 
-.controller('TeamListCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter',
-                              function($scope, $stateParams, storage, $state, $filter) {
+.controller('TeamListCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer',
+                             function($scope, $stateParams, storage, $state, $filter, authorizer) {
 
-	$scope.tabs = { activeTab: 'own' };
+	$scope.loggedIn = function() {
+		return authorizer.loggedIn();
+	}
 
-	
-//	if ($stateParams.teamId == 'new') {
-//		$scope.create = true;
-//		$scope.teamToEdit = {};
-//	} else {
-//		$scope.create = false;
-//		// get team
-//		storage.getTeam($stateParams.teamId, function(team) {
-//			$scope.teamToEdit = team;
-//		});
-//	}
+	// make sure we are directly at the right tab ('own' or 'all')
+	$scope.tabs = { activeTab: $stateParams.activeTab ? $stateParams.activeTab: 'all' };
+
+	$scope.teams = [];
+
+	$scope.$watch('tabs.activeTab', function() {
+		getTeams();
+	});
+
+	$scope.teamOrder = 'name';
+
+	// get teams
+	function getTeams() {
+		if ($scope.tabs.activeTab == 'all') {
+			storage.getAllTeams(function(teams) {
+				$scope.teams = teams;
+			});
+		} else {
+			storage.getOwnTeams(function(teams) {
+				$scope.teams = teams;
+			});
+		};
+	}
 
 
 }]);

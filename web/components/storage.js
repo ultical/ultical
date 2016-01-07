@@ -1,7 +1,7 @@
 'use strict';
 
-app.factory('storage', ['$filter', 'serverApi',
-                        function($filter, serverApi) {
+app.factory('storage', ['$filter', 'serverApi', 'authorizer',
+                        function($filter, serverApi, authorizer) {
 
 	var returnObject = {
 			// init structures
@@ -9,18 +9,20 @@ app.factory('storage', ['$filter', 'serverApi',
 				event: {},
 			},
 
+			own: {
+				teams: [],
+			},
 			events: {},
-			teams: {},
+			teams: [],
 			tournamentEditions: {},
 			tournamentFormats: {},
 
-			user: {
-				own: {
-					teams: {},
-					tournaments: {},
-				},
-			},
-			
+			teamsIndexed: {},
+			userIndexed: {},
+			playerIndexed: {},
+			rosterIndexed: {},
+			seasonIndexed: {},
+
 			getEmptyEvent: function() {
 				return createEmptyEvent();
 			},
@@ -37,10 +39,35 @@ app.factory('storage', ['$filter', 'serverApi',
 				var that = this;
 				serverApi.getTeam(teamId, function(team) {
 					that.teams[team.id] = team;
+					storeTeam(that, team);
 					callback(team);
 				});
 			},
-			
+
+			getAllTeams: function(callback) {
+				var that = this;
+				callback(that.teams);
+				serverApi.getAllTeams(function(teams) {
+					that.teams = teams;
+					angular.forEach(teams, function(team) {
+						storeTeam(that, team);
+					});
+					callback(that.teams);
+				});
+			},
+
+			getOwnTeams: function(callback) {
+				var that = this;
+				callback(that.own.teams);
+				serverApi.getOwnTeams(function(teams) {
+					that.own.teams = teams;
+					angular.forEach(teams, function(team) {
+						storeTeam(that, team);
+					});
+					callback(that.own.teams);
+				});
+			},
+
 			getEvent: function(eventId, callback) {
 				this.getEvents(function(events) {
 					var foundEvent = null;
@@ -60,20 +87,71 @@ app.factory('storage', ['$filter', 'serverApi',
 					serverApi.getEvents(function(data) {
 
 						// add some fields
-						var todayDateString = $filter('date')(new Date(), 'yyyy-MM-dd');
-
 						angular.forEach(data, function(event) {
 							storeEvent(that, event);
 						});
-
-						console.log("events", that.events);
 
 						callback(that.events);
 					});
 				} else {
 					callback(this.events);
 				}
+			},
+	}
+
+	function storeTeam(that, team) {
+		that.teamsIndexed[team.id] = team;
+
+		angular.forEach(team.admins, function(admin, idx) {
+			if (angular.isObject(admin)) {
+				storeUser(that, admin);
+			} else {
+				team.admins[idx] = that.userIndexed[admin];
 			}
+		});
+
+		angular.forEach(team.rosters, function(roster, idx) {
+			if (angular.isObject(roster)) {
+				storeRoster(that, roster);
+			} else {
+				team.rosters[idx] = that.rosterIndexed[roster];
+			}
+		});
+	}
+
+	function storeRoster(that, roster) {
+		// add team?
+		if (angular.isObject(roster.season)) {
+			storeSeason(that, roster.season);
+		} else {
+			roster.season = that.seasonIndexed[roster.season];
+		}
+
+		angular.forEach(roster.players, function(player, idx) {
+			if (angular.isObject(player)) {
+				storePlayer(that, player);
+			} else {
+				roster.players[idx] = that.playerIndexed[player];
+			}
+		});
+	}
+
+	function storeSeason(that, season) {
+		that.seasonIndexed[season.id] = season;
+	}
+
+	function storeUser(that, user) {
+		that.userIndexed[user.id] = user;
+
+		if (angular.isObject(user.dfvPlayer)) {
+			storePlayer(that, user.dfvPlayer);
+		} else {
+			user.dfvPlayer = that.playerIndexed[user.dfvPlayer];
+		}
+	}
+
+	function storePlayer(that, player) {
+		that.playerIndexed[player.id] = player;
 	}
 
 	function storeEvent(that, event) {
@@ -89,11 +167,14 @@ app.factory('storage', ['$filter', 'serverApi',
 			}
 		}
 
+		var todayDateString = $filter('date')(new Date(), 'yyyy-MM-dd');
+
 		event.tournamentEdition.registrationIsOpen = !isEmpty(event.tournamentEdition.registrationStart) && event.tournamentEdition.registrationStart.string <= todayDateString && event.tournamentEdition.registrationEnd.string >= todayDateString;
 		event.tournamentEdition.registrationTime = isEmpty(event.tournamentEdition.registrationStart) ? 'never' : (event.tournamentEdition.registrationStart.string > todayDateString ? 'future' : 'past');
 
 		var hasEditionFee = false;
 		var hasEventFee = false;
+
 		angular.forEach(['Player', 'Team', 'Guest'], function(feeType) {
 			if (event.tournamentEdition['feePer' + feeType] != 0) {
 				hasEditionFee = true;

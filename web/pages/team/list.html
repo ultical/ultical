@@ -9,26 +9,77 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="margin-top" bs-active-pane="tabs.activeTab" bs-tabs>
-				<div bs-pane title="{{ 'team.list.own' | translate }}" name="own">
-				<div class="row margin-top-big">
-				<div class="col-md-12">
-				<div class="btn btn-info" ng-click="createNewTeam()">
-					{{ 'team.list.newTeam' | translate }}
-				</div>
-				</div>
-				</div>
-				
-				<div class="row margin-top">
-				<div class="col-md-12">
-				</div>
-				</div>
-				
-				</div>
-
+				<div ng-if="loggedIn()" bs-pane title="{{ 'team.list.own' | translate }}" name="own"></div>
 				<div bs-pane title="{{ 'team.list.all' | translate }}" name="all"></div>
 			</div>
-
 		</div>
 	</div>
 
+	<div class="row margin-top-big ffade-in" ng-show="tabs.activeTab == 'own'">
+		<div class="col-md-12">
+			<div class="btn btn-info" ng-click="createNewTeam()">{{ 'team.list.newTeam' | translate }}</div>
+		</div>
+	</div>
+
+	<div class="row margin-top">
+		<div class="col-md-12">
+
+			<div class="panel-group" ng-model="panel.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
+				<div class="panel panel-default" ng-repeat="team in teams | orderBy : teamOrder">
+					<div class="panel-heading" role="tab">
+						<h4 class="panel-title">
+							<a bs-collapse-toggle>{{ team.name }}</a>
+						</h4>
+					</div>
+					<div class="panel-collapse" role="tabpanel" bs-collapse-target>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-md-12">{{team.description }}</div>
+							</div>
+							<div class="row margin-top" ng-show="team.foundingDate != 0">
+								<div class="col-md-12">{{ 'team.foundingDate' | translate }} {{ team.foundingDate }}</div>
+							</div>
+							<div class="row margin-top">
+								<div class="col-md-12">
+									{{ 'team.admins' | translate }}:
+									<bas ng-repeat="admin in team.admins">{{ admin.dfvPlayer != null ? admin.dfvPlayer.firstName : admin.email }}{{ $last ? '' : ', ' }}</bas>
+								</div>
+							</div>
+
+							<!-- ROSTERS -->
+							<div class="row margin-top" ng-if="team.rosters.length > 0">
+								<div class="col-md-12">{{ 'team.rosters' | translate }}</div>
+							</div>
+
+							<div class="row margin-top-small" ng-if="team.rosters.length > 0">
+								<div class="col-md-12">
+
+									<div class="panel-group" ng-model="panels[team.id].activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
+										<div class="panel panel-default" ng-repeat="roster in team.rosters | orderBy : 'season.year'">
+											<div class="panel-heading" role="tab">
+												<h4 class="panel-title">
+													<a bs-collapse-toggle>{{ roster.season | season : true }}</a>
+												</h4>
+											</div>
+											<div class="panel-collapse" role="tabpanel" bs-collapse-target>
+												<div class="panel-body">
+
+													<div class="row">
+														<div class="col-md-12">
+															<div ng-repeat="player in roster.players">{{ player.firstName}} {{ player.lastName }}</div>
+
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

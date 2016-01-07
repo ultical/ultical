@@ -41,9 +41,19 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		url: "/event/{eventId:int}/show",
 		templateUrl: "pages/event/show.html?v="+version,
 	})
-	.state('teamList', {
+	.state('teamsList', {
 		url: "/teams",
 		templateUrl: "pages/team/list.html?v="+version,
+		params: {
+			activeTab: 'all',
+		},
+	})
+	.state('teamsOwn', {
+		url: "/teams",
+		templateUrl: "pages/team/list.html?v="+version,
+		params: {
+			activeTab: 'own',
+		},
 	});
 
 	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|blob):/);

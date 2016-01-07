@@ -53,7 +53,7 @@ public class TeamResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("own/")
+    @Path("own")
     public List<Team> get(@Auth User user) {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);

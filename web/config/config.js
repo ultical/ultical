@@ -23,5 +23,6 @@ angular.extend(CONFIG_OBJECT, {
 		hostname: 'http://localhost:8765',
 	},
 
+	debug: true,
 
 });

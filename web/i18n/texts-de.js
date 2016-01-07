@@ -29,9 +29,11 @@ var TRANSLATIONS_DE = {
 		},
 		
 		season: {
-			season: "Saison",
-			indoor: "Indoor",
-			outdoor: "",
+			season: 'Saison',
+			indoor: 'Indoor',
+			indoorFullName: 'Indoor',
+			outdoor: '',
+			outdoorFullName: 'Outdoor',
 		},
 		
 		start: {
@@ -106,5 +108,8 @@ var TRANSLATIONS_DE = {
 				newTeam: 'Neues Team erstellen',
 				save: 'Team speichern',
 			},
+			foundingDate: 'Gegründet',
+			admins: 'Admins',
+			rosters: 'Roster pro Saison',
 		},
 };

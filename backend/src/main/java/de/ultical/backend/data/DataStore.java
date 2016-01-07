@@ -19,11 +19,13 @@ import de.ultical.backend.data.mapper.DfvPlayerMapper;
 import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
 import de.ultical.backend.data.mapper.PlayerMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
+import de.ultical.backend.data.mapper.TeamMapper;
 import de.ultical.backend.data.mapper.UserMapper;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.Identifiable;
 import de.ultical.backend.model.Season;
+import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TournamentEdition;
 import de.ultical.backend.model.User;
 
@@ -269,6 +271,11 @@ public class DataStore {
         }
         result = updateCount == 1;
         return result;
+    }
+
+    public List<Team> getTeamsByUser(int userId) {
+        TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+        return teamMapper.getByUser(userId);
     }
 
     public void storeDfvPlayer(DfvPlayer dfvPlayer) {

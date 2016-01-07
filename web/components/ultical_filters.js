@@ -50,16 +50,19 @@ app.filter('matchdayname', ['$translate', function ($translate) {
 }]);
 
 app.filter('season', ['$translate', function($translate) {
-	return function(season) {
+	return function(season, fullName) {
 		if (isEmpty(season)) {
 			return '';
+		}
+		if (undefined === fullName) {
+			fullName = false;
 		}
 
 		var seasonString = '';
 		if (season.surface == 'GYM') {
-			seasonString += $translate.instant('season.indoor');
+			seasonString += $translate.instant(fullName ? 'season.indoorFullName' : 'season.indoor');
 		} else {
-			seasonString += $translate.instant('season.outdoor');
+			seasonString += $translate.instant(fullName ? 'season.outdoorFullName' : 'season.outdoor');
 		}
 		seasonString += ' ' + season.year;
 
