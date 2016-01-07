@@ -54,6 +54,14 @@ public interface UserMapper extends BaseMapper<User> {
             @Result(column = "dfv_player", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ) })
     List<User> getAdminsForFormat(int formatId);
 
+    @Select({ "SELECT u.id, u.email, u.password, u.email_confirmed, u.dfv_email_opt_in, u.version, u.dfv_player",
+            "FROM TEAM_ULTICAL_USERS tuu LEFT JOIN ULTICAL_USER u", "ON tuu.admin = u.id",
+            "WHERE tuu.team = #{teamId}" })
+    @Results({ @Result(column = "email_confirmed", property = "emailConfirmed"),
+            @Result(column = "dfv_email_opt_in", property = "dfvEmailOptIn"),
+            @Result(column = "dfv_player", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ) })
+    List<User> getAdminsForTeam(int teamId);
+
     @Select({ "SELECT u.id, u.email, u.password, u.email_confirmed, u.dfv_email_opt_in, u.version",
             "FROM ULTICAL_USER u", "WHERE u.email = #{eMail}" })
     @Results({ @Result(column = "id"), @Result(column = "email_confirmed", property = "emailConfirmed"),

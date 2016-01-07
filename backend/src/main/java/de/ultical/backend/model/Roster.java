@@ -6,7 +6,9 @@ import lombok.Data;
 
 @Data
 public class Roster {
-	private Team team;
-	private Season season;
-	private Set<Player> players;
+    private Team team;
+    private Season season;
+    private DivisionAge divisionAge;
+    private DivisionType divisionType;
+    private Set<Player> players;
 }

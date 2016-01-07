@@ -44,4 +44,7 @@ public interface PlayerMapper extends BaseMapper<Player> {
     @TypeDiscriminator(column = "is_registered", javaType = Boolean.class, jdbcType = JdbcType.BOOLEAN, cases = {
             @Case(type = DfvPlayer.class, value = "true"), @Case(type = UnregisteredPlayer.class, value = "false") })
     List<Player> getAll();
+
+    @Select("SELECT id, version, first_name as firstName, last_name as lastName, email, gender, birth_date as birthDate, dfv_number as dfvNumber, is_registered FROM ROSTER_PLAYERS rp, PLAYER p LEFT JOIN DFV_PLAYER ON p.id = DFV_PLAYER.player_id LEFT JOIN UNREGISTERED_PLAYER ON p.id = UNREGISTERED_PLAYER.player_id WHERE p.id = rp.player AND rp.roster = 1")
+    List<Player> getByRoster();
 }

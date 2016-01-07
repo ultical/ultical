@@ -2,25 +2,46 @@ package de.ultical.backend.data.mapper;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Many;
+import org.apache.ibatis.annotations.One;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import de.ultical.backend.model.Team;
 
 public interface TeamMapper extends BaseMapper<Team> {
 
-	@Insert("INSERT INTO TEAM (name) VALUES #{name}")
-	@Options(keyProperty = "id", useGeneratedKeys = true)
-	Integer insert(Team team);
+    @Override
+    @Insert("INSERT INTO TEAM (name, description, founding_date, location) VALUES #{name}, #{description}, #{foundingDate}, #{location.id}")
+    @Options(keyProperty = "id", useGeneratedKeys = true)
+    Integer insert(Team team);
 
-	@Select("SELECT * FROM TEAM WHERE id=#{id}")
-	Team get(int id);
+    @Override
+    @Select("SELECT * FROM TEAM WHERE id=#{id}")
+    @Results({ @Result(column = "founding_date", property = "foundingDate"),
+            @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
+            @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
+            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
+    Team get(int id);
 
-	@Select("SELECT * FROM TEAM")
-	List<Team> getAll();
+    @Override
+    @Select("SELECT * FROM TEAM")
+    @Results({ @Result(column = "founding_date", property = "foundingDate"),
+            @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
+            @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
+            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
+    List<Team> getAll();
 
-	@Update("UPDATE TEAM SET version=version+1, name=#{name} WHERE version=#{version} AND id=#{id}")
-	Integer update(Team t);
+    @Override
+    @Update("UPDATE TEAM SET version=version+1, name=#{name}, description=#{description}, founding_date=#{foundingDate}, location=#{location.id} WHERE version=#{version} AND id=#{id}")
+    Integer update(Team t);
 
-	@Delete("DELETE FORM TEAM WHERE id=#{id}")
-	void delete(Team t);
+    @Override
+    @Delete("DELETE FORM TEAM WHERE id=#{team.id}")
+    void delete(Team team);
 }

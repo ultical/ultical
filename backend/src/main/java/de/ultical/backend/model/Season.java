@@ -5,14 +5,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 public class Season extends Identifiable {
-	private Surface surface;
-	private int year;
-	private boolean plusOneYear = false;
-	
-	@Override
-	public Class<SeasonMapper> getMapper() {
-		return SeasonMapper.class;
-	}
+    private Surface surface;
+    private int year;
+    private boolean plusOneYear = false;
+
+    @Override
+    public Class<SeasonMapper> getMapper() {
+        return SeasonMapper.class;
+    }
 }
