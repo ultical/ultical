@@ -18,14 +18,20 @@ public interface RosterMapper extends BaseMapper<Roster> {
 
     @Override
     @Select({ SELECT_STMT, "WHERE id = #{id}" })
-    @Results({ @Result(column = "division_age", property = "division_age"),
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "division_age"),
             @Result(column = "division_type", property = "division_type"),
             @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
-            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.PlayersMapper.getByRoster") ) })
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.PlayerMapper.getByRoster") ) })
     Roster get(int id);
 
     @Override
     @Select(SELECT_STMT)
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "division_age"),
+            @Result(column = "division_type", property = "division_type"),
+            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.PlayerMapper.getByRoster") ) })
     List<Roster> getAll();
 
     @Override
@@ -37,10 +43,11 @@ public interface RosterMapper extends BaseMapper<Roster> {
     Integer update(Roster entity);
 
     @Select({ SELECT_STMT, "WHERE team = #{teamId}" })
-    @Results({ @Result(column = "division_age", property = "division_age"),
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "division_age"),
             @Result(column = "division_type", property = "division_type"),
             @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
-            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.PlayersMapper.getByRoster") ) })
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.PlayerMapper.getByRoster") ) })
     List<Roster> getForTeam(Integer teamId);
 
 }

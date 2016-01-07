@@ -23,7 +23,9 @@ public interface TeamMapper extends BaseMapper<Team> {
 
     @Override
     @Select("SELECT * FROM TEAM WHERE id=#{id}")
-    @Results({ @Result(column = "founding_date", property = "foundingDate"),
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "description", property = "description"), @Result(column = "name", property = "name"),
+            @Result(column = "founding_date", property = "foundingDate"),
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
             @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
@@ -31,7 +33,9 @@ public interface TeamMapper extends BaseMapper<Team> {
 
     @Override
     @Select("SELECT * FROM TEAM")
-    @Results({ @Result(column = "founding_date", property = "foundingDate"),
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "description", property = "description"), @Result(column = "name", property = "name"),
+            @Result(column = "founding_date", property = "foundingDate"),
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
             @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })

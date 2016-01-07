@@ -21,5 +21,4 @@ public class Team extends Identifiable {
     public Class<TeamMapper> getMapper() {
         return TeamMapper.class;
     }
-
 }
