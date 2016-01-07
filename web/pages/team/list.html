@@ -55,10 +55,10 @@
 								<div class="col-md-12">
 
 									<div class="panel-group" ng-model="panels[team.id].activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
-										<div class="panel panel-default" ng-repeat="roster in team.rosters | orderBy : 'season.year'">
+										<div class="panel panel-default" ng-repeat="roster in team.rosters | orderBy : ['season.year', 'season.plusOneYear']">
 											<div class="panel-heading" role="tab">
 												<h4 class="panel-title">
-													<a bs-collapse-toggle>{{ roster.season | season : true }}</a>
+													<a bs-collapse-toggle>{{ roster | division }} - {{ roster.season | season : true }}</a>
 												</h4>
 											</div>
 											<div class="panel-collapse" role="tabpanel" bs-collapse-target>

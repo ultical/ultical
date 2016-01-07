@@ -74,3 +74,21 @@ app.filter('season', ['$translate', function($translate) {
 		return seasonString;
 	}
 }]);
+
+app.filter('division', ['$translate', function($translate) {
+	return function(obj) {
+		if (isEmpty(obj) || isEmpty(obj.divisionAge) || isEmpty(obj.divisionType)) {
+			return '';
+		}
+
+		var divisionString = '';
+
+		var divAgeStr = $translate.instant('division.' + obj.divisionAge.toLowerCase());
+		if (divAgeStr.length > 0) {
+			divAgeStr = ' ' + divAgeStr;
+		}
+		divisionString += $translate.instant('division.' + obj.divisionType.toLowerCase()) + divAgeStr;
+
+		return divisionString;
+	}
+}]);

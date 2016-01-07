@@ -27,7 +27,7 @@ var TRANSLATIONS_DE = {
 				ownEvents: 'Meine Turniere',
 			},
 		},
-		
+
 		season: {
 			season: 'Saison',
 			indoor: 'Indoor',
@@ -35,15 +35,28 @@ var TRANSLATIONS_DE = {
 			outdoor: '',
 			outdoorFullName: 'Outdoor',
 		},
-		
+
+		division: {
+			u14: 'U14',
+			u17: 'U17',
+			u20: 'Juniors',
+			u23: 'U23',
+			regular: '',
+			masters: 'Masters',
+			grandmasters: 'Grandmasters',
+			open: 'Open',
+			women: 'Damen',
+			mixed: 'Mixed',
+		},
+
 		start: {
-			
+
 		},
-		
+
 		tournaments: {
-			
+
 		},
-		
+
 		user: {
 			registration: {
 				title: 'Neuen Benutzer registrieren',
@@ -75,7 +88,7 @@ var TRANSLATIONS_DE = {
 			password: 'Passwort',
 			passwordCheck: 'Passwort wiederholen',
 		},
-		
+
 		event: {
 			list: {
 				title: 'Turniere',
@@ -99,7 +112,7 @@ var TRANSLATIONS_DE = {
 			feePerDinner: 'Pro Abendessen',
 			feePerNight: 'Pro Nacht',
 		},
-		
+
 		team: {
 			list: {
 				title: 'Teams',
