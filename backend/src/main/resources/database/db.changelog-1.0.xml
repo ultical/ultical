@@ -314,6 +314,9 @@
 			<column name="id" type="BIGINT" autoIncrement="true">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
+			<column name="description" type="TEXT" />
+			<column name="founding_date" type="INT" />
+			<column name="location" type="BIGINT"></column>
 			<column name="version" type="BIGINT" defaultValueNumeric="1">
 				<constraints nullable="false" />
 			</column>
@@ -321,6 +324,9 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+		<addForeignKeyConstraint constraintName="fk_team_location"
+			referencedTableName="LOCATION" baseColumnNames="location"
+			baseTableName="TEAM" referencedColumnNames="id" />
 	</changeSet>
 	<changeSet id="15" author="basil">
 		<addForeignKeyConstraint constraintName="fk_team_registration_team"
@@ -346,5 +352,62 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+	</changeSet>
+	<changeSet id="18" author="bas">
+		<createTable tableName="TEAM_ULTICAL_USERS">
+			<column name="team" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="admin" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_team_ultical_users_ultical_users"
+					referencedColumnNames="id" referencedTableName="ULTICAL_USER" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="fk_team_ultical_users_team"
+			referencedTableName="TEAM" baseColumnNames="team" baseTableName="TEAM_ULTICAL_USERS"
+			referencedColumnNames="id" onDelete="CASCADE" />
+	</changeSet>
+	<changeSet id="19" author="bas">
+		<createTable tableName="ROSTER">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="version" type="BIGINT" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="team" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="season" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_roster_season"
+					referencedColumnNames="id" referencedTableName="SEASON" />
+			</column>
+			<column name="division_age" type="VARCHAR(12)">
+				<constraints nullable="false" />
+			</column>
+			<column name="division_type" type="VARCHAR(5)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="fk_roster_team"
+			referencedTableName="TEAM" baseColumnNames="team" baseTableName="ROSTER"
+			referencedColumnNames="id" onDelete="CASCADE" />
+		<addUniqueConstraint columnNames="team, season, division_type, division_age"
+			tableName="ROSTER" />
+	</changeSet>
+	<changeSet id="20" author="bas">
+		<createTable tableName="ROSTER_PLAYERS">
+			<column name="roster" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="player" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_roster_players_player"
+					referencedColumnNames="id" referencedTableName="PLAYER" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="fk_roster_players_roster"
+			referencedTableName="ROSTER" referencedColumnNames="id"
+			baseTableName="ROSTER_PLAYERS" baseColumnNames="roster" onDelete="CASCADE" />
 	</changeSet>
 </databaseChangeLog>
