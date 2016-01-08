@@ -26,6 +26,7 @@ import de.ultical.backend.api.TeamResource;
 import de.ultical.backend.api.TempInitResource;
 import de.ultical.backend.api.TournamentFormatResource;
 import de.ultical.backend.api.TournamentResource;
+import de.ultical.backend.api.UserResource;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.LocalDateMixIn;
 import de.ultical.backend.data.mapper.UserMapper;
@@ -141,6 +142,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         env.jersey().register(RegisterResource.class);
         env.jersey().register(AuthResource.class);
         env.jersey().register(DivisionResource.class);
+        env.jersey().register(UserResource.class);
 
         /*
          * Authentication stuff. Basically the authenticator looks up the

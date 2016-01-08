@@ -369,8 +369,6 @@ public class DataStore {
         UserMapper userMapper = this.sqlSession.getMapper(UserMapper.class);
         User user = userMapper.getByEmail(email);
 
-        // TODO: get and assign corresponding dfvPlayer
-
         // set autoclose to original value
         this.setAutoCloseSession(orgCloseSession);
 
@@ -379,6 +377,18 @@ public class DataStore {
         }
 
         return user;
+    }
+
+    public List<User> findUser(String searchString) {
+        try {
+            UserMapper userMapper = this.sqlSession.getMapper(UserMapper.class);
+            return userMapper.find(searchString);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+
     }
 
     public void deleteDivision(final DivisionRegistration reg) {
