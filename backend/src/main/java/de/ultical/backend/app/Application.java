@@ -18,6 +18,7 @@ import com.google.common.base.Optional;
 
 import de.spinscale.dropwizard.jobs.JobsBundle;
 import de.ultical.backend.api.AuthResource;
+import de.ultical.backend.api.DivisionResource;
 import de.ultical.backend.api.EventsResource;
 import de.ultical.backend.api.RegisterResource;
 import de.ultical.backend.api.SeasonResource;
@@ -139,6 +140,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         env.jersey().register(TempInitResource.class);
         env.jersey().register(RegisterResource.class);
         env.jersey().register(AuthResource.class);
+        env.jersey().register(DivisionResource.class);
 
         /*
          * Authentication stuff. Basically the authenticator looks up the

@@ -56,7 +56,7 @@ public class EventsResource {
     @GET
     @Path("/{eventId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Event getEvent(@PathParam("{eventId}") Integer eventId) {
+    public Event getEvent(@PathParam("eventId") int eventId) {
         this.checkDatatStore();
         try {
             Event result = this.dStore.get(eventId, Event.class);
@@ -86,7 +86,7 @@ public class EventsResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{eventId}")
-    public void updateEvent(@PathParam("{eventId}") Integer id, Event event, @Auth @NotNull User currentUser) {
+    public void updateEvent(@PathParam("eventId") Integer id, Event event, @Auth @NotNull User currentUser) {
         this.checkDatatStore();
         if (id.equals(event.getId()) == false) {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
@@ -106,7 +106,7 @@ public class EventsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{eventId}/divisions")
-    public DivisionRegistration addDivision(@PathParam("{eventId}") Integer eventId, DivisionRegistration div,
+    public DivisionRegistration addDivision(@PathParam("eventId") Integer eventId, DivisionRegistration div,
             @Auth @NotNull User currentUser) {
         this.checkDatatStore();
         /*
@@ -128,8 +128,8 @@ public class EventsResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{eventId}/divisions/{divisionId}")
-    public void updateDivsion(@PathParam("{eventId}") Integer eventId, DivisionRegistration div,
-            @PathParam("{divisionId}") Integer divId, @Auth @NotNull User currentUser) {
+    public void updateDivsion(@PathParam("eventId") Integer eventId, DivisionRegistration div,
+            @PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser) {
         this.checkDatatStore();
         if (!Integer.valueOf(div.getId()).equals(divId)) {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
@@ -147,7 +147,7 @@ public class EventsResource {
 
     @DELETE
     @Path("/{eventId}/divisions/{divisionId}")
-    public void deleteDivision(@PathParam("{divisionId}") Integer divId, @Auth @NotNull User currentUser) {
+    public void deleteDivision(@PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser) {
         this.checkDatatStore();
         try {
             DivisionRegistrationTeams fakeDiv = new DivisionRegistrationTeams();

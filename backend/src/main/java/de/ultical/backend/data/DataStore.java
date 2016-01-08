@@ -20,12 +20,15 @@ import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
 import de.ultical.backend.data.mapper.PlayerMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
 import de.ultical.backend.data.mapper.TeamMapper;
+import de.ultical.backend.data.mapper.TeamRegistrationMapper;
 import de.ultical.backend.data.mapper.UserMapper;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionRegistration;
+import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.Identifiable;
 import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Team;
+import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.TournamentEdition;
 import de.ultical.backend.model.User;
 
@@ -382,6 +385,28 @@ public class DataStore {
         try {
             DivisionRegistrationMapper mapper = this.sqlSession.getMapper(DivisionRegistrationMapper.class);
             mapper.delete(reg);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public void registerTeamForDivision(DivisionRegistrationTeams div, TeamRegistration teamReg) {
+        try {
+            final TeamRegistrationMapper mapper = this.sqlSession.getMapper(TeamRegistrationMapper.class);
+            mapper.insertAtEnd(div, teamReg);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public void unregisterTeamFromDivision(DivisionRegistrationTeams div, Team t) {
+        try {
+            final TeamRegistrationMapper mapper = this.sqlSession.getMapper(TeamRegistrationMapper.class);
+            mapper.delete(div, t);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

@@ -18,13 +18,13 @@ public interface TeamMapper extends BaseMapper<Team> {
 
     // INSERT
     @Override
-    @Insert("INSERT INTO TEAM (name, description, founding_date, location) VALUES #{name}, #{description}, #{foundingDate}, #{location.id}")
+    @Insert("INSERT INTO TEAM (name, description, founding_date, location) VALUES (#{name}, #{description, jdbcType=VARCHAR}, #{foundingDate, jdbcType=DATE}, #{location.id, jdbcType=INTEGER})")
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Team team);
 
     // UPDATE
     @Override
-    @Update("UPDATE TEAM SET version=version+1, name=#{name}, description=#{description}, founding_date=#{foundingDate}, location=#{location.id} WHERE version=#{version} AND id=#{id}")
+    @Update("UPDATE TEAM SET version=version+1, name=#{name}, description=#{description, jdbcType=VARCHAR}, founding_date=#{foundingDate, jdbcType=DATE}, location=#{location.id, jdbcType=INTEGER} WHERE version=#{version} AND id=#{id}")
     Integer update(Team t);
 
     // DELETE

@@ -40,7 +40,7 @@ public class TeamResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{teamId}")
-    public Team get(@PathParam("{teamId}") Integer id) {
+    public Team get(@PathParam("teamId") Integer id) {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
@@ -81,7 +81,7 @@ public class TeamResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{teamId}")
-    public void update(@PathParam("{teamId}") Integer id, Team updatedTeam) {
+    public void update(@PathParam("teamId") Integer id, Team updatedTeam) {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
