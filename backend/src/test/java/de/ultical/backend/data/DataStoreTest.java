@@ -2,28 +2,19 @@ package de.ultical.backend.data;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import org.apache.ibatis.session.SqlSession;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import de.ultical.backend.model.*;
 
 public class DataStoreTest {
 
     private DataStore ds;
-    @Mock
-    TournamentEdition mockedTournament;
-    @Mock
-    TournamentEdition completeTournament;
-    @Mock
-    Event eventStartDatenull;
-    @Mock
-    Event mockOnlyEvent;
-    @Mock
-    Event wrongTournamentEvent;
     @Mock
     SqlSession sqlSession;
 
@@ -31,24 +22,7 @@ public class DataStoreTest {
     public void setUp() {
         this.ds = new DataStore();
         MockitoAnnotations.initMocks(this);
-        when(this.completeTournament.getAlternativeName()).thenReturn("FooBar Tournament");
-        TournamentEditionSingle tournamenMock = mock(TournamentEditionSingle.class);
-        when(tournamenMock.getEvent()).thenReturn(this.eventStartDatenull);
-        when(this.eventStartDatenull.getTournamentEdition()).thenReturn(tournamenMock);
-        when(this.wrongTournamentEvent.getTournamentEdition()).thenReturn(tournamenMock);
-
         this.ds.sqlSession = this.sqlSession;
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testGetTournamentNameNull() throws Exception {
-        this.ds.getTournamentByName(null);
-    }
-
-    @Test
-    public void testGetTournamentNameUnknown() throws Exception {
-        TournamentEdition t = this.ds.getTournamentByName("unknown Tournament");
-        Assert.assertNull(t);
     }
 
     @Test
