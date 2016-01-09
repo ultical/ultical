@@ -3,7 +3,9 @@ package de.ultical.backend.api;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -54,7 +56,7 @@ public class TeamResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("own")
-    public List<Team> get(@Auth User user) {
+    public List<Team> get(@Auth @NotNull User user) {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
@@ -65,7 +67,7 @@ public class TeamResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Team add(Team t) {
+    public Team add(Team t, @Auth @NotNull User currentUser) {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
@@ -81,13 +83,15 @@ public class TeamResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{teamId}")
-    public void update(@PathParam("teamId") Integer id, Team updatedTeam) {
+    public void update(@PathParam("teamId") Integer id, @Auth @NotNull User currentUser, Team updatedTeam) {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
         if (!id.equals(updatedTeam.getId())) {
             throw new WebApplicationException(Status.NOT_ACCEPTABLE);
         }
+        this.dataStore.setAutoCloseSession(false);
+        this.checkAccess(id, currentUser);
         boolean updated = false;
         try {
             updated = this.dataStore.update(updatedTeam);
@@ -96,6 +100,64 @@ public class TeamResource {
         }
         if (!updated) {
             throw new WebApplicationException(Status.CONFLICT);
+        }
+    }
+
+    @POST
+    @Path("{teamId}/admin/{userId}")
+    public void addAdmin(@Auth @NotNull User currentUser, @PathParam("teamId") Integer teamId,
+            @PathParam("userId") Integer userId) {
+        if (this.dataStore == null) {
+            throw new WebApplicationException();
+        }
+        this.dataStore.setAutoCloseSession(false);
+        this.checkAccess(teamId, currentUser);
+        final Team team = new Team();
+        team.setId(teamId);
+        final User admin = new User();
+        admin.setId(userId);
+        try {
+            this.dataStore.setAutoCloseSession(true);
+            this.dataStore.addAdminToTeam(team, admin);
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Accessing the database failed!");
+        }
+    }
+
+    @DELETE
+    @Path("{teamId}/admin/{userId}")
+    public void deleteAdmin(@Auth @NotNull User currentUser, @PathParam("teamId") Integer teamId,
+            @PathParam("userId") Integer userId) {
+        if (this.dataStore == null) {
+            throw new WebApplicationException();
+        }
+        this.dataStore.setAutoCloseSession(false);
+        this.checkAccess(teamId, currentUser);
+        final Team fakeTeam = new Team();
+        fakeTeam.setId(teamId);
+        final User fakeAdmin = new User();
+        fakeAdmin.setId(userId);
+        try {
+            this.dataStore.setAutoCloseSession(true);
+            this.dataStore.removeAdminFromTeam(fakeTeam, fakeAdmin);
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Acessecing the database failes!");
+        }
+    }
+
+    private void checkAccess(Integer id, User currentUser) {
+        Team storedTeam = null;
+        try {
+            storedTeam = this.dataStore.get(id, Team.class);
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Accessing the database failed!", Status.INTERNAL_SERVER_ERROR);
+        }
+        if (storedTeam == null) {
+            throw new WebApplicationException(String.format("Team with id %d does not exist!", id), Status.NOT_FOUND);
+        }
+        if (!storedTeam.getAdmins().contains(currentUser)) {
+            throw new WebApplicationException(String.format("You are not an admin for team %s", storedTeam.getName()),
+                    Status.FORBIDDEN);
         }
     }
 }

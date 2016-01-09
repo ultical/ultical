@@ -13,7 +13,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
@@ -79,18 +78,6 @@ public class TournamentResource {
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing database failed", pe, Status.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    @GET
-    @Path("/{tName}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public TournamentEdition getTournamentByName(@PathParam("tName") String tName) {
-        TournamentEdition result = this.dStore.getTournamentByName(tName);
-        if (result == null) {
-            throw new WebApplicationException(String.format("Tournament with name %s could not be found", tName),
-                    Response.Status.NOT_FOUND);
-        }
-        return result;
     }
 
 }

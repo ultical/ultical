@@ -13,6 +13,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import de.ultical.backend.model.Team;
+import de.ultical.backend.model.User;
 
 public interface TeamMapper extends BaseMapper<Team> {
 
@@ -22,6 +23,9 @@ public interface TeamMapper extends BaseMapper<Team> {
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Team team);
 
+    @Insert("INSERT INTO TEAM_ULTICAL_USERS (team, admin) VALUES (#{team.id}, #{admin.id})")
+    void addAdmin(Team team, User admin);
+
     // UPDATE
     @Override
     @Update("UPDATE TEAM SET version=version+1, name=#{name}, description=#{description, jdbcType=VARCHAR}, founding_date=#{foundingDate, jdbcType=DATE}, location=#{location.id, jdbcType=INTEGER} WHERE version=#{version} AND id=#{id}")
@@ -29,8 +33,11 @@ public interface TeamMapper extends BaseMapper<Team> {
 
     // DELETE
     @Override
-    @Delete("DELETE FORM TEAM WHERE id=#{team.id}")
+    @Delete("DELETE FROM TEAM WHERE id=#{team.id}")
     void delete(Team team);
+
+    @Delete("DELETE FROM TEAM_ULTICAL_USERS WHERE team = #{team.id} AND admin = #{admin.id}")
+    void removeAdmin(Team team, User admin);
 
     // SELECT
     @Override

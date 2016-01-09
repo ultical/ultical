@@ -1,9 +1,8 @@
 package de.ultical.backend.data;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -47,8 +46,6 @@ public class DataStore {
     @Inject
     Client client;
 
-    private Map<String, TournamentEdition> tournamentPerName;
-
     /**
      * set to <code>false</code> if you want to perform more then one dataStore
      * operation. However, if you do so, then you have to manually close the
@@ -57,11 +54,7 @@ public class DataStore {
     private boolean autoCloseSession = true;
 
     public DataStore() {
-        this.fillDataStore();
-    }
 
-    protected void fillDataStore() {
-        this.tournamentPerName = new HashMap<String, TournamentEdition>();
     }
 
     /**
@@ -179,13 +172,6 @@ public class DataStore {
                 this.sqlSession.close();
             }
         }
-    }
-
-    public TournamentEdition getTournamentByName(final String tournamentName) {
-        Objects.requireNonNull(tournamentName);
-
-        TournamentEdition result = this.tournamentPerName.get(tournamentName);
-        return result;
     }
 
     /*
@@ -422,5 +408,35 @@ public class DataStore {
                 this.sqlSession.close();
             }
         }
+    }
+
+    public void addAdminToTeam(Team team, User admin) {
+        this.modifyTeamAdmin(team, admin, (t, a) -> {
+            final TeamMapper mapper = this.sqlSession.getMapper(t.getMapper());
+            mapper.addAdmin(t, a);
+        });
+    }
+
+    public void removeAdminFromTeam(Team team, User amdin) {
+        this.modifyTeamAdmin(team, amdin, (t, a) -> {
+            final TeamMapper mapper = this.sqlSession.getMapper(t.getMapper());
+            mapper.removeAdmin(t, a);
+        });
+    }
+
+    private void modifyTeamAdmin(Team team, User admin, BiConsumer<Team, User> dbAction) {
+        Objects.requireNonNull(team);
+        Objects.requireNonNull(admin);
+        try {
+            dbAction.accept(team, admin);
+        } catch (PersistenceException pe) {
+            this.sqlSession.rollback();
+            throw pe;
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+
     }
 }
