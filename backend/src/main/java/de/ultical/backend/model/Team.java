@@ -14,6 +14,11 @@ public class Team extends Identifiable {
     private List<User> admins;
     private Location location;
     private int foundingDate;
+    private String emails;
+    private String url;
+    private String contactEmail;
+    private String twitterName;
+    private String facebookUrl;
 
     private List<Roster> rosters;
 

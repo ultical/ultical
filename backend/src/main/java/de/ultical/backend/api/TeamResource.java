@@ -65,16 +65,36 @@ public class TeamResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Team add(Team t) {
+    public Team add(Team t, @Auth User user) {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
+
+        // Validation
+        if (t.getName().length() < 3) {
+            throw new WebApplicationException(409);
+        }
+
+        t.getAdmins().add(user);
+
+        this.dataStore.setAutoCloseSession(false);
+
+        // Set location to null if undefined
+        if (t.getLocation() != null && t.getLocation().getCity() == null) {
+            t.setLocation(null);
+        } else {
+            this.dataStore.addNew(t.getLocation());
+        }
         Team result = null;
+
         try {
             result = this.dataStore.addNew(t);
         } catch (PersistenceException pe) {
             throw new WebApplicationException(pe);
         }
+
+        this.dataStore.closeSession();
+
         return result;
     }
 

@@ -323,6 +323,11 @@
 			<column name="name" type="VARCHAR(255)">
 				<constraints nullable="false" />
 			</column>
+			<column name="emails" type="VARCHAR(255)"></column>
+			<column name="url" type="VARCHAR(255)"></column>
+			<column name="contact_email" type="VARCHAR(255)"></column>
+			<column name="twitter_name" type="VARCHAR(255)"></column>
+			<column name="facebook_url" type="VARCHAR(255)"></column>
 		</createTable>
 		<addForeignKeyConstraint constraintName="fk_team_location"
 			referencedTableName="LOCATION" baseColumnNames="location"

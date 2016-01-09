@@ -18,13 +18,13 @@ public interface TeamMapper extends BaseMapper<Team> {
 
     // INSERT
     @Override
-    @Insert("INSERT INTO TEAM (name, description, founding_date, location) VALUES (#{name}, #{description, jdbcType=VARCHAR}, #{foundingDate, jdbcType=DATE}, #{location.id, jdbcType=INTEGER})")
+    @Insert("INSERT INTO TEAM (name, description, founding_date, location, emails, url, contact_email, twitter_name, facebook_url) VALUES (#{name}, #{description, jdbcType=VARCHAR}, #{foundingDate, jdbcType=DATE}, #{location.id, jdbcType=INTEGER}, #{emails}, #{url}, #{contactEmail}, #{twitterName}, #{facebookUrl} )")
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Team team);
 
     // UPDATE
     @Override
-    @Update("UPDATE TEAM SET version=version+1, name=#{name}, description=#{description, jdbcType=VARCHAR}, founding_date=#{foundingDate, jdbcType=DATE}, location=#{location.id, jdbcType=INTEGER} WHERE version=#{version} AND id=#{id}")
+    @Update("UPDATE TEAM SET version=version+1, name=#{name}, description=#{description, jdbcType=VARCHAR}, founding_date=#{foundingDate, jdbcType=DATE}, location=#{location.id, jdbcType=INTEGER}, emails=#{emails}, url=#{url}, contact_email=#{contactEmail}, twitter_name=#{twitterName}, facebook_url=#{facebookUrl} WHERE version=#{version} AND id=#{id}")
     Integer update(Team t);
 
     // DELETE
@@ -38,6 +38,10 @@ public interface TeamMapper extends BaseMapper<Team> {
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "description", property = "description"), @Result(column = "name", property = "name"),
             @Result(column = "founding_date", property = "foundingDate"),
+            @Result(column = "emails", property = "emails"), @Result(column = "url", property = "url"),
+            @Result(column = "contact_email", property = "contactEmail"),
+            @Result(column = "twitter_name", property = "twitterName"),
+            @Result(column = "facebook_url", property = "facebookUrl"),
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
             @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
@@ -48,6 +52,10 @@ public interface TeamMapper extends BaseMapper<Team> {
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "description", property = "description"), @Result(column = "name", property = "name"),
             @Result(column = "founding_date", property = "foundingDate"),
+            @Result(column = "emails", property = "emails"), @Result(column = "url", property = "url"),
+            @Result(column = "contact_email", property = "contactEmail"),
+            @Result(column = "twitter_name", property = "twitterName"),
+            @Result(column = "facebook_url", property = "facebookUrl"),
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
             @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
@@ -58,6 +66,10 @@ public interface TeamMapper extends BaseMapper<Team> {
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "description", property = "description"), @Result(column = "name", property = "name"),
             @Result(column = "founding_date", property = "foundingDate"),
+            @Result(column = "emails", property = "emails"), @Result(column = "url", property = "url"),
+            @Result(column = "contact_email", property = "contactEmail"),
+            @Result(column = "twitter_name", property = "twitterName"),
+            @Result(column = "facebook_url", property = "facebookUrl"),
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
             @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
