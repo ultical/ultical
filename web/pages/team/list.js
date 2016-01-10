@@ -2,8 +2,8 @@
 
 angular.module('ultical.team', [])
 
-.controller('TeamListCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http',
-                             function($scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http) {
+.controller('TeamListCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService',
+                             function($scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService) {
 
 	$scope.loggedIn = function() {
 		return authorizer.loggedIn();
@@ -175,5 +175,20 @@ angular.module('ultical.team', [])
 	$scope.deleteTeam = function(team) {
 		console.log("delete?", alert("Do you really want to delete this team?"));
 	}
+
+	// return location-proposals from mapbox api
+	$scope.getLocations = function(locationName) {
+		if (locationName.length < 4) {
+			return [];
+		}
+
+		return mapService.getLocations(locationName, 'city', function(res) {
+			return res;
+		});
+	};
+
+	$scope.locationMatching = function() {
+		return true;
+	};
 
 }]);

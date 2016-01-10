@@ -16,3 +16,7 @@ function isEmptyString(str) {
 function stringStartsWith (string, prefix) {
     return string.slice(0, prefix.length) == prefix;
 }
+
+if (!Date.now) {
+    Date.now = function() { return new Date().getTime(); }
+}

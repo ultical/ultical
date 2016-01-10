@@ -1,24 +1,137 @@
 'use strict';
 
-
-app.filter('location', [function () {
+app.filter('locationObject', ['$translate', function($translate) {
 	return function (location) {
+		if (isEmpty(location)) {
+			return null;
+		}
+
+		var loc = {
+				city: '',
+				country: '',
+				countryCode: '',
+				street: '',
+				zipCode: '',
+				additionalInfo: '',
+				longitude: 0,
+				latitude: 0,
+		};
+
+		var components = [];
+		components.push({ id: location.id, text: location.text, place_name: location.place_name});
+		angular.forEach(location.context, function(component) {
+			components.push(component);
+		});
+
+		var region = '';
+		angular.forEach(components, function(component) {
+			if (component.id.indexOf('country') == 0) {
+				loc.country = component.text;
+				loc.countryCode = component.short_code;
+			}
+			if (component.id.indexOf('region') == 0) {
+				region = component.text;
+			}
+			if (component.id.indexOf('place') == 0) {
+				loc.city = component.text;
+			}
+			if (component.id.indexOf('postcode') == 0) {
+				loc.zipCode = component.text;
+			}
+			if (component.id.indexOf('address') == 0) {
+				loc.street = component.text;
+
+				var completeStreet = component.place_name.split(',')[0];
+				var streetParts = completeStreet.split(' ');
+
+				var numbers = [];
+				// store the first occurence of number to see if it's before or after the street
+				var firstNumberIndex = -1;
+				angular.forEach(streetParts, function(streetPart, idx) {
+					if (streetPart.match(/\d+/)) {
+						// check if there is a number in the street name
+						if (streetPart != component.text) {
+							numbers.push(streetPart);
+							if (firstNumberIndex == -1) {
+								firstNumberIndex = idx;
+							}
+						}
+					}
+				});
+
+				if (numbers.length == 1) {
+					if (firstNumberIndex == 0) {
+						// number before street
+						loc.street = numbers[0] + ' ' + loc.street;
+					} else {
+						loc.street += ' ' + numbers[0];
+					}
+				} else if (numbers.length > 1) {
+					// multiple numbers, we take the string as provided by mapbox
+					loc.street = completeStreet;
+				}
+			}
+		});
+
+		// add state for us cities
+		if (!isEmpty(location.countryCode) && location.countryCode.toLowerCase() == 'us' && !isEmptyString(region)) {
+			loc.city += ', ' + region;
+		}
+
+		loc.longitude = location.center[0];
+		loc.latitude = location.center[1];
+
+		return loc;
+	};
+}]);
+
+app.filter('location', ['$translate', 'locationObjectFilter', function ($translate, locationObjectFilter) {
+	return function (location, type) {
 		if (isEmpty(location)) {
 			return '';
 		}
 
+		if (undefined === type) {
+			type = 'full';
+		}
+
+		// check if it's a raw location directly from mapbox or an location object
+		if (!('city' in location)) {
+			location = locationObjectFilter(location);
+		}
+
+		return getLocationFromObject(location, type);
+	};
+
+	function getLocationFromObject(location, type) {
 		var locationString = '';
 
+		if (type == 'full') {
+			if (!isEmpty(location.street)) {
+				locationString += location.street;
+			}
+		}
+
 		if (!isEmpty(location.city)) {
+			if (!isEmptyString(locationString)) {
+				locationString += ', ';
+			}
 			locationString += location.city;
 		}
 
 		if (!isEmpty(location.country)) {
-			locationString += ', ' + location.country;
+			if (!isEmpty(locationString)) {
+				locationString += ', ';
+			}
+			var countryTranslation = $translate.instant('countries.' + location.countryCode);
+			if (countryTranslation != 'countries.' + location.countryCode) {
+				locationString += countryTranslation;
+			} else {
+				locationString += location.country;
+			}
 		}
-
-		return locationString
-	};
+		return locationString;
+	}
 }]);
 
 app.filter('username', [function () {
