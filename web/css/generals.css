@@ -82,3 +82,13 @@ a {
 	color: black;
 }
 
+.glyphicon-big {
+    font-size: 160%;
+    margin-top: -10px;
+    top: 6px;
+    left: -4px;
+}
+
+textarea {
+	resize: none;
+}

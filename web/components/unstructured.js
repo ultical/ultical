@@ -12,3 +12,7 @@ function isEmpty(obj) {
 function isEmptyString(str) {
 	return undefined === str || null === str || str.length == 0 || str == '';
 }
+
+function stringStartsWith (string, prefix) {
+    return string.slice(0, prefix.length) == prefix;
+}

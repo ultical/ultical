@@ -86,3 +86,7 @@ app.filter('currencySymbol', [function() {
 		return output;
 	};
 }]);
+
+app.filter('urlEncode', function($window) {
+	  return $window.encodeURIComponent;
+	});

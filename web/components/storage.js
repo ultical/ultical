@@ -97,10 +97,58 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 					callback(this.events);
 				}
 			},
+
+			saveTeam: function(team, callback, activeList) {
+				var that = this;
+				var oldTeam;
+				if (team.id == -1) {
+					oldTeam = null;
+				} else {
+					oldTeam = this.teamsIndexed[team.id];
+				}
+				serverApi.saveTeam(team, oldTeam, function(savedTeam) {
+					that.teamsIndexed[team.id] = savedTeam;
+					var index = -1;
+					angular.forEach(that.own.teams, function(ownTeam, idx) {
+						if (ownTeam.id == savedTeam.id) {
+							index = idx;
+						}
+					});
+					if (index >= 0) {
+						that.own.teams.splice(index, 1);
+					}
+					that.own.teams.push(savedTeam);
+
+					index = -1;
+					angular.forEach(that.teams, function(existingTeam, idx) {
+						if (existingTeam.id == savedTeam.id) {
+							index = idx;
+						}
+					});
+					if (index >= 0) {
+						that.teams.splice(index, 1);
+					}
+					that.teams.push(savedTeam);
+
+					storeTeam(that, savedTeam);
+
+					if (activeList == 'own') {
+						callback(that.own.teams);
+					} else if (activeList == 'all') {
+						callback(that.teams);
+					}
+				});
+			},
 	}
 
 	function storeTeam(that, team) {
 		that.teamsIndexed[team.id] = team;
+
+		if (!isEmpty(team.emails)) {
+			team.emails = team.emails.split(',');
+		} else {
+			team.emails = [];
+		}
 
 		angular.forEach(team.admins, function(admin, idx) {
 			if (angular.isObject(admin)) {
@@ -108,6 +156,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			} else {
 				team.admins[idx] = that.userIndexed[admin];
 			}
+			team.own = authorizer.getUser() != null && (team.own || admin.id == authorizer.getUser().id);
 		});
 
 		angular.forEach(team.rosters, function(roster, idx) {

@@ -1,14 +1,22 @@
 'use strict';
 
-app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', 
-                          function(CONFIG, $http, Base64, authorizer) {
+app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter', 
+                          function(CONFIG, $http, Base64, authorizer, $filter) {
 
 	function get(resource, successCallback, errorCallback, includeHeader) {
-		doHttp(resource, 'GET', null, successCallback, errorCallback, includeHeader);
+		return doHttp(resource, 'GET', null, successCallback, errorCallback, includeHeader);
 	}
 
 	function post(resource, data, successCallback, errorCallback, includeHeader) {
 		doHttp(resource, 'POST', data, successCallback, errorCallback, includeHeader);
+	}
+
+	function put(resource, data, successCallback, errorCallback, includeHeader) {
+		doHttp(resource, 'PUT', data, successCallback, errorCallback, includeHeader);
+	}
+
+	function del(resource, successCallback, errorCallback, includeHeader) {
+		doHttp(resource, 'DELETE', null, successCallback, errorCallback, includeHeader);
 	}
 
 	function doHttp(resource, method, data, successCallback, errorCallback, includeHeader) {
@@ -26,22 +34,22 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer',
 		}
 
 		if (CONFIG.debug) {
-			console.log("API Request", config.method, config.url);
+			console.log("API Request", config.method, config.url, config.data);
 		}
 
-		$http(config).then(
+		return $http(config).then(
 				function (response) {
 					if (CONFIG.debug) {
 						console.log("API Response", response.data);
 					}
 					// success callback
-					callCallback(successCallback, response, includeHeader);
+					return callCallback(successCallback, response, includeHeader);
 				}, function (response) {
 					if (CONFIG.debug) {
 						console.log("API fail");
 					}
 					// error callback
-					callCallback(errorCallback, response, includeHeader);
+					return callCallback(errorCallback, response, includeHeader);
 				}
 		);
 	}
@@ -56,10 +64,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer',
 
 		if (includeHeader) {
 			// send complete response
-			callback(response);
+			return callback(response);
 		} else {
 			// only send payload data
-			callback(response.data);
+			return callback(response.data);
 		}
 	}
 
@@ -84,13 +92,73 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer',
 			get('teams/own', callback);
 		},
 
+		saveTeam: function(team, oldTeam, callback) {
+			var teamToSend = angular.copy(team);
+
+			var emailsString = '';
+			angular.forEach(teamToSend.emails, function(email, idx) {
+				emailsString += email;
+				if (idx != team.emails.length - 1) {
+					emailsString += ',';
+				}
+			});
+			teamToSend.emails = emailsString;
+
+			angular.forEach(teamToSend.admins, function(admin, idx) {
+				teamToSend.admins[idx] = { id: admin.id };
+			});
+
+			var that = this;
+
+			if (teamToSend.id == -1) {
+				// this is a team newly created
+				post('teams', teamToSend, function(newTeam) {
+					that.getTeam(newTeam.id, callback);
+				});
+
+			} else {
+				delete(teamToSend.own);
+				put('teams/' + teamToSend.id, teamToSend, function() {
+					that.getTeam(teamToSend.id, callback);
+				});
+			}
+		},
+
 		registerUser: function(user, callback) {
 			post('register', user, callback);
 		},
 
 		login: function(user, callback) {
 			post('auth', user, callback);
-		}
+		},
+
+		getUserProposals: function(userName, callback) {
+			return get('users?search=' + $filter('urlEncode')(userName), callback);
+		},
 	};
 
+	function addAdminsToTeam(teamId, addList, callback) {
+		var postCounter = 0;
+		angular.forEach(addList, function(adminToAdd) {
+			post('teams/' + teamId + '/admin/' + adminToAdd.id, {}, function() {
+				postCounter++;
+				if (postCounter == addList.length) {
+					callback();
+				}
+			});
+		});
+	}
+
+	function deleteAdminsFromTeam(teamId, deleteList, callback) {
+		var deleteCounter = 0;
+		angular.forEach(deleteList, function(adminToDelete) {
+			del('teams/' + teamId + '/admin/' + adminToDelete.id, function() {
+				deleteCounter++;
+				if (deleteCounter == deleteList.length) {
+					callback();
+				}
+			});
+
+		});
+	}
 }]);

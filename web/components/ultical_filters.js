@@ -1,5 +1,49 @@
 'use strict';
 
+
+app.filter('location', [function () {
+	return function (location) {
+		if (isEmpty(location)) {
+			return '';
+		}
+
+		var locationString = '';
+
+		if (!isEmpty(location.city)) {
+			locationString += location.city;
+		}
+
+		if (!isEmpty(location.country)) {
+			locationString += ', ' + location.country;
+		}
+
+		return locationString
+	};
+}]);
+
+app.filter('username', [function () {
+	return function (user, fullName) {
+		if (isEmpty(user)) {
+			return '';
+		}
+
+		if (undefined === fullName) {
+			fullName = false;
+		}
+
+		if (user.dfvPlayer == null) {
+			return user.email;
+		}
+
+		var username = user.dfvPlayer.firstName;
+		if (fullName) {
+			username += ' ' + user.dfvPlayer.lastName;
+		}
+
+		return username;
+	};
+}]);
+
 app.filter('eventname', ['$translate', 'matchdaynameFilter', function ($translate, matchdaynameFilter) {
 	return function (event) {
 		if (isEmpty(event)) {

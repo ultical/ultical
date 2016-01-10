@@ -1,3 +1,7 @@
+body {
+	font-size: 13px;
+}
+
 .view-container {
 	margin-top: -5px;
 	margin-bottom: 40px;
@@ -51,8 +55,8 @@
 }
 
 .navbar-button-strong {
-	background-color: #D9EDF7;
-/* 	#DBEBFB; */
+	background-color: #F3FAFF;
+	/* 	#DBEBFB; */
 }
 
 .navbar-button-strong:hover {
@@ -64,7 +68,7 @@
 }
 
 .navbar-language:hover #navbar-language-icon, .navbar-language:hover #navbar-language-code
-{
+	{
 	color: #000000;
 }
 
@@ -74,8 +78,9 @@
 }
 
 #login-popover {
-	background-color: #D9EDF7;
+	background-color: #F3FAFF;
 }
+
 #login-popover.login-error {
 	background-color: #E49B9B;
 }
@@ -90,4 +95,71 @@
 
 #login-popover-content .error-text {
 	color: white;
+}
+
+.panel.panel-ultical {
+	background-color: #F3FAFF;
+	border-color: #D9E9FF;
+}
+
+.panel-group .panel-heading+.panel-collapse>.panel-body {
+	border-top-color: #D9E9FF;
+}
+
+.panel.panel-ultical2 {
+	background-color: #FFFFFF;
+	border-color: #D9E9FF;
+}
+
+.panel-ultical2 .panel-title {
+	font-size: 14px;
+}
+
+.input-group-colored .input-group-addon {
+	background-color: #337AB7;
+	color: #FFFFFF;
+}
+
+.editable-list {
+	float: left;
+	margin-top: -5px;
+	margin-right: -10px;
+}
+
+.editable-list-item {
+	float: left;
+	border-color: #B3B3B3;
+	border-width: 1px;
+	border-style: solid;
+	background-color: #FFFFFF;
+	padding: 2px 5px;
+}
+
+.editable-list-item.no-remove {
+	margin-right: 22px;	
+}
+
+.editable-list-remove {
+	color: #E85E5E;
+	top: -10px;
+	right: 13px;
+	font-size: 59%;
+	float: right;
+	position: relative;
+	opacity: 0;
+}
+
+.editable-list:hover .editable-list-remove {
+	opacity: 1;
+}
+
+.team-actions {
+	float: right;
+	color: #337AB7;
+	opacity: 0;
+	margin-left: 7px;
+}
+
+.panel-title:hover .team-actions {
+	opacity: 1;
 }

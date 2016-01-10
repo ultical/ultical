@@ -36,7 +36,7 @@
 	opacity: 0;
 }
 
-.fade-ani.ng-enter, .fade-ani.ng-leave {
+.fade-ani.ng-enter.ng-enter-active, .fade-ani.ng-leave {
 	opacity: 1;
 }
 
@@ -55,7 +55,6 @@
 .ffade {
 	-webkit-transition: all 250ms ease-in-out, height 100ms;
 	transition: all 250ms ease-in-out, height 100ms;
-	opacity: 1;
 }
 
 .ffade.ng-hide {
@@ -65,7 +64,6 @@
 .ffade-in {
 	-webkit-transition: all 250ms ease-in-out, height 100ms;
 	transition: all 250ms ease-in-out, height 100ms;
-	opacity: 1;
 }
 .ffade-in.ng-hide {
 	-webkit-transition: all 0ms ease-in-out, height 000ms;
@@ -74,12 +72,25 @@
 }.ffade-out {
 	-webkit-transition: all 0ms ease-in-out, height 0ms;
 	transition: all 0ms ease-in-out, height 0ms;
-	opacity: 1;
 }
 .ffade-out.ng-hide {
 	-webkit-transition: all 250ms ease-in-out, height 100ms;
 	transition: all 250ms ease-in-out, height 100ms;
 	opacity: 0;
+}
+
+.fade-appear {
+	-webkit-transition: all 250ms ease-in-out, height 100ms;
+	transition: all 250ms ease-in-out, height 100ms;
+}
+
+.animation-delay {
+	-webkit-transition-delay: 0.5s;
+	transition-delay: 0.5s;
+}
+.animation-subito {
+	-webkit-transition-delay: 0s !important;
+	transition-delay: 0s !important;
 }
 
 /* collapsible animation */

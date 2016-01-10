@@ -9,6 +9,9 @@ var TRANSLATIONS_DE = {
 			close: 'schließen',
 			email: 'E-Mail',
 			phone: 'Telefon',
+			optional: 'optional',
+			save: 'Speichern',
+			cancel: 'Abbrechen',
 		},
 
 		nav: {
@@ -124,5 +127,33 @@ var TRANSLATIONS_DE = {
 			foundingDate: 'Gegründet',
 			admins: 'Admins',
 			rosters: 'Roster pro Saison',
+			edit: {
+				tooltip: 'Team bearbeiten',
+				nameLabel: 'Name',
+				namePlaceholder: 'Teamname',
+				foundingDateLabel: 'Gründungsjahr',
+				descriptionLabel: 'Beschreibung',
+				descriptionPlaceholder: 'Ein paar Worte zum Team...',
+				adminsPlaceholder: 'Name des Benutzers',
+				adminsHelp: 'Nur registrierte Benutzer dieser Seite können Admins werden',
+				adminsRemoveTooltip: 'Benutzer entfernen',
+				emailsLabel: 'Zusätzliche Emailadressen',
+				emailsPlaceholder: 'Email',
+				emailsRemoveTooltip: 'Email entfernen',
+				emailsHelp: 'Nachrichten an dieses Team werden außer den Admins auch an die angegebenen Emailadressen gesendet.',
+				urlLabel: 'Webseite',
+				urlPlaceholder: 'www. ...',
+				contactEmailLabel: 'Kontakt',
+				contactEmailPlaceholder: 'Emailadresse',
+				twitterNameLabel: 'Twitter',
+				twitterNamePlaceholder: 'Twittername',
+				facebookUrlLabel: 'Facebook',
+				facebookUrlPlaceholder: 'https://www.facebook.com/...',
+				locationCityLabel: 'Stadt',
+				locationCountryLabel: 'Land',
+			},
+			remove: {
+				tooltip: 'Team löschen',
+			}
 		},
 };

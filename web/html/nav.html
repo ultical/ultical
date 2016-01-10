@@ -31,7 +31,7 @@
 				<div class="navbar-text">{{ 'nav.login' | translate }}</div>
 			</li>
 			<li class="navbar-button" ng-show="loggedIn()" data-placement="bottom-right" data-animation="am-flip-x" bs-dropdown="profileDropdown">
-				<div class="navbar-text">{{ getUser().email }}</div>
+				<div class="navbar-text">{{ getUser() | username }}</div>
 			</li>
 		</ul>
 	</div>
