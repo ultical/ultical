@@ -25,4 +25,11 @@ angular.extend(CONFIG_OBJECT, {
 
 	debug: true,
 
+	mapBox: {
+		accessToken: '',
+		// defines an anchor point (cooridnates) for location search (center of germany: 51.16, 10.45)
+		proximity: '51.16,10.45',
+	}
+
+
 });

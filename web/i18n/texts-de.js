@@ -149,11 +149,30 @@ var TRANSLATIONS_DE = {
 				twitterNamePlaceholder: 'Twittername',
 				facebookUrlLabel: 'Facebook',
 				facebookUrlPlaceholder: 'https://www.facebook.com/...',
-				locationCityLabel: 'Stadt',
-				locationCountryLabel: 'Land',
+				locationCityLabel: 'Stadt/Land',
 			},
 			remove: {
 				tooltip: 'Team löschen',
 			}
 		},
+
+		countries: {
+			de: 'Deutschland',
+			fr: 'Frankreich',
+			ch: 'Schweiz',
+			at: 'Österreich',
+			nl: 'Niederlande',
+			be: 'Belgien',
+			dk: 'Dänemark',
+			pl: 'Polen',
+			it: 'Italien',
+			uk: 'England',
+			es: 'Spanien',
+			gr: 'Griechenland',
+			lu: 'Luxemburg',
+			pt: 'Portugal',
+			us: 'USA',
+			jp: 'Japan',
+			au: 'Australien',
+		}
 };
