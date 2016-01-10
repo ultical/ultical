@@ -104,4 +104,8 @@ app.config(function($modalProvider) {
 		container: 'body',
 		keyboard: false,
 	});
-})
+});
+
+app.run(['storage', function(storage) {
+	storage.getSeasons(function() {});
+}]);

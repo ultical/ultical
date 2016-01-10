@@ -163,3 +163,17 @@ body {
 .panel-title:hover .team-actions {
 	opacity: 1;
 }
+
+#new-roster-form button {
+	width: 100%;
+}
+
+#new-roster-form .btn .caret {
+	float: right;
+    top: 8px;
+    position: relative;
+}
+
+#new-roster-form .btn {
+	text-align: left;
+}

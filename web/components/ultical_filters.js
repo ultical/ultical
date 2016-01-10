@@ -240,10 +240,11 @@ app.filter('division', ['$translate', function($translate) {
 
 		var divisionString = '';
 
-		var divAgeStr = $translate.instant('division.' + obj.divisionAge.toLowerCase());
-		if (divAgeStr.length > 0) {
-			divAgeStr = ' ' + divAgeStr;
+		var divAgeStr = '';
+		if (obj.divisionAge.toLowerCase() != 'regular') {
+			divAgeStr = ' ' + $translate.instant('division.' + obj.divisionAge.toLowerCase());
 		}
+
 		divisionString += $translate.instant('division.' + obj.divisionType.toLowerCase()) + divAgeStr;
 
 		return divisionString;

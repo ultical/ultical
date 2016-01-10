@@ -71,7 +71,7 @@ public class RegisterResource {
 
         for (DfvMvName name : names) {
             WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profil")
-                    .path(String.valueOf(name.getDfvnr())).queryParam("token", this.config.getDfvApi().getToken())
+                    .path(String.valueOf(name.getDfvNumber())).queryParam("token", this.config.getDfvApi().getToken())
                     .queryParam("secret", this.config.getDfvApi().getSecret());
 
             Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);

@@ -173,7 +173,6 @@
 	<div class="row margin-top fade animation-delay" ng-hide="editing">
 
 		<div class="col-md-8">
-
 			<div class="panel-group" ng-model="panel.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
 				<div class="panel panel-ultical" ng-repeat="team in teams | orderBy : teamOrder">
 					<div class="panel-heading" role="tab">
@@ -185,7 +184,6 @@
 							<div ng-if="team.own" ng-click="editTeam(team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.edit.tooltip' | translate }}" bs-tooltip>
 								<i class="fa fa-pencil"></i>
 							</div>
-
 						</h4>
 					</div>
 					<div class="panel-collapse" role="tabpanel" bs-collapse-target>
@@ -245,7 +243,57 @@
 
 							<!-- ROSTERS -->
 							<div class="row margin-top" ng-if="team.rosters.length > 0">
-								<div class="col-md-12">{{ 'team.rosters' | translate }}</div>
+								<div class="col-md-12">{{ 'team.roster.label' | translate }}</div>
+							</div>
+
+							<div class="row margin-top-small margin-bottom ffade-in animation-delay" ng-show="team.own && !editing && editingRoster == -1">
+								<div class="col-md-12">
+									<button ng-click="createNewRoster(team)" type="button" class="btn btn-primary">
+										<span class="glyphicon glyphicon-plus-sign glyphicon-big" aria-hidden="true"></span>
+										{{ 'team.roster.newRoster' | translate }}
+									</button>
+								</div>
+							</div>
+
+							<div class="row margin-top fade-ani" ng-if="editingRoster == team.id">
+								<div class="col-md-9">
+									<div class="row" id="new-roster-form">
+										<div class="col-md-7">
+											<label class="" for="rosDivAge">{{ 'team.roster.divisionAgeLabel' | translate }}</label>
+											<div class="form-group">
+												<div class="row">
+													<div class="col-md-7">
+														<button id="rosDivAge" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.divisionAge" bs-options="divisionAge as 'division.' + divisionAge | translate for divisionAge in selects.divisionAges" bs-select>
+															<span class="caret"></span>
+														</button>
+													</div>
+													<div class="col-md-5">
+														<button id="rosDivType" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.divisionType" bs-options="divisionType as 'division.' + divisionType | translate for divisionType in selects.divisionTypes" bs-select>
+															<span class="caret"></span>
+														</button>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="col-md-5">
+											<div class="form-group">
+												<label class="" for="rosSeason">{{ 'season.season' | translate }}</label>
+												<button id="rosSeason" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.season" bs-options="season as season | season for season in selects.seasons" bs-select>
+													<span class="caret"></span>
+												</button>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-7">
+											<button type="click" ng-click="saveRoster(newRoster, team)" class="btn btn-primary">{{ 'general.create' | translate }}</button>
+											<button type="click" ng-click="cancelRosterEdit()" class="btn btn-default">{{ 'general.cancel' | translate }}</button>
+										</div>
+									</div>
+
+								</div>
 							</div>
 
 							<div class="row margin-top-small" ng-if="team.rosters.length > 0">
@@ -255,16 +303,35 @@
 										<div class="panel panel-ultical2" ng-repeat="roster in team.rosters | orderBy : ['season.year', 'season.plusOneYear']">
 											<div class="panel-heading" role="tab">
 												<h3 class="panel-title cursor-pointer" bs-collapse-toggle>
-													<span>{{ roster | division }} - {{ roster.season | season : true }}</span>
+													<span>{{ roster.season | season : true }} - {{ roster | division }}</span>
+													<div ng-if="false && team.own" ng-click="deleteRoster(roster)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.removeTooltip' | translate }}" bs-tooltip>
+														<i class="fa fa-remove"></i>
+													</div>
+													<div ng-if="team.own" ng-click="editRoster(roster, team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip>
+														<i class="fa fa-pencil"></i>
+													</div>
 												</h3>
 											</div>
 											<div class="panel-collapse" role="tabpanel" bs-collapse-target>
 												<div class="panel-body">
+													<div class="row" ng-if="editingRosterPlayers == roster.id">
+														<div class="col-md-12">
+															<div class="input-group input-group-colored col-md-6 margin-top-small">
+																<span ng-click="addPlayerToRoster(newPlayer, roster)" class="cursor-pointer input-group-addon">
+																	<span class="glyphicon glyphicon-plus"></span>
+																</span>
+																<input type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj" data-animation="am-flip-x" data-auto-select="true" data-trim-value="false"
+																	bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
+																>
+															</div>
+														</div>
+													</div>
+
 
 													<div class="row">
 														<div class="col-md-12">
 															<div ng-repeat="player in roster.players">{{ player.firstName}} {{ player.lastName }}</div>
-
+															<div ng-if="roster.players.length == 0">{{ 'team.roster.empty' | translate }}</div>
 														</div>
 													</div>
 												</div>

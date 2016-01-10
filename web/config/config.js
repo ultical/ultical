@@ -29,7 +29,11 @@ angular.extend(CONFIG_OBJECT, {
 		accessToken: '',
 		// defines an anchor point (cooridnates) for location search (center of germany: 51.16, 10.45)
 		proximity: '51.16,10.45',
-	}
+	},
 
+	division: {
+		ages: ['u14', 'u17', 'u20', 'u23', 'regular', 'masters', 'grandmasters'],
+		types: ['open', 'women', 'mixed'],
+	},
 
 });

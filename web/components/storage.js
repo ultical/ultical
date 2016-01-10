@@ -14,6 +14,8 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			},
 			events: {},
 			teams: [],
+			seasons: [],
+
 			tournamentEditions: {},
 			tournamentFormats: {},
 
@@ -66,6 +68,36 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 					});
 					callback(that.own.teams);
 				});
+			},
+
+			saveRoster: function(roster, team, callback) {
+				serverApi.postRoster(roster, team.id, callback);
+			},
+
+			deleteRoster: function(roster) {
+				serverApi.deleteRoster(roster);
+			},
+
+			addPlayerToRoster: function(player, roster, callback) {
+				serverApi.addPlayerToRoster(player, roster, function(newPlayer) {
+					playerIndexed[newPlayer.id] = newPlayer;
+					roster.players.push(newPlayer);
+					callback(newPlayer);
+				});
+			},
+
+			getSeasons: function(callback) {
+				var that = this;
+				if (isEmpty(this.seasons)) {
+					serverApi.getSeasons(function(seasons) {
+						that.seasons = seasons;
+						angular.forEach(seasons, function(season) {
+							storeSeason(that, season);
+						});
+					});
+				} else {
+					callback(this.seasons);
+				}
 			},
 
 			getEvent: function(eventId, callback) {

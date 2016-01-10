@@ -12,6 +12,7 @@ var TRANSLATIONS_DE = {
 			optional: 'optional',
 			save: 'Speichern',
 			cancel: 'Abbrechen',
+			create: 'Erstellen',
 		},
 
 		nav: {
@@ -44,7 +45,7 @@ var TRANSLATIONS_DE = {
 			u17: 'U17',
 			u20: 'Juniors',
 			u23: 'U23',
-			regular: '',
+			regular: 'unbeschränkt',
 			masters: 'Masters',
 			grandmasters: 'Grandmasters',
 			open: 'Open',
@@ -126,7 +127,16 @@ var TRANSLATIONS_DE = {
 			},
 			foundingDate: 'Gegründet',
 			admins: 'Admins',
-			rosters: 'Roster pro Saison',
+			roster: {
+				label: 'Aktuelle Roster',
+				newRoster: 'Neues Roster erstellen',
+				divisionAgeLabel: 'Division',
+				empty: 'Noch keine Spieler hinzugefügt',
+				removeTooltip: 'Roster entfernen',
+				editTooltip: 'Roster bearbeiten',
+				confirmDelete: 'Soll dieses Roster wirklich gelöscht werden?',
+				newPlayerPlaceholder: 'Name des Spielers',
+			},
 			edit: {
 				tooltip: 'Team bearbeiten',
 				nameLabel: 'Name',

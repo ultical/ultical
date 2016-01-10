@@ -2,8 +2,8 @@
 
 angular.module('ultical.team', [])
 
-.controller('TeamListCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService',
-                             function($scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService) {
+.controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService', 'alerter',
+                             function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter) {
 
 	$scope.loggedIn = function() {
 		return authorizer.loggedIn();
@@ -19,6 +19,7 @@ angular.module('ultical.team', [])
 	$scope.teams = [];
 
 	$scope.$watch('tabs.activeTab', function() {
+		$scope.editingRoster = -1;
 		$scope.editing = false;
 		$scope.teams = [];
 		getTeams();
@@ -59,7 +60,6 @@ angular.module('ultical.team', [])
 
 	$scope.editTeam = function(team) {
 		$scope.editing = true;
-
 		$scope.teamToEdit = angular.copy(team);
 	};
 
@@ -172,6 +172,20 @@ angular.module('ultical.team', [])
 		});
 	};
 
+	// return player proposals
+	$scope.getPlayers = function(playerName) {
+		if (playerName.length < 4) {
+			return [];
+		}
+
+		return serverApi.getPlayerProposals(playerName, function(result) {
+			angular.forEach(result, function(player) {
+				player.fullName = player.firstName + ' ' + player.lastName;
+			});
+			return result;
+		});
+	};
+
 	$scope.deleteTeam = function(team) {
 		console.log("delete?", alert("Do you really want to delete this team?"));
 	}
@@ -191,4 +205,66 @@ angular.module('ultical.team', [])
 		return true;
 	};
 
+	$scope.createNewRoster = function(team) {
+		$scope.editingRoster = team.id;
+		$scope.newRoster = {
+				divisionAge: 'regular',
+				divisionType: 'open',
+				season: {},
+		}
+		storage.getSeasons(function(seasons) {
+			angular.forEach(seasons, function(season) {
+				if (season.year == '2016') {
+					$scope.newRoster.season = season;
+				}
+			});
+		});
+	}
+
+	$scope.cancelRosterEdit = function() {
+		$scope.editingRoster = -1;
+	}
+
+	// prepare selects for roster creation
+	$scope.selects = {
+			divisionAges: CONFIG.division.ages,
+			divisionTypes: CONFIG.division.types,
+			seasons: [],
+	};
+
+	storage.getSeasons(function(seasons) {
+		$scope.selects.seasons = seasons;
+	});
+
+	$scope.saveRoster = function(newRoster, team) {
+		storage.saveRoster(newRoster, team, function(updatedRoster) {
+			storage.getTeam(team.id, function(updatedTeam) {
+				team.rosters = updatedTeam.rosters;
+			});
+			$scope.editingRoster = -1;
+		});
+	};
+
+	$scope.addPlayerToRoster = function(newPlayer, roster) {
+		if (!angular.isObject(newPlayer.obj)) {
+			return;
+		}
+
+		storage.addPlayerToRoster(newPlayer.obj, roster, function() {
+			$scope.newPlayer = {};
+		});
+	};
+
+	$scope.editRoster = function(roster, team) {
+		$scope.newPlayer = {};
+		$scope.editingRosterPlayers = roster.id;
+	};
+
+	$scope.deleteRoster = function(roster) {
+		alerter.confirm('team.roster.confirmDelete', function(userResponse) {
+			if (userResponse == true) {
+				storage.deleteRoster(roster);
+			}
+		});
+	};
 }]);

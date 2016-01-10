@@ -29,7 +29,7 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			config.headers = { Authorization: 'Basic ' + Base64.encode(authorizer.getUser().email + ':' + authorizer.getUser().password)};
 		}
 
-		if (method != 'GET') {
+		if (method != 'GET' || method != 'DELETE') {
 			config.data = data;
 		}
 
@@ -78,6 +78,19 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 
 		getEvents: function(callback) {
 			get('events', callback);
+		},
+
+		getSeasons: function(callback) {
+			get('season', callback);
+		},
+
+		postRoster: function(roster, teamId, callback) {
+			roster.team = { id: teamId };
+			post('roster', roster, callback);
+		},
+
+		deleteRoster: function(roster) {
+			del('roster/' + roster.id);
 		},
 
 		getTeam: function(teamId, callback) {
@@ -134,6 +147,16 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 
 		getUserProposals: function(userName, callback) {
 			return get('users?search=' + $filter('urlEncode')(userName), callback);
+		},
+
+		getPlayerProposals: function(playerName, callback) {
+			return get('dfvmvname?search=' + $filter('urlEncode')(playerName), callback);
+		},
+
+		addPlayerToRoster: function(player, roster, callback) {
+			var requestPlayer = { lastName: player.lastName, firstName: player.firstName, dse: player.dse, dfvNumber: player.dfvNumber };
+
+			return post('roster/' + roster.id, requestPlayer, callback);
 		},
 	};
 

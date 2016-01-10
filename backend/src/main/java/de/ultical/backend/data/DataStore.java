@@ -17,6 +17,7 @@ import de.ultical.backend.data.mapper.DfvMvNameMapper;
 import de.ultical.backend.data.mapper.DfvPlayerMapper;
 import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
 import de.ultical.backend.data.mapper.PlayerMapper;
+import de.ultical.backend.data.mapper.RosterMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
 import de.ultical.backend.data.mapper.TeamMapper;
 import de.ultical.backend.data.mapper.TeamRegistrationMapper;
@@ -25,6 +26,7 @@ import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.Identifiable;
+import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TeamRegistration;
@@ -150,6 +152,20 @@ public class DataStore {
             BaseMapper<T> mapper = (BaseMapper<T>) this.sqlSession.getMapper(instance.getMapper());
             return mapper.get(id);
         } catch (InstantiationException | IllegalAccessException e) {
+            this.sqlSession.rollback();
+            throw new PersistenceException(e);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public <T extends Identifiable> void remove(T instanceToDelete, Class<T> clazz) {
+        try {
+            BaseMapper<T> mapper = (BaseMapper<T>) this.sqlSession.getMapper(instanceToDelete.getMapper());
+            mapper.delete(instanceToDelete);
+        } catch (Exception e) {
             this.sqlSession.rollback();
             throw new PersistenceException(e);
         } finally {
@@ -300,6 +316,17 @@ public class DataStore {
         }
     }
 
+    public void addRoster(Roster newRoster) {
+        RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
+        rosterMapper.insert(newRoster);
+        this.sqlSession.commit();
+    }
+
+    public Roster getRoster(int rosterId) {
+        RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
+        return rosterMapper.get(rosterId);
+    }
+
     public void storeUser(User user) {
         /**
          * A user has to be stored in two steps First DfvPlayer, then User
@@ -379,7 +406,17 @@ public class DataStore {
                 this.sqlSession.close();
             }
         }
+    }
 
+    public List<DfvMvName> findDfvMvName(String searchString) {
+        try {
+            DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
+            return nameMapper.find(searchString);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 
     public void deleteDivision(final DivisionRegistration reg) {
