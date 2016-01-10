@@ -46,16 +46,13 @@
 						</div>
 
 						<div class="row">
-							<div class="col-md-7">
-								<div class="form-group">
+							<div class="col-md-12">
+								<div class="form-group has-feedback">
 									<label for="tteCity">{{ 'team.edit.locationCityLabel' | translate }}</label>
-									<input type="text" class="form-control" id="tteCity" ng-model="teamToEdit.location.city" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" />
-								</div>
-							</div>
-							<div class="col-md-5">
-								<div class="form-group">
-									<label for="tteCountry">{{ 'team.edit.locationCountryLabel' | translate }}</label>
-									<input type="text" class="form-control" id="tteCountry" ng-model="teamToEdit.location.country" placeholder="{{ 'team.edit.locationCountryLabel' | translate }}" />
+									<input type="text" container="body" class="form-control" ng-blur="storeLocation(teamToEdit.location)" ng-model="teamToEdit.location" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" data-comparator="locationMatching"
+										bs-options="location | locationObject as location | location for location in getLocations($viewValue)" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" bs-typeahead
+									>
+									<span ng-show="teamToEdit.location.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
 								</div>
 							</div>
 						</div>
