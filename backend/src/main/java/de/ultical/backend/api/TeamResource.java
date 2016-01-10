@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.ibatis.exceptions.PersistenceException;
 
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.model.Location;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
@@ -72,21 +73,14 @@ public class TeamResource {
             throw new WebApplicationException(500);
         }
 
-        // Validation
-        if (t.getName().length() < 3) {
-            throw new WebApplicationException(409);
-        }
-
-        t.getAdmins().add(currentUser);
-
         this.dataStore.setAutoCloseSession(false);
 
-        // Set location to null if undefined
-        if (t.getLocation() != null && t.getLocation().getCity() == null) {
-            t.setLocation(null);
-        } else {
+        t = this.prepareTeam(t);
+
+        if (t.getLocation() != null) {
             this.dataStore.addNew(t.getLocation());
         }
+
         Team result = null;
 
         try {
@@ -95,23 +89,58 @@ public class TeamResource {
             throw new WebApplicationException(pe);
         }
 
+        // add admins
+        for (User admin : t.getAdmins()) {
+            this.dataStore.addAdminToTeam(result, admin);
+        }
+
         this.dataStore.closeSession();
 
         return result;
     }
 
+    private Team prepareTeam(Team t) {
+        // Validation
+        if (t.getName().length() < 3) {
+            throw new WebApplicationException("Teamname must be at least 2 characters", Status.LENGTH_REQUIRED);
+        }
+
+        // check if a team with the same name already exists
+        Team checkTeam = this.dataStore.getTeamByName(t.getName());
+        if (checkTeam != null && checkTeam.getId() != t.getId()) {
+            throw new WebApplicationException("Teamname already taken", Status.CONFLICT);
+        }
+
+        return t;
+    }
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("{teamId}")
-    public void update(@PathParam("teamId") Integer id, @Auth @NotNull User currentUser, Team updatedTeam) {
+    public void update(Team updatedTeam, @PathParam("teamId") Integer id, @Auth @NotNull User currentUser) {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
+
+        this.dataStore.setAutoCloseSession(false);
+
+        this.checkAccess(id, currentUser);
+
         if (!id.equals(updatedTeam.getId())) {
             throw new WebApplicationException(Status.NOT_ACCEPTABLE);
         }
-        this.dataStore.setAutoCloseSession(false);
-        this.checkAccess(id, currentUser);
+
+        updatedTeam = this.prepareTeam(updatedTeam);
+
+        if (updatedTeam.getLocation() != null) {
+            if (this.dataStore.get(updatedTeam.getLocation().getId(), Location.class) == null) {
+                this.dataStore.addNew(updatedTeam.getLocation());
+            } else {
+                this.dataStore.update(updatedTeam.getLocation());
+            }
+        }
+
         boolean updated = false;
         try {
             updated = this.dataStore.update(updatedTeam);
@@ -121,6 +150,17 @@ public class TeamResource {
         if (!updated) {
             throw new WebApplicationException(Status.CONFLICT);
         }
+
+        // create the admin mapping
+        // first delete the old mapping
+        this.dataStore.removeAllAdminsFromTeam(updatedTeam);
+
+        for (User admin : updatedTeam.getAdmins()) {
+            this.dataStore.addAdminToTeam(updatedTeam, admin);
+        }
+
+        this.dataStore.closeSession();
+
     }
 
     @POST

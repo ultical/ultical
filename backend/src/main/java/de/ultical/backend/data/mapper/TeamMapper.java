@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
@@ -24,11 +25,11 @@ public interface TeamMapper extends BaseMapper<Team> {
     Integer insert(Team team);
 
     @Insert("INSERT INTO TEAM_ULTICAL_USERS (team, admin) VALUES (#{team.id}, #{admin.id})")
-    void addAdmin(Team team, User admin);
+    void addAdmin(@Param("team") Team team, @Param("admin") User admin);
 
     // UPDATE
     @Override
-    @Update("UPDATE TEAM SET version=version+1, name=#{name}, description=#{description, jdbcType=VARCHAR}, founding_date=#{foundingDate, jdbcType=DATE}, location=#{location.id, jdbcType=INTEGER}, emails=#{emails}, url=#{url}, contact_email=#{contactEmail}, twitter_name=#{twitterName}, facebook_url=#{facebookUrl} WHERE version=#{version} AND id=#{id}")
+    @Update("UPDATE TEAM SET version=version+1, name=#{name}, description=#{description, jdbcType=VARCHAR}, founding_date=#{foundingDate, jdbcType=INTEGER}, location=#{location.id, jdbcType=INTEGER}, emails=#{emails}, url=#{url}, contact_email=#{contactEmail}, twitter_name=#{twitterName}, facebook_url=#{facebookUrl} WHERE version=#{version} AND id=#{id}")
     Integer update(Team t);
 
     // DELETE
@@ -37,7 +38,10 @@ public interface TeamMapper extends BaseMapper<Team> {
     void delete(Team team);
 
     @Delete("DELETE FROM TEAM_ULTICAL_USERS WHERE team = #{team.id} AND admin = #{admin.id}")
-    void removeAdmin(Team team, User admin);
+    void removeAdmin(@Param("team") Team team, @Param("admin") User admin);
+
+    @Delete("DELETE FROM TEAM_ULTICAL_USERS WHERE team = #{team.id}")
+    void removeAllAdmins(@Param("team") Team team);
 
     // SELECT
     @Override
@@ -81,4 +85,9 @@ public interface TeamMapper extends BaseMapper<Team> {
             @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
     List<Team> getByUser(int userId);
+
+    // returns a team with the given name
+    @Select("SELECT * FROM TEAM WHERE name = #{teamName}")
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version") })
+    Team getByName(String teamName);
 }

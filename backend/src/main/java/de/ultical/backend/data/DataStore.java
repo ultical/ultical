@@ -267,6 +267,11 @@ public class DataStore {
         return teamMapper.getByUser(userId);
     }
 
+    public Team getTeamByName(String teamName) {
+        TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+        return teamMapper.getByName(teamName);
+    }
+
     public void storeDfvPlayer(DfvPlayer dfvPlayer) {
         /**
          * A DfvPlayer has to be stored in two steps First Player (superclass)
@@ -417,11 +422,17 @@ public class DataStore {
         });
     }
 
-    public void removeAdminFromTeam(Team team, User amdin) {
-        this.modifyTeamAdmin(team, amdin, (t, a) -> {
+    public void removeAdminFromTeam(Team team, User admin) {
+        this.modifyTeamAdmin(team, admin, (t, a) -> {
             final TeamMapper mapper = this.sqlSession.getMapper(t.getMapper());
             mapper.removeAdmin(t, a);
         });
+    }
+
+    public void removeAllAdminsFromTeam(Team team) {
+        TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+        teamMapper.removeAllAdmins(team);
+        this.sqlSession.commit();
     }
 
     private void modifyTeamAdmin(Team team, User admin, BiConsumer<Team, User> dbAction) {
@@ -429,6 +440,7 @@ public class DataStore {
         Objects.requireNonNull(admin);
         try {
             dbAction.accept(team, admin);
+            this.sqlSession.commit();
         } catch (PersistenceException pe) {
             this.sqlSession.rollback();
             throw pe;
@@ -437,6 +449,5 @@ public class DataStore {
                 this.sqlSession.close();
             }
         }
-
     }
 }
