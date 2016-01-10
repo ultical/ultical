@@ -5,6 +5,7 @@ dependency-reduced-pom.xml
 target/
 *~
 start-server.sh
+update-db.sh
 derby.log
 *default.yaml
 liquibase.properties
