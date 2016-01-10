@@ -100,11 +100,12 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
                     @Override
                     public Client provide() {
-                        JerseyClientConfiguration conf = new JerseyClientConfiguration();
-                        conf.setTimeout(Duration.milliseconds(7000));
-                        conf.setConnectionTimeout(Duration.milliseconds(7000));
 
                         if (this.clientInstance == null) {
+                            JerseyClientConfiguration conf = new JerseyClientConfiguration();
+                            conf.setTimeout(Duration.milliseconds(7000));
+                            conf.setConnectionTimeout(Duration.milliseconds(7000));
+
                             this.clientInstance = new JerseyClientBuilder(env).using(conf).using(env).build("dfvApi");
                         }
                         return this.clientInstance;
@@ -186,6 +187,8 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         env.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
                 .setAuthenticator(cachingAuthenticator).buildAuthFilter()));
         env.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
+
+        env.jersey().register(ServiceLocatorFeature.class);
     }
 
     /*
