@@ -2,8 +2,8 @@
 
 angular.module('ultical.user')
 
-.controller('RegistrationCtrl', ['$scope', 'serverApi', 'CONFIG', '$alert', '$translate',
-                                 function($scope, serverApi, CONFIG, $alert, $translate) {
+.controller('RegistrationCtrl', ['$scope', 'serverApi', 'CONFIG', '$translate', 'alterter',
+                                 function($scope, serverApi, CONFIG, $translate, alterter) {
 
 	$scope.minPasswordLength = CONFIG.registration.minPasswordLength;
 	$scope.error = {};
@@ -53,7 +53,7 @@ angular.module('ultical.user')
 				if (!isEmpty(userResponse.dfvEmail)) {
 					alertContent += ' ' + $translate.instant('user.registration.success.dfvEmail', { dfvEmail: userResponse.dfvEmail });
 				}
-				$alert({title: $translate.instant('user.registration.success.title'), content: alertContent, container: '#pageAlertSpace', placement: 'top', type: 'success', show: true});
+				alerter.success($translate.instant('user.registration.success.title'), alertContent);
 
 				// overwrite plain text passwords
 				$scope.user.password = '';

@@ -64,7 +64,21 @@ public class UserResource {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
         }
+
+        // delete personal information
+        this.clearPersonalInformation(result);
+
         return result;
+    }
+
+    private void clearPersonalInformation(List<User> users) {
+        for (User user : users) {
+            this.clearPersonalInformation(user);
+        }
+    }
+
+    private void clearPersonalInformation(User user) {
+        user.setPassword("");
     }
 
 }

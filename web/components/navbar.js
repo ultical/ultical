@@ -44,10 +44,21 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 			'text': $translate.instant('nav.profileDropdown.ownEvents'),
 			'href': $state.href('eventsList'),
 		},
-		];
+		{
+			'divider': true
+		},
+		{
+			'text': $translate.instant('nav.profileDropdown.logout'),
+			'click': 'logOut()',
+		}];
 
 	$scope.goTo = function(stateName) {
 		$state.go(stateName);
+	};
+
+	$scope.logOut = function() {
+		authorizer.logOut();
+		$state.reload();
 	};
 
 	/* *** Language Selector ****/

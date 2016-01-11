@@ -18,7 +18,19 @@ var TRANSLATIONS_DE = {
 		nav: {
 			title: 'UltiCal',
 			login: 'Login',
-			loginFail: 'Email oder Passwort fehlerhaft!',
+			loginFail: {
+				wrongCredentials: 'Email oder Passwort fehlerhaft!',
+				wrongCredentialsAction: 'Passwort vergessen?',
+				emailNotConfirmed: 'Email Adresse noch nicht bestätigt!',
+				emailNotConfirmedAction: 'Bestätigungsemail erneut senden?',
+				dfvEmailNotOptIn: 'Die Mail an die beim DFV hinterlegte Emailadresse wurde noch nicht bestätigt!',
+				dfvEmailNotOptInAction: 'Mail erneut senden?',
+			},
+			loginEmailActions: {
+				successTitle: 'Email erfolgreich gesendet',
+				passwordReset: 'Weitere Anweiseungen, wie das Passwort zurückgesetzt werden kann findest du in der Email',
+				confirmationEmailSendContent: 'Bitte bestätige den Erhalt der Email mit dem enthaltenen Link. Danach kannst du dich einloggen.',
+			},
 			register: 'Registrieren',
 			eventDropdown: {
 				label: 'Turniere',
@@ -29,6 +41,7 @@ var TRANSLATIONS_DE = {
 			profileDropdown: {
 				ownTeams: 'Meine Teams',
 				ownEvents: 'Meine Turniere',
+				logout: 'Abmelden',
 			},
 		},
 

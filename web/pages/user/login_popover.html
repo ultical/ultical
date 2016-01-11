@@ -1,10 +1,19 @@
-<div class="popover" tabindex="-1" ng-controller="LoginCtrl" id="login-popover" ng-class="{ 'login-error': loginFail}">
+<div class="popover" tabindex="-1" ng-controller="LoginCtrl" id="login-popover">
 	<div class="arrow"></div>
 	<!-- 	<h3 class="popover-title"></h3> -->
 	<div class="popover-content" id="login-popover-content">
-		<div class="row margin-bottom error-text" ng-if="loginFail">
+		<div class="row error-text" ng-if="loginFail != false">
 			<div class="col-sm-12">
-				{{ 'nav.loginFail' | translate }}				
+				<div class="panel panel-danger">
+					<div class="panel-heading">
+						<span>{{ 'nav.loginFail.' + loginFail.text | translate }}</span>
+					</div>
+					<div class="panel-footer">
+						<span>
+							<a ng-click="loginFail.action(login)" href="#">{{ 'nav.loginFail.' + loginFail.actionText | translate }}</a>
+						</span>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="row">
