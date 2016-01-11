@@ -89,8 +89,8 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			post('roster', roster, callback);
 		},
 
-		deleteRoster: function(roster) {
-			del('roster/' + roster.id);
+		deleteRoster: function(roster, callback) {
+			del('roster/' + roster.id, callback);
 		},
 
 		getTeam: function(teamId, callback) {

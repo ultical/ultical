@@ -304,7 +304,7 @@
 											<div class="panel-heading" role="tab">
 												<h3 class="panel-title cursor-pointer" bs-collapse-toggle>
 													<span>{{ roster.season | season : true }} - {{ roster | division }}</span>
-													<div ng-if="false && team.own" ng-click="deleteRoster(roster)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.removeTooltip' | translate }}" bs-tooltip>
+													<div ng-if="team.own" ng-click="deleteRoster(roster, team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.removeTooltip' | translate }}" bs-tooltip>
 														<i class="fa fa-remove"></i>
 													</div>
 													<div ng-if="team.own" ng-click="editRoster(roster, team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip>

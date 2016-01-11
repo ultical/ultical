@@ -48,7 +48,7 @@ public class RosterResource {
         this.checkAccess(newRoster.getTeam().getId(), currentUser);
 
         try {
-            this.dataStore.addRoster(newRoster);
+            this.dataStore.addNew(newRoster);
         } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
@@ -72,8 +72,7 @@ public class RosterResource {
 
         this.dataStore.setAutoCloseSession(false);
 
-        Team team = this.dataStore.get(1, Team.class);
-        Roster roster = this.dataStore.get(rosterId, Roster.class);
+        Roster roster = this.dataStore.get(new Integer(rosterId), Roster.class);
 
         this.checkAccess(roster.getTeam().getId(), currentUser);
 
@@ -86,7 +85,7 @@ public class RosterResource {
         Player result = null;
 
         // try {
-        // this.dataStore.addRoster(roster);
+        // this.dataStore.addNew(roster, roster.class);
         // } catch (PersistenceException pe) {
         // LOGGER.error("Database access failed!", pe);
         // throw new WebApplicationException("Accessing the database failed",
@@ -111,9 +110,9 @@ public class RosterResource {
 
         try {
             this.dataStore.setAutoCloseSession(true);
-            this.dataStore.remove(rosterToDelete, Roster.class);
+            this.dataStore.remove(rosterId, Roster.class);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Acessecing the database failes!");
+            throw new WebApplicationException("Accessing the database failes!");
         }
     }
 

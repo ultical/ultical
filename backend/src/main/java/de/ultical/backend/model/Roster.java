@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import de.ultical.backend.data.mapper.TeamMapper;
+import de.ultical.backend.data.mapper.RosterMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -21,7 +21,7 @@ public class Roster extends Identifiable {
     private Set<Player> players;
 
     @Override
-    public Class<TeamMapper> getMapper() {
-        return TeamMapper.class;
+    public Class<RosterMapper> getMapper() {
+        return RosterMapper.class;
     }
 }

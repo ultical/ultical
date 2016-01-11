@@ -74,8 +74,18 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				serverApi.postRoster(roster, team.id, callback);
 			},
 
-			deleteRoster: function(roster) {
-				serverApi.deleteRoster(roster);
+			deleteRoster: function(roster, team) {
+				serverApi.deleteRoster(roster, function() {
+					var rosterDeleteIdx = -1;
+					angular.forEach(team.rosters, function(teamRoster, idx) {
+						if (teamRoster.id == roster.id) {
+							rosterDeleteIdx = idx;
+						}
+					});
+					if (rosterDeleteIdx >= 0) {
+						team.rosters.splice(rosterDeleteIdx, 1);
+					}
+				});
 			},
 
 			addPlayerToRoster: function(player, roster, callback) {

@@ -260,10 +260,10 @@ angular.module('ultical.team', [])
 		$scope.editingRosterPlayers = roster.id;
 	};
 
-	$scope.deleteRoster = function(roster) {
+	$scope.deleteRoster = function(roster, team) {
 		alerter.confirm('team.roster.confirmDelete', function(userResponse) {
 			if (userResponse == true) {
-				storage.deleteRoster(roster);
+				storage.deleteRoster(roster, team);
 			}
 		});
 	};
