@@ -175,8 +175,8 @@
 		<div class="col-md-8">
 			<div class="panel-group" ng-model="panel.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
 				<div class="panel panel-ultical" ng-repeat="team in teams | orderBy : teamOrder">
-					<div class="panel-heading" role="tab">
-						<h4 class="panel-title cursor-pointer" bs-collapse-toggle>
+					<div class="panel-heading cursor-pointer" role="tab">
+						<h4 class="panel-title" bs-collapse-toggle>
 							<span>{{ team.name }}</span>
 							<div ng-if="false && team.own" ng-click="deleteTeam(team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.remove.tooltip' | translate }}" bs-tooltip>
 								<i class="fa fa-remove"></i>
@@ -189,7 +189,7 @@
 					<div class="panel-collapse" role="tabpanel" bs-collapse-target>
 						<div class="panel-body">
 
-							<div class="row" ng-show="team.description != ''">
+							<div class="row" ng-show="team.description | notEmpty">
 								<div class="col-md-12">{{team.description }}</div>
 							</div>
 
@@ -197,7 +197,7 @@
 								<div class="col-md-12"></div>
 							</div>
 
-							<div class="row" ng-show="team.location.city != null">
+							<div class="row" ng-show="team.location.city | notEmpty">
 								<div class="col-md-12">
 									<i class="fa fa-map-marker fa-fw"></i> {{ team.location | location }}
 								</div>
@@ -213,24 +213,24 @@
 								<div class="col-md-12"></div>
 							</div>
 
-							<div class="row" ng-show="team.contactEmail != ''">
+							<div class="row" ng-show="team.contactEmail | notEmpty">
 								<div class="col-md-12">
 									<i class="fa fa-envelope-o fa-fw"></i>
 									<a ng-href="mailto:{{ team.contactEmail }}">{{ team.contactEmail }}</a>
 								</div>
 							</div>
 
-							<div class="row" ng-show="team.url != ''">
+							<div class="row" ng-show="team.url | notEmpty">
 								<div class="col-md-12">
 									<i class="fa fa-link fa-fw"></i>
-									<a target="_blank" ng-href="{{ team.url }}">{{ team.url }}</a>
+									<a target="_blank" ng-href="{{ team.url | url }}">{{ team.url }}</a>
 								</div>
 							</div>
 
-							<div class="row" ng-show="team.facebookUrl != ''">
+							<div class="row" ng-show="team.facebookUrl | notEmpty">
 								<div class="col-md-12">
 									<i class="fa fa-facebook fa-fw"></i>
-									<a target="_blank" ng-href="{{ team.facebookUrl }}">{{ team.facebookUrl }}</a>
+									<a target="_blank" ng-href="{{ team.facebookUrl | url }}">{{ team.facebookUrl }}</a>
 								</div>
 							</div>
 
@@ -243,7 +243,9 @@
 
 							<!-- ROSTERS -->
 							<div class="row margin-top" ng-if="team.rosters.length > 0">
-								<div class="col-md-12">{{ 'team.roster.label' | translate }}</div>
+								<div class="col-md-12">
+								<i class="fa fa-list fa-fw"></i>
+								{{ 'team.roster.label' | translate }}</div>
 							</div>
 
 							<div class="row margin-top ffade-in animation-delay" ng-show="team.own && !editing && editingRoster == -1">
@@ -302,8 +304,8 @@
 									<div class="panel-group" ng-model="teamPanels.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
 
 										<div class="panel panel-ultical2" ng-repeat="roster in team.rosters | orderBy : ['-season.year', '-season.plusOneYear']">
-											<div class="panel-heading" role="tab">
-												<h3 class="panel-title cursor-pointer" bs-collapse-toggle>
+											<div class="panel-heading cursor-pointer" role="tab">
+												<h3 class="panel-title" bs-collapse-toggle>
 													<span>{{ roster.season | season : true }} - {{ roster | division }}</span>
 													<div ng-if="team.own" ng-click="deleteRoster(roster, team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.removeTooltip' | translate }}" bs-tooltip>
 														<i class="fa fa-remove"></i>

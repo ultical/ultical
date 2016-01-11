@@ -181,3 +181,8 @@ body {
 #roster-listing .panel-group {
 	margin-bottom: 0;
 }
+
+.panel-ultical .fa-fw {
+	margin-right: 4px;
+	font-size: 14px;
+}

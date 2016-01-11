@@ -179,7 +179,8 @@ var TRANSLATIONS_DE = {
 			},
 			remove: {
 				tooltip: 'Team löschen',
-			}
+			},
+			confirmDelete: 'Soll dieses Team wirklich gelöscht werden? Dieser Vorgang kann nicht rückgängig gemacht werden!',
 		},
 
 		countries: {
