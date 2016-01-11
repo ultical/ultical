@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
 
+import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.Location;
 import de.ultical.backend.model.Team;
@@ -125,7 +126,7 @@ public class TeamResource {
 
         this.dataStore.setAutoCloseSession(false);
 
-        this.checkAccess(id, currentUser);
+        Authenticator.assureTeamAdmin(this.dataStore, id, currentUser);
 
         if (!id.equals(updatedTeam.getId())) {
             throw new WebApplicationException(Status.NOT_ACCEPTABLE);
@@ -171,7 +172,7 @@ public class TeamResource {
             throw new WebApplicationException();
         }
         this.dataStore.setAutoCloseSession(false);
-        this.checkAccess(teamId, currentUser);
+        Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
         final Team team = new Team();
         team.setId(teamId);
         final User admin = new User();
@@ -192,7 +193,9 @@ public class TeamResource {
             throw new WebApplicationException();
         }
         this.dataStore.setAutoCloseSession(false);
-        this.checkAccess(teamId, currentUser);
+
+        Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
+
         final Team fakeTeam = new Team();
         fakeTeam.setId(teamId);
         final User fakeAdmin = new User();
@@ -202,22 +205,6 @@ public class TeamResource {
             this.dataStore.removeAdminFromTeam(fakeTeam, fakeAdmin);
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Acessecing the database failes!");
-        }
-    }
-
-    private void checkAccess(Integer id, User currentUser) {
-        Team storedTeam = null;
-        try {
-            storedTeam = this.dataStore.get(id, Team.class);
-        } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failed!", Status.INTERNAL_SERVER_ERROR);
-        }
-        if (storedTeam == null) {
-            throw new WebApplicationException(String.format("Team with id %d does not exist!", id), Status.NOT_FOUND);
-        }
-        if (!storedTeam.getAdmins().contains(currentUser)) {
-            throw new WebApplicationException(String.format("You are not an admin for team %s", storedTeam.getName()),
-                    Status.FORBIDDEN);
         }
     }
 }

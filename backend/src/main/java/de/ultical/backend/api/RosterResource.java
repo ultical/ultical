@@ -17,10 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
+import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.Player;
 import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.Team;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
 
@@ -45,7 +45,7 @@ public class RosterResource {
 
         this.dataStore.setAutoCloseSession(false);
 
-        this.checkAccess(newRoster.getTeam().getId(), currentUser);
+        Authenticator.assureTeamAdmin(this.dataStore, newRoster.getTeam().getId(), currentUser);
 
         try {
             this.dataStore.addNew(newRoster);
@@ -74,7 +74,7 @@ public class RosterResource {
 
         Roster roster = this.dataStore.get(new Integer(rosterId), Roster.class);
 
-        this.checkAccess(roster.getTeam().getId(), currentUser);
+        Authenticator.assureTeamAdmin(this.dataStore, roster.getTeam().getId(), currentUser);
 
         // get full player data from dfv-mv
 
@@ -106,29 +106,13 @@ public class RosterResource {
         this.dataStore.setAutoCloseSession(false);
         Roster rosterToDelete = this.dataStore.get(rosterId, Roster.class);
 
-        this.checkAccess(rosterToDelete.getTeam().getId(), currentUser);
+        Authenticator.assureTeamAdmin(this.dataStore, rosterToDelete.getTeam().getId(), currentUser);
 
         try {
             this.dataStore.setAutoCloseSession(true);
             this.dataStore.remove(rosterId, Roster.class);
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing the database failes!");
-        }
-    }
-
-    private void checkAccess(Integer id, User currentUser) {
-        Team storedTeam = null;
-        try {
-            storedTeam = this.dataStore.get(id, Team.class);
-        } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failed!", Status.INTERNAL_SERVER_ERROR);
-        }
-        if (storedTeam == null) {
-            throw new WebApplicationException(String.format("Team with id %d does not exist!", id), Status.NOT_FOUND);
-        }
-        if (!storedTeam.getAdmins().contains(currentUser)) {
-            throw new WebApplicationException(String.format("You are not an admin for team %s", storedTeam.getName()),
-                    Status.FORBIDDEN);
         }
     }
 }
