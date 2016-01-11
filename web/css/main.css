@@ -160,7 +160,7 @@ body {
 	margin-left: 7px;
 }
 
-.panel-title:hover .team-actions {
+.panel-heading:hover .team-actions {
 	opacity: 1;
 }
 

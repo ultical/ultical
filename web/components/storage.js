@@ -88,12 +88,13 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				});
 			},
 
-			addPlayerToRoster: function(player, roster, callback) {
+			addPlayerToRoster: function(player, roster, callback, errorCallback) {
+				var that = this;
 				serverApi.addPlayerToRoster(player, roster, function(newPlayer) {
-					playerIndexed[newPlayer.id] = newPlayer;
+					that.playerIndexed[newPlayer.id] = newPlayer;
 					roster.players.push(newPlayer);
 					callback(newPlayer);
-				});
+				}, errorCallback);
 			},
 
 			getSeasons: function(callback) {

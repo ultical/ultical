@@ -295,42 +295,59 @@
 
 								</div>
 							</div>
-
+{{ actualRosterEditedPanel }}
 							<div class="row margin-top-small" ng-if="team.rosters.length > 0">
 								<div class="col-md-12">
 
-									<div class="panel-group" ng-model="panels[team.id].activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
-										<div class="panel panel-ultical2" ng-repeat="roster in team.rosters | orderBy : ['season.year', 'season.plusOneYear']">
+									<div class="panel-group" ng-model="teamPanels.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
+
+										<div class="panel panel-ultical2" ng-repeat="roster in team.rosters | orderBy : ['-season.year', 'season.plusOneYear']">
 											<div class="panel-heading" role="tab">
 												<h3 class="panel-title cursor-pointer" bs-collapse-toggle>
 													<span>{{ roster.season | season : true }} - {{ roster | division }}</span>
 													<div ng-if="team.own" ng-click="deleteRoster(roster, team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.removeTooltip' | translate }}" bs-tooltip>
 														<i class="fa fa-remove"></i>
 													</div>
-													<div ng-if="team.own" ng-click="editRoster(roster, team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip>
+													<div ng-if="team.own" ng-click="editRoster(roster, team, $index)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip>
 														<i class="fa fa-pencil"></i>
 													</div>
 												</h3>
 											</div>
+
 											<div class="panel-collapse" role="tabpanel" bs-collapse-target>
 												<div class="panel-body">
+
+													<!-- adding player to roster - input -->
 													<div class="row" ng-if="editingRosterPlayers == roster.id">
 														<div class="col-md-12">
-															<div class="input-group input-group-colored col-md-6 margin-top-small">
-																<span ng-click="addPlayerToRoster(newPlayer, roster)" class="cursor-pointer input-group-addon">
-																	<span class="glyphicon glyphicon-plus"></span>
-																</span>
-																<input type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj" data-animation="am-flip-x" data-auto-select="true" data-trim-value="false"
-																	bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
-																>
+															<div class="row">
+																<div class="col-md-12">
+																	<div id="add-player-error"></div>
+																</div>
+															</div>
+															<div class="row margin-bottom">
+																<div class="col-md-7">
+																	<div class="input-group input-group-colored">
+																		<span ng-click="addPlayerToRoster(newPlayer, roster)" class="cursor-pointer input-group-addon">
+																			<span class="glyphicon glyphicon-plus"></span>
+																		</span>
+																		<input ng-disabled="editRosterBlock" type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj" data-animation="am-flip-x" data-auto-select="true" data-trim-value="false"
+																			bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
+																		>
+																	</div>
+																</div>
+																<div class="row">
+																	<div class="col-md-3">
+																		<div class="btn btn-default" ng-click="rosterEditEnd(roster, team)">{{ 'general.done' | translate }}</div>
+																	</div>
+																</div>
 															</div>
 														</div>
 													</div>
 
-
 													<div class="row">
 														<div class="col-md-12">
-															<div ng-repeat="player in roster.players">{{ player.firstName}} {{ player.lastName }}</div>
+															<div ng-repeat="player in roster.players | orderBy : 'lastName'">{{ player.firstName}} {{ player.lastName }}</div>
 															<div ng-if="roster.players.length == 0">{{ 'team.roster.empty' | translate }}</div>
 														</div>
 													</div>

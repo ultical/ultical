@@ -2,8 +2,8 @@
 
 angular.module('ultical.team', [])
 
-.controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService', 'alerter',
-                             function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter) {
+.controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService', 'alerter', '$timeout',
+                             function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter, $timeout) {
 
 	$scope.loggedIn = function() {
 		return authorizer.loggedIn();
@@ -249,15 +249,71 @@ angular.module('ultical.team', [])
 		if (!angular.isObject(newPlayer.obj)) {
 			return;
 		}
+		if ($scope.editRosterBlock) {
+			return;
+		}
+
+		$scope.editRosterBlock = true;
+
+		var alreadyInRoster = false;
+		angular.forEach(roster.players, function(player) {
+			if (newPlayer.obj.dfvNumber == player.dfvNumber) {
+				alreadyInRoster = true;
+			}
+		});
+
+		if (alreadyInRoster) {
+			$scope.editRosterBlock = false;
+			return;
+		}
 
 		storage.addPlayerToRoster(newPlayer.obj, roster, function() {
 			$scope.newPlayer = {};
+			$scope.editRosterBlock = false;
+		}, function(errorResponse) {
+			if (errorResponse.status = 409) {
+				switch(errorResponse.message.substring(0,4)) {
+				case 'e101':
+					// this player is already part of another roster in this season and division
+					alerter.error('', 'team.roster.playerAlreadyInRoster', {container: '#add-player-error' , duration: 5});
+					break;
+				case 'e102':
+					// this player has the wrong gender
+					alerter.error('', 'team.roster.playerWrongGender', { container: '#add-player-error', duration: 5});
+				}
+			}
+			$scope.editRosterBlock = false;
 		});
 	};
 
-	$scope.editRoster = function(roster, team) {
+	$scope.teamPanels = {};
+	$scope.editRosterBlock = false;
+
+	// we use this value to let the input fields disappear, when a different roster is un-collapsed
+	$scope.actualRosterEditedPanelIdx = -1;
+
+	$scope.editRoster = function(roster, team, collapseIndex) {
+		$scope.actualRosterEditedPanelIdx = collapseIndex;
+		$scope.editRosterBlock = false;
 		$scope.newPlayer = {};
 		$scope.editingRosterPlayers = roster.id;
+
+		$timeout(function() {
+			$scope.teamPanels.activePanel = collapseIndex;
+		}, 100);
+	};
+
+	$scope.$watch('teamPanels.activePanel', function() {
+		$timeout(function() {
+			if ($scope.actualRosterEditedPanelIdx != $scope.teamPanels.activePanel) {
+				$scope.rosterEditEnd();
+			}
+		}, 200);
+	});
+
+	$scope.rosterEditEnd = function() {
+		$scope.editingRosterPlayers = -1;
+		$scope.actualRosterEditedPanelIdx = -1
 	};
 
 	$scope.deleteRoster = function(roster, team) {

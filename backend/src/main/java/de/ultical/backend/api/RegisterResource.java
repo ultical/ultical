@@ -2,7 +2,6 @@ package de.ultical.backend.api;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +25,6 @@ import de.ultical.backend.api.transferClasses.RegisterResponse.RegisterResponseS
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.DfvPlayer;
-import de.ultical.backend.model.Gender;
 import de.ultical.backend.model.User;
 
 /**
@@ -158,14 +156,19 @@ public class RegisterResource {
             return new RegisterResponse(RegisterResponseStatus.EMAIL_ALREADY_TAKEN);
         }
 
-        // create and persist User and DfvPlayer object
-        DfvPlayer dfvPlayer = new DfvPlayer();
-        dfvPlayer.setBirthDate(LocalDate.parse(playerToRegister.getGeburtsdatum()));
-        dfvPlayer.setFirstName(registerRequest.getFirstName());
-        dfvPlayer.setLastName(registerRequest.getLastName());
-        dfvPlayer.setDfvNumber(playerToRegister.getDfvnr());
-        dfvPlayer.setGender(playerToRegister.getGeschlecht().equalsIgnoreCase("m") ? Gender.MALE
-                : playerToRegister.getGeschlecht().equalsIgnoreCase("w") ? Gender.FEMALE : Gender.NA);
+        // check if the corresponding dfv player is already in the db
+        DfvPlayer dfvPlayer = this.dataStore.getDfvPlayerByDfvNumber(playerToRegister.getDfvnr());
+
+        boolean playerNewlyCreated = false;
+
+        if (dfvPlayer == null) {
+            playerNewlyCreated = true;
+            // create and persist User and DfvPlayer object
+            dfvPlayer = new DfvPlayer(playerToRegister);
+            dfvPlayer.setFirstName(registerRequest.getFirstName());
+            dfvPlayer.setLastName(registerRequest.getLastName());
+        }
+
         dfvPlayer.setEmail(registerRequest.getEmail());
 
         User user = new User();
@@ -183,7 +186,7 @@ public class RegisterResource {
             user.setDfvEmailOptIn(true);
         }
 
-        this.dataStore.storeUser(user);
+        this.dataStore.storeUser(user, playerNewlyCreated);
 
         this.dataStore.closeSession();
 

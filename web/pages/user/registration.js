@@ -2,8 +2,8 @@
 
 angular.module('ultical.user')
 
-.controller('RegistrationCtrl', ['$scope', 'serverApi', 'CONFIG', '$translate', 'alterter',
-                                 function($scope, serverApi, CONFIG, $translate, alterter) {
+.controller('RegistrationCtrl', ['$scope', 'serverApi', 'CONFIG', '$translate', 'alerter',
+                                 function($scope, serverApi, CONFIG, $translate, alerter) {
 
 	$scope.minPasswordLength = CONFIG.registration.minPasswordLength;
 	$scope.error = {};
@@ -58,7 +58,6 @@ angular.module('ultical.user')
 				// overwrite plain text passwords
 				$scope.user.password = '';
 				$scope.user.passwordCheck = '';
-				console.log("userResponse", userResponse);
 				$scope.$hide();
 			}
 
@@ -68,7 +67,7 @@ angular.module('ultical.user')
 
 	function createError(errorType) {
 		$scope.error[errorType] = true;
-		$alert({title: $translate.instant('user.registration.error.title'), content: $translate.instant('user.registration.error.' + errorType), container: '#registrationModalError', placement: 'top', type: 'danger', show: true});
+		alerter.error($translate.instant('user.registration.error.title'), $translate.instant('user.registration.error.' + errorType), {container: '#registrationModalError'});
 	}
 
 }]);

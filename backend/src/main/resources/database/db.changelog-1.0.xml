@@ -39,6 +39,8 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+		<addUniqueConstraint columnNames="dfv_number"
+			tableName="DFV_PLAYER" />
 		<addForeignKeyConstraint constraintName="fk_dfv_player_player"
 			referencedTableName="PLAYER" baseColumnNames="player_id"
 			baseTableName="DFV_PLAYER" referencedColumnNames="id" onDelete="CASCADE" />
@@ -370,6 +372,8 @@
 					referencedColumnNames="id" referencedTableName="ULTICAL_USER" />
 			</column>
 		</createTable>
+		<addUniqueConstraint columnNames="team, admin"
+			tableName="TEAM_ULTICAL_USERS" />
 		<addForeignKeyConstraint constraintName="fk_team_ultical_users_team"
 			referencedTableName="TEAM" baseColumnNames="team" baseTableName="TEAM_ULTICAL_USERS"
 			referencedColumnNames="id" onDelete="CASCADE" />
@@ -405,11 +409,12 @@
 	<changeSet id="20" author="bas">
 		<createTable tableName="ROSTER_PLAYERS">
 			<column name="roster" type="BIGINT">
-				<constraints nullable="false" />
+				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="player" type="BIGINT">
-				<constraints nullable="false" foreignKeyName="fk_roster_players_player"
-					referencedColumnNames="id" referencedTableName="PLAYER" />
+				<constraints primaryKey="true" nullable="false"
+					foreignKeyName="fk_roster_players_player" referencedColumnNames="id"
+					referencedTableName="PLAYER" />
 			</column>
 		</createTable>
 		<addForeignKeyConstraint constraintName="fk_roster_players_roster"

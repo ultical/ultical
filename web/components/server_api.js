@@ -46,7 +46,7 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 					return callCallback(successCallback, response, includeHeader);
 				}, function (response) {
 					if (CONFIG.debug) {
-						console.log("API fail");
+						console.log("API fail", response);
 					}
 					// error callback
 					return callCallback(errorCallback, response, includeHeader);
@@ -153,10 +153,9 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			return get('dfvmvname?search=' + $filter('urlEncode')(playerName), callback);
 		},
 
-		addPlayerToRoster: function(player, roster, callback) {
+		addPlayerToRoster: function(player, roster, callback, errorCallback) {
 			var requestPlayer = { lastName: player.lastName, firstName: player.firstName, dse: player.dse, dfvNumber: player.dfvNumber };
-
-			return post('roster/' + roster.id, requestPlayer, callback);
+			return post('roster/' + roster.id, requestPlayer, callback, errorCallback);
 		},
 	};
 

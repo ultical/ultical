@@ -13,6 +13,7 @@ var TRANSLATIONS_DE = {
 			save: 'Speichern',
 			cancel: 'Abbrechen',
 			create: 'Erstellen',
+			done: 'Fertig',
 		},
 
 		nav: {
@@ -149,6 +150,8 @@ var TRANSLATIONS_DE = {
 				editTooltip: 'Roster bearbeiten',
 				confirmDelete: 'Soll dieses Roster wirklich gelöscht werden?',
 				newPlayerPlaceholder: 'Name des Spielers',
+				playerAlreadyInRoster: 'Dieser Spieler ist bereits in einem Roster für diese Saison und Division gemeldet',
+				playerWrongGender: 'Dieser Spieler ist aufgrund des angegebenen Geschlechts in dieser Division nicht startberechtigt.',
 			},
 			edit: {
 				tooltip: 'Team bearbeiten',

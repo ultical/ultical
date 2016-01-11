@@ -22,7 +22,13 @@ public class Authenticator {
             throw new WebApplicationException(String.format("Team with id %d does not exist!", teamId),
                     Status.NOT_FOUND);
         }
-        if (!storedTeam.getAdmins().contains(currentUser)) {
+        boolean isAdmin = false;
+        for (User admin : storedTeam.getAdmins()) {
+            if (admin.getId() == currentUser.getId()) {
+                isAdmin = true;
+            }
+        }
+        if (!isAdmin) {
             throw new WebApplicationException(String.format("You are not an admin for team %s", storedTeam.getName()),
                     Status.FORBIDDEN);
         }

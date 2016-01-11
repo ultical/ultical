@@ -7,9 +7,32 @@ app.factory('alerter', ['$translate', '$alert', function($translate, $alert) {
 			callback(confirm($translate.instant(text)));
 		},
 
-		success: function(title, content) {
-			$alert({title: $translate.instant(title), content: $translate.instant(content), duration: 10, container: '#pageAlertSpace', placement: 'top', type: 'success', show: true});
+		success: function(title, content, options) {
+			doBootstrapAlert(title, content, 'success', options);
+		},
+
+		error: function(title, content, options) {
+			doBootstrapAlert(title, content, 'danger', options);
 		},
 	};
+
+	function doBootstrapAlert(title, content, type, options) {
+		if (undefined === options || options == null) {
+			options = {};
+		}
+		if (!('container' in options)) {
+			options.container = '#pageAlertSpace';
+		}
+		if (!('duration' in options)) {
+			options.duration = false;
+		}
+		options.title = $translate.instant(title);
+		options.content = $translate.instant(content);
+		options.placement = 'top';
+		options.show = true;
+		options.type = type;
+
+		$alert(options);
+	}
 
 }]);

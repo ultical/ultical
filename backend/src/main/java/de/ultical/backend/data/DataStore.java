@@ -17,6 +17,7 @@ import de.ultical.backend.data.mapper.DfvMvNameMapper;
 import de.ultical.backend.data.mapper.DfvPlayerMapper;
 import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
 import de.ultical.backend.data.mapper.PlayerMapper;
+import de.ultical.backend.data.mapper.RosterMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
 import de.ultical.backend.data.mapper.TeamMapper;
 import de.ultical.backend.data.mapper.TeamRegistrationMapper;
@@ -25,6 +26,8 @@ import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.Identifiable;
+import de.ultical.backend.model.Player;
+import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TeamRegistration;
@@ -190,6 +193,40 @@ public class DataStore {
         }
     }
 
+    public Roster getRosterOfPlayerSeason(int playerId, int seasonId, String divisionAge, String divisionType) {
+        try {
+            RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
+            return rosterMapper.getByPlayerSeasonDivision(playerId, seasonId, divisionAge, divisionType);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public Player getPlayerByDfvNumber(int dfvNumber) {
+        try {
+            DfvPlayerMapper dfvPlayerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
+            return dfvPlayerMapper.getByDfvNumber(dfvNumber);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public void addPlayerToRoster(Roster roster, Player player) {
+        try {
+            RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
+            rosterMapper.addPlayer(roster, player);
+            this.sqlSession.commit();
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     /*
      * clear and refill the DfvMvName table
      */
@@ -288,6 +325,31 @@ public class DataStore {
         return teamMapper.getByName(teamName);
     }
 
+    public void updateDfvPlayer(DfvPlayer dfvPlayer) {
+        /**
+         * A DfvPlayer has to be stored in two steps First Player (superclass)
+         * then DfvPlayer (subclass)
+         */
+        boolean orgCloseSession = this.autoCloseSession;
+
+        // only close session at the end
+        this.setAutoCloseSession(false);
+
+        // insert Player with corresponding mapper
+        PlayerMapper playerMapper = this.sqlSession.getMapper(PlayerMapper.class);
+        playerMapper.update(dfvPlayer);
+
+        // insert DfvPlayer
+        this.update(dfvPlayer);
+
+        // set autoclose to original value
+        this.setAutoCloseSession(orgCloseSession);
+
+        if (this.sqlSession != null && this.autoCloseSession) {
+            this.sqlSession.close();
+        }
+    }
+
     public void storeDfvPlayer(DfvPlayer dfvPlayer) {
         /**
          * A DfvPlayer has to be stored in two steps First Player (superclass)
@@ -316,7 +378,7 @@ public class DataStore {
         }
     }
 
-    public void storeUser(User user) {
+    public void storeUser(User user, boolean playerNewlyCreated) {
         /**
          * A user has to be stored in two steps First DfvPlayer, then User
          */
@@ -325,7 +387,11 @@ public class DataStore {
         // only close session at the end
         this.setAutoCloseSession(false);
 
-        this.storeDfvPlayer(user.getDfvPlayer());
+        if (playerNewlyCreated) {
+            this.storeDfvPlayer(user.getDfvPlayer());
+        } else {
+            this.updateDfvPlayer(user.getDfvPlayer());
+        }
 
         // insert User
         this.addNew(user);
@@ -345,8 +411,7 @@ public class DataStore {
         // only close session at the end
         this.setAutoCloseSession(false);
 
-        DfvPlayerMapper dfvPlayerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
-        DfvPlayer dfvPlayer = dfvPlayerMapper.getByDfvNumber(dfvNumber);
+        DfvPlayer dfvPlayer = this.getDfvPlayerByDfvNumber(dfvNumber);
 
         if (dfvPlayer == null) {
             return null;
@@ -354,6 +419,10 @@ public class DataStore {
 
         UserMapper userMapper = this.sqlSession.getMapper(UserMapper.class);
         User user = userMapper.getByDfvPlayer(dfvPlayer.getId());
+
+        if (user == null) {
+            return null;
+        }
 
         user.setDfvPlayer(dfvPlayer);
 
@@ -365,6 +434,11 @@ public class DataStore {
         }
 
         return user;
+    }
+
+    public DfvPlayer getDfvPlayerByDfvNumber(int dfvNumber) {
+        DfvPlayerMapper dfvPlayerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
+        return dfvPlayerMapper.getByDfvNumber(dfvNumber);
     }
 
     public User getUserByEmail(String email) {
