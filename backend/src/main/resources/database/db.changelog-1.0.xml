@@ -252,7 +252,7 @@
 			</column>
 			<column name="city" type="VARCHAR(255)" />
 			<column name="street" type="VARCHAR(255)" />
-			<column name="zip" type="BIGINT" />
+			<column name="zip_code" type="BIGINT" />
 			<column name="country" type="VARCHAR(255)" />
 			<column name="country_code" type="VARCHAR(3)" />
 			<column name="longitude" type="java.sql.Types.DOUBLE" />

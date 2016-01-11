@@ -78,9 +78,11 @@ public class TeamResource {
 
         t = this.prepareTeam(t);
 
-        if (t.getLocation() != null) {
-            this.dataStore.addNew(t.getLocation());
+        if (t.getLocation() == null) {
+            t.setLocation(new Location());
         }
+
+        this.dataStore.addNew(t.getLocation());
 
         Team result = null;
 
@@ -119,27 +121,23 @@ public class TeamResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{teamId}")
-    public void update(Team updatedTeam, @PathParam("teamId") Integer id, @Auth @NotNull User currentUser) {
+    public void update(Team updatedTeam, @PathParam("teamId") Integer teamId, @Auth @NotNull User currentUser) {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
         this.dataStore.setAutoCloseSession(false);
 
-        Authenticator.assureTeamAdmin(this.dataStore, id, currentUser);
+        Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
 
-        if (!id.equals(updatedTeam.getId())) {
+        if (!teamId.equals(updatedTeam.getId())) {
             throw new WebApplicationException(Status.NOT_ACCEPTABLE);
         }
 
         updatedTeam = this.prepareTeam(updatedTeam);
 
         if (updatedTeam.getLocation() != null) {
-            if (this.dataStore.get(updatedTeam.getLocation().getId(), Location.class) == null) {
-                this.dataStore.addNew(updatedTeam.getLocation());
-            } else {
-                this.dataStore.update(updatedTeam.getLocation());
-            }
+            this.dataStore.update(updatedTeam.getLocation());
         }
 
         boolean updated = false;

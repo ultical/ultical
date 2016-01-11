@@ -59,7 +59,7 @@ var TRANSLATIONS_DE = {
 			u17: 'U17',
 			u20: 'Juniors',
 			u23: 'U23',
-			regular: 'unbeschränkt',
+			regular: 'jedes Alter',
 			masters: 'Masters',
 			grandmasters: 'Grandmasters',
 			open: 'Open',
@@ -179,7 +179,8 @@ var TRANSLATIONS_DE = {
 			},
 			remove: {
 				tooltip: 'Team löschen',
-			}
+			},
+			confirmDelete: 'Soll dieses Team wirklich gelöscht werden? Dieser Vorgang kann nicht rückgängig gemacht werden!',
 		},
 
 		countries: {

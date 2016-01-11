@@ -10,6 +10,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class DivisionConfirmationPlayers extends DivisionConfirmation {
-	private Set<Player> players;
+    private Set<Player> players;
 
 }

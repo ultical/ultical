@@ -1,5 +1,29 @@
 'use strict';
 
+app.filter('isEmpty', [function() {
+	return function(obj) {
+		return isEmpty(obj);
+	};
+}]);
+
+app.filter('notEmpty', [function() {
+	return function(obj) {
+		return !isEmpty(obj);
+	};
+}]);
+
+app.filter('url', [function() {
+	return function(url) {
+		if (isEmpty(url)) {
+			return '';
+		}
+		if (url.indexOf('http') != 0) {
+			url = 'http://' + url; 
+		}
+		return url;
+	};
+}]);
+
 app.filter('locationObject', ['$translate', function($translate) {
 	return function (location) {
 		if (isEmpty(location)) {
@@ -7,6 +31,8 @@ app.filter('locationObject', ['$translate', function($translate) {
 		}
 
 		var loc = {
+				id: location.id,
+				version: location.version,
 				city: '',
 				country: '',
 				countryCode: '',
@@ -18,7 +44,7 @@ app.filter('locationObject', ['$translate', function($translate) {
 		};
 
 		var components = [];
-		components.push({ id: location.id, text: location.text, place_name: location.place_name});
+		components.push({ id: location.mapBoxId, text: location.text, place_name: location.place_name});
 		angular.forEach(location.context, function(component) {
 			components.push(component);
 		});

@@ -15,10 +15,11 @@ angular.module('ultical.team', [])
 	$scope.tabs = { activeTab: $stateParams.activeTab ? $stateParams.activeTab: 'all' };
 
 	$scope.newEmail = { text: ''};
-
+	$scope.newAdmin = { obj: {}};
 	$scope.teams = [];
 
 	$scope.$watch('tabs.activeTab', function() {
+		$scope.teamPanels.activePanel = -1;
 		$scope.editingRoster = -1;
 		$scope.editing = false;
 		$scope.teams = [];
@@ -55,53 +56,53 @@ angular.module('ultical.team', [])
 			twitterName: '',
 			contactEmail: '',
 		});
-
 	};
 
 	$scope.editTeam = function(team) {
 		$scope.editing = true;
 		$scope.teamToEdit = angular.copy(team);
+		$scope.locationToEdit = angular.copy($scope.teamToEdit.location);
 	};
 
 	$scope.saveTeam = function(team) {
-		$scope.addAdmin($scope.newAdmin);
+		$scope.addAdmin($scope.newAdmin.obj);
 		$scope.addEmail($scope.newEmail);
 
 		storage.saveTeam(team, function(ownTeams) {
-			console.log("own teams", ownTeams);
 			$scope.teams = ownTeams;
 			$scope.editing = false;
+			$scope.panel.activePanel = -1;
 		}, $scope.tabs.activeTab);
-
 	};
 
 	$scope.cancel = function() {
 		$scope.teamToEdit = {};
 		$scope.editing = false;
+		$scope.panel.activePanel = -1;
 	}
 
 	$scope.addAdmin = function(newAdmin) {
-		if (isEmpty(newAdmin)) {
+		if (isEmpty(newAdmin) || isEmpty(newAdmin.obj)) {
 			return;
 		}
 
-		if (!angular.isObject(newAdmin)) {
+		if (!angular.isObject(newAdmin.obj)) {
 			return;
 		}
 
 		// check if admin is already in the list
 		var alreadyAdmin = false;
 		angular.forEach($scope.teamToEdit.admins, function(admin) {
-			if (admin.id == newAdmin.id) {
+			if (admin.id == newAdmin.obj.id) {
 				alreadyAdmin = true;
 			}
 		});
 
 		if (!alreadyAdmin) {
-			$scope.teamToEdit.admins.push(newAdmin);
+			$scope.teamToEdit.admins.push(newAdmin.obj);
 		}
 
-		$scope.newAdmin = '';
+		$scope.newAdmin = {};
 	}
 
 	$scope.removeAdmin = function(adminId) {
@@ -187,7 +188,12 @@ angular.module('ultical.team', [])
 	};
 
 	$scope.deleteTeam = function(team) {
-		console.log("delete?", alert("Do you really want to delete this team?"));
+		alerter.confirm('team.confirmDelete', function(userResponse) {
+			if (userResponse == true) {
+				// not yet implemented
+				// storage.deleteTeam(team);
+			}
+		});
 	}
 
 	// return location-proposals from mapbox api
@@ -196,8 +202,13 @@ angular.module('ultical.team', [])
 			return [];
 		}
 
-		return mapService.getLocations(locationName, 'city', function(res) {
-			return res;
+		return mapService.getLocations(locationName, 'city', function(locations) {
+			angular.forEach(locations, function(location) {
+				location.mapBoxId = location.id;
+				location.id = $scope.locationToEdit.id;
+				location.version = $scope.locationToEdit.version;
+			});
+			return locations;
 		});
 	};
 
@@ -302,6 +313,10 @@ angular.module('ultical.team', [])
 			$scope.teamPanels.activePanel = collapseIndex;
 		}, 100);
 	};
+
+	$scope.$watch('panel.activePanel', function() {
+		$scope.teamPanels.activePanel = -1;
+	});
 
 	$scope.$watch('teamPanels.activePanel', function() {
 		$timeout(function() {

@@ -11,10 +11,11 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class DivisionRegistrationPlayers extends DivisionRegistration {
-	// ordered list of registered players
-	private Map<Integer, PlayerRegistration> registeredPlayers;
+    // ordered list of registered players
+    private Map<Integer, PlayerRegistration> registeredPlayers;
 
-	public Class<DivisionRegistrationMapper> getMapper() {
-		return DivisionRegistrationMapper.class;
-	}
+    @Override
+    public Class<DivisionRegistrationMapper> getMapper() {
+        return DivisionRegistrationMapper.class;
+    }
 }
