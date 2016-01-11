@@ -1,10 +1,8 @@
-package de.ultical.backend.api;
+package de.ultical.backend.jobs;
 
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
@@ -15,14 +13,7 @@ import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
 
-/**
- * Temporary resource to init server
- *
- * @author bas
- *
- */
-@Path("/init")
-public class TempInitResource {
+public class DfvProfileLoaderWorker {
 
     @Inject
     private Client client;
@@ -33,8 +24,7 @@ public class TempInitResource {
     @Inject
     private DataStore dataStore;
 
-    @GET
-    public boolean initRequest() {
+    public boolean getDfvMvNames() {
 
         this.dataStore.setAutoCloseSession(false);
 

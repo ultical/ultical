@@ -25,7 +25,6 @@ import de.ultical.backend.api.RegisterResource;
 import de.ultical.backend.api.RosterResource;
 import de.ultical.backend.api.SeasonResource;
 import de.ultical.backend.api.TeamResource;
-import de.ultical.backend.api.TempInitResource;
 import de.ultical.backend.api.TournamentFormatResource;
 import de.ultical.backend.api.TournamentResource;
 import de.ultical.backend.api.UserResource;
@@ -141,7 +140,6 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         env.jersey().register(SeasonResource.class);
         env.jersey().register(TournamentFormatResource.class);
         env.jersey().register(TeamResource.class);
-        env.jersey().register(TempInitResource.class);
         env.jersey().register(RegisterResource.class);
         env.jersey().register(AuthResource.class);
         env.jersey().register(DivisionResource.class);

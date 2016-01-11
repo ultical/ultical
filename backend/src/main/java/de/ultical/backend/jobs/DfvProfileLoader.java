@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import de.spinscale.dropwizard.jobs.Job;
 import de.spinscale.dropwizard.jobs.annotations.On;
-import de.ultical.backend.api.TempInitResource;
 import de.ultical.backend.app.ServiceLocatorProvider;
 
 /**
@@ -28,12 +27,18 @@ public class DfvProfileLoader extends Job {
 
     @Override
     public void doJob() {
-        LOGGER.info("Job started ...");
+
+        LOGGER.info("Starting to fetch and store from dfv-mv...");
         ServiceLocator sl = ServiceLocatorProvider.INSTANCE.getServiceLocator();
+
         if (sl != null) {
-            TempInitResource tir = sl.createAndInitialize(TempInitResource.class);
+            DfvProfileLoaderWorker diw = sl.createAndInitialize(DfvProfileLoaderWorker.class);
+
+            // TempInitResource tir =
+            // sl.createAndInitialize(TempInitResource.class);
             try {
-                tir.initRequest();
+                diw.getDfvMvNames();
+                // tir.initRequest();
             } catch (WebApplicationException | PersistenceException pe) {
                 LOGGER.error("Updating DFV profiles failed!", pe);
             }
