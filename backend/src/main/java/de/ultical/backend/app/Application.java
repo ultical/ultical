@@ -3,6 +3,7 @@ package de.ultical.backend.app;
 import java.time.LocalDate;
 import java.util.EnumSet;
 
+import javax.mail.Session;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.ws.rs.client.Client;
@@ -126,6 +127,8 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
                     }
 
                 }).to(UltiCalConfig.class);
+                this.bindAsContract(MailClient.class);
+                this.bindFactory(SessionFactory.class).to(Session.class);
 
             }
         });
@@ -134,6 +137,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
         // add healthcheck
         env.healthChecks().register("Database healthcheck", new DatabaseHealthCheck(mds));
+        env.healthChecks().register("E-Mail health check", new MailHealthCheck());
 
         env.jersey().register(EventsResource.class);
         env.jersey().register(TournamentResource.class);
