@@ -59,7 +59,7 @@ var TRANSLATIONS_DE = {
 			u17: 'U17',
 			u20: 'Juniors',
 			u23: 'U23',
-			regular: 'unbeschränkt',
+			regular: 'jedes Alter',
 			masters: 'Masters',
 			grandmasters: 'Grandmasters',
 			open: 'Open',

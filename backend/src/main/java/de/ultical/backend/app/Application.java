@@ -191,6 +191,9 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         env.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
 
         env.jersey().register(ServiceLocatorFeature.class);
+
+        // TODO: remove debug output
+        env.jersey().property("jersey.config.server.tracing.type", "ALL");
     }
 
     /*

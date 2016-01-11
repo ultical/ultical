@@ -114,7 +114,7 @@
 									<span ng-click="addAdmin(newAdmin)" class="cursor-pointer input-group-addon">
 										<span class="glyphicon glyphicon-plus"></span>
 									</span>
-									<input type="text" data-container="body" class="form-control" id="tteAdmins" bas-enter="addAdmin(newAdmin)" ng-blur="addAdmin(newAdmin)" ng-model="newAdmin" data-animation="am-flip-x" data-auto-select="true" data-trim-value="false"
+									<input type="text" data-container="body" class="form-control" id="tteAdmins" bas-enter="addAdmin(newAdmin)" ng-blur="addAdmin(newAdmin)" ng-model="newAdmin.obj" data-animation="am-flip-x" data-auto-select="true" data-trim-value="false"
 										bs-options="user as user.fullName for user in getUsers($viewValue)" placeholder="{{ 'team.edit.adminsPlaceholder' | translate }}" bs-typeahead
 									>
 								</div>
@@ -197,7 +197,7 @@
 								<div class="col-md-12"></div>
 							</div>
 
-							<div class="row" ng-show="team.location != null">
+							<div class="row" ng-show="team.location.city != null">
 								<div class="col-md-12">
 									<i class="fa fa-map-marker fa-fw"></i> {{ team.location | location }}
 								</div>
@@ -246,7 +246,7 @@
 								<div class="col-md-12">{{ 'team.roster.label' | translate }}</div>
 							</div>
 
-							<div class="row margin-top-small margin-bottom ffade-in animation-delay" ng-show="team.own && !editing && editingRoster == -1">
+							<div class="row margin-top ffade-in animation-delay" ng-show="team.own && !editing && editingRoster == -1">
 								<div class="col-md-12">
 									<button ng-click="createNewRoster(team)" type="button" class="btn btn-primary">
 										<span class="glyphicon glyphicon-plus-sign glyphicon-big" aria-hidden="true"></span>
@@ -279,7 +279,7 @@
 										<div class="col-md-5">
 											<div class="form-group">
 												<label class="" for="rosSeason">{{ 'season.season' | translate }}</label>
-												<button id="rosSeason" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.season" bs-options="season as season | season for season in selects.seasons" bs-select>
+												<button id="rosSeason" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.season" bs-options="season as season | season : 'fullName' for season in selects.seasons" bs-select>
 													<span class="caret"></span>
 												</button>
 											</div>
@@ -295,13 +295,13 @@
 
 								</div>
 							</div>
-{{ actualRosterEditedPanel }}
-							<div class="row margin-top-small" ng-if="team.rosters.length > 0">
+
+							<div class="row margin-top" id="roster-listing" ng-if="team.rosters.length > 0">
 								<div class="col-md-12">
 
 									<div class="panel-group" ng-model="teamPanels.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
 
-										<div class="panel panel-ultical2" ng-repeat="roster in team.rosters | orderBy : ['-season.year', 'season.plusOneYear']">
+										<div class="panel panel-ultical2" ng-repeat="roster in team.rosters | orderBy : ['-season.year', '-season.plusOneYear']">
 											<div class="panel-heading" role="tab">
 												<h3 class="panel-title cursor-pointer" bs-collapse-toggle>
 													<span>{{ roster.season | season : true }} - {{ roster | division }}</span>

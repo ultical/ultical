@@ -177,3 +177,7 @@ body {
 #new-roster-form .btn {
 	text-align: left;
 }
+
+#roster-listing .panel-group {
+	margin-bottom: 0;
+}

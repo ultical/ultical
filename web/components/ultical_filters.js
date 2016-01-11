@@ -7,6 +7,8 @@ app.filter('locationObject', ['$translate', function($translate) {
 		}
 
 		var loc = {
+				id: location.id,
+				version: location.version,
 				city: '',
 				country: '',
 				countryCode: '',
@@ -18,7 +20,7 @@ app.filter('locationObject', ['$translate', function($translate) {
 		};
 
 		var components = [];
-		components.push({ id: location.id, text: location.text, place_name: location.place_name});
+		components.push({ id: location.mapBoxId, text: location.text, place_name: location.place_name});
 		angular.forEach(location.context, function(component) {
 			components.push(component);
 		});
@@ -81,6 +83,7 @@ app.filter('locationObject', ['$translate', function($translate) {
 		loc.longitude = location.center[0];
 		loc.latitude = location.center[1];
 
+		console.log(location, "to", loc);
 		return loc;
 	};
 }]);

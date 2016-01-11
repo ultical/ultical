@@ -108,6 +108,8 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		saveTeam: function(team, oldTeam, callback) {
 			var teamToSend = angular.copy(team);
 
+			teamToSend.rosters = [];
+
 			var emailsString = '';
 			angular.forEach(teamToSend.emails, function(email, idx) {
 				emailsString += email;

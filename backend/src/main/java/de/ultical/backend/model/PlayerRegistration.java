@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class PlayerRegistration {
-	private Player player;
-	private LocalDateTime timeRegistered;
-	private String comment;
+    private Player player;
+    private LocalDateTime timeRegistered;
+    private String comment;
 }

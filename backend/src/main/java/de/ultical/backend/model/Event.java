@@ -3,7 +3,8 @@ package de.ultical.backend.model;
 import java.time.LocalDate;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import de.ultical.backend.data.mapper.EventMapper;
 import io.dropwizard.validation.MinSize;
@@ -11,40 +12,41 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper=true)
-public class Event extends Identifiable{
+@EqualsAndHashCode(callSuper = true)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Event.class)
+public class Event extends Identifiable {
 
-	// keep on -1 for single tournaments
-	private int matchdayNumber = -1;
+    // keep on -1 for single tournaments
+    private int matchdayNumber = -1;
 
-	@JsonBackReference
-	private TournamentEdition tournamentEdition;
+    // @JsonBackReference
+    private TournamentEdition tournamentEdition;
 
-	private Location location;
+    private Location location;
 
-	// subset of the tournaments divisions and participants
-	@MinSize(1)
-	private Set<DivisionConfirmation> divisionConfirmations;
+    // subset of the tournaments divisions and participants
+    @MinSize(1)
+    private Set<DivisionConfirmation> divisionConfirmations;
 
-	private LocalDate startDate;
-	private LocalDate endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
-	private int feePerTeam;
-	private int feePerPlayer;
-	private int feePerGuest;
-	private int feePerBreakfast;
-	private int feePerLunch;
-	private int feePerDinner;
-	private int feePerNight;
+    private int feePerTeam;
+    private int feePerPlayer;
+    private int feePerGuest;
+    private int feePerBreakfast;
+    private int feePerLunch;
+    private int feePerDinner;
+    private int feePerNight;
 
-	private Set<User> admins;
+    private Set<User> admins;
 
-	private String localOrganizerName;
-	private String localOrganizerEmail;
-	private String localOrganizerPhone;
-	
-	@Override
-	public Class<EventMapper> getMapper() {
-		return EventMapper.class;
-	}
+    private String localOrganizerName;
+    private String localOrganizerEmail;
+    private String localOrganizerPhone;
+
+    @Override
+    public Class<EventMapper> getMapper() {
+        return EventMapper.class;
+    }
 }
