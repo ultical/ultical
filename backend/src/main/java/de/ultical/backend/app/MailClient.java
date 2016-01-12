@@ -1,7 +1,7 @@
 package de.ultical.backend.app;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.mail.Message.RecipientType;
@@ -11,7 +11,6 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,25 +23,32 @@ public class MailClient {
     Session mailSession;
 
     public static interface UlticalMessage {
-        List<String> getRecipients();
+        Set<String> getRecipients();
 
-        String getRenderedMessage();
+        String getRenderedMessage(String recipient);
 
         String getSubject();
+
+        String getSenderName();
     }
 
     public void sendMail(UlticalMessage m) {
         Objects.requireNonNull(m, "You must not pass a null-value!");
 
         try {
-            Transport trans = this.mailSession.getTransport();
+            // Transport trans = this.mailSession.getTransport();
             for (String recipient : m.getRecipients()) {
                 MimeMessage message = new MimeMessage(this.mailSession);
                 message.setSubject(m.getSubject());
-                message.setContent(m.getRenderedMessage(), MediaType.TEXT_PLAIN);
+                // message.setContent(m.getRenderedMessage(recipient),
+                // MediaType.TEXT_PLAIN);
+                message.setText(m.getRenderedMessage(recipient), "UTF-8");
                 message.setRecipient(RecipientType.TO, new InternetAddress(recipient));
-                message.setFrom(this.mailSession.getProperty(SessionFactory.EMAIL_FROM_PROPERTY_KEY));
-                trans.send(message);
+                message.setFrom(m.getSenderName() + " <"
+                        + this.mailSession.getProperty(SessionFactory.EMAIL_FROM_PROPERTY_KEY) + ">");
+                message.setSender(
+                        new InternetAddress(this.mailSession.getProperty(SessionFactory.EMAIL_FROM_PROPERTY_KEY)));
+                Transport.send(message);
             }
 
         } catch (NoSuchProviderException npe) {

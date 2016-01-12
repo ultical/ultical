@@ -1,7 +1,7 @@
 package de.ultical.backend.app;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import com.codahale.metrics.health.HealthCheck;
 
@@ -18,7 +18,7 @@ public class MailHealthCheck extends HealthCheck {
             }
 
             @Override
-            public String getRenderedMessage() {
+            public String getRenderedMessage(String recipient) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("Hallo zusammen,").append('\n');
                 sb.append('\n');
@@ -33,8 +33,14 @@ public class MailHealthCheck extends HealthCheck {
             }
 
             @Override
-            public List<String> getRecipients() {
-                return Collections.singletonList("team@ultical.com");
+            public Set<String> getRecipients() {
+                return Collections.singleton("team@ultical.com");
+            }
+
+            @Override
+            public String getSenderName() {
+                // TODO Auto-generated method stub
+                return null;
             }
         };
         MailClient mailClient = ServiceLocatorProvider.INSTANCE.getServiceLocator()

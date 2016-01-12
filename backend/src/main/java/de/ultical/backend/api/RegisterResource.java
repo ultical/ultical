@@ -3,6 +3,7 @@ package de.ultical.backend.api;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,7 +23,11 @@ import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.api.transferClasses.RegisterRequest;
 import de.ultical.backend.api.transferClasses.RegisterResponse;
 import de.ultical.backend.api.transferClasses.RegisterResponse.RegisterResponseStatus;
+import de.ultical.backend.app.MailClient;
 import de.ultical.backend.app.UltiCalConfig;
+import de.ultical.backend.app.mail.ConfirmEmailMessage;
+import de.ultical.backend.app.mail.DefaultMessage;
+import de.ultical.backend.app.mail.DfvOptInMessage;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.User;
@@ -44,6 +49,9 @@ public class RegisterResource {
 
     @Inject
     private UltiCalConfig config;
+
+    @Inject
+    private MailClient mailClient;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -173,15 +181,38 @@ public class RegisterResource {
 
         User user = new User();
         user.setEmail(registerRequest.getEmail());
-        user.setPassword(BCrypt.hashpw(registerRequest.getPassword(), BCrypt.gensalt(11)));
+        user.setPassword(BCrypt.hashpw(registerRequest.getPassword(), BCrypt.gensalt(10)));
         user.setDfvPlayer(dfvPlayer);
-        user.setEmailConfirmed(false);
 
-        // TODO send Confirmation Mail to registerRequest.getEmail()
+        // send Confirmation Mail to registerRequest.getEmail()
+        user.setEmailConfirmed(false);
+        DefaultMessage message = new ConfirmEmailMessage();
+        message.addRecipient(user.getEmail(), user.getDfvPlayer().getFirstName(), user.getFullName());
+
+        HashMap<String, String> values = new HashMap<String, String>();
+        values.put("pageName", "DFV-Turniere");
+        values.put("link", this.createEmailConfirmationLink(user));
+        values.put("needsDfvOptIn",
+                !registerRequest.getEmail().equalsIgnoreCase(playerToRegister.getEmail()) ? "1" : "0");
+        message.init(values);
+        this.mailClient.sendMail(message);
 
         if (!registerRequest.getEmail().equalsIgnoreCase(playerToRegister.getEmail())) {
-            // TODO send Opt-In Mail to playerToRegister.getEmail()
+            // send Opt-In Mail to playerToRegister.getEmail()
             user.setDfvEmailOptIn(false);
+
+            // user needs to confirm his 'old' email address stored in the dfv
+            // database
+            DefaultMessage optInMessage = new DfvOptInMessage();
+            optInMessage.addRecipient(playerToRegister.getEmail(), user.getDfvPlayer().getFirstName(),
+                    user.getFullName());
+
+            HashMap<String, String> optInValues = new HashMap<String, String>();
+            optInValues.put("pageName", "DFV-Turniere");
+            optInValues.put("link", this.createDfvOptInLink(user));
+            optInMessage.init(optInValues);
+
+            this.mailClient.sendMail(optInMessage);
         } else {
             user.setDfvEmailOptIn(true);
         }
@@ -211,4 +242,11 @@ public class RegisterResource {
         return response;
     }
 
+    private String createEmailConfirmationLink(User user) {
+        return "http://www.knallbude.de?test=abc&anlass=confirmationEmail";
+    }
+
+    private String createDfvOptInLink(User user) {
+        return "http://www.wallcity.de?a=dfvOptIn";
+    }
 }
