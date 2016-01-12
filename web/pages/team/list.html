@@ -114,7 +114,7 @@
 									<span ng-click="addAdmin(newAdmin)" class="cursor-pointer input-group-addon">
 										<span class="glyphicon glyphicon-plus"></span>
 									</span>
-									<input type="text" data-container="body" class="form-control" id="tteAdmins" bas-enter="addAdmin(newAdmin)" ng-blur="addAdmin(newAdmin)" ng-model="newAdmin.obj" data-animation="am-flip-x" data-auto-select="true" data-trim-value="false"
+									<input type="text" data-container="body" class="form-control" id="tteAdmins" bas-enter="addAdmin(newAdmin)" ng-blur="addAdmin(newAdmin)" ng-model="newAdmin.obj" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0"
 										bs-options="user as user.fullName for user in getUsers($viewValue)" placeholder="{{ 'team.edit.adminsPlaceholder' | translate }}" bs-typeahead
 									>
 								</div>
@@ -193,7 +193,7 @@
 								<div class="col-md-12">{{team.description }}</div>
 							</div>
 
-							<div class="row margin-top-small">
+							<div class="row margin-top">
 								<div class="col-md-12"></div>
 							</div>
 
@@ -209,7 +209,7 @@
 								</div>
 							</div>
 
-							<div class="row margin-top-small">
+							<div class="row margin-top">
 								<div class="col-md-12"></div>
 							</div>
 
@@ -244,8 +244,8 @@
 							<!-- ROSTERS -->
 							<div class="row margin-top" ng-if="team.rosters.length > 0">
 								<div class="col-md-12">
-								<i class="fa fa-list fa-fw"></i>
-								{{ 'team.roster.label' | translate }}</div>
+									<i class="fa fa-list fa-fw"></i> {{ 'team.roster.label' | translate }}
+								</div>
 							</div>
 
 							<div class="row margin-top ffade-in animation-delay" ng-show="team.own && !editing && editingRoster == -1">
@@ -320,7 +320,7 @@
 												<div class="panel-body">
 
 													<!-- adding player to roster - input -->
-													<div class="row" ng-if="editingRosterPlayers == roster.id">
+													<div class="row" ng-if="team.own && editingRosterPlayers == roster.id">
 														<div class="col-md-12">
 															<div class="row">
 																<div class="col-md-12">
@@ -333,8 +333,8 @@
 																		<span ng-click="addPlayerToRoster(newPlayer, roster)" class="cursor-pointer input-group-addon">
 																			<span class="glyphicon glyphicon-plus"></span>
 																		</span>
-																		<input ng-disabled="editRosterBlock" type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj" data-animation="am-flip-x" data-auto-select="true" data-trim-value="false"
-																			bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
+																		<input ng-disabled="editRosterBlock" type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj" data-animation="am-flip-x" data-auto-select="1"
+																			data-trim-value="0" bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
 																		>
 																	</div>
 																</div>
@@ -349,7 +349,12 @@
 
 													<div class="row">
 														<div class="col-md-12">
-															<div ng-repeat="player in roster.players | orderBy : 'lastName'">{{ player.firstName}} {{ player.lastName }}</div>
+															<div class="roster-list" ng-repeat="player in roster.players | orderBy : 'lastName'">
+																{{ player.firstName}} {{ player.lastName }}
+																<span ng-if="team.own && editingRosterPlayers == roster.id" ng-click="removePlayerFromRoster(player, roster, team)" class="ffade player-actions cursor-pointer" data-title="{{ 'team.roster.removePlayerTooltip' | translate }}" bs-tooltip>
+																	<i class="fa fa-remove"></i>
+																</span>
+															</div>
 															<div ng-if="roster.players.length == 0">{{ 'team.roster.empty' | translate }}</div>
 														</div>
 													</div>

@@ -155,6 +155,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			return get('dfvmvname?search=' + $filter('urlEncode')(playerName), callback);
 		},
 
+		removePlayerFromRoster: function(player, roster, callback) {
+			return del('roster/' + roster.id + '/player/' + player.id, callback);
+		},
+
 		addPlayerToRoster: function(player, roster, callback, errorCallback) {
 			var requestPlayer = { lastName: player.lastName, firstName: player.firstName, dse: player.dse, dfvNumber: player.dfvNumber };
 			return post('roster/' + roster.id, requestPlayer, callback, errorCallback);

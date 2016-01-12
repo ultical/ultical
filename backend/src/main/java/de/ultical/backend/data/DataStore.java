@@ -204,6 +204,18 @@ public class DataStore {
         }
     }
 
+    public void removePlayerFromRoster(int playerId, int rosterId) {
+        try {
+            RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
+            rosterMapper.deletePlayer(playerId, rosterId);
+            this.sqlSession.commit();
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public Player getPlayerByDfvNumber(int dfvNumber) {
         try {
             DfvPlayerMapper dfvPlayerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);

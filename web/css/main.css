@@ -164,6 +164,16 @@ body {
 	opacity: 1;
 }
 
+.player-actions {
+	color: #B9B9B9;
+	opacity: 0;
+	margin-left: 7px;
+}
+
+.roster-list:hover .player-actions {
+	opacity: 1;
+}
+
 #new-roster-form button {
 	width: 100%;
 }

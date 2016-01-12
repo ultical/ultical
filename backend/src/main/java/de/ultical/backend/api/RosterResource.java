@@ -157,6 +157,28 @@ public class RosterResource {
     }
 
     @DELETE
+    @Path("{rosterId}/player/{playerId}")
+    public void deletePlayerFromRoster(@Auth @NotNull User currentUser, @PathParam("rosterId") int rosterId,
+            @PathParam("playerId") int playerId) {
+        if (this.dataStore == null) {
+            throw new WebApplicationException();
+        }
+        this.dataStore.setAutoCloseSession(false);
+        Roster roster = this.dataStore.get(rosterId, Roster.class);
+
+        Authenticator.assureTeamAdmin(this.dataStore, roster.getTeam().getId(), currentUser);
+
+        try {
+            this.dataStore.removePlayerFromRoster(playerId, rosterId);
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Accessing the database failes!");
+        }
+
+        this.dataStore.closeSession();
+
+    }
+
+    @DELETE
     @Path("{rosterId}")
     public void deleteRoster(@Auth @NotNull User currentUser, @PathParam("rosterId") int rosterId) {
         if (this.dataStore == null) {

@@ -88,6 +88,22 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				});
 			},
 
+			removePlayerFromRoster: function(player, roster, callback) {
+				var that = this;
+				serverApi.removePlayerFromRoster(player, roster, function() {
+					var idxToRemove = -1;
+					angular.forEach(roster.players, function(rosterPlayer, idx) {
+						if (rosterPlayer.id == player.id) {
+							idxToRemove = idx;
+						}
+					});
+					if (idxToRemove != -1) {
+						roster.players.splice(idxToRemove, 1);
+					}
+					callback();
+				});
+			},
+
 			addPlayerToRoster: function(player, roster, callback, errorCallback) {
 				var that = this;
 				serverApi.addPlayerToRoster(player, roster, function(newPlayer) {

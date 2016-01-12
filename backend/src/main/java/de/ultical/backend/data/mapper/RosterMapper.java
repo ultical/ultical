@@ -37,6 +37,9 @@ public interface RosterMapper extends BaseMapper<Roster> {
     @Delete("DELETE FROM ROSTER WHERE id=#{rosterId}")
     void delete(int rosterId);
 
+    @Delete("DELETE FROM ROSTER_PLAYERS WHERE roster=#{rosterId} AND player=#{playerId}")
+    void deletePlayer(@Param("playerId") int playerId, @Param("rosterId") int rosterId);
+
     // SELECT
     @Override
     @Select({ SELECT_STMT, "WHERE id = #{id}" })

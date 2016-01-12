@@ -331,6 +331,10 @@ angular.module('ultical.team', [])
 		$scope.actualRosterEditedPanelIdx = -1
 	};
 
+	$scope.removePlayerFromRoster = function(player, roster) {
+		storage.removePlayerFromRoster(player, roster, function() {});
+	};
+
 	$scope.deleteRoster = function(roster, team) {
 		alerter.confirm('team.roster.confirmDelete', function(userResponse) {
 			if (userResponse == true) {
