@@ -15,3 +15,10 @@ database:
   url: jdbc:mysql://localhost/ultical
   user: ultical
   password: ultical
+  
+ mail:
+   smtpHost: smtp.example.com
+   smtpPort: 587
+   smtpUser: smtp-user
+   smtpPassword: secret
+   smtpSender: no-reply@example.com
