@@ -16,9 +16,9 @@ database:
   user: ultical
   password: ultical
   
- mail:
-   smtpHost: smtp.example.com
-   smtpPort: 587
-   smtpUser: smtp-user
-   smtpPassword: secret
-   smtpSender: no-reply@example.com
+mail:
+  smtpHost: smtp.example.com
+  smtpPort: 587
+  smtpUser: smtp-user
+  smtpPassword: secret
+  smtpSender: no-reply@example.com
