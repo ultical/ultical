@@ -33,4 +33,6 @@ public class UltiCalConfig extends Configuration {
 
     @NotNull
     private MailConfig mail;
+
+    private boolean debug;
 }

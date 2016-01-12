@@ -196,8 +196,9 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
         env.jersey().register(ServiceLocatorFeature.class);
 
-        // TODO: remove debug output
-        env.jersey().property("jersey.config.server.tracing.type", "ALL");
+        if (config.isDebug()) {
+            env.jersey().property("jersey.config.server.tracing.type", "ALL");
+        }
     }
 
     /*
