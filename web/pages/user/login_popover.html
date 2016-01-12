@@ -8,7 +8,7 @@
 					<div class="panel-heading">
 						<span>{{ 'nav.loginFail.' + loginFail.text | translate }}</span>
 					</div>
-					<div class="panel-footer">
+					<div class="panel-footer" ng-if="loginFail.actionText | notEmpty">
 						<span>
 							<a ng-click="loginFail.action(login)" href="#">{{ 'nav.loginFail.' + loginFail.actionText | translate }}</a>
 						</span>

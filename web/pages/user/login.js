@@ -55,6 +55,9 @@ angular.module('ultical.user', [])
 						});
 					};
 					break;
+				default:
+					$scope.loginFail.text = 'loginFail';
+					$scope.loginFail.actionText = null;
 				}
 			}
 		});

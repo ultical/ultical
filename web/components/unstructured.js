@@ -1,4 +1,10 @@
 function isEmpty(obj) {
+	if (undefined === obj || obj == null) {
+		return true;
+	}
+	if (!angular.isObject(obj)) {
+		return isEmptyString(obj);
+	}
 	if (obj instanceof Array) {
 		return obj.length == 0;
 	} else {

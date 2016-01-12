@@ -26,6 +26,7 @@ var TRANSLATIONS_DE = {
 				emailNotConfirmedAction: 'Bestätigungsemail erneut senden?',
 				dfvEmailNotOptIn: 'Die Mail an die beim DFV hinterlegte Emailadresse wurde noch nicht bestätigt!',
 				dfvEmailNotOptInAction: 'Mail erneut senden?',
+				loginFail: 'Felher bei der Anmeldung',
 			},
 			loginEmailActions: {
 				successTitle: 'Email erfolgreich gesendet',
