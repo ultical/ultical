@@ -9,6 +9,8 @@ angular.module('ultical.team', [])
 		return authorizer.loggedIn();
 	}
 
+	$scope.bigButtons = CONFIG.general.actionButtonsBig;
+
 	$scope.activeUserId = authorizer.getUser() != null ? authorizer.getUser().id : -1;
 
 	// make sure we are directly at the right tab ('own' or 'all')

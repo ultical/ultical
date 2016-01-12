@@ -162,10 +162,11 @@
 
 	<div class="row margin-top-big ffade-in" ng-show="tabs.activeTab == 'own' && !editing">
 		<div class="col-md-12">
-			<button ng-click="createNewTeam()" type="button" class="btn btn-primary">
+			<button ng-if="bigButtons" ng-click="createNewTeam()" type="button" class="btn btn-primary">
 				<span class="glyphicon glyphicon-plus-sign glyphicon-big" aria-hidden="true"></span>
 				{{ 'team.list.newTeam' | translate }}
 			</button>
+			<a class="alternative-button-link" ng-if="!bigButtons" ng-click="createNewTeam()">{{ 'team.list.newTeam' | translate }}</a>
 		</div>
 	</div>
 
@@ -242,13 +243,17 @@
 							</div>
 
 							<!-- ROSTERS -->
-							<div class="row margin-top" ng-if="team.rosters.length > 0">
+							<div class="row margin-top" ng-if="team.rosters.length > 0 || !bigButtons">
 								<div class="col-md-12">
-									<i class="fa fa-list fa-fw"></i> {{ 'team.roster.label' | translate }}
+									<i class="fa fa-list fa-fw"></i>
+									<span ng-hide="team.rosters.length == 0 && editingRoster == -1">{{ 'team.roster.label' | translate }}</span>
+									<span ng-show="!bigButtons && team.own && !editing && editingRoster == -1 && team.rosters.length != 0"> &nbsp;(</span>
+									<a class="alternative-button-link" ng-click="createNewRoster(team)" ng-show="!bigButtons && team.own && !editing && editingRoster == -1">{{ 'team.roster.newRoster' | translate }}</a>
+									<span ng-show="!bigButtons && team.own && !editing && editingRoster == -1 && team.rosters.length != 0">)</span>
 								</div>
 							</div>
 
-							<div class="row margin-top ffade-in animation-delay" ng-show="team.own && !editing && editingRoster == -1">
+							<div class="row margin-top ffade-in animation-delay" ng-show="bigButtons && team.own && !editing && editingRoster == -1">
 								<div class="col-md-12">
 									<button ng-click="createNewRoster(team)" type="button" class="btn btn-primary">
 										<span class="glyphicon glyphicon-plus-sign glyphicon-big" aria-hidden="true"></span>
@@ -333,8 +338,8 @@
 																		<span ng-click="addPlayerToRoster(newPlayer, roster)" class="cursor-pointer input-group-addon">
 																			<span class="glyphicon glyphicon-plus"></span>
 																		</span>
-																		<input ng-disabled="editRosterBlock" type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj" data-animation="am-flip-x" data-auto-select="1"
-																			data-trim-value="0" bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
+																		<input ng-disabled="editRosterBlock" type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0"
+																			bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
 																		>
 																	</div>
 																</div>

@@ -13,6 +13,8 @@ angular.extend(CONFIG_OBJECT, {
 		availableLanguagesFull: ['deutsch', 'spanisch'],
 		// can be any two-letter country code or 'auto'
 		defaultLanguage: 'de',
+		// button style
+		actionButtonsBig: true,
 	},
 
 	registration: {

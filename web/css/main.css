@@ -196,3 +196,7 @@ body {
 	margin-right: 4px;
 	font-size: 14px;
 }
+
+.alternative-button-link {
+	cursor: pointer;
+}
