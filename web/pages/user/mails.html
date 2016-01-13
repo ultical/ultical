@@ -1,0 +1,27 @@
+<div ng-controller="MailsCtrl">
+	<form name="pwForm">
+
+		<div class="row" ang-if="promptFor == 'password'">
+			<div class="col-md-4 col-md-offset-4">
+				<div class="form-group col-md-9 col-md-offset-1" ng-class="{'has-error': pwForm.pwOne.$touched && newPw.one.length < 10}">
+					<label for="pw1">{{ 'user.password' | translate }}</label>
+					<input ng-required="1" ng-minlength="10" name="pwOne" type="password" class="form-control" id="pw1" ng-model="newPw.one" placeholder="{{ 'user.password' | translate }}" />
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 col-md-offset-4">
+				<div class="form-group col-md-9 col-md-offset-1" ng-class="{'has-error': pwForm.pwTwo.$touched && newPw.one != newPw.two}">
+					<label for="pw2">{{ 'user.passwordCheck' | translate }}</label>
+					<input ng-required="1" ng-minlength="10" name="pwTwo" type="password" class="form-control" id="pw2" ng-model="newPw.two" placeholder="{{ 'user.passwordCheck' | translate }}" />
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4 col-md-offset-4 text-center">
+				<button ng-disabled="!pwForm.$valid || newPw.one != newPw.two" type="button" class="btn btn-primary" ng-click="doPasswordChange(newPw)">{{ 'emailCode.changePassword' | translate }}</button>
+			</div>
+		</div>
+	</form>
+
+</div>

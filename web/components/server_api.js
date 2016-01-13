@@ -143,6 +143,27 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			post('register', user, callback);
 		},
 
+		changePasswordWithMailCode : function(code, user, callback) {
+			var basicUser = { id: user.id, password: user.password};
+			post('mail/' + code, basicUser, callback);
+		},
+
+		resendConfirmationEmail: function(loginData, callback) {
+			post('mail/resend/confirmation', loginData, callback);
+		},
+
+		resendOptInEmail: function(loginData, callback) {
+			post('mail/resend/optin', loginData, callback);
+		},
+
+		sendForgotPasswordEmail: function(loginData, callback) {
+			post('mail/resend/password', loginData, callback);
+		},
+
+		redeemMailCode: function(code, callback, errorCallback) {
+			get('mail/' + code, callback, errorCallback);
+		},
+
 		login: function(user, callback) {
 			post('auth', user, callback);
 		},

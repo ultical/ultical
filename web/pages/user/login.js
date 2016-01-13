@@ -5,16 +5,16 @@ angular.module('ultical.user', [])
                           function($scope, serverApi, authorizer, $state, alerter) {
 
 	$scope.loginFail = false;
+	$scope.freeze = false;
 
 	$scope.doLogin = function(loginData) {
-
-		// TODO: DEBUG
-		loginData = {};
-		loginData.email = "johanna@knallbude.de";
-		loginData.password = "asdasdasda";
-		// END DEBUG
+		if ($scope.freeze) {
+			return;
+		}
+		$scope.freeze = true;
 
 		serverApi.login(loginData, function(authResponse) {
+			$scope.freeze = false;
 			if (authResponse.status == 'SUCCESS') {
 				$scope.loginFail = false;
 				$scope.password = '';
@@ -28,7 +28,11 @@ angular.module('ultical.user', [])
 					$scope.loginFail.text = 'wrongCredentials';
 					$scope.loginFail.actionText = 'wrongCredentialsAction';
 					$scope.loginFail.action = function(loginData) {
-						authorizer.sendForgotPasswortMail(loginData, function() {
+						if ($scope.freeze) {
+							return;
+						}
+						$scope.freeze = true;
+						serverApi.sendForgotPasswordEmail(loginData, function() {
 							alerter.success('nav.loginEmailActions.successTitle', 'nav.loginEmailActions.passwordReset');
 							$scope.$hide();
 						});
@@ -38,8 +42,11 @@ angular.module('ultical.user', [])
 					$scope.loginFail.text = 'emailNotConfirmed';
 					$scope.loginFail.actionText = 'emailNotConfirmedAction';
 					$scope.loginFail.action = function(loginData) {
-						authorizer.sendConfirmationEmail(loginData, function() {
-							console.log("success");
+						if ($scope.freeze) {
+							return;
+						}
+						$scope.freeze = true;
+						serverApi.resendConfirmationEmail(loginData, function() {
 							alerter.success('nav.loginEmailActions.successTitle', 'nav.loginEmailActions.confirmationEmailSendContent');
 							$scope.$hide();
 						});
@@ -49,7 +56,11 @@ angular.module('ultical.user', [])
 					$scope.loginFail.text = 'dfvEmailNotOptIn';
 					$scope.loginFail.actionText = 'dfvEmailNotOptInAction';
 					$scope.loginFail.action = function(loginData) {
-						authorizer.sendDfvOptInEmail(loginData, function() {
+						if ($scope.freeze) {
+							return;
+						}
+						$scope.freeze = true;
+						serverApi.resendOptInEmail(loginData, function() {
 							alerter.success('nav.loginEmailActions.successTitle', 'nav.loginEmailActions.confirmationEmailSendContent');
 							$scope.$hide();
 						});
@@ -57,7 +68,7 @@ angular.module('ultical.user', [])
 					break;
 				default:
 					$scope.loginFail.text = 'loginFail';
-					$scope.loginFail.actionText = null;
+				$scope.loginFail.actionText = null;
 				}
 			}
 		});

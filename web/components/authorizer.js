@@ -21,17 +21,5 @@ app.factory('authorizer', [function() {
 		logOut: function() {
 			this.activeUser = {};
 		},
-
-		sendConfirmationEmail: function(loginData, callback) {
-			callback(true);
-		},
-
-		sendDfvOptInEmail: function(loginData, callback) {
-			callback(true);
-		},
-
-		sendForgotPasswortMail: function(loginData, callback) {
-			callback(true);
-		},
 	};
 }]);

@@ -1,24 +1,32 @@
 package de.ultical.backend.api;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-import de.ultical.backend.api.transferClasses.AuthResponse;
-import de.ultical.backend.api.transferClasses.AuthResponse.AuthResponseStatus;
+import de.ultical.backend.api.transferClasses.DfvMvPlayer;
+import de.ultical.backend.app.EmailCodeService;
 import de.ultical.backend.app.MailClient;
-import de.ultical.backend.app.MailClient.UlticalMessage;
-import de.ultical.backend.app.mail.DefaultMessage;
+import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.model.MailCode;
 import de.ultical.backend.model.User;
 
 /**
- * Handle new user registration
+ * Handle mail code link clicks (referred by the frontend)
  *
  * @author bas
  *
@@ -32,46 +40,137 @@ public class MailResource {
     @Inject
     MailClient mailClient;
 
+    @Inject
+    UltiCalConfig config;
+
+    @Inject
+    Client client;
+
+    @GET
+    @Path("{code}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public MailCode getMailCode(@PathParam("code") String code) {
+
+        this.dataStore.setAutoCloseSession(false);
+
+        MailCode mailCode = this.dataStore.getMailCode(code);
+
+        if (mailCode == null) {
+            throw new WebApplicationException("Mail Code not valid", Status.NOT_FOUND);
+        }
+
+        switch (mailCode.getType()) {
+        case FORGOT_PASSWORD:
+            return mailCode;
+        case CONFIRM_EMAIL:
+            mailCode.getUser().setEmailConfirmed(true);
+            break;
+        case DFV_MAIL_OPT_IN:
+            mailCode.getUser().setDfvEmailOptIn(true);
+            break;
+        }
+
+        // update user
+        this.dataStore.update(mailCode.getUser());
+
+        // delete mail code
+        this.dataStore.deleteMailCode(code);
+
+        this.dataStore.closeSession();
+
+        return mailCode;
+    }
+
     @POST
+    @Path("{code}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public AuthResponse AuthRequest(User requestedUser) {
-        if (requestedUser == null) {
-            return null;
+    public User updatePassword(@PathParam("code") String code, @NotNull User user) {
+
+        this.dataStore.setAutoCloseSession(false);
+
+        MailCode mailCode = this.dataStore.getMailCode(code);
+
+        if (mailCode == null) {
+            throw new WebApplicationException("Mail Code not valid", Status.NOT_FOUND);
         }
 
-        if (true) {
-            return null;
-        }
-        User foundUser = this.dataStore.getUserByEmail(requestedUser.getEmail());
-
-        if (foundUser == null) {
-            return new AuthResponse(AuthResponseStatus.WRONG_CREDENTIALS);
+        if (mailCode.getUser().getId() != user.getId()) {
+            throw new WebApplicationException("Email Code and User do not match", Status.FORBIDDEN);
         }
 
-        if (!BCrypt.checkpw(requestedUser.getPassword(), foundUser.getPassword())) {
-            return new AuthResponse(AuthResponseStatus.WRONG_CREDENTIALS);
-        }
+        // encode password
+        mailCode.getUser().setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(10)));
 
-        if (!foundUser.isEmailConfirmed()) {
-            return new AuthResponse(AuthResponseStatus.EMAIL_NOT_CONFIRMED);
-        }
+        // update user
+        this.dataStore.update(mailCode.getUser());
 
-        if (!foundUser.isDfvEmailOptIn()) {
-            return new AuthResponse(AuthResponseStatus.DFV_EMAIL_NOT_OPT_IN);
-        }
+        // delete mail code
+        this.dataStore.deleteMailCode(code);
 
-        AuthResponse successResponse = new AuthResponse(AuthResponseStatus.SUCCESS);
-        successResponse.setUser(foundUser);
+        this.dataStore.closeSession();
 
-        return successResponse;
+        return mailCode.getUser();
     }
 
-    private void sendMail() {
+    @POST
+    @Path("resend/confirmation")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public boolean resendConfirmation(@NotNull User loginData) {
 
-        UlticalMessage message = new DefaultMessage();
+        this.dataStore.setAutoCloseSession(false);
 
-        this.mailClient.sendMail(message);
+        User user = this.dataStore.getUserByEmail(loginData.getEmail());
+
+        if (user == null) {
+            throw new WebApplicationException("Email not found", Status.NOT_FOUND);
+        }
+        return new EmailCodeService(this.dataStore, this.config.getFrontendUrl())
+                .sendEmailConfirmMessage(this.mailClient, user);
     }
 
+    @POST
+    @Path("resend/optin")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public boolean resendOptIn(@NotNull User loginData) {
+
+        this.dataStore.setAutoCloseSession(false);
+
+        User user = this.dataStore.getUserByEmail(loginData.getEmail());
+
+        if (user == null) {
+            throw new WebApplicationException("Email not found", Status.NOT_FOUND);
+        }
+
+        // get dfv data
+        WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profil")
+                .path(String.valueOf(user.getDfvPlayer().getDfvNumber()))
+                .queryParam("token", this.config.getDfvApi().getToken())
+                .queryParam("secret", this.config.getDfvApi().getSecret());
+
+        Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
+        DfvMvPlayer player = invocationBuilder.get(DfvMvPlayer.class);
+
+        return new EmailCodeService(this.dataStore, this.config.getFrontendUrl())
+                .sendEmailDfvOptInMessage(this.mailClient, user, player.getEmail());
+    }
+
+    @POST
+    @Path("resend/password")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public boolean sendForgotPassword(@NotNull User loginData) {
+
+        this.dataStore.setAutoCloseSession(false);
+
+        User user = this.dataStore.getUserByEmail(loginData.getEmail());
+
+        if (user == null) {
+            throw new WebApplicationException("Email not found", Status.NOT_FOUND);
+        }
+
+        user.setPassword("");
+
+        return new EmailCodeService(this.dataStore, this.config.getFrontendUrl())
+                .sendForgotPasswordMessage(this.mailClient, user);
+    }
 }

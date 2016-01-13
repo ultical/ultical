@@ -56,5 +56,6 @@
 		<mapper class="de.ultical.backend.data.mapper.TeamRegistrationMapper" />
 		<mapper class="de.ultical.backend.data.mapper.DfvMvNameMapper" />
 		<mapper class="de.ultical.backend.data.mapper.RosterMapper" />
+		<mapper class="de.ultical.backend.data.mapper.MailCodeMapper" />
 	</mappers>
 </configuration>

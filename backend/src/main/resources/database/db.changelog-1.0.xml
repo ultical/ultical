@@ -39,8 +39,8 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-		<addUniqueConstraint columnNames="dfv_number"
-			tableName="DFV_PLAYER" />
+		<addUniqueConstraint constraintName="uk_dfv_player_dfv_number"
+			columnNames="dfv_number" tableName="DFV_PLAYER" />
 		<addForeignKeyConstraint constraintName="fk_dfv_player_player"
 			referencedTableName="PLAYER" baseColumnNames="player_id"
 			baseTableName="DFV_PLAYER" referencedColumnNames="id" onDelete="CASCADE" />
@@ -372,8 +372,8 @@
 					referencedColumnNames="id" referencedTableName="ULTICAL_USER" />
 			</column>
 		</createTable>
-		<addUniqueConstraint columnNames="team, admin"
-			tableName="TEAM_ULTICAL_USERS" />
+		<addUniqueConstraint constraintName="uk_team_ultical_users_team_admin"
+			columnNames="team, admin" tableName="TEAM_ULTICAL_USERS" />
 		<addForeignKeyConstraint constraintName="fk_team_ultical_users_team"
 			referencedTableName="TEAM" baseColumnNames="team" baseTableName="TEAM_ULTICAL_USERS"
 			referencedColumnNames="id" onDelete="CASCADE" />
@@ -403,8 +403,8 @@
 		<addForeignKeyConstraint constraintName="fk_roster_team"
 			referencedTableName="TEAM" baseColumnNames="team" baseTableName="ROSTER"
 			referencedColumnNames="id" onDelete="CASCADE" />
-		<addUniqueConstraint columnNames="team, season, division_type, division_age"
-			tableName="ROSTER" />
+		<addUniqueConstraint constraintName="uk_roster_team_season_division"
+			columnNames="team, season, division_type, division_age" tableName="ROSTER" />
 	</changeSet>
 	<changeSet id="20" author="bas">
 		<createTable tableName="ROSTER_PLAYERS">
@@ -420,5 +420,22 @@
 		<addForeignKeyConstraint constraintName="fk_roster_players_roster"
 			referencedTableName="ROSTER" referencedColumnNames="id"
 			baseTableName="ROSTER_PLAYERS" baseColumnNames="roster" onDelete="CASCADE" />
+	</changeSet>
+	<changeSet id="21" author="bas">
+		<createTable tableName="MAIL_CODE">
+			<column name="user" type="BIGINT">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="time_created" type="TIMESTAMP">
+				<constraints nullable="false" />
+			</column>
+			<column name="mail_code_type" type="VARCHAR(16)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="code" type="VARCHAR(100)">
+				<constraints primaryKey="true" unique="true"
+					uniqueConstraintName="uk_mail_code_code" nullable="false" />
+			</column>
+		</createTable>
 	</changeSet>
 </databaseChangeLog>

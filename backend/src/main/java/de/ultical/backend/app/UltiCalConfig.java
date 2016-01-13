@@ -35,4 +35,6 @@ public class UltiCalConfig extends Configuration {
     private MailConfig mail;
 
     private boolean debug;
+
+    private String frontendUrl;
 }

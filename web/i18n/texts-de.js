@@ -17,7 +17,7 @@ var TRANSLATIONS_DE = {
 		},
 
 		nav: {
-			title: 'UltiCal',
+			title: 'DFV-Turniere',
 			login: 'Login',
 			loginFail: {
 				wrongCredentials: 'Email oder Passwort fehlerhaft!',
@@ -29,8 +29,8 @@ var TRANSLATIONS_DE = {
 				loginFail: 'Felher bei der Anmeldung',
 			},
 			loginEmailActions: {
-				successTitle: 'Email erfolgreich gesendet',
-				passwordReset: 'Weitere Anweiseungen, wie das Passwort zurückgesetzt werden kann findest du in der Email',
+				successTitle: 'Email erfolgreich gesendet!',
+				passwordReset: 'Weitere Anweisungen, wie das Passwort zurückgesetzt werden kann findest du in der Email',
 				confirmationEmailSendContent: 'Bitte bestätige den Erhalt der Email mit dem enthaltenen Link. Danach kannst du dich einloggen.',
 			},
 			register: 'Registrieren',
@@ -82,16 +82,16 @@ var TRANSLATIONS_DE = {
 				dfvLabel: 'Hinweis',
 				dfvDescription: 'Nur DFV Mitglieder können sich hier registrieren. Außerdem ist es notwendig, dass du beim DFV (über deinen Verein) eine gültige Email Adresse angegeben hast.',
 				register: 'Benutzer registrieren',
-				dfvEmail: 'DFV Email Adresse',
-				dfvEmailPlaceholder: 'Email Adresse, die beim DFV gemeldet ist',
+				dfvEmail: 'DFV Emailadresse',
+				dfvEmailPlaceholder: 'Emailadresse, die beim DFV gemeldet ist',
 				error: {
 					title: 'Fehler bei der Registrierung',
 					validation_error: 'Das Passwort muss mindestens 8 Zeichen lang sein.',
 					not_found: 'Ein Eintrag mit diesem Namen und Geburtstag konnte in der DFV Datenbank nicht gefunden werden.',
-					ambiguous: 'Es existieren mehrere Einträge mit den gleichen Namen, Geburtstag und Email Adresse. Bitte wende dich an support@ultical.de.',
-					email_not_found: 'Deine Email Adresse konnte nicht verifiziert werden. Bitte gib unten in dem neuen Feld die Email Adresse an, mit der du in deinem Verein gemeldet bist.',
-					no_dfv_email: 'Du hast keine Email Adresse beim DFV hinterlegt. Bitte wende dich an die Verantwortlichen Stellen in deinem Verein.',
-					email_already_taken: 'Diese Email Adresse wird bereits benutzt. Bitte wähle eine andere.',
+					ambiguous: 'Es existieren mehrere Einträge mit den gleichen Namen, Geburtstag und Emailadresse. Bitte wende dich an support@ultical.de.',
+					email_not_found: 'Deine Emailadresse konnte nicht verifiziert werden. Bitte gib unten in dem neuen Feld die Emailadresse an, mit der du in deinem Verein gemeldet bist.',
+					no_dfv_email: 'Du hast keine Emailadresse beim DFV hinterlegt. Bitte wende dich an die Verantwortlichen Stellen in deinem Verein.',
+					email_already_taken: 'Diese Emailadresse wird bereits benutzt. Bitte wähle eine andere.',
 					user_already_registered: 'Du bist bereits registriert. Bitte benutze den Login Button. Dort kannst du auch ein neues Passwort anfordern.',
 				},
 				success: {
@@ -102,10 +102,23 @@ var TRANSLATIONS_DE = {
 			},
 			firstname: 'Vorname',
 			lastname: 'Nachname',
-			email: 'E-Mail-Adresse',
+			email: 'Emailadresse',
 			dob: 'Geburtsdatum',
 			password: 'Passwort',
 			passwordCheck: 'Passwort wiederholen',
+		},
+
+		emailCode: {
+			noCodeTitle: 'Ungültiger Link',
+			noCodeforgotPw: 'Der benutzte Link ist abgelaufen (er ist 3 Stunden gültig) oder er wurde schon einmal benutzt. Bitte fordere einen neuen Code an',
+			noCodeConfirm: 'Der benutzte Link wurde schon einmal benutzt. Bitte benutze das Login Feld, um einen neuen Code anzufordern.',
+			successTitle: 'Email erfolgreich bestätigt!',
+			successText: 'Du kannst dich nun mit deiner Mailadresse und deinem Passwort einloggen und die Seite nutzen',
+			missingEmailConfirm: 'Deine primäre Mailadresse ist allerdings noch nicht bestätigt. Bitte klicke auf den Link in der entsprechenden Email oder fordere eine neue Bestätigungsmail an (über das Login-Menü).',
+			missingDfvOptIn: 'Deine beim DFV hinterlegte Mailadresse ist allerdings noch nicht bestätigt. Bitte klicke auf den Link in der entsprechenden Email oder fordere eine neue Bestätigungsmail an (über das Login-Menü).',
+			changePassword: 'Passwort ändern',
+			successPasswordChangedTitle: 'Passwort erfolgreich geändert',
+			successPasswordChangedText: 'Du kannst dich nun mit deiner Emailadresse und dem neuen Passwort einloggen.',
 		},
 
 		event: {

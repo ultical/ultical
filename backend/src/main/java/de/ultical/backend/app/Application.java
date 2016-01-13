@@ -22,6 +22,7 @@ import de.ultical.backend.api.AuthResource;
 import de.ultical.backend.api.DfvMvNameResource;
 import de.ultical.backend.api.DivisionResource;
 import de.ultical.backend.api.EventsResource;
+import de.ultical.backend.api.MailResource;
 import de.ultical.backend.api.RegisterResource;
 import de.ultical.backend.api.RosterResource;
 import de.ultical.backend.api.SeasonResource;
@@ -150,6 +151,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         env.jersey().register(UserResource.class);
         env.jersey().register(RosterResource.class);
         env.jersey().register(DfvMvNameResource.class);
+        env.jersey().register(MailResource.class);
 
         /*
          * Authentication stuff. Basically the authenticator looks up the

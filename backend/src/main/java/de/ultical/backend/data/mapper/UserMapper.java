@@ -37,7 +37,7 @@ public interface UserMapper extends BaseMapper<User> {
     public static final String SELECT_STMT = "SELECT u.id, u.email, u.password, u.email_confirmed, u.dfv_email_opt_in, u.version, u.dfv_player";
 
     @Override
-    @Select({ SELECT_STMT, "FROM ULTICAL_USER", "WHERE id = #{id}" })
+    @Select({ SELECT_STMT, "FROM ULTICAL_USER u", "WHERE id = #{id}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "email", property = "email"),
             @Result(column = "email_confirmed", property = "emailConfirmed"),
@@ -46,7 +46,7 @@ public interface UserMapper extends BaseMapper<User> {
     User get(int id);
 
     @Override
-    @Select({ SELECT_STMT, "FROM ULTICAL_USER" })
+    @Select({ SELECT_STMT, "FROM ULTICAL_USER u" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "email", property = "email"),
             @Result(column = "dfv_player", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ) })

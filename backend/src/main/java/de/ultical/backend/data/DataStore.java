@@ -16,6 +16,7 @@ import de.ultical.backend.data.mapper.BaseMapper;
 import de.ultical.backend.data.mapper.DfvMvNameMapper;
 import de.ultical.backend.data.mapper.DfvPlayerMapper;
 import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
+import de.ultical.backend.data.mapper.MailCodeMapper;
 import de.ultical.backend.data.mapper.PlayerMapper;
 import de.ultical.backend.data.mapper.RosterMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
@@ -26,6 +27,7 @@ import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.Identifiable;
+import de.ultical.backend.model.MailCode;
 import de.ultical.backend.model.Player;
 import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.Season;
@@ -451,6 +453,25 @@ public class DataStore {
     public DfvPlayer getDfvPlayerByDfvNumber(int dfvNumber) {
         DfvPlayerMapper dfvPlayerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
         return dfvPlayerMapper.getByDfvNumber(dfvNumber);
+    }
+
+    public MailCode getMailCode(String code) {
+        MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);
+        return mcMapper.get(code);
+    }
+
+    public void deleteMailCode(String code) {
+        MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);
+        mcMapper.delete(code);
+        this.sqlSession.commit();
+    }
+
+    public boolean saveMailCode(MailCode mailCode) {
+        MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);
+        mcMapper.deletePreviousEntries(mailCode);
+        int insertedRows = mcMapper.insert(mailCode);
+        this.sqlSession.commit();
+        return insertedRows == 1;
     }
 
     public User getUserByEmail(String email) {

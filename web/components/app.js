@@ -54,6 +54,20 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		params: {
 			activeTab: 'own',
 		},
+	})
+	.state('confirmMails', {
+		url: "/confirm/{code}",
+		templateUrl: "pages/user/mails.html?v="+version,
+		params: {
+			emailCodeType: 'confirm',
+		},
+	})
+	.state('forgotPassword', {
+		url: "/forgot/password/{code}",
+		templateUrl: "pages/user/mails.html?v="+version,
+		params: {
+			emailCodeType: 'password',
+		},
 	});
 
 	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|blob):/);
