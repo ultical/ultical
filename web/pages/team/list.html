@@ -286,7 +286,7 @@
 										<div class="col-md-5">
 											<div class="form-group">
 												<label class="" for="rosSeason">{{ 'season.season' | translate }}</label>
-												<button id="rosSeason" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.season" bs-options="season as season | season : 'fullName' for season in selects.seasons" bs-select>
+												<button id="rosSeason" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.season" bs-options="season as season | season : 'fullName' for season in selects.seasons | orderBy : ['-year', '-plusOneYear']" bs-select>
 													<span class="caret"></span>
 												</button>
 											</div>

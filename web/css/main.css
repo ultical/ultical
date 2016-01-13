@@ -204,7 +204,7 @@
 
 /* disable rounded corners */
 .panel-group .panel, .panel, .panel-group, .panel-heading, .panel-footer,
-	.btn, .modal-content, .form-control, .popover, .dropdown-menu,
+	.btn, .modal-content, .form-control, .popover, .dropdown-menu, .alert,
 	.nav-tabs>li>a {
 	border-radius: 0px;
 }

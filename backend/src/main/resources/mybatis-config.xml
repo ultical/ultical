@@ -57,5 +57,7 @@
 		<mapper class="de.ultical.backend.data.mapper.DfvMvNameMapper" />
 		<mapper class="de.ultical.backend.data.mapper.RosterMapper" />
 		<mapper class="de.ultical.backend.data.mapper.MailCodeMapper" />
+		<mapper class="de.ultical.backend.data.mapper.ContactMapper" />
+		<mapper class="de.ultical.backend.data.mapper.FeeMapper" />
 	</mappers>
 </configuration>

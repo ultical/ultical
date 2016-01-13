@@ -28,6 +28,65 @@
 		</createTable>
 	</changeSet>
 	<changeSet id="1" author="basil">
+		<createTable tableName="LOCATION">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="version" type="BIGINT" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="city" type="VARCHAR(255)" />
+			<column name="street" type="VARCHAR(255)" />
+			<column name="zip_code" type="BIGINT" />
+			<column name="country" type="VARCHAR(255)" />
+			<column name="country_code" type="VARCHAR(3)" />
+			<column name="longitude" type="java.sql.Types.DOUBLE" />
+			<column name="latitude" type="java.sql.Types.DOUBLE" />
+			<column name="additional_info" type="TEXT" />
+		</createTable>
+	</changeSet>
+	<changeSet id="2" author="bas">
+		<createTable tableName="FEE">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="version" type="BIGINT" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="fee_type" type="VARCHAR(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="amount" type="VARCHAR(10)">
+				<constraints nullable="false" />
+			</column>
+			<column name="currency" type="VARCHAR(3)">
+				<constraints nullable="false" />
+			</column>
+			<column name="alternative_name" type="VARCHAR(100)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="3" author="basil">
+		<createTable tableName="SEASON">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="version" type="BIGINT" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="surface" type="VARCHAR(10)" defaultValue="TURF">
+				<constraints nullable="false" />
+			</column>
+			<column name="season_year" type="SMALLINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="plusOneYear" type="BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addUniqueConstraint constraintName="uk_season_surface_year" columnNames="surface, season_year, plusOneYear"
+			tableName="SEASON" />
+	</changeSet>
+	<changeSet id="4" author="basil">
 		<createTable tableName="DFV_PLAYER">
 			<column name="player_id" type="BIGINT" autoIncrement="false">
 				<constraints primaryKey="false" nullable="false" />
@@ -45,7 +104,7 @@
 			referencedTableName="PLAYER" baseColumnNames="player_id"
 			baseTableName="DFV_PLAYER" referencedColumnNames="id" onDelete="CASCADE" />
 	</changeSet>
-	<changeSet id="2" author="basil">
+	<changeSet id="5" author="basil">
 		<createTable tableName="ULTICAL_USER">
 			<column name="id" type="BIGINT" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
@@ -71,7 +130,7 @@
 			referencedTableName="PLAYER" baseColumnNames="dfv_player"
 			baseTableName="ULTICAL_USER" referencedColumnNames="id" onDelete="SET NULL" />
 	</changeSet>
-	<changeSet id="3" author="basil">
+	<changeSet id="6" author="basil">
 		<createTable tableName="UNREGISTERED_PLAYER">
 			<column name="player_id" type="BIGINT" autoIncrement="false">
 				<constraints primaryKey="false" nullable="false" />
@@ -85,7 +144,35 @@
 			baseTableName="UNREGISTERED_PLAYER" referencedColumnNames="id"
 			onDelete="CASCADE" />
 	</changeSet>
-	<changeSet id="4" author="basil">
+	<changeSet id="7" author="bas">
+		<createTable tableName="CONTACT">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="version" type="BIGINT" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="email" type="VARCHAR(100)" />
+			<column name="name" type="VARCHAR(100)" />
+			<column name="phone" type="VARCHAR(50)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="8" author="basil">
+		<createTable tableName="TOURNAMENT_FORMAT">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="version" type="BIGINT" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="VARCHAR(256)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="TEXT" />
+			<column name="url" type="VARCHAR(255)" />
+		</createTable>
+	</changeSet>
+	<changeSet id="9" author="basil">
 		<createTable tableName="TOURNAMENT_EDITION">
 			<column name="id" type="BIGINT" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
@@ -96,7 +183,6 @@
 			<column name="tournament_format" type="BIGINT"
 				remarks="reference to the used tourname_format">
 				<constraints nullable="true" />
-
 			</column>
 			<column name="alternative_name" type="VARCHAR(256)">
 				<constraints nullable="true" />
@@ -109,46 +195,34 @@
 			</column>
 			<column name="season" type="BIGINT"
 				remarks="reference to the tournament_edition's season">
-				<constraints nullable="true" />
+				<constraints nullable="false" />
 			</column>
-			<column name="fee_per_player" type="BIGINT"></column>
-			<column name="fee_per_team" type="BIGINT" />
-			<column name="fee_per_guest" type="BIGINT" />
-			<column name="currency" type="VARCHAR(3)" defaultValue="EUR" />
-			<column name="organizer_name" type="VARCHAR(50)" />
-			<column name="organizer_email" type="VARCHAR(50)" />
-			<column name="organizer_phone" type="VARCHAR(25)" />
+			<column name="organizer" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
 			<column name="is_league" type="BOOLEAN" defaultValueBoolean="false">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
+		<addForeignKeyConstraint constraintName="fk_tournament_edition_season"
+			referencedTableName="SEASON" baseColumnNames="season" baseTableName="TOURNAMENT_EDITION"
+			referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_tournament_edition_tournament_format"
+			referencedTableName="TOURNAMENT_FORMAT" baseColumnNames="tournament_format"
+			baseTableName="TOURNAMENT_EDITION" referencedColumnNames="id"
+			onDelete="CASCADE" />
+		<addForeignKeyConstraint constraintName="fk_tournament_edition_contact"
+			referencedTableName="CONTACT" baseColumnNames="organizer"
+			baseTableName="TOURNAMENT_EDITION" referencedColumnNames="id" />
 	</changeSet>
-	<!-- <changeSet id="5" author="basil"> <createTable tableName="TOURNAMENT_EDITION_SINGLE"> 
+	<!-- <changeSet id="xx" author="basil"> <createTable tableName="TOURNAMENT_EDITION_SINGLE"> 
 		<column name="id" type="BIGINT"> <constraints primaryKey="true" nullable="false" 
 		foreignKeyName="fk_tournament_edition_single_tournament_edition" referencedTableName="TOURNAMENT_EDITION" 
 		referencedColumnNames="id"/> </column> <column name="version" type="BIGINT" 
 		defaultValueNumeric="1"> <constraints nullable="false" /> </column> <column 
 		name="event" type="BIGINT"> <constraints nullable="true" /> </column> </createTable> 
 		</changeSet> -->
-	<changeSet id="6" author="basil">
-		<createTable tableName="TOURNAMENT_FORMAT">
-			<column name="id" type="BIGINT" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="version" type="BIGINT" defaultValueNumeric="1">
-				<constraints nullable="false" />
-			</column>
-			<column name="name" type="VARCHAR(256)">
-				<constraints nullable="false" />
-			</column>
-			<column name="description" type="TEXT" />
-		</createTable>
-		<addForeignKeyConstraint constraintName="fk_tournament_edition_tournament_format"
-			referencedTableName="TOURNAMENT_FORMAT" baseColumnNames="tournament_format"
-			baseTableName="TOURNAMENT_EDITION" referencedColumnNames="id"
-			onDelete="CASCADE" />
-	</changeSet>
-	<changeSet id="7" author="basil">
+	<changeSet id="10" author="basil">
 		<createTable tableName="TOURNAMENT_FORMAT_ULTICAL_USERS">
 			<column name="tournament_format" type="BIGINT">
 				<constraints nullable="false" />
@@ -165,29 +239,7 @@
 			baseTableName="TOURNAMENT_FORMAT_ULTICAL_USERS"
 			referencedColumnNames="id" onDelete="CASCADE" />
 	</changeSet>
-	<changeSet id="8" author="basil">
-		<createTable tableName="SEASON">
-			<column name="id" type="BIGINT" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="version" type="BIGINT" defaultValueNumeric="1">
-				<constraints nullable="false" />
-			</column>
-			<column name="surface" type="VARCHAR(10)" defaultValue="TURF">
-				<constraints nullable="false" />
-			</column>
-			<column name="season_year" type="SMALLINT">
-				<constraints nullable="false" />
-			</column>
-			<column name="plusOneYear" type="BOOLEAN" defaultValueBoolean="false">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-		<addForeignKeyConstraint constraintName="fk_tournament_edition_season"
-			referencedTableName="SEASON" referencedColumnNames="id"
-			baseTableName="TOURNAMENT_EDITION" baseColumnNames="season" />
-	</changeSet>
-	<changeSet id="9" author="basil">
+	<changeSet id="11" author="basil">
 		<createTable tableName="TOURNAMENT_EDITION_LEAGUE">
 			<column name="id" type="BIGINT">
 				<constraints primaryKey="true" nullable="false"
@@ -200,7 +252,7 @@
 			<column name="alternative_matchday_name" type="VARCHAR(255)" />
 		</createTable>
 	</changeSet>
-	<changeSet id="10" author="basil">
+	<changeSet id="12" author="basil">
 		<createTable tableName="EVENT">
 			<column name="id" type="BIGINT" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
@@ -211,6 +263,7 @@
 			<column name="matchday_number" type="BIGINT" defaultValue="-1">
 				<constraints nullable="false" />
 			</column>
+			<column name="hash_tag" type="VARCHAR(100)" />
 			<column name="tournament_edition" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
@@ -223,47 +276,22 @@
 			<column name="end_date" type="DATE">
 				<constraints nullable="false" />
 			</column>
-			<column name="fee_per_team" type="BIGINT" />
-			<column name="fee_per_player" type="BIGINT" />
-			<column name="fee_per_guest" type="BIGINT" />
-			<column name="fee_per_breakfast" type="BIGINT" />
-			<column name="fee_per_lunch" type="BIGINT" />
-			<column name="fee_per_dinner" type="BIGINT" />
-			<column name="fee_per_night" type="BIGINT" />
-			<column name="local_organizer_name" type="VARCHAR(255)">
+			<column name="local_organizer" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
-			<column name="local_organizer_email" type="VARCHAR(255)">
-				<constraints nullable="false" />
-			</column>
-			<column name="local_organizer_phone" type="VARCHAR(25)" />
 		</createTable>
 		<addForeignKeyConstraint constraintName="fk_event_tournament_edition"
 			referencedTableName="TOURNAMENT_EDITION" baseColumnNames="tournament_edition"
 			baseTableName="EVENT" referencedColumnNames="id" onDelete="CASCADE" />
-	</changeSet>
-	<changeSet id="11" author="basil">
-		<createTable tableName="LOCATION">
-			<column name="id" type="BIGINT" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="version" type="BIGINT" defaultValueNumeric="1">
-				<constraints nullable="false" />
-			</column>
-			<column name="city" type="VARCHAR(255)" />
-			<column name="street" type="VARCHAR(255)" />
-			<column name="zip_code" type="BIGINT" />
-			<column name="country" type="VARCHAR(255)" />
-			<column name="country_code" type="VARCHAR(3)" />
-			<column name="longitude" type="java.sql.Types.DOUBLE" />
-			<column name="latitude" type="java.sql.Types.DOUBLE" />
-			<column name="additional_info" type="TEXT" />
-		</createTable>
+		<addForeignKeyConstraint constraintName="fk_event_contact"
+			referencedTableName="CONTACT" baseColumnNames="local_organizer"
+			baseTableName="EVENT" referencedColumnNames="id" />
 		<addForeignKeyConstraint constraintName="fk_event_location"
 			referencedTableName="LOCATION" baseColumnNames="location"
 			baseTableName="EVENT" referencedColumnNames="id" />
 	</changeSet>
-	<changeSet id="12" author="basil">
+
+	<changeSet id="13" author="basil">
 		<createTable tableName="DIVISION_REGISTRATION">
 			<column name="id" type="BIGINT" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
@@ -295,7 +323,7 @@
 		<addUniqueConstraint columnNames="tournament_edition, division_type, division_age"
 			tableName="DIVISION_REGISTRATION" />
 	</changeSet>
-	<changeSet id="13" author="basil">
+	<changeSet id="14" author="basil">
 		<createTable tableName="TEAM_REGISTRATION">
 			<column name="division_registration" type="BIGINT">
 				<constraints nullable="false" />
@@ -312,7 +340,7 @@
 			<column name="comment" type="TEXT" />
 		</createTable>
 	</changeSet>
-	<changeSet id="14" author="basil">
+	<changeSet id="15" author="basil">
 		<createTable tableName="TEAM">
 			<column name="id" type="BIGINT" autoIncrement="true">
 				<constraints nullable="false" primaryKey="true" />
@@ -336,18 +364,18 @@
 			referencedTableName="LOCATION" baseColumnNames="location"
 			baseTableName="TEAM" referencedColumnNames="id" />
 	</changeSet>
-	<changeSet id="15" author="basil">
+	<changeSet id="16" author="basil">
 		<addForeignKeyConstraint constraintName="fk_team_registration_team"
 			referencedTableName="TEAM" baseColumnNames="team" baseTableName="TEAM_REGISTRATION"
 			referencedColumnNames="id" onDelete="CASCADE" />
 	</changeSet>
-	<changeSet id="16" author="basil">
+	<changeSet id="17" author="basil">
 		<addForeignKeyConstraint constraintName="fk_team_registration_division_registration"
 			referencedTableName="DIVISION_REGISTRATION" baseColumnNames="division_registration"
 			baseTableName="TEAM_REGISTRATION" referencedColumnNames="id"
 			onDelete="CASCADE" />
 	</changeSet>
-	<changeSet id="17" author="bas">
+	<changeSet id="18" author="bas">
 		<createTable tableName="DFV_MV_NAME">
 			<column name="dfv_number" type="BIGINT">
 				<constraints nullable="false" primaryKey="true" />
@@ -361,7 +389,7 @@
 			</column>
 		</createTable>
 	</changeSet>
-	<changeSet id="18" author="bas">
+	<changeSet id="19" author="bas">
 		<createTable tableName="TEAM_ULTICAL_USERS">
 			<column name="team" type="BIGINT">
 				<constraints nullable="false" />
@@ -378,7 +406,7 @@
 			referencedTableName="TEAM" baseColumnNames="team" baseTableName="TEAM_ULTICAL_USERS"
 			referencedColumnNames="id" onDelete="CASCADE" />
 	</changeSet>
-	<changeSet id="19" author="bas">
+	<changeSet id="20" author="bas">
 		<createTable tableName="ROSTER">
 			<column name="id" type="BIGINT" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
@@ -406,7 +434,7 @@
 		<addUniqueConstraint constraintName="uk_roster_team_season_division"
 			columnNames="team, season, division_type, division_age" tableName="ROSTER" />
 	</changeSet>
-	<changeSet id="20" author="bas">
+	<changeSet id="21" author="bas">
 		<createTable tableName="ROSTER_PLAYERS">
 			<column name="roster" type="BIGINT">
 				<constraints primaryKey="true" nullable="false" />
@@ -421,7 +449,7 @@
 			referencedTableName="ROSTER" referencedColumnNames="id"
 			baseTableName="ROSTER_PLAYERS" baseColumnNames="roster" onDelete="CASCADE" />
 	</changeSet>
-	<changeSet id="21" author="bas">
+	<changeSet id="22" author="bas">
 		<createTable tableName="MAIL_CODE">
 			<column name="ultical_user" type="BIGINT">
 				<constraints primaryKey="true" nullable="false" />
@@ -440,5 +468,41 @@
 		<addForeignKeyConstraint constraintName="fk_mail_code_ultical_user"
 			referencedTableName="ULTICAL_USER" referencedColumnNames="id"
 			baseTableName="MAIL_CODE" baseColumnNames="ultical_user" onDelete="CASCADE" />
+	</changeSet>
+
+	<changeSet id="23" author="bas">
+		<createTable tableName="FEE_TOURNAMENT_EDITION">
+			<column name="fee" type="BIGINT">
+				<constraints primaryKey="true" nullable="false"></constraints>
+			</column>
+			<column name="tournament_edition" type="BIGINT">
+				<constraints primaryKey="true" nullable="false"></constraints>
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="fk_fee_tournament_edition_fee"
+			referencedTableName="FEE" referencedColumnNames="id"
+			baseTableName="FEE_TOURNAMENT_EDITION" baseColumnNames="fee"
+			onDelete="CASCADE" />
+		<addForeignKeyConstraint
+			constraintName="fk_fee_tournament_edition_tournament_edition"
+			referencedTableName="TOURNAMENT_EDITION" referencedColumnNames="id"
+			baseTableName="FEE_TOURNAMENT_EDITION" baseColumnNames="tournament_edition"
+			onDelete="CASCADE" />
+	</changeSet>
+	<changeSet id="24" author="bas">
+		<createTable tableName="FEE_EVENT">
+			<column name="fee" type="BIGINT">
+				<constraints primaryKey="true" nullable="false"></constraints>
+			</column>
+			<column name="event" type="BIGINT">
+				<constraints primaryKey="true" nullable="false"></constraints>
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="fk_fee_event_fee"
+			referencedTableName="FEE" referencedColumnNames="id" baseTableName="FEE_EVENT"
+			baseColumnNames="fee" onDelete="CASCADE" />
+		<addForeignKeyConstraint constraintName="fk_fee_event_event"
+			referencedTableName="EVENT" referencedColumnNames="id" baseTableName="FEE_EVENT"
+			baseColumnNames="event" onDelete="CASCADE" />
 	</changeSet>
 </databaseChangeLog>

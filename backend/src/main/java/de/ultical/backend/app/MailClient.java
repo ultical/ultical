@@ -22,6 +22,9 @@ public class MailClient {
     @Inject
     Session mailSession;
 
+    @Inject
+    UltiCalConfig config;
+
     public static interface UlticalMessage {
         Set<String> getRecipients();
 
@@ -43,7 +46,15 @@ public class MailClient {
                 // message.setContent(m.getRenderedMessage(recipient),
                 // MediaType.TEXT_PLAIN);
                 message.setText(m.getRenderedMessage(recipient), "UTF-8");
-                message.setRecipient(RecipientType.TO, new InternetAddress(recipient));
+
+                if (this.config.getDebugMode().isEnabled() && !this.config.getDebugMode().getMailCatcher().isEmpty()) {
+                    String detouredRecipient = recipient.replace("<", "-").replace(">", "-") + " <"
+                            + this.config.getDebugMode().getMailCatcher() + ">";
+                    message.setRecipient(RecipientType.TO, new InternetAddress(detouredRecipient));
+                } else {
+                    message.setRecipient(RecipientType.TO, new InternetAddress(recipient));
+                }
+
                 message.setFrom(m.getSenderName() + " <"
                         + this.mailSession.getProperty(SessionFactory.EMAIL_FROM_PROPERTY_KEY) + ">");
                 message.setSender(
