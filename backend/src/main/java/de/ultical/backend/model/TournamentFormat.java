@@ -25,6 +25,8 @@ public class TournamentFormat extends Identifiable {
 
     private Set<User> admins;
 
+    private String url;
+
     @Override
     public Class<TournamentFormatMapper> getMapper() {
         return TournamentFormatMapper.class;

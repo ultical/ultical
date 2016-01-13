@@ -1,6 +1,7 @@
 package de.ultical.backend.model;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -31,19 +32,12 @@ public class Event extends Identifiable {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private int feePerTeam;
-    private int feePerPlayer;
-    private int feePerGuest;
-    private int feePerBreakfast;
-    private int feePerLunch;
-    private int feePerDinner;
-    private int feePerNight;
+    private String hashTag;
 
-    private Set<User> admins;
+    private List<User> admins;
+    private List<Fee> fees;
 
-    private String localOrganizerName;
-    private String localOrganizerEmail;
-    private String localOrganizerPhone;
+    private Contact localOrganizer;
 
     @Override
     public Class<EventMapper> getMapper() {
