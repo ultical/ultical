@@ -1,13 +1,13 @@
 var TRANSLATIONS_DE = {
 
 		general: {
-			pageTitle: 'UltiCal',
+			pageTitle: 'DFV-Turniere',
 			dateFormat : "dd.MM.yyyy",
 			dateFormatShort: "dd.MM.yy",
 			datetimeFormat : "dd.MM.yy - HH:mm",
 			na: 'Noch keine Informationen',
 			close: 'schließen',
-			email: 'E-Mail',
+			email: 'Email',
 			phone: 'Telefon',
 			optional: 'optional',
 			save: 'Speichern',

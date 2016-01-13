@@ -110,6 +110,11 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 
 			teamToSend.rosters = [];
 
+			// prevent bad requests if the backend tries to parse a string into a location objects
+			if (!angular.isObject(team.location)) {
+				team.location = null;
+			}
+
 			var emailsString = '';
 			angular.forEach(teamToSend.emails, function(email, idx) {
 				emailsString += email;
