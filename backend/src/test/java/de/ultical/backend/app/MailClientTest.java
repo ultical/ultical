@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -68,13 +69,14 @@ public class MailClientTest {
         this.client.mailSession.setDebug(true);
 
         when(this.testMessage.getSubject()).thenReturn("Test from: " + MailClientTest.class.getName());
-        when(this.testMessage.getRecipients()).thenReturn(Collections.singletonList("test@frisbeesportverband.de"));
-        when(this.testMessage.getRenderedMessage()).thenReturn("Foo Bar");
+        when(this.testMessage.getRecipients())
+                .thenReturn(new HashSet<String>(Collections.singletonList("test@frisbeesportverband.de")));
+        when(this.testMessage.getRenderedMessage("a")).thenReturn("Foo Bar");
 
         when(this.testMessageTwoRec.getSubject()).thenReturn("Test from: " + MailClientTest.class.getName());
-        when(this.testMessageTwoRec.getRecipients())
-                .thenReturn(Arrays.asList("test@frisbeesportverbande.de", "testtoo@frisbeesportverband.de"));
-        when(this.testMessageTwoRec.getRenderedMessage()).thenReturn("Foo Bar");
+        when(this.testMessageTwoRec.getRecipients()).thenReturn(
+                new HashSet<String>(Arrays.asList("test@frisbeesportverbande.de", "testtoo@frisbeesportverband.de")));
+        when(this.testMessageTwoRec.getRenderedMessage("a")).thenReturn("Foo Bar");
     }
 
     @After
