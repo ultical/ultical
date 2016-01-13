@@ -423,7 +423,7 @@
 	</changeSet>
 	<changeSet id="21" author="bas">
 		<createTable tableName="MAIL_CODE">
-			<column name="user" type="BIGINT">
+			<column name="ultical_user" type="BIGINT">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
 			<column name="time_created" type="TIMESTAMP">
@@ -437,5 +437,8 @@
 					uniqueConstraintName="uk_mail_code_code" nullable="false" />
 			</column>
 		</createTable>
+		<addForeignKeyConstraint constraintName="fk_mail_code_ultical_user"
+			referencedTableName="ULTICAL_USER" referencedColumnNames="id"
+			baseTableName="MAIL_CODE" baseColumnNames="ultical_user" onDelete="CASCADE" />
 	</changeSet>
 </databaseChangeLog>

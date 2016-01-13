@@ -11,17 +11,17 @@ import de.ultical.backend.model.MailCode;
 
 public interface MailCodeMapper {
 
-    final String SELECT_STMT = "SELECT mail_code_type AS type, user, code FROM MAIL_CODE";
+    final String SELECT_STMT = "SELECT mail_code_type AS type, ultical_user AS user, code FROM MAIL_CODE";
 
     // INSERT
-    @Insert("INSERT INTO MAIL_CODE (mail_code_type, user, code) VALUES (#{type},#{user.id},#{code})")
+    @Insert("INSERT INTO MAIL_CODE (mail_code_type, ultical_user, code) VALUES (#{type},#{user.id},#{code})")
     Integer insert(MailCode entity);
 
     // DELETE
     @Delete("DELETE FROM MAIL_CODE WHERE code=#{code}")
     void delete(String code);
 
-    @Delete("DELETE FROM MAIL_CODE WHERE mail_code_type = #{type} AND user = #{user.id}")
+    @Delete("DELETE FROM MAIL_CODE WHERE mail_code_type = #{type} AND ultical_user = #{user.id}")
     void deletePreviousEntries(MailCode entity);
 
     // TODO: put in a job to execute daily(?)...
@@ -32,7 +32,7 @@ public interface MailCodeMapper {
     @Select({ SELECT_STMT,
             "WHERE code = #{code} AND (mail_code_type != 'FORGOT_PASSWORD' OR time_created > (NOW() - INTERVAL 3 HOUR))" })
     @Results({ @Result(column = "mail_code_type", property = "type"),
-            @Result(column = "user", property = "user", one = @One(select = "de.ultical.backend.data.mapper.UserMapper.get") ) })
+            @Result(column = "ultical_user", property = "user", one = @One(select = "de.ultical.backend.data.mapper.UserMapper.get") ) })
     MailCode get(String code);
 
 }
