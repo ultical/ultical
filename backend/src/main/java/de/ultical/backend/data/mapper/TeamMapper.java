@@ -20,7 +20,7 @@ public interface TeamMapper extends BaseMapper<Team> {
 
     // INSERT
     @Override
-    @Insert("INSERT INTO TEAM (name, description, founding_date, location, emails, url, contact_email, twitter_name, facebook_url) VALUES (#{name}, #{description, jdbcType=VARCHAR}, #{foundingDate, jdbcType=DATE}, #{location.id, jdbcType=INTEGER}, #{emails}, #{url}, #{contactEmail}, #{twitterName}, #{facebookUrl} )")
+    @Insert("INSERT INTO TEAM (name, description, founding_date, location, emails, url, contact_email, twitter_name, facebook_url) VALUES (#{name}, #{description, jdbcType=VARCHAR}, #{foundingDate, jdbcType=DATE}, #{location.id, jdbcType=INTEGER}, #{emails, jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{contactEmail, jdbcType=VARCHAR}, #{twitterName, jdbcType=VARCHAR}, #{facebookUrl, jdbcType=VARCHAR} )")
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Team team);
 
@@ -29,7 +29,7 @@ public interface TeamMapper extends BaseMapper<Team> {
 
     // UPDATE
     @Override
-    @Update("UPDATE TEAM SET version=version+1, name=#{name}, description=#{description, jdbcType=VARCHAR}, founding_date=#{foundingDate, jdbcType=INTEGER}, location=#{location.id, jdbcType=INTEGER}, emails=#{emails}, url=#{url}, contact_email=#{contactEmail}, twitter_name=#{twitterName}, facebook_url=#{facebookUrl} WHERE version=#{version} AND id=#{id}")
+    @Update("UPDATE TEAM SET version=version+1, name=#{name}, description=#{description, jdbcType=VARCHAR}, founding_date=#{foundingDate, jdbcType=INTEGER}, location=#{location.id, jdbcType=INTEGER}, emails=#{emails, jdbcType=VARCHAR}, url=#{url, jdbcType=VARCHAR}, contact_email=#{contactEmail, jdbcType=VARCHAR}, twitter_name=#{twitterName, jdbcType=VARCHAR}, facebook_url=#{facebookUrl, jdbcType=VARCHAR} WHERE version=#{version} AND id=#{id}")
     Integer update(Team t);
 
     // DELETE
