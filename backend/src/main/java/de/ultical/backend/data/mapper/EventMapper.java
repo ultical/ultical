@@ -21,8 +21,8 @@ public interface EventMapper extends BaseMapper<Event> {
     // INSERT
     @Override
     @Insert({
-            "INSERT INTO EVENT (matchday_number, tournament_edition, location, start_date, end_date, local_organizer, hash_tag) VALUES",
-            "(#{matchdayNumber},#{tournamentEdition.id},#{location.id}, #{startDate},#{endDate},#{localOrganizer.id, jdbcType=INTEGER},#{hashTag}" })
+            "INSERT INTO EVENT (matchday_number, tournament_edition, location, start_date, end_date, local_organizer) VALUES",
+            "(#{matchdayNumber},#{tournamentEdition.id},#{location.id}, #{startDate},#{endDate},#{localOrganizer.id, jdbcType=INTEGER}" })
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Event event);
 
@@ -30,8 +30,7 @@ public interface EventMapper extends BaseMapper<Event> {
     @Override
     @Update({
             "UPDATE EVENT SET version=version+1, tournament_edition=#{tournamentEdition.id}, location=#{location.id},",
-            "start_date=#{startDate}, end_date=#{endDate},",
-            "hash_tag=#{hashTag}, local_organizer=#{localOrganizer.id, jdbcType=INTEGER}",
+            "start_date=#{startDate}, end_date=#{endDate},", "local_organizer=#{localOrganizer.id, jdbcType=INTEGER}",
             "WHERE version=#{version} AND id=#{id}" })
     Integer update(Event entity);
 
@@ -49,7 +48,6 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") , javaType = Location.class),
             @Result(column = "start_date", property = "startDate"), @Result(column = "end_date", property = "endDate"),
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent") ),
-            @Result(column = "hash_tag", property = "hashTag"),
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") , javaType = Contact.class) })
     Event get(int id);
 
@@ -61,7 +59,6 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") , javaType = Location.class),
             @Result(column = "start_date", property = "startDate"), @Result(column = "end_date", property = "endDate"),
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent") ),
-            @Result(column = "hash_tag", property = "hashTag"),
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") , javaType = Contact.class) })
     List<Event> getAll();
 
@@ -72,7 +69,6 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") , javaType = Location.class),
             @Result(column = "start_date", property = "startDate"), @Result(column = "end_date", property = "endDate"),
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent") ),
-            @Result(column = "hash_tag", property = "hashTag"),
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") , javaType = Contact.class) })
     List<Event> getEventsForEdition(int editionId);
 

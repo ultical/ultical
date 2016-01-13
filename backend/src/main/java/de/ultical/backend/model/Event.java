@@ -32,8 +32,6 @@ public class Event extends Identifiable {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private String hashTag;
-
     private List<User> admins;
     private List<Fee> fees;
 

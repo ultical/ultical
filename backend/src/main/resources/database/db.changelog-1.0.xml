@@ -83,8 +83,8 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-		<addUniqueConstraint constraintName="uk_season_surface_year" columnNames="surface, season_year, plusOneYear"
-			tableName="SEASON" />
+		<addUniqueConstraint constraintName="uk_season_surface_year"
+			columnNames="surface, season_year, plusOneYear" tableName="SEASON" />
 	</changeSet>
 	<changeSet id="4" author="basil">
 		<createTable tableName="DFV_PLAYER">
@@ -197,6 +197,7 @@
 				remarks="reference to the tournament_edition's season">
 				<constraints nullable="false" />
 			</column>
+			<column name="hashtag" type="VARCHAR(100)" />
 			<column name="organizer" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
@@ -263,7 +264,6 @@
 			<column name="matchday_number" type="BIGINT" defaultValue="-1">
 				<constraints nullable="false" />
 			</column>
-			<column name="hash_tag" type="VARCHAR(100)" />
 			<column name="tournament_edition" type="BIGINT">
 				<constraints nullable="false" />
 			</column>

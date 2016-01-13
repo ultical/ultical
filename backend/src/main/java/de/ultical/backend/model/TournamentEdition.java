@@ -33,6 +33,8 @@ public abstract class TournamentEdition extends Identifiable {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate registrationEnd;
 
+    private String hashtag;
+
     private List<Fee> fees;
     private Contact organizer;
 

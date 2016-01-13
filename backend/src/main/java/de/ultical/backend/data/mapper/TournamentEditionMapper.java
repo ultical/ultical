@@ -25,23 +25,23 @@ import de.ultical.backend.model.TournamentFormat;
 public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
 
     final String editionSelectBase = "SELECT sup.id, sup.version, sup.tournament_format, sup.alternative_name, sup.season, "
-            + "sup.registration_start, sup.registration_end,"
+            + "sup.registration_start, sup.registration_end, sup.hashtag"
             + "sup.organizer, sup.is_league, league.alternative_matchday_name "
             + "FROM TOURNAMENT_EDITION sup LEFT JOIN TOURNAMENT_EDITION_LEAGUE league ON sup.id = league.id ";
 
     // INSERT
     @Override
     @Insert({ "INSERT INTO TOURNAMENT_EDITION",
-            "(tournament_format, alternative_name, season, registration_start, registration_end, organizer)",
+            "(tournament_format, alternative_name, season, registration_start, registration_end, organizer, hashtag)",
             "VALUES (#{tournamentFormat.id},#{alternativeName, jdbcType=VARCHAR},#{season.id},#{registrationStart},#{registrationEnd},",
-            "#{organizer.id})" })
+            "#{organizer.id}, #{hashtag})" })
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(TournamentEdition entity);
 
     // UPDATE
     @Override
     @Update({
-            "UPDATE TOURNAMENT_EDITION SET version=version+1, tournament_format=#{tournamentFormat.id},alternative_name=#{alternativeName},",
+            "UPDATE TOURNAMENT_EDITION SET version=version+1, hashtag=#{hashtag}, tournament_format=#{tournamentFormat.id},alternative_name=#{alternativeName},",
             "season=#{season.id}, registration_start=#{registrationStart}, registration_end=#{registrationEnd}, organizer=#{organizer.id}",
             "WHERE id=#{id} AND version=#{version}" })
     Integer update(TournamentEdition entity);
@@ -66,6 +66,7 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
             @Result(column = "sup.season", property = "season", javaType = Season.class, one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
             @Result(column = "sup.registration_start", property = "registrationStart"),
             @Result(column = "sup.registration_end", property = "registrationEnd"),
+            @Result(column = "sup.hashtag", property = "hashtag"),
             @Result(column = "sup.id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForTournamentEdition") ),
             @Result(column = "sup.organizer", property = "organizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") ),
             @Result(column = "sup.id", property = "divisionRegistrations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.getRegistrationsForEdition") ) })
@@ -84,6 +85,7 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
             @Result(column = "sup.season", property = "season", javaType = Season.class, one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
             @Result(column = "sup.registration_start", property = "registrationStart"),
             @Result(column = "sup.registration_end", property = "registrationEnd"),
+            @Result(column = "sup.hashtag", property = "hashtag"),
             @Result(column = "sup.id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForTournamentEdition") ),
             @Result(column = "sup.organizer", property = "organizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") ),
             @Result(column = "sup.id", property = "divisionRegistrations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.getRegistrationsForEdition") ) })
@@ -103,6 +105,7 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
             @Result(column = "sup.season", property = "season", javaType = Season.class, one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
             @Result(column = "sup.registration_start", property = "registrationStart"),
             @Result(column = "sup.registration_end", property = "registrationEnd"),
+            @Result(column = "sup.hashtag", property = "hashtag"),
             @Result(column = "sup.id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForTournamentEdition") ),
             @Result(column = "sup.organizer", property = "organizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") ),
             @Result(column = "sup.id", property = "divisionRegistrations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.getRegistrationsForEdition") ) })

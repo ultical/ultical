@@ -35,15 +35,16 @@ public interface UserMapper extends BaseMapper<User> {
     void delete(int userId);
 
     // SELECT
-    public static final String SELECT_STMT = "SELECT u.id, u.email, u.password, u.email_confirmed, u.dfv_email_opt_in, u.version, u.dfv_player";
+    // without password
+    public static final String SELECT_STMT = "SELECT u.id, u.email, u.version, u.dfv_player";
+    // with password
+    public static final String SELECT_STMT_FULL = "SELECT u.id, u.email, u.password, u.email_confirmed, u.dfv_email_opt_in, u.version, u.dfv_player";
 
     @Override
     @Select({ SELECT_STMT, "FROM ULTICAL_USER u", "WHERE u.id = #{id}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "email", property = "email"),
-            @Result(column = "email_confirmed", property = "emailConfirmed"),
-            @Result(column = "dfv_player", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ),
-            @Result(column = "dfv_email_opt_in", property = "dfvEmailOptIn") })
+            @Result(column = "dfv_player", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ), })
     User get(@Param("id") int id);
 
     @Override
@@ -67,7 +68,8 @@ public interface UserMapper extends BaseMapper<User> {
             @Result(column = "dfv_player", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ) })
     List<User> getAdminsForTeam(int teamId);
 
-    @Select({ SELECT_STMT, "FROM ULTICAL_USER u", "WHERE u.email = #{eMail}" })
+    // this is the only query where the password is given out
+    @Select({ SELECT_STMT_FULL, "FROM ULTICAL_USER u", "WHERE u.email = #{eMail}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "email", property = "email"), @Result(column = "password", property = "password"),
             @Result(column = "email_confirmed", property = "emailConfirmed"),
