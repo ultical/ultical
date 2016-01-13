@@ -24,7 +24,15 @@ public class UltiCalConfig extends Configuration {
         private String smtpSender;
     }
 
+    @Data
+    public static class DebugMode {
+        private boolean enabled;
+        private String mailCatcher;
+    }
+
     private DfvApiConfig dfvApi;
+
+    private DebugMode debugMode;
 
     @NotNull
     private DataSourceFactory database;
@@ -33,8 +41,6 @@ public class UltiCalConfig extends Configuration {
 
     @NotNull
     private MailConfig mail;
-
-    private boolean debug;
 
     private String frontendUrl;
 }

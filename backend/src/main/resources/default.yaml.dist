@@ -1,4 +1,6 @@
-debug: false
+debugMode:
+  enabled: false
+  mailCatcher: team@ultical.de
 server:
   applicationConnectors:
     - type: http
