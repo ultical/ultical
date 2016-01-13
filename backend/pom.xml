@@ -199,6 +199,7 @@
 				<configuration>
 					<changeLogFile>src/main/resources/database/db.changelog-1.0.xml</changeLogFile>
 					<propertyFile>src/main/resources/database/liquibase.properties</propertyFile>
+					<promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
 				</configuration>
 				<dependencies>
 					<dependency>
