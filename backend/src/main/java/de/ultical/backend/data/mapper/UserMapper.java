@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
@@ -37,13 +38,13 @@ public interface UserMapper extends BaseMapper<User> {
     public static final String SELECT_STMT = "SELECT u.id, u.email, u.password, u.email_confirmed, u.dfv_email_opt_in, u.version, u.dfv_player";
 
     @Override
-    @Select({ SELECT_STMT, "FROM ULTICAL_USER u", "WHERE id = #{id}" })
+    @Select({ SELECT_STMT, "FROM ULTICAL_USER u", "WHERE u.id = #{id}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "email", property = "email"),
             @Result(column = "email_confirmed", property = "emailConfirmed"),
             @Result(column = "dfv_player", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ),
             @Result(column = "dfv_email_opt_in", property = "dfvEmailOptIn") })
-    User get(int id);
+    User get(@Param("id") int id);
 
     @Override
     @Select({ SELECT_STMT, "FROM ULTICAL_USER u" })

@@ -11,7 +11,7 @@ import de.ultical.backend.model.MailCode;
 
 public interface MailCodeMapper {
 
-    final String SELECT_STMT = "SELECT mail_code_type AS type, ultical_user AS user, code FROM MAIL_CODE";
+    final String SELECT_STMT = "SELECT mail_code_type AS type, ultical_user, code FROM MAIL_CODE";
 
     // INSERT
     @Insert("INSERT INTO MAIL_CODE (mail_code_type, ultical_user, code) VALUES (#{type},#{user.id},#{code})")
