@@ -25,9 +25,10 @@ angular.module('ultical.user', [])
 				$scope.loginFail = {};
 				switch (authResponse.status) {
 				case 'WRONG_CREDENTIALS':
-					$scope.loginFail.text = 'wrongCredentials';
+					$scope.loginFail.title = 'wrongCredentials';
 					$scope.loginFail.actionText = 'wrongCredentialsAction';
 					$scope.loginFail.action = function(loginData) {
+						console.log("Click");
 						if ($scope.freeze) {
 							return;
 						}
@@ -39,7 +40,7 @@ angular.module('ultical.user', [])
 					};
 					break;
 				case 'EMAIL_NOT_CONFIRMED':
-					$scope.loginFail.text = 'emailNotConfirmed';
+					$scope.loginFail.title = 'emailNotConfirmed';
 					$scope.loginFail.actionText = 'emailNotConfirmedAction';
 					$scope.loginFail.action = function(loginData) {
 						if ($scope.freeze) {
@@ -53,7 +54,7 @@ angular.module('ultical.user', [])
 					};
 					break;
 				case 'DFV_EMAIL_NOT_OPT_IN':
-					$scope.loginFail.text = 'dfvEmailNotOptIn';
+					$scope.loginFail.title = 'dfvEmailNotOptIn';
 					$scope.loginFail.actionText = 'dfvEmailNotOptInAction';
 					$scope.loginFail.action = function(loginData) {
 						if ($scope.freeze) {
@@ -67,9 +68,13 @@ angular.module('ultical.user', [])
 					};
 					break;
 				default:
-					$scope.loginFail.text = 'loginFail';
-				$scope.loginFail.actionText = null;
+					$scope.loginFail.title = 'loginFail';
+				$scope.loginFail.actionText = '';
 				}
+			}
+
+			$scope.hideLoginFail = function() {
+				$scope.loginFail = false;
 			}
 		});
 	}

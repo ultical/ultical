@@ -1,21 +1,17 @@
 <div class="popover" tabindex="-1" ng-controller="LoginCtrl" id="login-popover">
 	<div class="arrow"></div>
-	<!-- 	<h3 class="popover-title"></h3> -->
 	<div class="popover-content" id="login-popover-content">
-		<div class="row error-text" ng-if="loginFail != false">
+
+		<div class="row fade-ani" ng-if="loginFail != false">
 			<div class="col-sm-12">
-				<div class="panel panel-danger">
-					<div class="panel-heading">
-						<span>{{ 'nav.loginFail.' + loginFail.text | translate }}</span>
-					</div>
-					<div class="panel-footer" ng-if="loginFail.actionText | notEmpty">
-						<span>
-							<a ng-click="loginFail.action(login)" href="#">{{ 'nav.loginFail.' + loginFail.actionText | translate }}</a>
-						</span>
-					</div>
+				<div class="alert alert-danger">
+					<button type="button" class="close" ng-click="hideLoginFail()">&times;</button>
+					<strong ng-bind="'nav.loginFail.' + loginFail.title | translate"></strong><br />
+					<a ng-click="loginFail.action(login)">{{ 'nav.loginFail.' + loginFail.actionText | translate }}</a>
 				</div>
 			</div>
 		</div>
+
 		<div class="row margin-top-small">
 			<div class="col-sm-12">
 				<input type="text" ng-model="login.email" placeholder="{{ 'general.email' | translate }}" />
