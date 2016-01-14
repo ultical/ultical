@@ -1,38 +1,47 @@
 <div class="navbar navbar-default navbar-fixed-top" role="banner" bs-navbar ng-cloak>
-	<div class="container">
+	<div class="container" bs-collapse data-start-collapsed="true">
+
 		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" bs-collapse-toggle>
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
 			<h3>{{ 'nav.title' | translate }}</h3>
 		</div>
 
-		<ul class="nav navbar-nav">
-			<li class="navbar-button" data-animation="am-flip-x" bs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
-				<div class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</div>
-			</li>
-		</ul>
+		<div bs-collapse-target>
+			<ul class="nav navbar-nav">
+				<li class="navbar-button" data-animation="am-flip-x" bs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
+					<div class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</div>
+				</li>
+			</ul>
 
-		<ul class="nav navbar-nav">
-			<li ng-click="$state.go('teamsList')" class="navbar-button">
-				<div class="navbar-text">{{ 'nav.teams' | translate }}</div>
-			</li>
-		</ul>
+			<ul class="nav navbar-nav">
+				<li ng-click="$state.go('teamsList')" class="navbar-button">
+					<div class="navbar-text">{{ 'nav.teams' | translate }}</div>
+				</li>
+			</ul>
 
-		<ul class="nav navbar-right navbar-nav">
-			<li ng-show="languageSelector.length > 1" class="navbar-nav navbar-button navbar-language" bs-dropdown="languageSelector" data-animation="am-flip-x" data-placement="bottom-left">
-				<div id="navbar-language-icon">
-					<i class="fa fa-globe"></i>
-				</div>
-				<div id="navbar-language-code">{{ selectedLanguage }}</div>
-			</li>
+			<ul class="nav navbar-right navbar-nav">
+				<li ng-show="languageSelector.length > 1" class="navbar-nav navbar-button navbar-language" bs-dropdown="languageSelector" data-animation="am-flip-x" data-placement="bottom-left">
+					<div id="navbar-language-icon">
+						<i class="fa fa-globe"></i>
+					</div>
+					<div id="navbar-language-code">{{ selectedLanguage }}</div>
+				</li>
 
-			<li class="navbar-button" ng-show="!loggedIn()" data-animation="am-fade-and-slide-top" data-template-url="pages/user/registration_modal.html?v=5" bs-modal="modal">
-				<div class="navbar-text">{{ 'nav.register' | translate }}</div>
-			</li>
-			<li class="navbar-button navbar-button-strong" ng-show="!loggedIn()" data-placement="bottom-right" data-template-url="pages/user/login_popover.html?v=8" data-animation="am-flip-x" data-auto-close="1" bs-popover>
-				<div class="navbar-text">{{ 'nav.login' | translate }}</div>
-			</li>
-			<li class="navbar-button" ng-show="loggedIn()" data-placement="bottom-right" data-animation="am-flip-x" bs-dropdown="profileDropdown">
-				<div class="navbar-text">{{ getUser() | username }}</div>
-			</li>
-		</ul>
+				<li class="navbar-button" ng-show="!loggedIn()" data-animation="am-fade-and-slide-top" data-template-url="pages/user/registration_modal.html?v=5" bs-modal="modal">
+					<div class="navbar-text">{{ 'nav.register' | translate }}</div>
+				</li>
+				<li class="navbar-button navbar-button-strong" ng-show="!loggedIn()" data-placement="bottom-right" data-template-url="pages/user/login_popover.html?v=8" data-animation="am-flip-x" data-auto-close="1" bs-popover>
+					<div class="navbar-text">{{ 'nav.login' | translate }}</div>
+				</li>
+				<li class="navbar-button" ng-show="loggedIn()" data-placement="bottom-right" data-animation="am-flip-x" bs-dropdown="profileDropdown">
+					<div class="navbar-text">{{ getUser() | username }}</div>
+				</li>
+			</ul>
+		</div>
 	</div>
 </div>

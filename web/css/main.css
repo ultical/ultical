@@ -2,12 +2,30 @@
 	font-size: 13px;
 	margin-top: -5px;
 	margin-bottom: 40px;
-	min-width: 1000px;
+/* 	min-width: 1000px; */
 	margin-top: -5px;
 }
 
 #pageAlertSpace {
 	margin-top: 60px;
+}
+
+@media ( min-width : 768px) {
+	.navbar .collapse {
+		display: block !important;
+	}
+}
+
+@media ( max-width : 768px) {
+	.navbar-fixed-top {
+		position: static;
+		right: 0;
+		left: 0;
+		z-index: 1030;
+	}
+	.navbar-nav {
+		margin: 0px 0px;
+	}
 }
 
 .navbar {
@@ -208,6 +226,7 @@
 	.nav-tabs>li>a {
 	border-radius: 0px;
 }
+
 select:not([multiple]) {
 	-webkit-appearance: none;
 	-moz-appearance: none;
