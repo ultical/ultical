@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import de.ultical.backend.model.Contact;
 import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
@@ -47,12 +48,17 @@ public class TeamRegistrationMapperTest {
 
         this.tes = new TournamentEditionSingle();
         this.tes.setAlternativeName("alter");
-        this.tes.setOrganizerName("dfdfd");
-        this.tes.setOrganizerEmail("jkjk");
+
+        Contact contact = new Contact();
+        contact.setEmail("abc@asd.de");
+        contact.setName("Hans");
+        this.tes.setOrganizer(contact);
         this.tes.setTournamentFormat(tf);
         this.tes.setSeason(season);
         this.tes.setRegistrationEnd(LocalDate.of(2015, 12, 6));
         this.tes.setRegistrationStart(LocalDate.of(2015, 12, 23));
+        RULE.getSession().getMapper(ContactMapper.class).insert(contact);
+
         RULE.getSession().getMapper(this.tes.getMapper()).insert(this.tes);
 
         this.team = new Team();

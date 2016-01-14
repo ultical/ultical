@@ -25,7 +25,7 @@ import de.ultical.backend.model.TournamentFormat;
 public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
 
     final String editionSelectBase = "SELECT sup.id, sup.version, sup.tournament_format, sup.alternative_name, sup.season, "
-            + "sup.registration_start, sup.registration_end, sup.hashtag"
+            + "sup.registration_start, sup.registration_end, sup.hashtag,"
             + "sup.organizer, sup.is_league, league.alternative_matchday_name "
             + "FROM TOURNAMENT_EDITION sup LEFT JOIN TOURNAMENT_EDITION_LEAGUE league ON sup.id = league.id ";
 
@@ -34,14 +34,14 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
     @Insert({ "INSERT INTO TOURNAMENT_EDITION",
             "(tournament_format, alternative_name, season, registration_start, registration_end, organizer, hashtag)",
             "VALUES (#{tournamentFormat.id},#{alternativeName, jdbcType=VARCHAR},#{season.id},#{registrationStart},#{registrationEnd},",
-            "#{organizer.id}, #{hashtag})" })
+            "#{organizer.id}, #{hashtag, jdbcType=VARCHAR})" })
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(TournamentEdition entity);
 
     // UPDATE
     @Override
     @Update({
-            "UPDATE TOURNAMENT_EDITION SET version=version+1, hashtag=#{hashtag}, tournament_format=#{tournamentFormat.id},alternative_name=#{alternativeName},",
+            "UPDATE TOURNAMENT_EDITION SET version=version+1, hashtag=#{hashtag, jdbcType=VARCHAR}, tournament_format=#{tournamentFormat.id},alternative_name=#{alternativeName, jdbcType=VARCHAR},",
             "season=#{season.id}, registration_start=#{registrationStart}, registration_end=#{registrationEnd}, organizer=#{organizer.id}",
             "WHERE id=#{id} AND version=#{version}" })
     Integer update(TournamentEdition entity);

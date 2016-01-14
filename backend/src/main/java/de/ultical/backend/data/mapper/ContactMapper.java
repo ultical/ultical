@@ -16,13 +16,13 @@ public interface ContactMapper extends BaseMapper<Contact> {
 
     // INSERT
     @Override
-    @Insert("INSERT INTO CONTACT (email, name, phone) VALUES (#{email},#{name},#{phone})")
+    @Insert("INSERT INTO CONTACT (email, name, phone) VALUES (#{email, jdbcType=VARCHAR},#{name, jdbcType=VARCHAR},#{phone, jdbcType=VARCHAR})")
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Contact entity);
 
     // UPDATE
     @Override
-    @Update("UPDATE CONTACT SET version=version+1, email=#{email}, name=#{name}, phone=#{phone}")
+    @Update("UPDATE CONTACT SET version=version+1, email=#{email, jdbcType=VARCHAR}, name=#{name, jdbcType=VARCHAR}, phone=#{phone, jdbcType=VARCHAR}")
     Integer update(Contact entity);
 
     // DELETE

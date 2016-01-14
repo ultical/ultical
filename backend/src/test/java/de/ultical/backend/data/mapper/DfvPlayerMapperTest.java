@@ -19,79 +19,80 @@ import de.ultical.backend.utils.test.PrepareDBRule;
 
 public class DfvPlayerMapperTest {
 
-	private DfvPlayer dfvPlayer;
+    private DfvPlayer dfvPlayer;
 
-	@ClassRule
-	public static PrepareDBRule dbRule = new PrepareDBRule();
+    @ClassRule
+    public static PrepareDBRule dbRule = new PrepareDBRule();
 
-	@Before
-	public void setUp() throws Exception {
-		dbRule.getSession();
-		this.dfvPlayer = new DfvPlayer();
-		this.dfvPlayer.setDfvNumber(123456);
-		this.dfvPlayer.setFirstName("Brodie");
-		this.dfvPlayer.setLastName("Smith");
-		this.dfvPlayer.setGender(Gender.MALE);
+    @Before
+    public void setUp() throws Exception {
+        dbRule.getSession();
+        this.dfvPlayer = new DfvPlayer();
+        this.dfvPlayer.setDfvNumber(123456);
+        this.dfvPlayer.setFirstName("Brodie");
+        this.dfvPlayer.setLastName("Smith");
+        this.dfvPlayer.setGender(Gender.MALE);
 
-		this.dfvPlayer.setBirthDate(LocalDate.now());
-	}
+        this.dfvPlayer.setBirthDate(LocalDate.now());
+    }
 
-	@After
-	public void tearDown() throws Exception {
-		dbRule.closeSession();
-	}
+    @After
+    public void tearDown() throws Exception {
+        dbRule.closeSession();
+    }
 
-	@Test
-	public void test() {
-		PlayerMapper playerMapper = dbRule.getSession().getMapper(PlayerMapper.class);
-		DfvPlayerMapper mapper = dbRule.getSession().getMapper(DfvPlayerMapper.class);
-		playerMapper.insert(this.dfvPlayer);
-		final int insertedId = this.dfvPlayer.getId();
-		mapper.insert(this.dfvPlayer);
-		dbRule.getSession().commit();
-		List<Player> allPlayers = playerMapper.getAll();
-		assertNotNull(allPlayers);
-		assertEquals(1, allPlayers.size());
-		assertTrue(allPlayers.get(0) instanceof DfvPlayer);
+    @Test
+    public void test() {
+        PlayerMapper playerMapper = dbRule.getSession().getMapper(PlayerMapper.class);
+        DfvPlayerMapper mapper = dbRule.getSession().getMapper(DfvPlayerMapper.class);
+        this.dfvPlayer.getId();
+        playerMapper.insert(this.dfvPlayer);
+        final int insertedId = this.dfvPlayer.getId();
+        mapper.insert(this.dfvPlayer);
+        dbRule.getSession().commit();
+        List<Player> allPlayers = playerMapper.getAll();
+        assertNotNull(allPlayers);
+        assertEquals(1, allPlayers.size());
+        assertTrue(allPlayers.get(0) instanceof DfvPlayer);
 
-		final DfvPlayer foundPlayer = (DfvPlayer) playerMapper.get(insertedId);
-		assertNotNull(foundPlayer);
-		assertEquals(1, foundPlayer.getVersion());
-		assertEquals(insertedId, foundPlayer.getId());
-		assertNotNull(foundPlayer.getFirstName());
-		assertEquals(this.dfvPlayer.getGender(), foundPlayer.getGender());
-		assertEquals(this.dfvPlayer.getBirthDate(), foundPlayer.getBirthDate());
-		assertEquals(this.dfvPlayer.getFirstName(), foundPlayer.getFirstName());
-		assertEquals(this.dfvPlayer.getLastName(), foundPlayer.getLastName());
+        final DfvPlayer foundPlayer = (DfvPlayer) playerMapper.get(insertedId);
+        assertNotNull(foundPlayer);
+        assertEquals(1, foundPlayer.getVersion());
+        assertEquals(insertedId, foundPlayer.getId());
+        assertNotNull(foundPlayer.getFirstName());
+        assertEquals(this.dfvPlayer.getGender(), foundPlayer.getGender());
+        assertEquals(this.dfvPlayer.getBirthDate(), foundPlayer.getBirthDate());
+        assertEquals(this.dfvPlayer.getFirstName(), foundPlayer.getFirstName());
+        assertEquals(this.dfvPlayer.getLastName(), foundPlayer.getLastName());
 
-		/*
-		 * test update of players
-		 */
+        /*
+         * test update of players
+         */
 
-		Integer shouldBeOne = playerMapper.update(foundPlayer);
-		mapper.update(foundPlayer);
-		assertEquals(Integer.valueOf(1), shouldBeOne);
-		dbRule.getSession().commit();
-		DfvPlayer updatedPlayer = (DfvPlayer) playerMapper.get(insertedId);
-		this.checkUpdatedPlayer(updatedPlayer);
+        Integer shouldBeOne = playerMapper.update(foundPlayer);
+        mapper.update(foundPlayer);
+        assertEquals(Integer.valueOf(1), shouldBeOne);
+        dbRule.getSession().commit();
+        DfvPlayer updatedPlayer = (DfvPlayer) playerMapper.get(insertedId);
+        this.checkUpdatedPlayer(updatedPlayer);
 
-		// update again, but using the foundPlayer instance, which has the wrong
-		// version set by now.
-		Integer shouldBeZero = playerMapper.update(foundPlayer);
-		assertEquals(Integer.valueOf(0), shouldBeZero);
-		// as update is supposed to not succeed, we can check the player using
-		// the same checks as after the first update
-		updatedPlayer = (DfvPlayer) playerMapper.get(insertedId);
-		this.checkUpdatedPlayer(updatedPlayer);
-	}
+        // update again, but using the foundPlayer instance, which has the wrong
+        // version set by now.
+        Integer shouldBeZero = playerMapper.update(foundPlayer);
+        assertEquals(Integer.valueOf(0), shouldBeZero);
+        // as update is supposed to not succeed, we can check the player using
+        // the same checks as after the first update
+        updatedPlayer = (DfvPlayer) playerMapper.get(insertedId);
+        this.checkUpdatedPlayer(updatedPlayer);
+    }
 
-	private void checkUpdatedPlayer(final DfvPlayer updatedPlayer) {
-		assertNotNull(updatedPlayer);
-		assertEquals(2, updatedPlayer.getVersion());
-		assertEquals(this.dfvPlayer.getGender(), updatedPlayer.getGender());
-		assertEquals(this.dfvPlayer.getBirthDate(), updatedPlayer.getBirthDate());
-		assertEquals(this.dfvPlayer.getFirstName(), updatedPlayer.getFirstName());
-		assertEquals(this.dfvPlayer.getLastName(), updatedPlayer.getLastName());
-	}
+    private void checkUpdatedPlayer(final DfvPlayer updatedPlayer) {
+        assertNotNull(updatedPlayer);
+        assertEquals(2, updatedPlayer.getVersion());
+        assertEquals(this.dfvPlayer.getGender(), updatedPlayer.getGender());
+        assertEquals(this.dfvPlayer.getBirthDate(), updatedPlayer.getBirthDate());
+        assertEquals(this.dfvPlayer.getFirstName(), updatedPlayer.getFirstName());
+        assertEquals(this.dfvPlayer.getLastName(), updatedPlayer.getLastName());
+    }
 
 }

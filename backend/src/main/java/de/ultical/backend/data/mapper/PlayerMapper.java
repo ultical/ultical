@@ -27,7 +27,8 @@ public interface PlayerMapper extends BaseMapper<Player> {
 
     // UPDATE
     @Override
-    @Update({ "UPDATE PLAYER SET version=version+1, first_name=#{firstName}, last_name=#{lastName},",
+    @Update({
+            "UPDATE PLAYER SET version=version+1, first_name=#{firstName, jdbcType=VARCHAR}, last_name=#{lastName, jdbcType=VARCHAR},",
             "gender=#{gender} WHERE id=#{id} AND version=#{version}" })
     Integer update(Player entity);
 

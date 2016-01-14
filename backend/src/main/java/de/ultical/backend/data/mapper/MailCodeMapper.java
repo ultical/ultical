@@ -14,11 +14,11 @@ public interface MailCodeMapper {
     final String SELECT_STMT = "SELECT mail_code_type AS type, ultical_user, code FROM MAIL_CODE";
 
     // INSERT
-    @Insert("INSERT INTO MAIL_CODE (mail_code_type, ultical_user, code) VALUES (#{type},#{user.id},#{code})")
+    @Insert("INSERT INTO MAIL_CODE (mail_code_type, ultical_user, code) VALUES (#{type},#{user.id},#{code, jdbcType=VARCHAR})")
     Integer insert(MailCode entity);
 
     // DELETE
-    @Delete("DELETE FROM MAIL_CODE WHERE code=#{code}")
+    @Delete("DELETE FROM MAIL_CODE WHERE code=#{code, jdbcType=VARCHAR}")
     void delete(String code);
 
     @Delete("DELETE FROM MAIL_CODE WHERE mail_code_type = #{type} AND ultical_user = #{user.id}")

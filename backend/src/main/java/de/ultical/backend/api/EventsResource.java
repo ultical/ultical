@@ -33,10 +33,10 @@ import io.dropwizard.auth.Auth;
 public class EventsResource {
 
     @Inject
-    DataStore dStore;
+    DataStore dataStore;
 
     private void checkDatatStore() {
-        if (this.dStore == null) {
+        if (this.dataStore == null) {
             throw new WebApplicationException("Dependency injection failed!", Status.INTERNAL_SERVER_ERROR);
         }
     }
@@ -47,7 +47,7 @@ public class EventsResource {
         // I think we should ignore from and to for the moment ;)
         this.checkDatatStore();
         try {
-            return this.dStore.getAll(Event.class);
+            return this.dataStore.getAll(Event.class);
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing databaes failed", Status.INTERNAL_SERVER_ERROR);
         }
@@ -59,7 +59,7 @@ public class EventsResource {
     public Event getEvent(@PathParam("eventId") int eventId) {
         this.checkDatatStore();
         try {
-            Event result = this.dStore.get(eventId, Event.class);
+            Event result = this.dataStore.get(eventId, Event.class);
             if (result == null) {
                 throw new WebApplicationException(Status.NOT_FOUND);
             }
@@ -76,7 +76,7 @@ public class EventsResource {
         // TODO check authorisation
         this.checkDatatStore();
         try {
-            Event storedEvent = this.dStore.addNew(t);
+            Event storedEvent = this.dataStore.addNew(t);
             return storedEvent;
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
@@ -92,7 +92,7 @@ public class EventsResource {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
         }
         try {
-            boolean updated = this.dStore.update(event);
+            boolean updated = this.dataStore.update(event);
             if (!updated) {
                 throw new WebApplicationException(
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
@@ -118,7 +118,7 @@ public class EventsResource {
         fakeEdition.setId(eventId);
         DivisionRegistration storedDiv;
         try {
-            storedDiv = this.dStore.addDivisionToEdition(fakeEdition, div);
+            storedDiv = this.dataStore.addDivisionToEdition(fakeEdition, div);
         } catch (PersistenceException pe) {
             throw new WebApplicationException(pe);
         }
@@ -135,7 +135,7 @@ public class EventsResource {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
         }
         try {
-            final boolean updated = this.dStore.update(div);
+            final boolean updated = this.dataStore.update(div);
             if (!updated) {
                 throw new WebApplicationException(
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
@@ -152,7 +152,7 @@ public class EventsResource {
         try {
             DivisionRegistrationTeams fakeDiv = new DivisionRegistrationTeams();
             fakeDiv.setId(divId.intValue());
-            this.dStore.deleteDivision(fakeDiv);
+            this.dataStore.deleteDivision(fakeDiv);
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
         }

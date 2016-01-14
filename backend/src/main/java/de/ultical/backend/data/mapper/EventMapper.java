@@ -22,7 +22,7 @@ public interface EventMapper extends BaseMapper<Event> {
     @Override
     @Insert({
             "INSERT INTO EVENT (matchday_number, tournament_edition, location, start_date, end_date, local_organizer) VALUES",
-            "(#{matchdayNumber},#{tournamentEdition.id},#{location.id}, #{startDate},#{endDate},#{localOrganizer.id, jdbcType=INTEGER}" })
+            "(#{matchdayNumber, jdbcType=INTEGER},#{tournamentEdition.id, jdbcType=INTEGER},#{location.id, jdbcType=INTEGER}, #{startDate, jdbcType=DATE},#{endDate, jdbcType=DATE},#{localOrganizer.id, jdbcType=INTEGER})" })
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Event event);
 

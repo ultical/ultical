@@ -31,8 +31,8 @@ public interface UserMapper extends BaseMapper<User> {
 
     // DELETE
     @Override
-    @Delete("DELETE FROM ULTICAL_USER WHERE id=#{userId}")
-    void delete(int userId);
+    @Delete("DELETE FROM ULTICAL_USER WHERE id=#{id}")
+    void delete(int id);
 
     // SELECT
     // without password

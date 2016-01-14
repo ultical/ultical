@@ -20,7 +20,7 @@ public interface TournamentFormatMapper extends BaseMapper<TournamentFormat> {
 
     // INSERT
     @Override
-    @Insert("INSERT INTO TOURNAMENT_FORMAT (name, description, url) VALUES (#{name},#{description},#{url})")
+    @Insert("INSERT INTO TOURNAMENT_FORMAT (name, description, url) VALUES (#{name, jdbcType=VARCHAR},#{description, jdbcType=VARCHAR},#{url, jdbcType=VARCHAR})")
     @Options(keyProperty = "id", useGeneratedKeys = true)
     public Integer insert(TournamentFormat entity);
 
@@ -29,7 +29,8 @@ public interface TournamentFormatMapper extends BaseMapper<TournamentFormat> {
 
     // UPDATE
     @Override
-    @Update({ "UPDATE TOURNAMENT_FORMAT SET version=version+1, name=#{name}, description=#{description}, url=#{url}",
+    @Update({
+            "UPDATE TOURNAMENT_FORMAT SET version=version+1, name=#{name, jdbcType=VARCHAR}, description=#{description, jdbcType=VARCHAR}, url=#{url, jdbcType=VARCHAR}",
             "WHERE version=#{version} AND id=#{id}" })
     public Integer update(TournamentFormat entity);
 
