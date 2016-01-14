@@ -11,16 +11,35 @@
 			<h3>{{ 'nav.title' | translate }}</h3>
 		</div>
 
-		<div bs-collapse-target>
+		<div bs-collapse-target class="navbar-body">
 			<ul class="nav navbar-nav">
-				<li class="navbar-button" data-animation="am-flip-x" bs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
+				<li data-animation="am-flip-x" bs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
 					<div class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</div>
 				</li>
 			</ul>
 
 			<ul class="nav navbar-nav">
-				<li ng-click="$state.go('teamsList')" class="navbar-button">
+				<li ng-click="$state.go('teamsList')">
 					<div class="navbar-text">{{ 'nav.teams' | translate }}</div>
+				</li>
+			</ul>
+
+			<ul class="nav navbar-right navbar-nav">
+				<li ng-show="loggedIn()" data-placement="bottom-right" data-animation="am-flip-x" bs-dropdown="profileDropdown">
+					<div class="navbar-text">{{ getUser() | username }}</div>
+				</li>
+			</ul>
+
+
+			<ul class="nav navbar-right navbar-nav">
+				<li ng-show="!loggedIn()" data-placement="bottom-right" data-template-url="pages/user/login_popover.html?v=8" data-animation="am-flip-x" data-auto-close="1" bs-popover>
+					<div class="navbar-text">{{ 'nav.login' | translate }}</div>
+				</li>
+			</ul>
+
+			<ul class="nav navbar-right navbar-nav">
+				<li ng-show="!loggedIn()" data-animation="am-fade-and-slide-top" data-template-url="pages/user/registration_modal.html?v=5" bs-modal="modal">
+					<div class="navbar-text">{{ 'nav.register' | translate }}</div>
 				</li>
 			</ul>
 
@@ -31,17 +50,8 @@
 					</div>
 					<div id="navbar-language-code">{{ selectedLanguage }}</div>
 				</li>
-
-				<li class="navbar-button" ng-show="!loggedIn()" data-animation="am-fade-and-slide-top" data-template-url="pages/user/registration_modal.html?v=5" bs-modal="modal">
-					<div class="navbar-text">{{ 'nav.register' | translate }}</div>
-				</li>
-				<li class="navbar-button navbar-button-strong" ng-show="!loggedIn()" data-placement="bottom-right" data-template-url="pages/user/login_popover.html?v=8" data-animation="am-flip-x" data-auto-close="1" bs-popover>
-					<div class="navbar-text">{{ 'nav.login' | translate }}</div>
-				</li>
-				<li class="navbar-button" ng-show="loggedIn()" data-placement="bottom-right" data-animation="am-flip-x" bs-dropdown="profileDropdown">
-					<div class="navbar-text">{{ getUser() | username }}</div>
-				</li>
 			</ul>
+
 		</div>
 	</div>
 </div>
