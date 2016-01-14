@@ -20,7 +20,7 @@ public interface LocationMapper extends BaseMapper<Location> {
 
     // UPDATE
     @Override
-    @Update("UPDATE LOCATION SET version=version+1, latitude=#{latitude, jdbcType=DOUBLE}, longitude=#{longitude, jdbcType=DOUBLE}, city=#{city, jdbcType=VARCHAR}, street=#{street, jdbcType=VARCHAR}, zip_code=#{zipCode, jdbcType=INTEGER}, country=#{country, jdbcType=VARCHAR}, country_code=#{countryCode, jdbcType=VARCHAR}, additional_info=#{additionalInfo, jdbcType=VARCHAR} WHERE version=#{version} AND id=#{id}")
+    @Update("UPDATE LOCATION SET version=version+1, latitude=#{latitude, jdbcType=DOUBLE}, longitude=#{longitude, jdbcType=DOUBLE}, city=#{city, jdbcType=VARCHAR}, street=#{street, jdbcType=VARCHAR}, zip_code=#{zipCode, jdbcType=INTEGER}, country=#{country, jdbcType=VARCHAR}, country_code=#{countryCode, jdbcType=VARCHAR}, additional_info=#{additionalInfo, jdbcType=CLOB} WHERE version=#{version} AND id=#{id}")
     Integer update(Location entity);
 
     // DELETE
