@@ -21,14 +21,14 @@
 
 								<div class="form-group">
 									<label for="user-input-firstname" class="col-sm-3 control-label">{{ 'user.firstname' | translate }}</label>
-									<div class="col-sm-7">
+									<div class="col-sm-8">
 										<input ng-model="user.firstname" ng-required="true" type="text" class="form-control" id="user-input-firstname" placeholder="{{ 'user.firstname' | translate }}">
 									</div>
 								</div>
 
 								<div class="form-group">
 									<label for="user-input-lastname" class="col-sm-3 control-label">{{ 'user.lastname' | translate }}</label>
-									<div class="col-sm-7">
+									<div class="col-sm-8">
 										<input ng-model="user.lastname" ng-required="true" type="text" class="form-control" id="user-input-lastname" placeholder="{{ 'user.lastname' | translate }}">
 									</div>
 								</div>
@@ -52,30 +52,32 @@
 									</div>
 								</div>
 
-								<div class="form-group">
+								<div class="form-group" ng-class="{'has-error': registrationForm.email.$invalid && registrationForm.email.$touched}">
 									<label for="user-input-email" class="col-sm-3 control-label">{{ 'user.email' | translate }}</label>
-									<div class="col-sm-7">
-										<input ng-model="user.email" ng-required="true" type="email" class="form-control" id="user-input-email" placeholder="{{ 'user.email' | translate }}">
+									<div class="col-sm-8">
+										<input name="email" ng-model="user.email" ng-required="true" type="email" class="form-control" id="user-input-email" placeholder="{{ 'user.email' | translate }}">
 									</div>
 								</div>
 
-								<div class="form-group">
+								<div class="form-group" ng-class="{'has-error': registrationForm.userPw.$invalid && registrationForm.userPw.$touched}">
 									<label for="user-input-password" class="col-sm-3 control-label">{{ 'user.password' | translate }}</label>
-									<div class="col-sm-7">
-										<input ng-model="user.password" ng-minlength="{{ minPasswordLength }}" ng-required="true" type="password" class="form-control" id="user-input-password" placeholder="{{ 'user.password' | translate }}">
+									<div class="col-sm-8">
+										<input name="userPw" ng-model="user.password" ng-minlength="{{ minPasswordLength }}" ng-required="true" type="password" class="form-control" id="user-input-password" placeholder="{{ 'user.password' | translate }}">
+										<div ng-if="registrationForm.userPw.$invalid && registrationForm.userPw.$touched" class="help-block">{{ 'user.registration.error.validation_error' | translate }}</div>
 									</div>
 								</div>
 
-								<div class="form-group">
+								<div class="form-group" ng-class="{'has-error': registrationForm.userPw.$valid && registrationForm.userPw2.$touched && user.password != user.passwordCheck}">
 									<label for="user-input-password-check" class="col-sm-3 control-label">{{ 'user.passwordCheck' | translate }}</label>
-									<div class="col-sm-7">
-										<input ng-model="user.passwordCheck" ng-minlength="{{ minPasswordLength }}" ng-required="true" type="password" class="form-control" id="user-input-password-check" placeholder="{{ 'user.password' | translate }}">
+									<div class="col-sm-8">
+										<input name="userPw2" ng-model="user.passwordCheck" ng-minlength="{{ minPasswordLength }}" ng-required="true" type="password" class="form-control" id="user-input-password-check" placeholder="{{ 'user.password' | translate }}">
+										<div ng-if="registrationForm.userPw.$valid && registrationForm.userPw2.$touched && user.password != user.passwordCheck" class="help-block">{{ 'user.registration.error.passwordsNotEqual' | translate }}</div>
 									</div>
 								</div>
 
 								<div ng-if="error.email_not_found" class="form-group">
 									<label for="user-input-dfv-email" class="col-sm-3 control-label">{{ 'user.registration.dfvEmail' | translate }}</label>
-									<div class="col-sm-7">
+									<div class="col-sm-8">
 										<input ng-model="user.dfvEmail" ng-required="true" type="email" class="form-control" id="user-input-dfv-email" placeholder="{{ 'user.registration.dfvEmailPlaceholder' | translate }}">
 									</div>
 								</div>

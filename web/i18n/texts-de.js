@@ -86,7 +86,8 @@ var TRANSLATIONS_DE = {
 				dfvEmailPlaceholder: 'Emailadresse, die beim DFV gemeldet ist',
 				error: {
 					title: 'Fehler bei der Registrierung',
-					validation_error: 'Das Passwort muss mindestens 8 Zeichen lang sein.',
+					passwordsNotEqual: 'Die Passwörter stimmen nicht überein',
+					validation_error: 'Das Passwort muss mindestens 10 Zeichen lang sein.',
 					not_found: 'Ein Eintrag mit diesem Namen und Geburtstag konnte in der DFV Datenbank nicht gefunden werden.',
 					ambiguous: 'Es existieren mehrere Einträge mit den gleichen Namen, Geburtstag und Emailadresse. Bitte wende dich an support@ultical.de.',
 					email_not_found: 'Deine Emailadresse konnte nicht verifiziert werden. Bitte gib unten in dem neuen Feld die Emailadresse an, mit der du in deinem Verein gemeldet bist.',
