@@ -19,6 +19,7 @@ import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
 import de.ultical.backend.data.mapper.MailCodeMapper;
 import de.ultical.backend.data.mapper.PlayerMapper;
 import de.ultical.backend.data.mapper.RosterMapper;
+import de.ultical.backend.data.mapper.RosterPlayerMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
 import de.ultical.backend.data.mapper.TeamMapper;
 import de.ultical.backend.data.mapper.TeamRegistrationMapper;
@@ -208,8 +209,8 @@ public class DataStore {
 
     public void removePlayerFromRoster(int playerId, int rosterId) {
         try {
-            RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
-            rosterMapper.deletePlayer(playerId, rosterId);
+            RosterPlayerMapper rosterPlayerMapper = this.sqlSession.getMapper(RosterPlayerMapper.class);
+            rosterPlayerMapper.deletePlayer(playerId, rosterId);
             this.sqlSession.commit();
         } finally {
             if (this.sqlSession != null && this.autoCloseSession) {

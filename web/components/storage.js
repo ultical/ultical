@@ -93,7 +93,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				serverApi.removePlayerFromRoster(player, roster, function() {
 					var idxToRemove = -1;
 					angular.forEach(roster.players, function(rosterPlayer, idx) {
-						if (rosterPlayer.id == player.id) {
+						if (rosterPlayer.player.id == player.id) {
 							idxToRemove = idx;
 						}
 					});
@@ -108,8 +108,13 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				var that = this;
 				serverApi.addPlayerToRoster(player, roster, function(newPlayer) {
 					that.playerIndexed[newPlayer.id] = newPlayer;
-					roster.players.push(newPlayer);
-					callback(newPlayer);
+					var today = new Date();
+					var rosterPlayer = {
+							player: newPlayer,
+							dateAdded: moment().format('YYYY-MM-DD'),
+					};
+					roster.players.push(rosterPlayer);
+					callback(rosterPlayer);
 				}, errorCallback);
 			},
 

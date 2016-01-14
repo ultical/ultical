@@ -269,8 +269,8 @@ angular.module('ultical.team', [])
 		$scope.editRosterBlock = true;
 
 		var alreadyInRoster = false;
-		angular.forEach(roster.players, function(player) {
-			if (newPlayer.obj.dfvNumber == player.dfvNumber) {
+		angular.forEach(roster.players, function(rosterPlayer) {
+			if (newPlayer.obj.dfvNumber == rosterPlayer.player.dfvNumber) {
 				alreadyInRoster = true;
 			}
 		});
@@ -313,7 +313,7 @@ angular.module('ultical.team', [])
 
 		$timeout(function() {
 			$scope.teamPanels.activePanel = collapseIndex;
-		}, 100);
+		}, 0);
 	};
 
 	$scope.$watch('panel.activePanel', function() {

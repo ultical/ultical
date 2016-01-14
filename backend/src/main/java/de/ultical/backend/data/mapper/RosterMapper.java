@@ -37,9 +37,6 @@ public interface RosterMapper extends BaseMapper<Roster> {
     @Delete("DELETE FROM ROSTER WHERE id=#{rosterId}")
     void delete(int rosterId);
 
-    @Delete("DELETE FROM ROSTER_PLAYERS WHERE roster=#{rosterId} AND player=#{playerId}")
-    void deletePlayer(@Param("playerId") int playerId, @Param("rosterId") int rosterId);
-
     // SELECT
     @Override
     @Select({ SELECT_STMT, "WHERE id = #{id}" })
@@ -48,7 +45,7 @@ public interface RosterMapper extends BaseMapper<Roster> {
             @Result(column = "division_type", property = "division_type"),
             @Result(column = "team", property = "team", one = @One(select = "de.ultical.backend.data.mapper.TeamMapper.get") ),
             @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
-            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.PlayerMapper.getByRoster") ) })
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
     Roster get(int id);
 
     @Override
@@ -57,7 +54,7 @@ public interface RosterMapper extends BaseMapper<Roster> {
             @Result(column = "division_age", property = "division_age"),
             @Result(column = "division_type", property = "division_type"),
             @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
-            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.PlayerMapper.getByRoster") ) })
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
     List<Roster> getAll();
 
     @Select({ SELECT_STMT, "WHERE team = #{teamId}" })
@@ -65,16 +62,15 @@ public interface RosterMapper extends BaseMapper<Roster> {
             @Result(column = "division_age", property = "division_age"),
             @Result(column = "division_type", property = "division_type"),
             @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
-            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.PlayerMapper.getByRoster") ) })
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
     List<Roster> getForTeam(Integer teamId);
 
+    // get roster that contains specific player in one season to check for
+    // uniqueness
     @Select({ SELECT_STMT,
             "LEFT JOIN ROSTER_PLAYERS rp ON ROSTER.id = rp.roster WHERE rp.player = #{playerId} AND ROSTER.season = #{seasonId} AND division_age = #{divisionAge} AND division_type = #{divisionType}" })
-    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
-            @Result(column = "division_age", property = "division_age"),
-            @Result(column = "division_type", property = "division_type"),
-            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
-            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.PlayerMapper.getByRoster") ) })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version") })
     Roster getByPlayerSeasonDivision(@Param("playerId") Integer playerId, @Param("seasonId") Integer seasonId,
             @Param("divisionAge") String divisionAge, @Param("divisionType") String divisionType);
+
 }

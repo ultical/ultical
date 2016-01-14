@@ -1,6 +1,6 @@
 package de.ultical.backend.model;
 
-import java.util.Set;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -21,7 +21,7 @@ public class Roster extends Identifiable {
     private Season season;
     private DivisionAge divisionAge;
     private DivisionType divisionType;
-    private Set<Player> players;
+    private List<RosterPlayer> players;
 
     @Override
     public Class<RosterMapper> getMapper() {

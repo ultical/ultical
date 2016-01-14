@@ -59,5 +59,6 @@
 		<mapper class="de.ultical.backend.data.mapper.MailCodeMapper" />
 		<mapper class="de.ultical.backend.data.mapper.ContactMapper" />
 		<mapper class="de.ultical.backend.data.mapper.FeeMapper" />
+		<mapper class="de.ultical.backend.data.mapper.RosterPlayerMapper" />
 	</mappers>
 </configuration>

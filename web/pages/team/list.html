@@ -354,9 +354,9 @@
 
 													<div class="row">
 														<div class="col-md-12">
-															<div class="roster-list" ng-repeat="player in roster.players | orderBy : 'lastName'">
-																{{ player.firstName}} {{ player.lastName }}
-																<span ng-if="team.own && editingRosterPlayers == roster.id" ng-click="removePlayerFromRoster(player, roster, team)" class="ffade player-actions cursor-pointer" data-title="{{ 'team.roster.removePlayerTooltip' | translate }}" bs-tooltip>
+															<div class="roster-list" ng-repeat="rosterPlayer in roster.players | orderBy : 'player.lastName'">
+																{{ rosterPlayer.player.firstName}} {{ rosterPlayer.player.lastName }}
+																<span ng-if="team.own && editingRosterPlayers == roster.id" ng-click="removePlayerFromRoster(rosterPlayer.player, roster, team)" class="ffade player-actions cursor-pointer" data-title="{{ 'team.roster.removePlayerTooltip' | translate }}" bs-tooltip>
 																	<i class="fa fa-remove"></i>
 																</span>
 															</div>

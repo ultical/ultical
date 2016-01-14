@@ -30,6 +30,7 @@
     "angular-motion": "*",
     "bootstrap": "*",
     "respond": "*",
-    "fontawesome": "*"
+    "fontawesome": "*",
+    "moment": "*"
   }
 }
