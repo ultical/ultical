@@ -26,6 +26,7 @@ import de.ultical.backend.app.EmailCodeService;
 import de.ultical.backend.app.MailClient;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.User;
 
@@ -172,6 +173,9 @@ public class RegisterResource {
             dfvPlayer = new DfvPlayer(playerToRegister);
             dfvPlayer.setFirstName(registerRequest.getFirstName());
             dfvPlayer.setLastName(registerRequest.getLastName());
+
+            Club club = this.dataStore.getClub(playerToRegister.getVerein());
+            dfvPlayer.setClub(club);
         }
 
         dfvPlayer.setEmail(registerRequest.getEmail());

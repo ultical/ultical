@@ -71,7 +71,7 @@ public class MailResource {
         }
 
         // update user
-        this.dataStore.update(mailCode.getUser());
+        this.dataStore.updateUserWithoutPassword(mailCode.getUser());
 
         // delete mail code
         this.dataStore.deleteMailCode(code);

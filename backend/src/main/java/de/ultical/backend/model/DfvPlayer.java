@@ -25,6 +25,7 @@ public class DfvPlayer extends Player {
 
     private int dfvNumber;
     private LocalDate birthDate;
+    private Club club;
 
     @Override
     public Class<DfvPlayerMapper> getMapper() {

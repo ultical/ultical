@@ -244,11 +244,14 @@ public class DataStore {
         }
     }
 
-    public ClubMapper getClubMapper() {
-        return this.sqlSession.getMapper(ClubMapper.class);
+    public void updateUserWithoutPassword(User user) {
+        UserMapper userMapper = this.sqlSession.getMapper(UserMapper.class);
+        userMapper.updateWithoutPassword(user);
+        this.sqlSession.commit();
     }
 
-    public Club getClub(ClubMapper clubMapper, int clubId) {
+    public Club getClub(int clubId) {
+        ClubMapper clubMapper = this.sqlSession.getMapper(ClubMapper.class);
         return clubMapper.get(clubId);
     }
 

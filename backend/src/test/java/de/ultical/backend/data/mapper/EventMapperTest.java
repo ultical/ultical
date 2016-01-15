@@ -35,6 +35,8 @@ public class EventMapperTest {
     private Event event;
     private Location location;
     private TournamentEdition edition;
+    private Season season;
+    private TournamentFormat format;
 
     @Before
     public void beforeClass() throws Exception {
@@ -45,19 +47,19 @@ public class EventMapperTest {
         this.location.setAdditionalInfo("blubb");
         DBRULE.getSession().getMapper(this.location.getMapper()).insert(this.location);
 
-        Season season = new Season();
-        season.setYear(2015);
-        season.setSurface(Surface.TURF);
-        DBRULE.getSession().getMapper(season.getMapper()).insert(season);
+        this.season = new Season();
+        this.season.setYear(2015);
+        this.season.setSurface(Surface.TURF);
+        DBRULE.getSession().getMapper(this.season.getMapper()).insert(this.season);
 
-        TournamentFormat format = new TournamentFormat();
-        format.setName("test Format");
-        format.setDescription("ipsum lori");
-        DBRULE.getSession().getMapper(format.getMapper()).insert(format);
+        this.format = new TournamentFormat();
+        this.format.setName("test Format");
+        this.format.setDescription("ipsum lori");
+        DBRULE.getSession().getMapper(this.format.getMapper()).insert(this.format);
 
         this.edition = new TournamentEditionSingle();
-        this.edition.setTournamentFormat(format);
-        this.edition.setSeason(season);
+        this.edition.setTournamentFormat(this.format);
+        this.edition.setSeason(this.season);
         this.edition.setRegistrationStart(LocalDate.of(2015, 1, 1));
         this.edition.setRegistrationEnd(LocalDate.of(2015, 5, 31));
         Contact org1 = new Contact();
@@ -86,7 +88,16 @@ public class EventMapperTest {
         contact.setEmail("abc@mail.com");
         contact.setName("Peter GmbH");
         contact.setPhone("0142353535");
+        DBRULE.getSession().getMapper(ContactMapper.class).insert(contact);
 
+        TournamentEdition te = new TournamentEditionSingle();
+        te.setHashtag("#udm16");
+        te.setOrganizer(contact);
+        te.setSeason(this.season);
+        te.setTournamentFormat(this.format);
+        DBRULE.getSession().getMapper(TournamentEditionMapper.class).insert(te);
+
+        this.event.setTournamentEdition(te);
         this.event.setLocalOrganizer(contact);
         this.event.setMatchdayNumber(2);
         this.event.setTournamentEdition(this.edition);

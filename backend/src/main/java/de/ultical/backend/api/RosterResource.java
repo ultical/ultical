@@ -24,6 +24,7 @@ import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionType;
 import de.ultical.backend.model.Gender;
@@ -127,6 +128,9 @@ public class RosterResource {
             dfvPlayer.setFirstName(dfvMvName.getFirstName());
             dfvPlayer.setLastName(dfvMvName.getLastName());
             dfvPlayer.setEmail(dfvMvPlayer.getEmail());
+
+            Club club = this.dataStore.getClub(dfvMvPlayer.getVerein());
+            dfvPlayer.setClub(club);
 
             player = dfvPlayer;
 

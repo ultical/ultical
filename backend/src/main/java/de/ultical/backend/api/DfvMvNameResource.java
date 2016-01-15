@@ -23,7 +23,6 @@ import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
-import de.ultical.backend.data.mapper.ClubMapper;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
 
@@ -53,7 +52,6 @@ public class DfvMvNameResource {
 
         try {
             result = this.dataStore.findDfvMvName("%" + searchString + "%");
-            ClubMapper clubMapper = this.dataStore.getClubMapper();
 
             // get find duplicates
             List<DfvMvName> duplicates = new ArrayList<DfvMvName>();
@@ -76,7 +74,7 @@ public class DfvMvNameResource {
                 Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
                 DfvMvPlayer player = invocationBuilder.get(DfvMvPlayer.class);
 
-                name.setClub(this.dataStore.getClub(clubMapper, player.getVerein()).getName());
+                name.setClub(this.dataStore.getClub(player.getVerein()).getName());
             }
 
         } catch (PersistenceException pe) {
