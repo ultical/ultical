@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.spinscale.dropwizard.jobs.Job;
-import de.spinscale.dropwizard.jobs.annotations.On;
+import de.spinscale.dropwizard.jobs.annotations.Every;
 import de.ultical.backend.app.ServiceLocatorProvider;
 
 /**
@@ -20,7 +20,8 @@ import de.ultical.backend.app.ServiceLocatorProvider;
  */
 // @OnApplicationStart bb: had to remove this, as the configuration is not
 // available, when the scheduler starts!
-@On("0 0 3 * * ?")
+// @On("0 0 0/1 * * ?")
+@Every("1h")
 public class DfvDataSync extends Job {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DfvDataSync.class);
