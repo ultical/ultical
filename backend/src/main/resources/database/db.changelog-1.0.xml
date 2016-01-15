@@ -524,4 +524,9 @@
 			<column name="club" type="BIGINT" />
 		</addColumn>
 	</changeSet>
+	<changeSet author="bas" id="27">
+		<addForeignKeyConstraint constraintName="fk_dfv_player_club"
+			referencedTableName="CLUB" referencedColumnNames="id" baseTableName="DFV_PLAYER"
+			baseColumnNames="club" />
+	</changeSet>
 </databaseChangeLog>
