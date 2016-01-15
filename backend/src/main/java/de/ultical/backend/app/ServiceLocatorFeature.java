@@ -13,7 +13,7 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.ultical.backend.jobs.DfvProfileLoader;
+import de.ultical.backend.jobs.DfvDataSync;
 
 public class ServiceLocatorFeature implements Feature {
     private final static Logger LOGGER = LoggerFactory.getLogger(ServiceLocatorFeature.class);
@@ -30,11 +30,11 @@ public class ServiceLocatorFeature implements Feature {
         boolean result = false;
         try {
             final Scheduler defaultScheduler = StdSchedulerFactory.getDefaultScheduler();
-            defaultScheduler.scheduleJob(JobBuilder.newJob(DfvProfileLoader.class).build(),
+            defaultScheduler.scheduleJob(JobBuilder.newJob(DfvDataSync.class).build(),
                     TriggerBuilder.newTrigger().startNow().build());
             result = true;
         } catch (SchedulerException e) {
-            LOGGER.error(String.format("executing job %s failed", DfvProfileLoader.class.getName()), e);
+            LOGGER.error(String.format("executing job %s failed", DfvDataSync.class.getName()), e);
 
         }
         return result;

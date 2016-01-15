@@ -507,4 +507,21 @@
 			referencedTableName="EVENT" referencedColumnNames="id" baseTableName="FEE_EVENT"
 			baseColumnNames="event" onDelete="CASCADE" />
 	</changeSet>
+	<changeSet id="25" author="bas">
+		<createTable tableName="CLUB">
+			<column name="id" type="BIGINT">
+				<constraints primaryKey="true" nullable="false"></constraints>
+			</column>
+			<column name="name" type="VARCHAR(255)">
+				<constraints nullable="false"></constraints>
+			</column>
+			<column name="association" type="BIGINT">
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="bas" id="26">
+		<addColumn tableName="DFV_PLAYER">
+			<column name="club" type="BIGINT" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

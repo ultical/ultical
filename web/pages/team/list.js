@@ -184,6 +184,9 @@ angular.module('ultical.team', [])
 		return serverApi.getPlayerProposals(playerName, function(result) {
 			angular.forEach(result, function(player) {
 				player.fullName = player.firstName + ' ' + player.lastName;
+				if (player.club != null) {
+					player.fullName += ' <i><small>(' + player.club + ')</small></i>';
+				}
 			});
 			return result;
 		});

@@ -1,49 +1,46 @@
 package de.ultical.backend.jobs;
 
-import javax.ws.rs.WebApplicationException;
+import java.util.List;
 
-import org.apache.ibatis.exceptions.PersistenceException;
-import org.glassfish.hk2.api.ServiceLocator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.inject.Inject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
 
-import de.spinscale.dropwizard.jobs.Job;
-import de.spinscale.dropwizard.jobs.annotations.On;
-import de.ultical.backend.app.ServiceLocatorProvider;
+import de.ultical.backend.api.transferClasses.DfvMvName;
+import de.ultical.backend.app.UltiCalConfig;
+import de.ultical.backend.data.DataStore;
 
-/**
- * Job to get profile-overview from dfv-mv.de's API every night at 3 a.m. and on
- * application startup
- *
- * @author bas
- *
- */
-// @OnApplicationStart bb: had to remove this, as the configuration is not
-// available, when the scheduler starts!
-@On("0 0 3 * * ?")
-public class DfvProfileLoader extends Job {
+public class DfvProfileLoader {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(DfvProfileLoader.class);
+    @Inject
+    private Client client;
 
-    @Override
-    public void doJob() {
+    @Inject
+    private UltiCalConfig config;
 
-        LOGGER.info("Starting to fetch and store from dfv-mv...");
-        ServiceLocator sl = ServiceLocatorProvider.INSTANCE.getServiceLocator();
+    @Inject
+    private DataStore dataStore;
 
-        if (sl != null) {
-            DfvProfileLoaderWorker diw = sl.createAndInitialize(DfvProfileLoaderWorker.class);
+    public boolean getDfvMvNames() {
 
-            // TempInitResource tir =
-            // sl.createAndInitialize(TempInitResource.class);
-            try {
-                diw.getDfvMvNames();
-                // tir.initRequest();
-            } catch (WebApplicationException | PersistenceException pe) {
-                LOGGER.error("Updating DFV profiles failed!", pe);
-            }
-        }
-        LOGGER.info("... Job finished!");
+        this.dataStore.setAutoCloseSession(false);
+
+        WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profile")
+                .queryParam("token", this.config.getDfvApi().getToken())
+                .queryParam("secret", this.config.getDfvApi().getSecret());
+
+        Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
+
+        List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {
+        });
+
+        this.dataStore.refreshDfvNames(response);
+        this.dataStore.closeSession();
+
+        return true;
     }
 
 }

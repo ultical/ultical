@@ -13,6 +13,7 @@ import org.glassfish.jersey.process.internal.RequestScoped;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.data.mapper.BaseMapper;
+import de.ultical.backend.data.mapper.ClubMapper;
 import de.ultical.backend.data.mapper.DfvMvNameMapper;
 import de.ultical.backend.data.mapper.DfvPlayerMapper;
 import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
@@ -24,6 +25,7 @@ import de.ultical.backend.data.mapper.SeasonMapper;
 import de.ultical.backend.data.mapper.TeamMapper;
 import de.ultical.backend.data.mapper.TeamRegistrationMapper;
 import de.ultical.backend.data.mapper.UserMapper;
+import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
@@ -234,6 +236,32 @@ public class DataStore {
         try {
             RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
             rosterMapper.addPlayer(roster, player);
+            this.sqlSession.commit();
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public ClubMapper getClubMapper() {
+        return this.sqlSession.getMapper(ClubMapper.class);
+    }
+
+    public Club getClub(ClubMapper clubMapper, int clubId) {
+        return clubMapper.get(clubId);
+    }
+
+    /*
+     * clear and refill the DfvMvName table
+     */
+    public void refreshClubs(List<Club> clubs) {
+        try {
+            ClubMapper clubMapper = this.sqlSession.getMapper(ClubMapper.class);
+            clubMapper.deleteAll();
+            for (Club club : clubs) {
+                clubMapper.insert(club);
+            }
             this.sqlSession.commit();
         } finally {
             if (this.sqlSession != null && this.autoCloseSession) {

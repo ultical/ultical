@@ -9,11 +9,11 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
-import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.model.Club;
 
-public class DfvProfileLoaderWorker {
+public class DfvClubLoader {
 
     @Inject
     private Client client;
@@ -24,20 +24,20 @@ public class DfvProfileLoaderWorker {
     @Inject
     private DataStore dataStore;
 
-    public boolean getDfvMvNames() {
+    public boolean getClubs() {
 
         this.dataStore.setAutoCloseSession(false);
 
-        WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profile")
+        WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("vereine")
                 .queryParam("token", this.config.getDfvApi().getToken())
                 .queryParam("secret", this.config.getDfvApi().getSecret());
 
         Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 
-        List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {
+        List<Club> response = invocationBuilder.get(new GenericType<List<Club>>() {
         });
 
-        this.dataStore.refreshDfvNames(response);
+        this.dataStore.refreshClubs(response);
         this.dataStore.closeSession();
 
         return true;

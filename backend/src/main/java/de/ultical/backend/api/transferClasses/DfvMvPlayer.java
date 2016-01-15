@@ -4,12 +4,12 @@ import lombok.Data;
 
 @Data
 public class DfvMvPlayer {
-	private String geburtsdatum;
-	private String verein;
-	private boolean ruht;
-	private boolean aktiv;
-	private int dfvnr;
-	private String geschlecht;
-	private boolean dse;
-	private String email;
+    private String geburtsdatum;
+    private int verein;
+    private boolean ruht;
+    private boolean aktiv;
+    private int dfvnr;
+    private String geschlecht;
+    private boolean dse;
+    private String email;
 }

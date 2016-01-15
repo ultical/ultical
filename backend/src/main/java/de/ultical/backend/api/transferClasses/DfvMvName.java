@@ -8,6 +8,7 @@ public class DfvMvName {
     private String firstName;
     private boolean dse;
     private int dfvNumber;
+    private String club;
 
     public String getVorname() {
         return this.firstName;
