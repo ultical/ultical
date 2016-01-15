@@ -76,8 +76,6 @@ public class RosterResource {
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
         }
 
-        newRoster.getId();
-
         this.dataStore.closeSession();
 
         return newRoster;

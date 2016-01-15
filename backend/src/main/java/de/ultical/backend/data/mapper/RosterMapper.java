@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.One;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
@@ -22,6 +23,7 @@ public interface RosterMapper extends BaseMapper<Roster> {
     // INSERT
     @Override
     @Insert("INSERT INTO ROSTER (team, season, division_age, division_type) VALUES (#{team.id},#{season.id},#{divisionAge},#{divisionType})")
+    @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Roster entity);
 
     @Insert("INSERT INTO ROSTER_PLAYERS (roster, player) VALUES (#{roster.id}, #{player.id})")

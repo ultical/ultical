@@ -254,9 +254,8 @@ angular.module('ultical.team', [])
 
 	$scope.saveRoster = function(newRoster, team) {
 		storage.saveRoster(newRoster, team, function(updatedRoster) {
-			storage.getTeam(team.id, function(updatedTeam) {
-				team.rosters = updatedTeam.rosters;
-			});
+			team.rosters.push(updatedRoster);
+			updatedRoster.players = [];
 			$scope.editingRoster = -1;
 		});
 	};
