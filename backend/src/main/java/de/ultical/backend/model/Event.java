@@ -6,7 +6,11 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import de.ultical.backend.app.LocalDateDeserializer;
+import de.ultical.backend.app.LocalDateSerializer;
 import de.ultical.backend.data.mapper.EventMapper;
 import io.dropwizard.validation.MinSize;
 import lombok.Data;
@@ -29,7 +33,11 @@ public class Event extends Identifiable {
     @MinSize(1)
     private Set<DivisionConfirmation> divisionConfirmations;
 
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate startDate;
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate endDate;
 
     private List<User> admins;

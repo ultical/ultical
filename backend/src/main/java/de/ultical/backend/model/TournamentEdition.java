@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -12,6 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import de.ultical.backend.app.LocalDateDeserializer;
 import de.ultical.backend.app.LocalDateSerializer;
+import de.ultical.backend.data.mapper.TournamentEditionMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,7 +20,7 @@ import lombok.EqualsAndHashCode;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = TournamentEdition.class)
 public abstract class TournamentEdition extends Identifiable {
 
-    @JsonBackReference
+    // @JsonBackReference
     private TournamentFormat tournamentFormat;
 
     private String alternativeName;
@@ -39,4 +39,9 @@ public abstract class TournamentEdition extends Identifiable {
     private Contact organizer;
 
     private Set<DivisionRegistration> divisionRegistrations;
+
+    @Override
+    public Class<TournamentEditionMapper> getMapper() {
+        return TournamentEditionMapper.class;
+    }
 }

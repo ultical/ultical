@@ -20,7 +20,7 @@ public interface TournamentFormatMapper extends BaseMapper<TournamentFormat> {
 
     // INSERT
     @Override
-    @Insert("INSERT INTO TOURNAMENT_FORMAT (name, description, url) VALUES (#{name, jdbcType=VARCHAR},#{description, jdbcType=VARCHAR},#{url, jdbcType=VARCHAR})")
+    @Insert("INSERT INTO TOURNAMENT_FORMAT (name, description, url, dfv_official) VALUES (#{name, jdbcType=VARCHAR},#{description, jdbcType=VARCHAR},#{url, jdbcType=VARCHAR},#{dfvOfficial, jdbcType=BOOLEAN})")
     @Options(keyProperty = "id", useGeneratedKeys = true)
     public Integer insert(TournamentFormat entity);
 
@@ -29,8 +29,8 @@ public interface TournamentFormatMapper extends BaseMapper<TournamentFormat> {
 
     // UPDATE
     @Override
-    @Update({
-            "UPDATE TOURNAMENT_FORMAT SET version=version+1, name=#{name, jdbcType=VARCHAR}, description=#{description, jdbcType=VARCHAR}, url=#{url, jdbcType=VARCHAR}",
+    @Update({ "UPDATE TOURNAMENT_FORMAT",
+            "SET version=version+1, name=#{name, jdbcType=VARCHAR}, description=#{description, jdbcType=VARCHAR}, url=#{url, jdbcType=VARCHAR}, dfv_official=#{dfvOfficial}",
             "WHERE version=#{version} AND id=#{id}" })
     public Integer update(TournamentFormat entity);
 
@@ -44,10 +44,12 @@ public interface TournamentFormatMapper extends BaseMapper<TournamentFormat> {
 
     // SELECT
     @Override
-    @Select({ "SELECT id, version, name, url, description FROM", "TOURNAMENT_FORMAT", "WHERE id = #{id}" })
+    @Select({ "SELECT id, version, name, url, description, dfv_official FROM", "TOURNAMENT_FORMAT",
+            "WHERE id = #{id}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "name", property = "name"), @Result(column = "url", property = "url"),
             @Result(column = "description", property = "description"),
+            @Result(column = "dfv_official", property = "dfvOfficial"),
             @Result(column = "id", property = "editions", many = @Many(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.getEditionsForFormat", fetchType = FetchType.EAGER) ),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForFormat") ) })
     TournamentFormat get(int id);
@@ -57,6 +59,7 @@ public interface TournamentFormatMapper extends BaseMapper<TournamentFormat> {
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "name", property = "name"), @Result(column = "url", property = "url"),
             @Result(column = "description", property = "description"),
+            @Result(column = "dfv_official", property = "dfvOfficial"),
             @Result(column = "id", property = "editions", many = @Many(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.getEditionsForFormat", fetchType = FetchType.EAGER) ) })
     public List<TournamentFormat> getAll();
 
