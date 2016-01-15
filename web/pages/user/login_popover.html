@@ -7,7 +7,7 @@
 				<div class="alert alert-danger">
 					<button type="button" class="close" ng-click="hideLoginFail()">&times;</button>
 					<strong ng-bind="'nav.loginFail.' + loginFail.title | translate"></strong><br />
-					<a ng-click="loginFail.action(login)">{{ 'nav.loginFail.' + loginFail.actionText | translate }}</a>
+					<a ng-hide="loginFail.actionText == ''" ng-click="loginFail.action(login)">{{ 'nav.loginFail.' + loginFail.actionText | translate }}</a>
 				</div>
 			</div>
 		</div>
