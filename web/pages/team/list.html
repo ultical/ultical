@@ -243,7 +243,7 @@
 							</div>
 
 							<!-- ROSTERS -->
-							<div class="row margin-top" ng-if="team.rosters.length > 0 || !bigButtons">
+							<div class="row margin-top" ng-if="team.rosters.length > 0 || (team.own && !bigButtons)">
 								<div class="col-md-12">
 									<i class="fa fa-list fa-fw"></i>
 									<span ng-hide="team.rosters.length == 0 && editingRoster == -1">{{ 'team.roster.label' | translate }}</span>
