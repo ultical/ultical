@@ -12,39 +12,39 @@
 		</div>
 
 		<div bs-collapse-target class="navbar-body">
-			<ul class="nav navbar-nav">
-				<li data-animation="am-flip-x" bs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
+			<ul class="nav navbar-nav" ng-click="goTo('eventsList')" >
+				<li data-animation="am-flip-x" XXXbs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
 					<div class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</div>
 				</li>
 			</ul>
 
-			<ul class="nav navbar-nav">
-				<li ng-click="$state.go('teamsList')">
+			<ul class="nav navbar-nav" ng-click="goTo('teamsList')">
+				<li>
 					<div class="navbar-text">{{ 'nav.teams' | translate }}</div>
 				</li>
 			</ul>
 
-			<ul class="nav navbar-right navbar-nav">
-				<li ng-show="loggedIn()" data-placement="bottom-right" data-animation="am-flip-x" bs-dropdown="profileDropdown">
+			<ul class="nav navbar-right navbar-nav" data-placement="bottom-right" data-animation="am-flip-x" bs-dropdown="profileDropdown">
+				<li ng-show="loggedIn()">
 					<div class="navbar-text">{{ getUser() | username }}</div>
 				</li>
 			</ul>
 
 
-			<ul class="nav navbar-right navbar-nav">
-				<li ng-show="!loggedIn()" data-placement="bottom-right" data-template-url="pages/user/login_popover.html?v=10" data-animation="am-flip-x" data-auto-close="1" bs-popover>
+			<ul ng-show="!loggedIn()" class="nav navbar-right navbar-nav">
+				<li data-placement="bottom-right" data-template-url="pages/user/login_popover.html?v=10" data-animation="am-flip-x" data-auto-close="1" bs-popover>
 					<div class="navbar-text">{{ 'nav.login' | translate }}</div>
 				</li>
 			</ul>
 
-			<ul class="nav navbar-right navbar-nav">
-				<li ng-show="!loggedIn()" data-animation="am-fade-and-slide-top" data-template-url="pages/user/registration_modal.html?v=11" bs-modal="modal">
+			<ul class="nav navbar-right navbar-nav" ng-show="!loggedIn()" data-animation="am-fade-and-slide-top" data-template-url="pages/user/registration_modal.html?v=11" bs-modal="modal">
+				<li>
 					<div class="navbar-text">{{ 'nav.register' | translate }}</div>
 				</li>
 			</ul>
 
-			<ul class="nav navbar-right navbar-nav">
-				<li ng-show="languageSelector.length > 1" class="navbar-nav navbar-button navbar-language" bs-dropdown="languageSelector" data-animation="am-flip-x" data-placement="bottom-left">
+			<ul class="nav navbar-right navbar-nav" ng-show="languageSelector.length > 1" bs-dropdown="languageSelector" data-animation="am-flip-x" data-placement="bottom-left">
+				<li class="navbar-nav navbar-language" >
 					<div id="navbar-language-icon">
 						<i class="fa fa-globe"></i>
 					</div>

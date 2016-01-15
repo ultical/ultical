@@ -21,10 +21,6 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 	var version = '1';
 
 	$stateProvider
-	.state('startalt', {
-		url: "/start",
-		templateUrl: "pages/start/start.html?v="+version,
-	})
 	.state('start', {
 		url: "/calendar",
 		templateUrl: "pages/event/list.html?v="+version,

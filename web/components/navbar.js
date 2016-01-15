@@ -4,8 +4,6 @@
 app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer',
                               function($scope, CONFIG, $filter, $translate, $state, authorizer) {
 
-	$scope.version = '0.1';
-
 	$scope.$state = $state;
 
 	$scope.loggedIn = function() {

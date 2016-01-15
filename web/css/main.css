@@ -74,9 +74,16 @@
 	cursor: pointer;
 }
 
-.navbar-body > ul:hover > li {
+.navbar-body > ul:hover {
 	background-color: #C2DAF3;
 }
+.dropdown-menu>li>a:focus, 
+.dropdown-menu>li>a:hover {
+    color: #262626;
+    text-decoration: none;
+    background-color: #C2DAF3;
+}
+
 
 .navbar-body ul:hover .navbar-text {
 	color: #000000;
