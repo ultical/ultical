@@ -41,7 +41,6 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			getTeam: function(teamId, callback) {
 				var that = this;
 				serverApi.getTeam(teamId, function(team) {
-					that.teams[team.id] = team;
 					storeTeam(that, team);
 					callback(team);
 				});

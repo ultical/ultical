@@ -68,6 +68,14 @@ public interface RosterMapper extends BaseMapper<Roster> {
     // get roster that contains specific player in one season to check for
     // uniqueness
     @Select({ SELECT_STMT,
+            "WHERE team = #{teamId} AND season = #{seasonId} AND division_age = #{divisionAge} AND division_type = #{divisionType}" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version") })
+    Roster getByTeamSeasonDivision(@Param("teamId") Integer teamId, @Param("seasonId") Integer seasonId,
+            @Param("divisionAge") String divisionAge, @Param("divisionType") String divisionType);
+
+    // get roster that contains specific player in one season to check for
+    // uniqueness
+    @Select({ SELECT_STMT,
             "LEFT JOIN ROSTER_PLAYERS rp ON ROSTER.id = rp.roster WHERE rp.player = #{playerId} AND ROSTER.season = #{seasonId} AND division_age = #{divisionAge} AND division_type = #{divisionType}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version") })
     Roster getByPlayerSeasonDivision(@Param("playerId") Integer playerId, @Param("seasonId") Integer seasonId,

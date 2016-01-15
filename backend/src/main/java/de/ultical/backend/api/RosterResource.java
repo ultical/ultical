@@ -56,11 +56,18 @@ public class RosterResource {
                     Status.INTERNAL_SERVER_ERROR);
         }
 
-        Roster result = null;
-
         this.dataStore.setAutoCloseSession(false);
 
         Authenticator.assureTeamAdmin(this.dataStore, newRoster.getTeam().getId(), currentUser);
+
+        // check if roster for this season already exists for this team
+        Roster result = this.dataStore.getRosterOfTeamSeason(newRoster.getTeam().getId(), newRoster.getSeason().getId(),
+                newRoster.getDivisionAge().name(), newRoster.getDivisionType().name());
+
+        if (result != null) {
+            // this roster is already present for this team
+            throw new WebApplicationException("e101 - Roster already exists for team", Status.CONFLICT);
+        }
 
         try {
             this.dataStore.addNew(newRoster);
@@ -69,9 +76,11 @@ public class RosterResource {
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
         }
 
+        newRoster.getId();
+
         this.dataStore.closeSession();
 
-        return result;
+        return newRoster;
     }
 
     @POST

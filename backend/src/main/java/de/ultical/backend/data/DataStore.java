@@ -210,6 +210,17 @@ public class DataStore {
         }
     }
 
+    public Roster getRosterOfTeamSeason(int teamId, int seasonId, String divisionAge, String divisionType) {
+        try {
+            RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
+            return rosterMapper.getByTeamSeasonDivision(teamId, seasonId, divisionAge, divisionType);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public void removePlayerFromRoster(int playerId, int rosterId) {
         try {
             RosterPlayerMapper rosterPlayerMapper = this.sqlSession.getMapper(RosterPlayerMapper.class);
