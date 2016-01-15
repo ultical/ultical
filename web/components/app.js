@@ -18,7 +18,7 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 	// For any unmatched url, redirect to:
 	$urlRouterProvider.otherwise("/calendar");
 
-	var version = '1';
+	var version = '2';
 
 	$stateProvider
 	.state('start', {

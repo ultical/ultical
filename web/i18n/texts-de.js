@@ -168,6 +168,9 @@ var TRANSLATIONS_DE = {
 				playerAlreadyInRoster: 'Dieser Spieler ist bereits in einem Roster für diese Saison und Division gemeldet',
 				playerWrongGender: 'Dieser Spieler ist aufgrund des angegebenen Geschlechts in dieser Division nicht startberechtigt.',
 				removePlayerTooltip: 'Spieler aus Roster entfernen',
+				player: 'Spieler',
+				players: 'Spieler',
+				notLoggedIn: 'Spieler sind nur für angemeldete Benutzer sichtbar',
 			},
 			edit: {
 				tooltip: 'Team bearbeiten',

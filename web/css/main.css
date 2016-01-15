@@ -143,6 +143,10 @@
 	font-size: 14px;
 }
 
+.panel-title-addon {
+	font-weight: 400;
+}
+
 .input-group-colored .input-group-addon {
 	background-color: #337AB7;
 	color: #FFFFFF;

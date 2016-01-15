@@ -247,6 +247,7 @@
 								<div class="col-md-12">
 									<i class="fa fa-list fa-fw"></i>
 									<span ng-hide="team.rosters.length == 0 && editingRoster == -1">{{ 'team.roster.label' | translate }}</span>
+
 									<span ng-show="!bigButtons && team.own && !editing && editingRoster == -1 && team.rosters.length != 0"> &nbsp;(</span>
 									<a class="alternative-button-link" ng-click="createNewRoster(team)" ng-show="!bigButtons && team.own && !editing && editingRoster == -1">{{ 'team.roster.newRoster' | translate }}</a>
 									<span ng-show="!bigButtons && team.own && !editing && editingRoster == -1 && team.rosters.length != 0">)</span>
@@ -312,6 +313,7 @@
 											<div class="panel-heading cursor-pointer" role="tab">
 												<h3 class="panel-title" bs-collapse-toggle>
 													<span>{{ roster.season | season : true }} - {{ roster | division }}</span>
+													<span class="panel-title-addon">&nbsp;&nbsp;(&nbsp;{{ roster.players.length }}&nbsp;)</span>
 													<div ng-if="team.own" ng-click="deleteRoster(roster, team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.removeTooltip' | translate }}" bs-tooltip>
 														<i class="fa fa-remove"></i>
 													</div>
@@ -354,13 +356,14 @@
 
 													<div class="row">
 														<div class="col-md-12">
-															<div class="roster-list" ng-repeat="rosterPlayer in roster.players | orderBy : 'player.lastName'">
+															<div ng-if="loggedIn()" class="roster-list" ng-repeat="rosterPlayer in roster.players | orderBy : 'player.lastName'">
 																{{ rosterPlayer.player | playername : true }}
 																<span ng-if="team.own && editingRosterPlayers == roster.id" ng-click="removePlayerFromRoster(rosterPlayer.player, roster, team)" class="ffade player-actions cursor-pointer" data-title="{{ 'team.roster.removePlayerTooltip' | translate }}" bs-tooltip>
 																	<i class="fa fa-remove"></i>
 																</span>
 															</div>
 															<div ng-if="roster.players.length == 0">{{ 'team.roster.empty' | translate }}</div>
+															<div ng-if="roster.players.length > 0 && !loggedIn()">{{ 'team.roster.notLoggedIn' | translate }}</div>
 														</div>
 													</div>
 												</div>
