@@ -43,14 +43,14 @@ public class DfvMvMapperTest {
         assertNotNull(id);
         DfvMvName found = this.mapper.get(3234567);
         assertNotNull(found);
-        assertEquals(VORNAME, found.getVorname());
-        assertEquals(NACHNAME, found.getNachname());
+        assertEquals(VORNAME, found.getFirstName());
+        assertEquals(NACHNAME, found.getLastName());
         assertEquals(true, found.isDse());
 
         DfvMvName other = new DfvMvName();
         other.setDfvnr(41234568);
-        other.setVorname(VORNAME);
-        other.setNachname(NACHNAME);
+        other.setFirstName(VORNAME);
+        other.setLastName(NACHNAME);
         this.mapper.insert(other);
 
         other = new DfvMvName();

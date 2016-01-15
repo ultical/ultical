@@ -29,7 +29,6 @@ public class DfvPlayer extends Player {
 
     @Override
     public Class<DfvPlayerMapper> getMapper() {
-        // TODO Auto-generated method stub
         return DfvPlayerMapper.class;
     }
 }

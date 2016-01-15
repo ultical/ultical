@@ -160,9 +160,22 @@ app.filter('location', ['$translate', 'locationObjectFilter', function ($transla
 	}
 }]);
 
-app.filter('username', [function () {
-	return function (user, fullName) {
+app.filter('username', ['playernameFilter', function(playernameFilter) {
+	return function(user, fullName, showClub) {
 		if (isEmpty(user)) {
+			return '';
+		}
+		if (user.dfvPlayer == null) {
+			return user.email;
+		}
+
+		return playernameFilter(user.dfvPlayer, fullName, showClub);
+	}
+}]);
+
+app.filter('playername', [function () {
+	return function (player, fullName, showClub) {
+		if (isEmpty(player)) {
 			return '';
 		}
 
@@ -170,16 +183,19 @@ app.filter('username', [function () {
 			fullName = false;
 		}
 
-		if (user.dfvPlayer == null) {
-			return user.email;
+		if (undefined === showClub) {
+			showClub = false;
 		}
 
-		var username = user.dfvPlayer.firstName;
+		var playername = player.firstName;
 		if (fullName) {
-			username += ' ' + user.dfvPlayer.lastName;
+			playername += ' ' + player.lastName;
 		}
 
-		return username;
+		if (showClub && player.club != null) {
+			playername += ' (' + player.club.name + ')';
+		}
+		return playername;
 	};
 }]);
 

@@ -33,16 +33,16 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
     @Override
     @Insert({ "INSERT INTO TOURNAMENT_EDITION",
             "(tournament_format, alternative_name, season, registration_start, registration_end, organizer, hashtag)",
-            "VALUES (#{tournamentFormat.id},#{alternativeName, jdbcType=VARCHAR},#{season.id},#{registrationStart},#{registrationEnd},",
-            "#{organizer.id}, #{hashtag, jdbcType=VARCHAR})" })
+            "VALUES (#{tournamentFormat.id, jdbcType=INTEGER},#{alternativeName, jdbcType=VARCHAR},#{season.id, jdbcType=INTEGER},#{registrationStart},#{registrationEnd},",
+            "#{organizer.id, jdbcType=INTEGER}, #{hashtag, jdbcType=VARCHAR})" })
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(TournamentEdition entity);
 
     // UPDATE
     @Override
     @Update({
-            "UPDATE TOURNAMENT_EDITION SET version=version+1, hashtag=#{hashtag, jdbcType=VARCHAR}, tournament_format=#{tournamentFormat.id},alternative_name=#{alternativeName, jdbcType=VARCHAR},",
-            "season=#{season.id}, registration_start=#{registrationStart}, registration_end=#{registrationEnd}, organizer=#{organizer.id}",
+            "UPDATE TOURNAMENT_EDITION SET version=version+1, hashtag=#{hashtag, jdbcType=VARCHAR}, tournament_format=#{tournamentFormat.id, jdbcType=INTEGER},alternative_name=#{alternativeName, jdbcType=VARCHAR},",
+            "season=#{season.id, jdbcType=INTEGER}, registration_start=#{registrationStart}, registration_end=#{registrationEnd}, organizer=#{organizer.id, jdbcType=INTEGER}",
             "WHERE id=#{id} AND version=#{version}" })
     Integer update(TournamentEdition entity);
 

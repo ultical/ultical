@@ -185,7 +185,7 @@ angular.module('ultical.team', [])
 			angular.forEach(result, function(player) {
 				player.fullName = player.firstName + ' ' + player.lastName;
 				if (player.club != null) {
-					player.fullName += ' <i><small>(' + player.club + ')</small></i>';
+					player.fullName += ' <i><small>(' + player.club.name + ')</small></i>';
 				}
 			});
 			return result;

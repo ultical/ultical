@@ -1,5 +1,6 @@
 package de.ultical.backend.api.transferClasses;
 
+import de.ultical.backend.model.Club;
 import lombok.Data;
 
 @Data
@@ -8,29 +9,22 @@ public class DfvMvName {
     private String firstName;
     private boolean dse;
     private int dfvNumber;
-    private String club;
+    private Club club;
 
-    public String getVorname() {
-        return this.firstName;
+    public void setVnr(int clubNumber) {
+        this.club = new Club();
+        this.club.setId(clubNumber);
     }
 
     public void setVorname(String vorname) {
-        this.firstName = vorname;
-    }
-
-    public String getNachname() {
-        return this.lastName;
+        this.setFirstName(vorname);
     }
 
     public void setNachname(String nachname) {
-        this.lastName = nachname;
-    }
-
-    public int getDfvnr() {
-        return this.dfvNumber;
+        this.setLastName(nachname);
     }
 
     public void setDfvnr(int dfvnr) {
-        this.dfvNumber = dfvnr;
+        this.setDfvNumber(dfvnr);
     }
 }

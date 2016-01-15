@@ -529,4 +529,14 @@
 			referencedTableName="CLUB" referencedColumnNames="id" baseTableName="DFV_PLAYER"
 			baseColumnNames="club" />
 	</changeSet>
+	<changeSet author="bas" id="28">
+		<addColumn tableName="DFV_MV_NAME">
+			<column name="club" type="BIGINT" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="29">
+		<addColumn tableName="TOURNAMENT_FORMAT">
+			<column name="dfv_official" type="BOOLEAN" defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

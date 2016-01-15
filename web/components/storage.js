@@ -22,6 +22,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			teamsIndexed: {},
 			userIndexed: {},
 			playerIndexed: {},
+			clubIndexed: {},
 			rosterIndexed: {},
 			seasonIndexed: {},
 
@@ -265,6 +266,16 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 
 	function storePlayer(that, player) {
 		that.playerIndexed[player.id] = player;
+
+		if (angular.isObject(player.club)) {
+			storeClub(that, player.club);
+		} else {
+			player.club = that.clubIndexed[player.club];
+		}
+	}
+
+	function storeClub(that, club) {
+		that.clubIndexed[club.id] = club;
 	}
 
 	function storeEvent(that, event) {

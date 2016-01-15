@@ -2,6 +2,7 @@ package de.ultical.backend.data;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
@@ -258,12 +259,17 @@ public class DataStore {
     /*
      * clear and refill the DfvMvName table
      */
-    public void refreshClubs(List<Club> clubs) {
+    public void refreshClubs(List<Club> retrievedClubs) {
         try {
             ClubMapper clubMapper = this.sqlSession.getMapper(ClubMapper.class);
-            clubMapper.deleteAll();
-            for (Club club : clubs) {
-                clubMapper.insert(club);
+            Set<Integer> existingClubIds = clubMapper.getAllIds();
+
+            for (Club club : retrievedClubs) {
+                if (existingClubIds.contains(club.getId())) {
+                    clubMapper.update(club);
+                } else {
+                    clubMapper.insert(club);
+                }
             }
             this.sqlSession.commit();
         } finally {

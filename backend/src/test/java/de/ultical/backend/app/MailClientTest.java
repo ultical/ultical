@@ -72,11 +72,13 @@ public class MailClientTest {
         when(this.testMessage.getRecipients())
                 .thenReturn(new HashSet<String>(Collections.singletonList("test@frisbeesportverband.de")));
         when(this.testMessage.getRenderedMessage(Mockito.anyString())).thenReturn("Foo Bar");
+        when(this.testMessage.getSenderName()).thenReturn("Mister Frisbee");
 
         when(this.testMessageTwoRec.getSubject()).thenReturn("Test from: " + MailClientTest.class.getName());
         when(this.testMessageTwoRec.getRecipients()).thenReturn(
                 new HashSet<String>(Arrays.asList("test@frisbeesportverbande.de", "testtoo@frisbeesportverband.de")));
         when(this.testMessageTwoRec.getRenderedMessage(Mockito.anyString())).thenReturn("Foo Bar");
+        when(this.testMessageTwoRec.getSenderName()).thenReturn("Mrs Frisbee");
     }
 
     @After
