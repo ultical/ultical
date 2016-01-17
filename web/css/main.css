@@ -40,10 +40,19 @@
 	}
 }
 
-#nav-logo {
+#nav-logo img {
 	margin-top: 9px;
 }
 
+#nav-logo div {
+    margin-left: 14px;
+    margin-top: 5px;
+    line-height: 100%;
+}
+
+.navbar-header a {
+	color: #777777;
+}
 .navbar {
 	background-color: #F3FAFF;
 	color: #666666;
