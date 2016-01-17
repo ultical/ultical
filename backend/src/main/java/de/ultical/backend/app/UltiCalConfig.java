@@ -26,13 +26,13 @@ public class UltiCalConfig extends Configuration {
 
     @Data
     public static class DebugMode {
-        private boolean enabled;
-        private String mailCatcher;
+        private boolean enabled = false;
+        private String mailCatcher = "";
     }
 
     private DfvApiConfig dfvApi;
 
-    private DebugMode debugMode;
+    private DebugMode debugMode = new DebugMode();
 
     @NotNull
     private DataSourceFactory database;

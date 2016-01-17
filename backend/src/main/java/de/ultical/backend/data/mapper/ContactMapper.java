@@ -12,7 +12,7 @@ import de.ultical.backend.model.Contact;
 
 public interface ContactMapper extends BaseMapper<Contact> {
 
-    final String SELECT_STMT = "SELECT email, name, phone FROM CONTACT";
+    final String SELECT_STMT = "SELECT id, version, email, name, phone FROM CONTACT";
 
     // INSERT
     @Override

@@ -1,5 +1,6 @@
 package de.ultical.backend.app;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -67,6 +68,7 @@ public class MailClientTest {
         this.client = new MailClient();
         this.client.mailSession = sf.provide();
         this.client.mailSession.setDebug(true);
+        this.client.config = MailClientTest.config;
 
         when(this.testMessage.getSubject()).thenReturn("Test from: " + MailClientTest.class.getName());
         when(this.testMessage.getRecipients())
@@ -91,12 +93,11 @@ public class MailClientTest {
         this.client.sendMail(this.testMessage);
         final MimeMessage[] messages = greenMail.getReceivedMessages();
         assertThat(messages, is(notNullValue()));
-        assertThat(messages.length, is(this.equals(1)));
+        assertThat(messages.length, is(equalTo(1)));
         assertThat(messages[0].getAllRecipients(), is(notNullValue()));
-        assertThat(messages[0].getAllRecipients().length, is(this.equals(1)));
-        assertThat(messages[0].getAllRecipients()[0],
-                is(this.equals(new InternetAddress("test@frisbeesportverband.de"))));
-        assertThat(messages[0].getFrom()[0], is(this.equals(new InternetAddress(SMTP_SENDER))));
+        assertThat(messages[0].getAllRecipients().length, is(equalTo(1)));
+        assertThat(messages[0].getAllRecipients()[0], is(equalTo(new InternetAddress("test@frisbeesportverband.de"))));
+        assertThat(messages[0].getFrom()[0], is(equalTo(new InternetAddress(SMTP_SENDER))));
     }
 
     @Test
@@ -109,7 +110,7 @@ public class MailClientTest {
 
         final MimeMessage[] messages = greenMail.getReceivedMessages();
         assertThat(messages, notNullValue());
-        assertThat(messages.length, is(this.equals(2)));
+        assertThat(messages.length, is(equalTo(2)));
     }
 
     @Test(expected = NullPointerException.class)

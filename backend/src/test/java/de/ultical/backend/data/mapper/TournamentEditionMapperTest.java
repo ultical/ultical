@@ -47,6 +47,7 @@ public class TournamentEditionMapperTest {
 
         Contact organizer = new Contact();
         organizer.setName("e.V.");
+        DBRULE.getSession().getMapper(organizer.getMapper()).insert(organizer);
         this.edition.setOrganizer(organizer);
 
         this.edition.setTournamentFormat(format);
@@ -55,7 +56,7 @@ public class TournamentEditionMapperTest {
         this.edition.setRegistrationStart(START_DATE);
         this.edition.setRegistrationEnd(END_DATE);
 
-        this.mapper = (TournamentEditionMapper) DBRULE.getSession().getMapper(this.edition.getMapper());
+        this.mapper = DBRULE.getSession().getMapper(this.edition.getMapper());
         ContactMapper cm = DBRULE.getSession().getMapper(ContactMapper.class);
         cm.insert(organizer);
 
@@ -65,6 +66,7 @@ public class TournamentEditionMapperTest {
     public void test() {
         assertEquals(0, this.edition.getId());
         this.mapper.insert(this.edition);
+        DBRULE.getSession().commit();
         final int editionId = this.edition.getId();
 
         TournamentEdition readEdition = this.mapper.get(editionId);

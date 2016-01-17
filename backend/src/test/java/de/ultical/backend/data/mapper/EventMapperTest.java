@@ -13,6 +13,7 @@ import org.apache.ibatis.exceptions.PersistenceException;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -33,48 +34,49 @@ public class EventMapperTest {
     @ClassRule
     public static PrepareDBRule DBRULE = new PrepareDBRule();
     private Event event;
-    private Location location;
-    private TournamentEdition edition;
-    private Season season;
-    private TournamentFormat format;
+    private static Location location;
+    private static TournamentEdition edition;
+    private static Season season;
+    private static TournamentFormat format;
 
-    @Before
-    public void beforeClass() throws Exception {
-        this.location = new Location();
-        this.location.setCity("foo");
-        this.location.setStreet("bar");
-        this.location.setCountry("barcamp");
-        this.location.setAdditionalInfo("blubb");
-        DBRULE.getSession().getMapper(this.location.getMapper()).insert(this.location);
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        location = new Location();
+        location.setCity("foo");
+        location.setStreet("bar");
+        location.setCountry("barcamp");
+        location.setAdditionalInfo("blubb");
+        DBRULE.getSession().getMapper(location.getMapper()).insert(location);
 
-        this.season = new Season();
-        this.season.setYear(2015);
-        this.season.setSurface(Surface.TURF);
-        DBRULE.getSession().getMapper(this.season.getMapper()).insert(this.season);
+        season = new Season();
+        season.setYear(2015);
+        season.setSurface(Surface.TURF);
+        DBRULE.getSession().getMapper(season.getMapper()).insert(season);
 
-        this.format = new TournamentFormat();
-        this.format.setName("test Format");
-        this.format.setDescription("ipsum lori");
-        DBRULE.getSession().getMapper(this.format.getMapper()).insert(this.format);
+        format = new TournamentFormat();
+        format.setName("test Format");
+        format.setDescription("ipsum lori");
+        DBRULE.getSession().getMapper(format.getMapper()).insert(format);
 
-        this.edition = new TournamentEditionSingle();
-        this.edition.setTournamentFormat(this.format);
-        this.edition.setSeason(this.season);
-        this.edition.setRegistrationStart(LocalDate.of(2015, 1, 1));
-        this.edition.setRegistrationEnd(LocalDate.of(2015, 5, 31));
+        edition = new TournamentEditionSingle();
+        edition.setTournamentFormat(format);
+        edition.setSeason(season);
+        edition.setRegistrationStart(LocalDate.of(2015, 1, 1));
+        edition.setRegistrationEnd(LocalDate.of(2015, 5, 31));
         Contact org1 = new Contact();
         org1.setName("Orgi");
         DBRULE.getSession().getMapper(ContactMapper.class).insert(org1);
-        this.edition.setOrganizer(org1);
+        edition.setOrganizer(org1);
 
-        DBRULE.getSession().getMapper(TournamentEditionMapper.class).insert(this.edition);
+        DBRULE.getSession().getMapper(TournamentEditionMapper.class).insert(edition);
+        DBRULE.getSession().commit();
         DBRULE.closeSession();
     }
 
     @Before
     public void setUp() throws Exception {
         this.event = new Event();
-        this.event.setLocation(this.location);
+        this.event.setLocation(location);
         this.event.setEndDate(LocalDate.of(2015, 12, 6));
         this.event.setStartDate(LocalDate.of(2015, 12, 5));
 
@@ -93,14 +95,16 @@ public class EventMapperTest {
         TournamentEdition te = new TournamentEditionSingle();
         te.setHashtag("#udm16");
         te.setOrganizer(contact);
-        te.setSeason(this.season);
-        te.setTournamentFormat(this.format);
+        te.setSeason(season);
+        te.setTournamentFormat(format);
+        te.setRegistrationStart(LocalDate.of(2015, 11, 1));
+        te.setRegistrationEnd(LocalDate.of(2015, 11, 30));
         DBRULE.getSession().getMapper(TournamentEditionMapper.class).insert(te);
 
         this.event.setTournamentEdition(te);
         this.event.setLocalOrganizer(contact);
         this.event.setMatchdayNumber(2);
-        this.event.setTournamentEdition(this.edition);
+        this.event.setTournamentEdition(edition);
 
     }
 
@@ -148,6 +152,11 @@ public class EventMapperTest {
          * for a TournamentEditionSingle
          */
         TournamentEdition secondEditino = DBRULE.getSession().getMapper(TournamentEditionMapper.class).get(1);
+        secondEditino.setRegistrationStart(LocalDate.now());
+        secondEditino.setRegistrationEnd(LocalDate.now());
+        secondEditino.setSeason(season);
+        secondEditino.setOrganizer(readEvent.getLocalOrganizer());
+
         DBRULE.getSession().getMapper(TournamentEditionMapper.class).insert(secondEditino);
         this.event.setTournamentEdition(secondEditino);
 
@@ -176,13 +185,6 @@ public class EventMapperTest {
     public void testEndDateNull() {
         EventMapper mapper = DBRULE.getSession().getMapper(this.event.getMapper());
         this.event.setEndDate(null);
-        mapper.insert(this.event);
-    }
-
-    @Test(expected = PersistenceException.class)
-    public void testLocationNull() {
-        EventMapper mapper = DBRULE.getSession().getMapper(this.event.getMapper());
-        this.event.setLocation(null);
         mapper.insert(this.event);
     }
 
