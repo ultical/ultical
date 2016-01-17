@@ -17,7 +17,7 @@ var TRANSLATIONS_DE = {
 		},
 
 		nav: {
-			title: 'DFV-Turniere',
+			titleFlipText: 'Deutscher Frisbeesport Verband e.V.',
 			login: 'Login',
 			loginFail: {
 				wrongCredentials: 'Email oder Passwort fehlerhaft!',

@@ -4,7 +4,20 @@
 app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer',
                               function($scope, CONFIG, $filter, $translate, $state, authorizer) {
 
-	$scope.$state = $state;
+	$scope.logoSide = "front";
+
+	$scope.toggleLogoFlip = function(){
+		"toggle two";
+		$scope.logoSide = toggle($scope.logoSide);
+	}
+	function toggle(value){
+		if(value === "front"){
+			return "back";
+		}
+		else {
+			return "front";
+		}
+	}
 
 	$scope.loggedIn = function() {
 		return authorizer.loggedIn();
