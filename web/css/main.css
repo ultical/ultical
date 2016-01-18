@@ -232,6 +232,12 @@
 	position: relative;
 }
 
+@-moz-document url-prefix() {
+    #new-roster-form .btn .caret {
+		top: -11px;
+	}
+}
+
 #new-roster-form .btn {
 	text-align: left;
 }
