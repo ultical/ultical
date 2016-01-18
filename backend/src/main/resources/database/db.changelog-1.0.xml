@@ -546,4 +546,25 @@
 		<dropNotNullConstraint columnDataType="Date"
 			columnName="registration_end" tableName="TOURNAMENT_EDITION" />
 	</changeSet>
+	<changeSet author="bas" id="31">
+		<createTable tableName="EVENT_ULTICAL_USERS">
+			<column name="event" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="admin" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_tevent_ultical_users_ultical_users"
+					referencedColumnNames="id" referencedTableName="ULTICAL_USER" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="fk_event_ultical_users_event"
+			referencedTableName="EVENT" baseColumnNames="event" baseTableName="EVENT_ULTICAL_USERS"
+			referencedColumnNames="id" onDelete="CASCADE" />
+		<addUniqueConstraint constraintName="uk_event_ultical_users_team_admin"
+			columnNames="event, admin" tableName="EVENT_ULTICAL_USERS" />
+	</changeSet>
+	<changeSet author="bas" id="32">
+		<renameColumn tableName="FEE" oldColumnName="alternative_name"
+			newColumnName="other_name" columnDataType="VARCHAR(100)" />
+	</changeSet>
 </databaseChangeLog>
