@@ -14,17 +14,17 @@
 
 		<div class="row margin-top-small">
 			<div class="col-sm-12">
-				<input type="text" ng-model="login.email" placeholder="{{ 'general.email' | translate }}" />
+				<input bas-enter="doLogin(login)" type="text" ng-model="login.email" placeholder="{{ 'general.email' | translate }}" />
 			</div>
 		</div>
 		<div class="row margin-top-small margin-bottom">
 			<div class="col-sm-12">
-				<input type="password" ng-model="login.password" placeholder="{{ 'user.password' | translate }}" />
+				<input bas-enter="doLogin(login)" type="password" ng-model="login.password" placeholder="{{ 'user.password' | translate }}" />
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-sm-12 text-center">
-				<div class="btn btn-default" ng-click="doLogin(login)">{{ 'nav.login' | translate }}</div>
+				<button class="btn btn-default" ng-click="doLogin(login)">{{ 'nav.login' | translate }}</button>
 			</div>
 		</div>
 	</div>
