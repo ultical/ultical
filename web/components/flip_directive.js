@@ -96,14 +96,11 @@ app.directive("flip", function(flipConfig) {
 		controller: function($scope, $element, $attrs) {
 
 			$attrs.$observe("flipShow", function(newValue){
-				console.log(newValue);
 				if(newValue === "front"){
 					showFront();
-				}
-				else if(newValue === "back"){
+				} else if(newValue === "back"){
 					showBack();
-				}
-				else {
+				} else {
 					console.warn("FLIP: Unknown side.");
 				}
 			});
