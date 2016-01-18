@@ -43,4 +43,6 @@ public class UltiCalConfig extends Configuration {
     private MailConfig mail;
 
     private String frontendUrl;
+
+    private boolean corsFilterEnabled = false;
 }

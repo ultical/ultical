@@ -26,3 +26,4 @@ mail:
   smtpPassword: secret
   smtpSender: no-reply@example.com
 frontendUrl: http://example.com:1234/front
+corsFilterEnabled: false

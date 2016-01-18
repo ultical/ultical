@@ -134,8 +134,6 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
             }
         });
 
-        this.addCorsFilter(env);
-
         // add healthcheck
         env.healthChecks().register("Database healthcheck", new DatabaseHealthCheck(mds));
         env.healthChecks().register("E-Mail health check", new MailHealthCheck());
@@ -200,6 +198,10 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
         if (config.getDebugMode().isEnabled()) {
             env.jersey().property("jersey.config.server.tracing.type", "ALL");
+        }
+
+        if (config.isCorsFilterEnabled()) {
+            this.addCorsFilter(env);
         }
     }
 
