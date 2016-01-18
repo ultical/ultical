@@ -536,7 +536,14 @@
 	</changeSet>
 	<changeSet author="bas" id="29">
 		<addColumn tableName="TOURNAMENT_FORMAT">
-			<column name="dfv_official" type="BOOLEAN" defaultValueBoolean="false" />
+			<column name="dfv_official" type="BOOLEAN"
+				defaultValueBoolean="false" />
 		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="30">
+		<dropNotNullConstraint columnDataType="Date"
+			columnName="registration_start" tableName="TOURNAMENT_EDITION" />
+		<dropNotNullConstraint columnDataType="Date"
+			columnName="registration_end" tableName="TOURNAMENT_EDITION" />
 	</changeSet>
 </databaseChangeLog>
