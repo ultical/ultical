@@ -82,6 +82,35 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
                     @Result(column = "id", property = "divisionRegistrations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.getRegistrationsForEdition") ) }) })
     TournamentEdition get(int id);
 
+    // use this method to get Editions when loading an event - so no event
+    // entities should be included (double happiness)
+    @Select({ editionSelectBase, "WHERE sup.id = #{id}" })
+    @TypeDiscriminator(column = "is_league", javaType = Boolean.class, cases = {
+            @Case(value = "false", type = TournamentEditionSingle.class, results = {
+                    @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+                    @Result(column = "tournament_format", property = "tournamentFormat", javaType = TournamentFormat.class, one = @One(select = "de.ultical.backend.data.mapper.TournamentFormatMapper.getForEdition") ),
+                    @Result(column = "alternative_name", property = "alternativeName"),
+                    @Result(column = "season", property = "season", javaType = Season.class, one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
+                    @Result(column = "registration_start", property = "registrationStart"),
+                    @Result(column = "registration_end", property = "registrationEnd"),
+                    @Result(column = "hashtag", property = "hashtag"),
+                    @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForTournamentEdition") ),
+                    @Result(column = "organizer", property = "organizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") ),
+                    @Result(column = "id", property = "divisionRegistrations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.getRegistrationsForEdition") ) }),
+            @Case(value = "true", type = TournamentEditionLeague.class, results = {
+                    @Result(column = "alternative_matchday_name", property = "alternativeMatchdayName"),
+                    @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+                    @Result(column = "tournament_format", property = "tournamentFormat", javaType = TournamentFormat.class, one = @One(select = "de.ultical.backend.data.mapper.TournamentFormatMapper.getForEdition") ),
+                    @Result(column = "alternative_name", property = "alternativeName"),
+                    @Result(column = "season", property = "season", javaType = Season.class, one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
+                    @Result(column = "registration_start", property = "registrationStart"),
+                    @Result(column = "registration_end", property = "registrationEnd"),
+                    @Result(column = "hashtag", property = "hashtag"),
+                    @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForTournamentEdition") ),
+                    @Result(column = "organizer", property = "organizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") ),
+                    @Result(column = "id", property = "divisionRegistrations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.getRegistrationsForEdition") ) }) })
+    TournamentEdition getForEvent(int id);
+
     @Select({ editionSelectBase, "WHERE sup.tournament_format = #{formatId}" })
     @TypeDiscriminator(column = "is_league", javaType = Boolean.class, cases = {
             @Case(value = "false", type = TournamentEditionSingle.class, results = {

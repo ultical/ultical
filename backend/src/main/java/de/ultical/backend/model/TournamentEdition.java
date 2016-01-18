@@ -20,7 +20,6 @@ import lombok.EqualsAndHashCode;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = TournamentEdition.class)
 public abstract class TournamentEdition extends Identifiable {
 
-    // @JsonBackReference
     private TournamentFormat tournamentFormat;
 
     private String alternativeName;

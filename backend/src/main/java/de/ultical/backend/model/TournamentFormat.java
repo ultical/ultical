@@ -19,7 +19,6 @@ public class TournamentFormat extends Identifiable {
 
     private String description;
 
-    // @JsonManagedReference
     private List<TournamentEdition> editions;
 
     private Set<User> admins;

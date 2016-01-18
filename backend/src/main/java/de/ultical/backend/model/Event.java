@@ -24,7 +24,6 @@ public class Event extends Identifiable {
     // keep on -1 for single tournaments
     private int matchdayNumber = -1;
 
-    // @JsonBackReference
     private TournamentEdition tournamentEdition;
 
     private Location location;

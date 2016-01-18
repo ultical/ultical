@@ -56,7 +56,7 @@ public interface EventMapper extends BaseMapper<Event> {
     @Select("SELECT * FROM EVENT WHERE id = #{id}")
     @Results({ @Result(column = "matchday_number", property = "matchdayNumber"),
             @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
-            @Result(column = "tournament_edition", property = "tournamentEdition", one = @One(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.get") ),
+            @Result(column = "tournament_edition", property = "tournamentEdition", one = @One(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.getForEvent") ),
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") , javaType = Location.class),
             @Result(column = "start_date", property = "startDate"), @Result(column = "end_date", property = "endDate"),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForEvent") ),
@@ -68,7 +68,7 @@ public interface EventMapper extends BaseMapper<Event> {
     @Select("SELECT * FROM EVENT")
     @Results({ @Result(column = "matchday_number", property = "matchdayNumber"),
             @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
-            @Result(column = "tournament_edition", property = "tournamentEdition", one = @One(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.get") ),
+            @Result(column = "tournament_edition", property = "tournamentEdition", one = @One(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.getForEvent") ),
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") , javaType = Location.class),
             @Result(column = "start_date", property = "startDate"), @Result(column = "end_date", property = "endDate"),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForEvent") ),

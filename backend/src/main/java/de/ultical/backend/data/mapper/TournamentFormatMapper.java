@@ -54,6 +54,15 @@ public interface TournamentFormatMapper extends BaseMapper<TournamentFormat> {
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForFormat") ) })
     TournamentFormat get(int id);
 
+    @Select({ "SELECT id, version, name, url, description, dfv_official FROM", "TOURNAMENT_FORMAT",
+            "WHERE id = #{id}" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "name", property = "name"), @Result(column = "url", property = "url"),
+            @Result(column = "description", property = "description"),
+            @Result(column = "dfv_official", property = "dfvOfficial"),
+            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForFormat") ) })
+    TournamentFormat getForEdition(int id);
+
     @Override
     @Select({ "SELECT id, version, name, description, url FROM", "TOURNAMENT_FORMAT" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
