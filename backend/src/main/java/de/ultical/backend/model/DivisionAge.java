@@ -1,5 +1,25 @@
 package de.ultical.backend.model;
 
 public enum DivisionAge {
-	U14, U17, U20, U23, REGULAR, MASTERS, GRANDMASTERS;
+    U14(14), U17(17), U20(20), U23(23), REGULAR(0, true), MASTERS(33, true), GRANDMASTERS(40, true);
+
+    private final int ageDifference;
+    private final boolean hasToBeOlder;
+
+    private DivisionAge(final int ageDiff) {
+        this(ageDiff, false);
+    }
+
+    private DivisionAge(final int ageDiff, final boolean older) {
+        this.ageDifference = ageDiff;
+        this.hasToBeOlder = older;
+    }
+
+    public int getAgeDifference() {
+        return this.ageDifference;
+    }
+
+    public boolean isHasToBeOlder() {
+        return this.hasToBeOlder;
+    }
 }

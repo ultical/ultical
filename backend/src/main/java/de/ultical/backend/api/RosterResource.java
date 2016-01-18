@@ -1,5 +1,7 @@
 package de.ultical.backend.api;
 
+import java.time.LocalDate;
+
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -26,6 +28,7 @@ import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
+import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionType;
 import de.ultical.backend.model.Gender;
 import de.ultical.backend.model.Player;
@@ -39,13 +42,13 @@ public class RosterResource {
     private final static Logger LOGGER = LoggerFactory.getLogger(RosterResource.class);
 
     @Inject
-    private Client client;
+    Client client;
 
     @Inject
-    private DataStore dataStore;
+    DataStore dataStore;
 
     @Inject
-    private UltiCalConfig config;
+    UltiCalConfig config;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -100,12 +103,15 @@ public class RosterResource {
 
         this.dataStore.setAutoCloseSession(false);
 
-        Roster roster = this.dataStore.get(new Integer(rosterId), Roster.class);
-
+        Roster roster = this.dataStore.get(rosterId, Roster.class);
+        if (roster == null) {
+            throw new WebApplicationException(String.format("Roster with ID=%d does not exist!", rosterId),
+                    Status.NOT_FOUND);
+        }
         Authenticator.assureTeamAdmin(this.dataStore, roster.getTeam().getId(), currentUser);
 
         // get player if exists
-        Player player = this.dataStore.getPlayerByDfvNumber(dfvMvName.getDfvNumber());
+        DfvPlayer player = this.dataStore.getPlayerByDfvNumber(dfvMvName.getDfvNumber());
 
         if (player != null) {
             // check if player is already in a roster of this season and
@@ -144,20 +150,7 @@ public class RosterResource {
             this.dataStore.storeDfvPlayer(dfvPlayer);
         }
 
-        // check if gender matches with divison
-        boolean wrongGender = false;
-        if (player.getGender().equals(Gender.MALE)) {
-            if (roster.getDivisionType().equals(DivisionType.WOMEN)) {
-                wrongGender = true;
-            }
-        } else if (player.getGender().equals(Gender.NA)) {
-            if (roster.getDivisionType().equals(DivisionType.WOMEN)) {
-                wrongGender = true;
-            }
-        }
-        if (wrongGender) {
-            throw new WebApplicationException("e102 - Player has wrong gender for this Division", Status.CONFLICT);
-        }
+        this.checkPlayerEligibility(roster, player);
 
         // add player to roster
         this.dataStore.addPlayerToRoster(roster, player);
@@ -165,6 +158,49 @@ public class RosterResource {
         this.dataStore.closeSession();
 
         return player;
+    }
+
+    /**
+     * throws an exception if either the player's gender does not match with the
+     * division's requirements or if the player is too old or too young for the
+     * respective division. In case the player is eligible to player in the
+     * division determined by the roster, this method silently returns.
+     *
+     * @param roster
+     * @param player
+     */
+    private void checkPlayerEligibility(Roster roster, DfvPlayer player) {
+        // check if gender matches with divison
+        boolean wrongGender = false;
+        if (Gender.MALE.equals(player.getGender())) {
+            if (DivisionType.WOMEN.equals(roster.getDivisionType())) {
+                wrongGender = true;
+            }
+        } else if (Gender.NA.equals(player.getGender())) {
+            if (DivisionType.WOMEN.equals(roster.getDivisionType())) {
+                wrongGender = true;
+            }
+        }
+        if (wrongGender) {
+            throw new WebApplicationException("e102 - Player has wrong gender for this Division", Status.CONFLICT);
+        }
+
+        // check player's age
+        boolean wrongAge = false;
+        if (roster.getDivisionAge() != DivisionAge.REGULAR) {
+            final LocalDate birthDate = player.getBirthDate();
+            if (birthDate == null) {
+                throw new WebApplicationException("A player, registered at the dfv, should have a valid birthdate",
+                        Status.CONFLICT);
+            }
+            final int age = roster.getSeason().getYear() - birthDate.getYear();
+            wrongAge = (roster.getDivisionAge().isHasToBeOlder() && age < roster.getDivisionAge().getAgeDifference())
+                    || (!roster.getDivisionAge().isHasToBeOlder() && age > roster.getDivisionAge().getAgeDifference());
+        }
+        if (wrongAge) {
+            throw new WebApplicationException("e103 - Player's age does not match division's regulations",
+                    Status.CONFLICT);
+        }
     }
 
     @DELETE

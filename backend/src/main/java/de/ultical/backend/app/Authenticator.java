@@ -26,6 +26,7 @@ public class Authenticator {
         for (User admin : storedTeam.getAdmins()) {
             if (admin.getId() == currentUser.getId()) {
                 isAdmin = true;
+                break;
             }
         }
         if (!isAdmin) {

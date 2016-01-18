@@ -233,7 +233,7 @@ public class DataStore {
         }
     }
 
-    public Player getPlayerByDfvNumber(int dfvNumber) {
+    public DfvPlayer getPlayerByDfvNumber(int dfvNumber) {
         try {
             DfvPlayerMapper dfvPlayerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
             return dfvPlayerMapper.getByDfvNumber(dfvNumber);
