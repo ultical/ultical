@@ -340,7 +340,7 @@
 																		<span ng-click="addPlayerToRoster(newPlayer, roster)" class="cursor-pointer input-group-addon">
 																			<span class="glyphicon glyphicon-plus"></span>
 																		</span>
-																		<input ng-disabled="editRosterBlock" type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0"
+																		<input ng-change="addPlayerToRoster(newPlayer, roster)" ng-disabled="editRosterBlock" type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj" data-animation="am-flip-x" data-auto-select="0" data-trim-value="0"
 																			data-html="1" bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
 																		>
 																	</div>
