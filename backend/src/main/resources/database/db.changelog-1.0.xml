@@ -567,4 +567,20 @@
 		<renameColumn tableName="FEE" oldColumnName="alternative_name"
 			newColumnName="other_name" columnDataType="VARCHAR(100)" />
 	</changeSet>
+	<changeSet author="bas" id="33">
+		<dropTable tableName="FEE_EVENT" />
+		<dropTable tableName="FEE_TOURNAMENT_EDITION" />
+		<addColumn tableName="FEE">
+			<column name="event" type="BIGINT" />
+		</addColumn>
+		<addColumn tableName="FEE">
+			<column name="tournament_edition" type="BIGINT" />
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_fee_event"
+			referencedTableName="EVENT" baseColumnNames="event" baseTableName="FEE"
+			referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_fee_tournament_edition"
+			referencedTableName="TOURNAMENT_EDITION" baseColumnNames="tournament_edition"
+			baseTableName="FEE" referencedColumnNames="id" />
+	</changeSet>
 </databaseChangeLog>
