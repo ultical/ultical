@@ -17,7 +17,7 @@ import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.Gender;
 import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Surface;
-import de.ultical.backend.model.TournamentEditionSingle;
+import de.ultical.backend.model.TournamentEdition;
 import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.model.User;
 import de.ultical.backend.utils.test.PrepareDBRule;
@@ -108,7 +108,7 @@ public class TournamentFormatTest {
          * create a sample TournamentEdtion to check whether they were set
          * correctly.
          */
-        TournamentEditionSingle tes = new TournamentEditionSingle();
+        TournamentEdition tes = new TournamentEdition();
         Season season = new Season();
         season.setYear(2015);
         season.setSurface(Surface.TURF);

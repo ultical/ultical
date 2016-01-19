@@ -583,4 +583,13 @@
 			referencedTableName="TOURNAMENT_EDITION" baseColumnNames="tournament_edition"
 			baseTableName="FEE" referencedColumnNames="id" />
 	</changeSet>
+	<changeSet author="bas" id="34">
+		<dropTable tableName="TOURNAMENT_EDITION_LEAGUE" />
+		<addColumn tableName="TOURNAMENT_EDITION">
+			<column name="alternative_matchday_name" type="VARCHAR(100)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="35">
+		<dropColumn tableName="TOURNAMENT_EDITION" columnName="is_league" />
+	</changeSet>
 </databaseChangeLog>

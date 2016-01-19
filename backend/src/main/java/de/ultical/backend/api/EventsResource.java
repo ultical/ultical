@@ -25,7 +25,6 @@ import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.TournamentEdition;
-import de.ultical.backend.model.TournamentEditionSingle;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
 
@@ -114,7 +113,7 @@ public class EventsResource {
          * reading it from the db. If the event does not exist the database's
          * foreign key constraints will fail.
          */
-        TournamentEdition fakeEdition = new TournamentEditionSingle();
+        TournamentEdition fakeEdition = new TournamentEdition();
         fakeEdition.setId(eventId);
         DivisionRegistration storedDiv;
         try {

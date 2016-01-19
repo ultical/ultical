@@ -1,6 +1,5 @@
 package de.ultical.backend.api;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,7 +18,6 @@ import org.apache.ibatis.exceptions.PersistenceException;
 
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.TournamentEdition;
-import de.ultical.backend.model.TournamentEditionSingle;
 
 @Path("/tournaments")
 public class TournamentResource {
@@ -36,10 +34,10 @@ public class TournamentResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<? extends TournamentEdition> getAllTournaments() {
+    public List<TournamentEdition> getAllTournaments() {
         this.checkDataStore();
         try {
-            List<? extends TournamentEdition> result = this.dStore.getAll(TournamentEditionSingle.class);
+            List<TournamentEdition> result = this.dStore.getAll(TournamentEdition.class);
             return result;
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing database failed", pe, Status.INTERNAL_SERVER_ERROR);
@@ -50,7 +48,7 @@ public class TournamentResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public TournamentEdition storeTournament(final TournamentEditionSingle newEdition) {
+    public TournamentEdition storeTournament(final TournamentEdition newEdition) {
         this.checkDataStore();
         try {
             TournamentEdition result = this.dStore.addNew(newEdition);

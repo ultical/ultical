@@ -19,7 +19,6 @@ import de.ultical.backend.model.Surface;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.TournamentEdition;
-import de.ultical.backend.model.TournamentEditionSingle;
 import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.utils.test.PrepareDBRule;
 
@@ -27,7 +26,7 @@ public class TeamRegistrationMapperTest {
 
     @ClassRule
     public static PrepareDBRule RULE = new PrepareDBRule();
-    private TournamentEditionSingle tes;
+    private TournamentEdition tes;
     private TeamRegistrationMapper mapper;
     private Team team;
     private DivisionRegistrationTeams divisionRegOpen;
@@ -46,7 +45,7 @@ public class TeamRegistrationMapperTest {
         season.setSurface(Surface.TURF);
         RULE.getSession().getMapper(season.getMapper()).insert(season);
 
-        this.tes = new TournamentEditionSingle();
+        this.tes = new TournamentEdition();
         this.tes.setAlternativeName("alter");
 
         Contact contact = new Contact();

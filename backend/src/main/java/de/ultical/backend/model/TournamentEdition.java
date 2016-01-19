@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = TournamentEdition.class)
-public abstract class TournamentEdition extends Identifiable {
+public class TournamentEdition extends Identifiable {
 
     private TournamentFormat tournamentFormat;
 
@@ -38,6 +38,9 @@ public abstract class TournamentEdition extends Identifiable {
     private Contact organizer;
 
     private Set<DivisionRegistration> divisionRegistrations;
+
+    private List<Event> events;
+    private String alternativeMatchdayName;
 
     @Override
     public Class<TournamentEditionMapper> getMapper() {

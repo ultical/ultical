@@ -16,7 +16,6 @@ import de.ultical.backend.model.Contact;
 import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Surface;
 import de.ultical.backend.model.TournamentEdition;
-import de.ultical.backend.model.TournamentEditionSingle;
 import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.utils.test.PrepareDBRule;
 
@@ -34,7 +33,7 @@ public class TournamentEditionMapperTest {
 
     @Before
     public void setUp() throws Exception {
-        this.edition = new TournamentEditionSingle();
+        this.edition = new TournamentEdition();
 
         TournamentFormat format = new TournamentFormat();
         format.setName("test format");
@@ -71,7 +70,7 @@ public class TournamentEditionMapperTest {
 
         TournamentEdition readEdition = this.mapper.get(editionId);
         assertNotNull(readEdition);
-        assertTrue(readEdition instanceof TournamentEditionSingle);
+        assertTrue(readEdition instanceof TournamentEdition);
         assertNotNull(readEdition.getTournamentFormat());
         assertNotNull(readEdition.getSeason());
         assertNotNull(readEdition.getOrganizer());
@@ -86,7 +85,7 @@ public class TournamentEditionMapperTest {
         assertEquals(1, updateCount);
         readEdition = this.mapper.get(editionId);
         assertNotNull(readEdition);
-        assertTrue(readEdition instanceof TournamentEditionSingle);
+        assertTrue(readEdition instanceof TournamentEdition);
         assertNotNull(readEdition.getTournamentFormat());
         assertNotNull(readEdition.getSeason());
         assertEquals(UPDATED_ALTERNATIVE_NAME, readEdition.getAlternativeName());

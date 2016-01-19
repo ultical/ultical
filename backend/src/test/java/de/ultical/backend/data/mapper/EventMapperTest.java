@@ -25,7 +25,6 @@ import de.ultical.backend.model.Location;
 import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Surface;
 import de.ultical.backend.model.TournamentEdition;
-import de.ultical.backend.model.TournamentEditionSingle;
 import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.utils.test.PrepareDBRule;
 
@@ -58,7 +57,7 @@ public class EventMapperTest {
         format.setDescription("ipsum lori");
         DBRULE.getSession().getMapper(format.getMapper()).insert(format);
 
-        edition = new TournamentEditionSingle();
+        edition = new TournamentEdition();
         edition.setTournamentFormat(format);
         edition.setSeason(season);
         edition.setRegistrationStart(LocalDate.of(2015, 1, 1));
@@ -92,7 +91,7 @@ public class EventMapperTest {
         contact.setPhone("0142353535");
         DBRULE.getSession().getMapper(ContactMapper.class).insert(contact);
 
-        TournamentEdition te = new TournamentEditionSingle();
+        TournamentEdition te = new TournamentEdition();
         te.setHashtag("#udm16");
         te.setOrganizer(contact);
         te.setSeason(season);
@@ -127,7 +126,7 @@ public class EventMapperTest {
         assertNotNull(readEvent.getLocalOrganizer());
         assertNotNull(readEvent.getLocation());
         assertNotNull(readEvent.getTournamentEdition());
-        assertTrue(readEvent.getTournamentEdition() instanceof TournamentEditionSingle);
+        assertTrue(readEvent.getTournamentEdition() instanceof TournamentEdition);
 
         int updateCount = mapper.update(this.event);
         assertEquals(0, updateCount);
@@ -145,7 +144,7 @@ public class EventMapperTest {
         assertNotNull(readEvent.getLocalOrganizer());
         assertNotNull(readEvent.getLocation());
         assertNotNull(readEvent.getTournamentEdition());
-        assertTrue(readEvent.getTournamentEdition() instanceof TournamentEditionSingle);
+        assertTrue(readEvent.getTournamentEdition() instanceof TournamentEdition);
 
         /*
          * we need a second edition as otherwise we will insert a second event
