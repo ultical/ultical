@@ -187,63 +187,64 @@
 							</div>
 						</h4>
 					</div>
+
 					<div class="panel-collapse" role="tabpanel" bs-collapse-target>
 						<div class="panel-body">
 
-							<div class="row" ng-show="team.description | notEmpty">
+							<div class="row margin-bottom" ng-if="team.description | notEmpty">
 								<div class="col-md-12">{{team.description }}</div>
 							</div>
 
-							<div class="row margin-top">
-								<div class="col-md-12"></div>
-							</div>
-
-							<div class="row" ng-show="team.location.city | notEmpty">
+							<div class="row" ng-if="team.location.city | notEmpty">
 								<div class="col-md-12">
 									<i class="fa fa-map-marker fa-fw"></i> {{ team.location | location }}
 								</div>
 							</div>
 
-							<div class="row" ng-show="team.foundingDate != 0">
+							<div class="row" ng-if="team.foundingDate != 0">
 								<div class="col-md-12">
 									<i class="fa fa-calendar fa-fw"></i> {{ team.foundingDate }}
 								</div>
 							</div>
 
-							<div class="row margin-top">
+							<div class="row margin-top" ng-if="(team.location.city | notEmpty) || (team.foundingDate != 0)">
 								<div class="col-md-12"></div>
 							</div>
 
-							<div class="row" ng-show="team.contactEmail | notEmpty">
+							<div class="row" ng-if="team.contactEmail | notEmpty">
 								<div class="col-md-12">
 									<i class="fa fa-envelope-o fa-fw"></i>
 									<a ng-href="mailto:{{ team.contactEmail }}">{{ team.contactEmail }}</a>
 								</div>
 							</div>
 
-							<div class="row" ng-show="team.url | notEmpty">
+							<div class="row" ng-if="team.url | notEmpty">
 								<div class="col-md-12">
 									<i class="fa fa-link fa-fw"></i>
 									<a target="_blank" ng-href="{{ team.url | url }}">{{ team.url }}</a>
 								</div>
 							</div>
 
-							<div class="row" ng-show="team.facebookUrl | notEmpty">
+							<div class="row" ng-if="team.facebookUrl | notEmpty">
 								<div class="col-md-12">
 									<i class="fa fa-facebook fa-fw"></i>
 									<a target="_blank" ng-href="{{ team.facebookUrl | url }}">{{ team.facebookUrl }}</a>
 								</div>
 							</div>
 
-							<div class="row" ng-show="team.twitterName != ''">
+							<div class="row" ng-if="team.twitterName != ''">
 								<div class="col-md-12">
 									<i class="fa fa-twitter fa-fw"></i>
 									<a target="_blank" ng-href="https://www.twitter.com/{{ team.twitterName }}">{{ team.twitterName }}</a>
 								</div>
 							</div>
 
+							<div class="row margin-top" ng-if="(team.contactEmail | notEmpty) || (team.url | notEmpty) || (team.facebookUrl | notEmpty) || (team.twitterName != '')">
+								<div class="col-md-12"></div>
+							</div>
+
 							<!-- ROSTERS -->
-							<div class="row margin-top" ng-if="team.rosters.length > 0 || (team.own && !bigButtons)">
+							<div class="row" ng-if="team.rosters.length > 0 || (team.own && !bigButtons)">
 								<div class="col-md-12">
 									<i class="fa fa-list fa-fw"></i>
 									<span ng-hide="team.rosters.length == 0 && editingRoster == -1">{{ 'team.roster.label' | translate }}</span>
@@ -340,8 +341,8 @@
 																		<span ng-click="addPlayerToRoster(newPlayer, roster)" class="cursor-pointer input-group-addon">
 																			<span class="glyphicon glyphicon-plus"></span>
 																		</span>
-																		<input ng-change="addPlayerToRoster(newPlayer, roster)" ng-disabled="editRosterBlock" type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj" data-animation="am-flip-x" data-auto-select="0" data-trim-value="0"
-																			data-html="1" bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
+																		<input ng-change="addPlayerToRoster(newPlayer, roster)" ng-disabled="editRosterBlock" type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj"
+																			data-animation="am-flip-x" data-auto-select="0" data-trim-value="0" data-html="1" bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
 																		>
 																	</div>
 																</div>
