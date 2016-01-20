@@ -233,7 +233,6 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 	}
 
 	function storeRoster(that, roster) {
-		// add team?
 		if (angular.isObject(roster.season)) {
 			storeSeason(that, roster.season);
 		} else {
@@ -241,10 +240,10 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 		}
 
 		angular.forEach(roster.players, function(player, idx) {
-			if (angular.isObject(player)) {
-				storePlayer(that, player);
+			if (angular.isObject(player.player)) {
+				storePlayer(that, player.player);
 			} else {
-				roster.players[idx] = that.playerIndexed[player];
+				roster.players[idx].player = that.playerIndexed[player.player];
 			}
 		});
 	}
