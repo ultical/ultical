@@ -10,18 +10,18 @@
 		<div class="col-md-9">
 			<table>
 
-				<tr ng-if="0" class="row" ng-repeat-start="event in events | orderBy : sortKey : sortOrderDesc">
+				<tr ng-if="0" class="row" ng-repeat-start="event in (orderedEvents = (events | orderBy : sortKey : sortOrderDesc))">
 				</tr>
 
 				<!-- year -->
-				<tr ng-if="(sortKey == 'startDate') && ($index == 0 || (((event.startDate | amDateFormat : 'YYYY-MM') != (events[$index - 1].startDate | amDateFormat : 'YYYY-MM')) && (event.startDate | amDateFormat : 'M') == '1' ))">
+				<tr ng-if="(sortKey == 'startDate') && ($index == 0 || (((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')) && (event.startDate | amDateFormat : 'M') == '1' ))">
 					<td colspan="4">
 						<h4>{{ event.startDate | amDateFormat : 'YYYY' }}</h4>
 					</td>
 				</tr>
 
 				<!-- month -->
-				<tr ng-if="sortKey == 'startDate' && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY-MM') != (events[$index - 1].startDate | amDateFormat : 'YYYY-MM')))">
+				<tr ng-if="sortKey == 'startDate' && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')))">
 					<td colspan="4">
 						<h5>{{ event.startDate | amDateFormat : 'MMMM' }}</h5>
 					</td>
@@ -42,12 +42,12 @@
 					<td>
 						<div class="event-list-text-top">{{ event | eventname }}</div>
 						<div class="event-list-text-bottom">
-							<span class="margin-right" ng-if="event.location | notEmpty">
-								<i class="fa fa-map-marker"></i> Berlin, Deutschland{{ event.location | location : 'city' }}
+							<span class="margin-right-small" ng-if="event.tournamentEdition.divisionRegistrations | notEmpty">
+<!-- 								<i class="fa fa-venus-mars"></i> -->
+								<bas ng-repeat="divReg in event.tournamentEdition.divisionRegistrations">{{ divReg | division }}<bas ng-if="!$last">, </bas></bas>
 							</span>
-							<span ng-if="event.tournamentEdition.divisionRegistrations | notEmpty">
-								<i class="fa fa-venus-mars"></i>
-								<bas ng-repeat="divReg in event.tournamentEdition.divisionRegistrations">{{ divReg }}</bas>
+							<span class="margin-right" ng-if="event.location | notEmpty">
+								<i class="fa fa-map-marker"></i> {{ event.location | location : 'city' }}
 							</span>
 							&nbsp;
 						</div>

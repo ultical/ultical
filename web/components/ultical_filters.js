@@ -193,8 +193,7 @@ app.filter('eventname', ['$translate', 'matchdaynameFilter', function ($translat
 
 		// this is a multi-matchday-tournament
 		if (event.matchdayNumber != -1) {
-			var matchday = '';
-			eventName += ' ' + event.matchdayNumber + '. ';
+			eventName += ' - ' + event.matchdayNumber + '. ';
 
 			eventName += matchdaynameFilter(event);
 		}
