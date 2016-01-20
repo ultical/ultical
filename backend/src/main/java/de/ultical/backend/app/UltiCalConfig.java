@@ -30,9 +30,16 @@ public class UltiCalConfig extends Configuration {
         private String mailCatcher = "";
     }
 
+    @Data
+    public static class JobsConfig {
+        private boolean dfvMvSyncEnabled = false;
+    }
+
     private DfvApiConfig dfvApi;
 
-    private DebugMode debugMode = new DebugMode();
+    private DebugMode debugMode;
+
+    private JobsConfig jobs;
 
     @NotNull
     private DataSourceFactory database;

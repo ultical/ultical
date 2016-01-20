@@ -26,6 +26,10 @@ public class DfvProfileLoader {
 
     public boolean getDfvMvNames() {
 
+        if (!this.config.getJobs().isDfvMvSyncEnabled()) {
+            return false;
+        }
+
         this.dataStore.setAutoCloseSession(false);
 
         WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profile")
