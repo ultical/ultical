@@ -1,8 +1,8 @@
 'use strict';
 
 //nav bar controller
-app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer',
-                              function($scope, CONFIG, $filter, $translate, $state, authorizer) {
+app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer', 'amMoment',
+                              function($scope, CONFIG, $filter, $translate, $state, authorizer, amMoment) {
 
 	$scope.logoSide = "front";
 
@@ -91,6 +91,7 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 		.then(function(key) {
 			if (oldLanguage != key) {
 				$scope.selectedLanguage = key.toUpperCase();
+				amMoment.changeLocale(key.toLowerCase());
 				$state.reload();
 			}
 		});

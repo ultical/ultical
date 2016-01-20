@@ -221,7 +221,6 @@ app.filter('eventname', ['$translate', 'matchdaynameFilter', function ($translat
 			eventName += ' ' + event.matchdayNumber + '. ';
 
 			eventName += matchdaynameFilter(event);
-
 		}
 
 		return eventName;

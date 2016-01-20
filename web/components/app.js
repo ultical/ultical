@@ -11,6 +11,7 @@ var app = angular.module('ultical',
 		 'ultical.events',
 		 'ultical.team',
 		 'ultical.user',
+		 'angularMoment',
 		 ]);
 
 //router ui route
@@ -18,7 +19,7 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 	// For any unmatched url, redirect to:
 	$urlRouterProvider.otherwise("/calendar");
 
-	var version = '2';
+	var version = '3';
 
 	$stateProvider
 	.state('start', {
@@ -74,7 +75,9 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 app.config(function ($translateProvider) {
 	angular.forEach(CONFIG_OBJECT.general.availableLanguages, function(language) {
 		$translateProvider
-		.translations(language.toLowerCase(), window['TRANSLATIONS_'+language.toUpperCase()]);
+		.translations(language.toLowerCase(), TRANSLATIONS[language.toLowerCase()]);
+//		window['TRANSLATIONS_'+language.toUpperCase()]);
+
 	});
 
 	$translateProvider
@@ -88,7 +91,7 @@ app.config(function ($translateProvider) {
 			'en_UK': 'en',
 			'de_DE': 'de',
 			'de_CH': 'de',
-			'de_AT': 'de',
+			'de_AT': 'de-at',
 		})
 		.determinePreferredLanguage();
 	} else {
@@ -116,6 +119,7 @@ app.config(function($modalProvider) {
 	});
 });
 
-app.run(['storage', function(storage) {
+app.run(['storage', '$translate', 'amMoment', function(storage, $translate, amMoment) {
 	storage.getSeasons(function() {});
+	amMoment.changeLocale($translate.use().toLowerCase());
 }]);

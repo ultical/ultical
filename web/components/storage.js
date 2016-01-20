@@ -12,13 +12,14 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			own: {
 				teams: [],
 			},
-			events: {},
+			events: [],
 			teams: [],
 			seasons: [],
 
 			tournamentEditions: {},
 			tournamentFormats: {},
 
+			eventsIndexed: {},
 			teamsIndexed: {},
 			userIndexed: {},
 			playerIndexed: {},
@@ -149,6 +150,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				if (isEmpty(this.allEvents)) {
 					// make API call
 					serverApi.getEvents(function(data) {
+						that.events = data;
 
 						// add some fields
 						angular.forEach(data, function(event) {
@@ -277,7 +279,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 	}
 
 	function storeEvent(that, event) {
-		that.events[event.id] = event;
+		that.eventsIndexed[event.id] = event;
 
 		if (angular.isObject(event.tournamentEdition)) {
 			storeTournamentEdition(that, event.tournamentEdition);

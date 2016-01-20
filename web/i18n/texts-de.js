@@ -1,4 +1,9 @@
-var TRANSLATIONS_DE = {
+'use strict';
+
+if (undefined === TRANSLATIONS) {
+	var TRANSLATIONS = {};
+}
+TRANSLATIONS['de'] = {
 
 		general: {
 			pageTitle: 'DFV-Turniere',
@@ -167,6 +172,7 @@ var TRANSLATIONS_DE = {
 				newPlayerPlaceholder: 'Name des Spielers',
 				playerAlreadyInRoster: 'Dieser Spieler ist bereits in einem Roster für diese Saison und Division gemeldet',
 				playerWrongGender: 'Dieser Spieler ist aufgrund des angegebenen Geschlechts in dieser Division nicht startberechtigt.',
+				playerWrongAge: 'Dieser Spieler ist aufgrund seines Alters in dieser Division in diesem Jahr nicht spielberechtigt.',
 				removePlayerTooltip: 'Spieler aus Roster entfernen',
 				player: 'Spieler',
 				players: 'Spieler',
@@ -222,3 +228,4 @@ var TRANSLATIONS_DE = {
 			au: 'Australien',
 		}
 };
+TRANSLATIONS['de-at'] = TRANSLATIONS['de'];

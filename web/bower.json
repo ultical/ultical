@@ -31,6 +31,6 @@
     "bootstrap": "*",
     "respond": "*",
     "fontawesome": "*",
-    "moment": "*"
+    "angular-moment": "*"
   }
 }
