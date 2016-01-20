@@ -321,7 +321,7 @@ select:not([multiple]) {
 }
 
 .event-list-text-bottom {
-	margin-bottom: 2px;
+	margin-bottom: 3px;
 	padding-right: 15px;
 	font-weight: 300;
 }
@@ -335,10 +335,11 @@ select:not([multiple]) {
 	padding-bottom: 4px;	
 }
 
- .event-list h5 {
+.event-list h5 {
  	font-weight: 500;
  }
- .event-list h4 {
+ 
+.event-list h4 {
  	font-weight: 300;
  }
 .event-list h5, .event-list h4 {
@@ -347,8 +348,9 @@ select:not([multiple]) {
 }
 
 .event-list-row:hover {
-    background-color: #C2DAF3;
-	cursor: pointer;
+/* 	TODO: Disable when tournament page is ready */
+/*     background-color: #C2DAF3; */
+/* 	cursor: pointer; */
 }
 
 @media ( min-width : 767px) {

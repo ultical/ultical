@@ -28,7 +28,7 @@
 				</tr>
 
 				<!-- event -->
-				<tr ng-repeat-end class="event-list-row" ng-click="goToEvent(event.id)">
+				<tr ng-repeat-end class="event-list-row" ang-click="goToEvent(event.id)">
 					<td class="event-list-date event-list-date-left">
 						<span>{{ event.startDate | amDateFormat : 'D' }}</span>
 					</td>
@@ -41,7 +41,16 @@
 					</td>
 					<td>
 						<div class="event-list-text-top">{{ event | eventname }}</div>
-						<div class="event-list-text-bottom">zweite Zeitle..s....</div>
+						<div class="event-list-text-bottom">
+							<span class="margin-right" ng-if="event.location | notEmpty">
+								<i class="fa fa-map-marker"></i> Berlin, Deutschland{{ event.location | location : 'city' }}
+							</span>
+							<span ng-if="event.tournamentEdition.divisionRegistrations | notEmpty">
+								<i class="fa fa-venus-mars"></i>
+								<bas ng-repeat="divReg in event.tournamentEdition.divisionRegistrations">{{ divReg }}</bas>
+							</span>
+							&nbsp;
+						</div>
 					</td>
 				</tr>
 			</table>

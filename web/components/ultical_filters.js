@@ -1,29 +1,5 @@
 'use strict';
 
-app.filter('isEmpty', [function() {
-	return function(obj) {
-		return isEmpty(obj);
-	};
-}]);
-
-app.filter('notEmpty', [function() {
-	return function(obj) {
-		return !isEmpty(obj);
-	};
-}]);
-
-app.filter('url', [function() {
-	return function(url) {
-		if (isEmpty(url)) {
-			return '';
-		}
-		if (url.indexOf('http') != 0) {
-			url = 'http://' + url; 
-		}
-		return url;
-	};
-}]);
-
 app.filter('locationObject', ['$translate', function($translate) {
 	return function (location) {
 		if (isEmpty(location)) {
