@@ -295,6 +295,11 @@ angular.module('ultical.team', [])
 				case 'e102':
 					// this player has the wrong gender
 					alerter.error('', 'team.roster.playerWrongGender', { container: '#add-player-error', duration: 5});
+					break;
+				case 'e103':
+					// this player has not the right age for this division
+					alerter.error('', 'team.roster.playerWrongAge', { container: '#add-player-error', duration: 5});
+					break;
 				}
 			}
 			$scope.editRosterBlock = false;
