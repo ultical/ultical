@@ -31,13 +31,12 @@ To update the database:
 `mvn liquibase:update`
 
 To run the server:
+
 `java -jar target/backend-0.0.1-SNAPSHOT.jar server src/main/resources/default.yaml`
 
 ## Frontend
 
-Go to web/
-
-Install dependencies with bower:
+Inside the `web/`directory install dependencies with bower:
 
 `bower install`
 
