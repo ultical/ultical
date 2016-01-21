@@ -25,11 +25,11 @@ button, input, optgroup, select, textarea {
 	font-weight: 300;
 }
 
-#pageAlertSpace {
-	margin-top: 60px;
-}
-
 @media ( min-width : 768px) {
+	#pageAlertSpace {
+		margin-top: 60px;
+	}
+
 	.navbar .collapse {
 		display: block !important;
 	}
@@ -42,6 +42,10 @@ button, input, optgroup, select, textarea {
 }
 
 @media ( max-width : 767px) {
+	.page-title {
+		margin-top: 0;
+	}
+
 	.navbar-fixed-top {
 		position: static;
 		right: 0;

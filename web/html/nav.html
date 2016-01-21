@@ -14,30 +14,32 @@
 				<div>{{ 'nav.titleFlipText' | translate }}</div>
 				</flip-panel> </flip>
 			</a>
-
-
-
 		</div>
 
-		<div id="nav-bar-buttons" bs-collapse-target class="navbar-body">
-			<ul class="nav navbar-nav" ng-click="goTo('eventsList')">
+		<div id="nav-bar-buttons" bs-collapse-target="c1" class="navbar-body">
+			<ul bs-collapse-toggle="c1" class="nav navbar-nav" ng-click="goTo('eventsList')">
 				<li data-animation="am-flip-x" XXXbs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
 					<div class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</div>
 				</li>
 			</ul>
 
-			<ul class="nav navbar-nav" ng-click="goTo('teamsList')">
+			<ul bs-collapse-toggle="c1" class="nav navbar-nav" ng-click="goTo('teamsList')">
 				<li>
 					<div class="navbar-text">{{ 'nav.teams' | translate }}</div>
 				</li>
 			</ul>
 
-			<ul class="nav navbar-right navbar-nav" data-placement="bottom-right" data-animation="am-flip-x" bs-dropdown="profileDropdown">
+			<ul class="nav navbar-right navbar-nav" data-placement="bottom-right" data-animation="am-flip-x" bs-dropdown>
 				<li ng-show="loggedIn()">
 					<div class="navbar-text">{{ getUser() | username }}</div>
 				</li>
 			</ul>
-
+			<ul class="dropdown-menu" role="menu">
+				<li><a ui-sref="teamsOwn">{{ 'nav.profileDropdown.ownTeams' | translate }}</a></li>
+				<li><a ui-sref="eventsList">{{ 'nav.profileDropdown.ownEvents' | translate }}</a></li>
+				<li class="divider"></li>
+				<li><a href="#" ng-click="logOut()">{{ 'nav.profileDropdown.logout' | translate }}</a></li>
+			</ul>
 
 			<ul ng-show="!loggedIn()" class="nav navbar-right navbar-nav">
 				<li data-placement="bottom-right" data-template-url="pages/user/login_popover.html?v=11" data-animation="am-flip-x" data-auto-close="1" bs-popover>
