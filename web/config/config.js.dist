@@ -5,6 +5,7 @@ var CONFIG_OBJECT = {
 };
 
 angular.extend(CONFIG_OBJECT, {
+	
 	// put default values for the app
 	general: {
 		// list of two-letter country codes
@@ -14,7 +15,7 @@ angular.extend(CONFIG_OBJECT, {
 		// can be any two-letter country code or 'auto'
 		defaultLanguage: 'de',
 		// button style
-		actionButtonsBig: true,
+		actionButtonsBig: false,
 	},
 
 	registration: {
@@ -36,6 +37,10 @@ angular.extend(CONFIG_OBJECT, {
 	division: {
 		ages: ['u14', 'u17', 'u20', 'u23', 'regular', 'masters', 'grandmasters'],
 		types: ['open', 'women', 'mixed'],
+	},
+	
+	brand: {
+		emailSupport: 'support@ultical.com',
 	},
 
 });

@@ -87,20 +87,25 @@ public class RegisterResource {
             }
         }
 
-        if (foundPlayers.size() == 0) {
+        /*
+         * we now have a set of players with matching names and birthdays
+         */
+        DfvMvPlayer playerToRegister = null;
+
+        switch (foundPlayers.size()) {
+        case 0:
             // no matching players found
             this.dataStore.closeSession();
             return new RegisterResponse(RegisterResponseStatus.NOT_FOUND);
-        }
-
-        /*
-         * we now have a set of players - most likely filled with one entity,
-         * however, if we encounter more than one entity we check whether the
-         * email addresses match
-         */
-        if (foundPlayers.size() > 1) {
+        case 1:
+            // one match - that's it
+            playerToRegister = foundPlayers.get(0);
+            break;
+        default:
+            // if we encounter more than one entity we check whether the email
+            // addresses match
+            List<DfvMvPlayer> matchingEmailPlayers = new ArrayList<DfvMvPlayer>();
             Iterator<DfvMvPlayer> playerIterator = foundPlayers.iterator();
-            boolean dfvEmailMissingForAll = true;
 
             while (playerIterator.hasNext()) {
                 DfvMvPlayer player = playerIterator.next();
@@ -108,40 +113,82 @@ public class RegisterResource {
                 // the dfv email adress needs to be set
                 if (player.getEmail().isEmpty()) {
                     playerIterator.remove();
-                } else {
-                    dfvEmailMissingForAll = false;
                 }
 
                 // check if emails match
-                if (!registerRequest.getEmail().equalsIgnoreCase(player.getEmail())
-                        && !registerRequest.getDfvEmail().equalsIgnoreCase(player.getEmail())) {
-                    playerIterator.remove();
+                if (registerRequest.getEmail().equalsIgnoreCase(player.getEmail())) {
+                    matchingEmailPlayers.add(player);
                 }
             }
 
-            // more than one player has a correct match of firstname, lastname,
-            // birthday and email (not very realistic,
-            // but who knows)
-            if (foundPlayers.size() > 1) {
-                this.dataStore.closeSession();
-                return new RegisterResponse(RegisterResponseStatus.AMBIGUOUS);
-            }
-
-            if (dfvEmailMissingForAll) {
+            if (foundPlayers.size() == 0) {
                 // none of the found players had an dfv email set
                 this.dataStore.closeSession();
                 return new RegisterResponse(RegisterResponseStatus.NO_DFV_EMAIL);
             }
 
-            if (foundPlayers.size() == 0) {
-                // there were players but the email did not match
-                this.dataStore.closeSession();
-                return new RegisterResponse(RegisterResponseStatus.EMAIL_NOT_FOUND);
+            if (matchingEmailPlayers.size() == 1) {
+                // we found one matching email, that should be it
+                playerToRegister = matchingEmailPlayers.get(0);
+            } else {
+                // it's still ambiguous, check if the user chose a club
+                if (registerRequest.getClubId() != -1) {
+                    if (matchingEmailPlayers.size() > 1) {
+                        for (DfvMvPlayer player : matchingEmailPlayers) {
+                            if (player.getVerein() == registerRequest.getClubId()) {
+                                playerToRegister = player;
+                            }
+                        }
+                    } else {
+                        for (DfvMvPlayer player : foundPlayers) {
+                            if (player.getVerein() == registerRequest.getClubId()) {
+                                playerToRegister = player;
+                            }
+                        }
+                    }
+                    if (playerToRegister == null) {
+                        this.dataStore.closeSession();
+                        return new RegisterResponse(RegisterResponseStatus.NOT_FOUND);
+                    }
+                } else {
+                    // no club chosen, so let her choose one
+                    RegisterResponse response;
+                    List<Club> clubs = new ArrayList<Club>();
+
+                    if (matchingEmailPlayers.size() > 1) {
+                        /*
+                         * more than one player has a correct match of name,
+                         * birthday and email - probably the same player in
+                         * different clubs - let her choose
+                         */
+                        // get clubs
+                        for (DfvMvPlayer player : matchingEmailPlayers) {
+                            Club club = this.dataStore.getClub(player.getVerein());
+                            if (club != null) {
+                                clubs.add(club);
+                            }
+                        }
+                        response = new RegisterResponse(RegisterResponseStatus.AMBIGUOUS_EMAIL);
+                    } else {
+                        /*
+                         * no matching email found so we have one or more
+                         * players with matching names and birhdates
+                         */
+                        for (DfvMvPlayer player : foundPlayers) {
+                            Club club = this.dataStore.getClub(player.getVerein());
+                            if (club != null) {
+                                clubs.add(club);
+                            }
+                        }
+                        response = new RegisterResponse(RegisterResponseStatus.AMBIGUOUS);
+                    }
+                    response.setClubs(clubs);
+                    this.dataStore.closeSession();
+                    // return choosing message
+                    return response;
+                }
             }
         }
-
-        // one exact match found
-        DfvMvPlayer playerToRegister = foundPlayers.get(0);
 
         // check if an email is stored at dfv database
         if (playerToRegister.getEmail().isEmpty()) {

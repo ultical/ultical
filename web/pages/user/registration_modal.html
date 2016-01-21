@@ -75,10 +75,12 @@
 									</div>
 								</div>
 
-								<div ng-if="error.email_not_found" class="form-group">
-									<label for="user-input-dfv-email" class="col-sm-3 control-label">{{ 'user.registration.dfvEmail' | translate }}</label>
+								<div class="form-group" ng-if="error.ambiguous || error.ambiguous_email">
+									<label for="user-input-club" class="col-sm-3 control-label">{{ 'user.club' | translate }}</label>
 									<div class="col-sm-8">
-										<input ng-model="user.dfvEmail" ng-required="true" type="email" class="form-control" id="user-input-dfv-email" placeholder="{{ 'user.registration.dfvEmailPlaceholder' | translate }}">
+										<select class="form-control" ng-model="user.clubId">
+											<option ng-repeat="club in clubs" value="{{ club.id }}">{{ club.name }}</option>
+										</select>
 									</div>
 								</div>
 

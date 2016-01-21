@@ -36,10 +36,11 @@ angular.module('ultical.user')
 				firstName: $scope.user.firstname,
 				lastName: $scope.user.lastname,
 				birthDate: $scope.user.getDob(),
+				clubId: -1,
 		};
 
-		if ($scope.error.email_not_found) {
-			userRequest.dfvEmail = $scope.user.dfvEmail;
+		if ($scope.error.ambiguous_email || $scope.error.ambiguous) {
+			userRequest.clubId = $scope.user.clubId;
 		}
 
 		$scope.registrationPending = true;
@@ -47,6 +48,7 @@ angular.module('ultical.user')
 		serverApi.registerUser(userRequest, function(userResponse) {
 			if (userResponse.status != 'SUCCESS') {
 				// registration was not successful
+				$scope.clubs = userResponse.clubs;
 				createError(userResponse.status.toLowerCase());
 			} else {
 				var alertContent = $translate.instant('user.registration.success.confirmationEmail', { email: userRequest.email });
@@ -67,7 +69,7 @@ angular.module('ultical.user')
 
 	function createError(errorType) {
 		$scope.error[errorType] = true;
-		alerter.error($translate.instant('user.registration.error.title'), $translate.instant('user.registration.error.' + errorType), {container: '#registrationModalError'});
+		alerter.error($translate.instant('user.registration.error.title'), $translate.instant('user.registration.error.' + errorType, { supportEmail: CONFIG.brand.emailSupport}), {container: '#registrationModalError'});
 	}
 
 }]);
