@@ -49,7 +49,7 @@
 							<div class="col-md-12">
 								<div class="form-group has-feedback">
 									<label for="tteCity">{{ 'team.edit.locationCityLabel' | translate }}</label>
-									<input type="text" container="body" class="form-control" ng-blur="storeLocation(teamToEdit.location)" ng-model="teamToEdit.location" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" data-comparator="locationMatching"
+									<input type="text" id="ttyCity" container="body" class="form-control" ng-blur="storeLocation(teamToEdit.location)" ng-model="teamToEdit.location" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" data-comparator="locationMatching"
 										bs-options="location | locationObject as location | location for location in getLocations($viewValue)" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" bs-typeahead
 									>
 									<span ng-show="teamToEdit.location.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
@@ -60,8 +60,10 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group has-feedback">
-									<label for="tteCity">{{ 'team.edit.clubLabel' | translate }}</label>
-									<input type="text" container="body" class="form-control" ng-model="teamToEdit.club" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" bs-options="club as club.name for club in allClubs" placeholder="{{ 'team.edit.clubPlaceholder' | translate }}" bs-typeahead>
+									<label for="tteClub">{{ 'team.edit.clubLabel' | translate }}</label>
+									<input data-min-length="3" id="tteClub" type="text" container="body" class="form-control" ng-model="teamToEdit.club" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" bs-options="club as club.name for club in allClubs"
+										placeholder="{{ 'team.edit.clubPlaceholder' | translate }}" bs-typeahead
+									>
 									<span ng-show="teamToEdit.club.id != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
 								</div>
 							</div>
