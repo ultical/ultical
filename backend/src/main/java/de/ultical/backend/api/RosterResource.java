@@ -193,7 +193,13 @@ public class RosterResource {
                 throw new WebApplicationException("A player, registered at the dfv, should have a valid birthdate",
                         Status.CONFLICT);
             }
-            final int age = roster.getSeason().getYear() - birthDate.getYear();
+            int age = roster.getSeason().getYear() - birthDate.getYear();
+
+            if (roster.getDivisionAge() == DivisionAge.MASTERS && player.getGender() == Gender.FEMALE) {
+                // women masters can be 3 years younger than their male
+                // counterparts
+                age += 3;
+            }
             wrongAge = (roster.getDivisionAge().isHasToBeOlder() && age < roster.getDivisionAge().getAgeDifference())
                     || (!roster.getDivisionAge().isHasToBeOlder() && age > roster.getDivisionAge().getAgeDifference());
         }
