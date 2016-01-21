@@ -115,9 +115,6 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			teamToSend.rosters = [];
 
 			// prevent bad requests if the backend tries to parse a string into a location objects
-			if (!angular.isObject(team.location)) {
-				teamToSend.location = null;
-			}
 			if (!angular.isObject(team.club)) {
 				teamToSend.club = null;
 			}

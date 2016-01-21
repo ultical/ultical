@@ -171,6 +171,12 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 					oldTeam = null;
 				} else {
 					oldTeam = this.teamsIndexed[team.id];
+					if (!angular.isObject(team.location)) {
+						team.location = {
+								id: oldTeam.location.id,
+								version: oldTeam.location.version,
+						}
+					}
 				}
 				serverApi.saveTeam(team, oldTeam, function(savedTeam) {
 					that.teamsIndexed[team.id] = savedTeam;

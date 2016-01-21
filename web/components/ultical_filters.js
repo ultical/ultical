@@ -99,7 +99,12 @@ app.filter('location', ['$translate', 'locationObjectFilter', function ($transla
 
 		// check if it's a raw location directly from mapbox or an location object
 		if (!('city' in location)) {
-			location = locationObjectFilter(location);
+			if ('mapBoxId' in location) {
+				location = locationObjectFilter(location);
+			} else {
+				// this is an empty location - updated to empty
+				return '';
+			}
 		}
 
 		return getLocationFromObject(location, type);

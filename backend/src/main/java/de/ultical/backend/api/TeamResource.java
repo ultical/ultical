@@ -136,9 +136,7 @@ public class TeamResource {
 
         updatedTeam = this.prepareTeam(updatedTeam);
 
-        if (updatedTeam.getLocation() != null) {
-            this.dataStore.update(updatedTeam.getLocation());
-        }
+        this.dataStore.update(updatedTeam.getLocation());
 
         boolean updated = false;
         try {
