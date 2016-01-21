@@ -1,3 +1,4 @@
 .project
 bower_components
 .settings
+config/config.js
