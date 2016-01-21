@@ -24,6 +24,7 @@ public class Team extends Identifiable {
     private String contactEmail;
     private String twitterName;
     private String facebookUrl;
+    private Club club;
 
     @JsonManagedReference
     private List<Roster> rosters;

@@ -267,6 +267,11 @@ public class DataStore {
         return clubMapper.get(clubId);
     }
 
+    public List<Club> getAllClubs() {
+        ClubMapper clubMapper = this.sqlSession.getMapper(ClubMapper.class);
+        return clubMapper.getAll();
+    }
+
     /*
      * clear and refill the DfvMvName table
      */

@@ -19,6 +19,7 @@ import com.google.common.base.Optional;
 
 import de.spinscale.dropwizard.jobs.JobsBundle;
 import de.ultical.backend.api.AuthResource;
+import de.ultical.backend.api.ClubResource;
 import de.ultical.backend.api.DfvMvNameResource;
 import de.ultical.backend.api.DivisionResource;
 import de.ultical.backend.api.EventsResource;
@@ -150,6 +151,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         env.jersey().register(RosterResource.class);
         env.jersey().register(DfvMvNameResource.class);
         env.jersey().register(MailResource.class);
+        env.jersey().register(ClubResource.class);
 
         /*
          * Authentication stuff. Basically the authenticator looks up the

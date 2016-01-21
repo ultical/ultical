@@ -232,6 +232,12 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				team.rosters[idx] = that.rosterIndexed[roster];
 			}
 		});
+
+		if (angular.isObject(team.club)) {
+			storeClub(that, team.club);
+		} else {
+			team.club = that.clubIndexed[team.club];
+		}
 	}
 
 	function storeRoster(that, roster) {

@@ -20,7 +20,7 @@ public interface TeamMapper extends BaseMapper<Team> {
 
     // INSERT
     @Override
-    @Insert("INSERT INTO TEAM (name, description, founding_date, location, emails, url, contact_email, twitter_name, facebook_url) VALUES (#{name, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR}, #{foundingDate, jdbcType=DATE}, #{location.id, jdbcType=INTEGER}, #{emails, jdbcType=VARCHAR}, #{url, jdbcType=VARCHAR}, #{contactEmail, jdbcType=VARCHAR}, #{twitterName, jdbcType=VARCHAR}, #{facebookUrl, jdbcType=VARCHAR} )")
+    @Insert("INSERT INTO TEAM (name, description, founding_date, location, emails, url, contact_email, twitter_name, facebook_url, club) VALUES (#{name, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR}, #{foundingDate, jdbcType=DATE}, #{location.id, jdbcType=INTEGER}, #{emails, jdbcType=VARCHAR}, #{url, jdbcType=VARCHAR}, #{contactEmail, jdbcType=VARCHAR}, #{twitterName, jdbcType=VARCHAR}, #{facebookUrl, jdbcType=VARCHAR}, #{club.id, jdbcType=INTEGER} )")
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Team team);
 
@@ -29,7 +29,7 @@ public interface TeamMapper extends BaseMapper<Team> {
 
     // UPDATE
     @Override
-    @Update("UPDATE TEAM SET version=version+1, name=#{name}, description=#{description, jdbcType=VARCHAR}, founding_date=#{foundingDate, jdbcType=INTEGER}, location=#{location.id, jdbcType=INTEGER}, emails=#{emails, jdbcType=VARCHAR}, url=#{url, jdbcType=VARCHAR}, contact_email=#{contactEmail, jdbcType=VARCHAR}, twitter_name=#{twitterName, jdbcType=VARCHAR}, facebook_url=#{facebookUrl, jdbcType=VARCHAR} WHERE version=#{version} AND id=#{id}")
+    @Update("UPDATE TEAM SET version=version+1, name=#{name}, description=#{description, jdbcType=VARCHAR}, founding_date=#{foundingDate, jdbcType=INTEGER}, location=#{location.id, jdbcType=INTEGER}, emails=#{emails, jdbcType=VARCHAR}, url=#{url, jdbcType=VARCHAR}, contact_email=#{contactEmail, jdbcType=VARCHAR}, twitter_name=#{twitterName, jdbcType=VARCHAR}, facebook_url=#{facebookUrl, jdbcType=VARCHAR}, club=#{club.id, jdbcType=INTEGER} WHERE version=#{version} AND id=#{id}")
     Integer update(Team t);
 
     // DELETE
@@ -53,6 +53,7 @@ public interface TeamMapper extends BaseMapper<Team> {
             @Result(column = "contact_email", property = "contactEmail"),
             @Result(column = "twitter_name", property = "twitterName"),
             @Result(column = "facebook_url", property = "facebookUrl"),
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
             @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
@@ -67,6 +68,7 @@ public interface TeamMapper extends BaseMapper<Team> {
             @Result(column = "contact_email", property = "contactEmail"),
             @Result(column = "twitter_name", property = "twitterName"),
             @Result(column = "facebook_url", property = "facebookUrl"),
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
             @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
@@ -81,13 +83,14 @@ public interface TeamMapper extends BaseMapper<Team> {
             @Result(column = "contact_email", property = "contactEmail"),
             @Result(column = "twitter_name", property = "twitterName"),
             @Result(column = "facebook_url", property = "facebookUrl"),
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
             @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
             @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
     List<Team> getByUser(int userId);
 
     // returns a team with the given name
-    @Select("SELECT * FROM TEAM WHERE name = #{teamName}")
-    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version") })
+    @Select("SELECT id FROM TEAM WHERE name = #{teamName}")
+    @Results({ @Result(column = "id", property = "id") })
     Team getByName(String teamName);
 }

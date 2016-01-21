@@ -1,5 +1,6 @@
 package de.ultical.backend.data.mapper;
 
+import java.util.List;
 import java.util.Set;
 
 import org.apache.ibatis.annotations.Delete;
@@ -36,6 +37,13 @@ public interface ClubMapper extends BaseMapper<Club> {
             @Result(column = "name", property = "name", jdbcType = JdbcType.VARCHAR, javaType = String.class),
             @Result(column = "association", property = "association", jdbcType = JdbcType.BIGINT, javaType = Integer.class) })
     Club get(@Param("id") int id);
+
+    @Override
+    @Select("SELECT id, name, association FROM CLUB")
+    @Results({ @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, javaType = Integer.class),
+            @Result(column = "name", property = "name", jdbcType = JdbcType.VARCHAR, javaType = String.class),
+            @Result(column = "association", property = "association", jdbcType = JdbcType.BIGINT, javaType = Integer.class) })
+    List<Club> getAll();
 
     @Select({ "SELECT id FROM CLUB" })
     Set<Integer> getAllIds();

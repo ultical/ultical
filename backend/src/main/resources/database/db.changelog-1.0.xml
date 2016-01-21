@@ -592,4 +592,12 @@
 	<changeSet author="bas" id="35">
 		<dropColumn tableName="TOURNAMENT_EDITION" columnName="is_league" />
 	</changeSet>
+	<changeSet author="bas" id="36">
+		<addColumn tableName="TEAM">
+			<column name="club" type="BIGINT" />
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_team_club"
+			referencedTableName="CLUB" baseColumnNames="club"
+			baseTableName="TEAM" referencedColumnNames="id" onDelete="SET NULL" />
+	</changeSet>
 </databaseChangeLog>

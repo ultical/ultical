@@ -9,6 +9,8 @@ angular.module('ultical.team', [])
 		return authorizer.loggedIn();
 	}
 
+	$scope.allClubs = [];
+
 	$scope.bigButtons = CONFIG.general.actionButtonsBig;
 
 	$scope.activeUserId = authorizer.getUser() != null ? authorizer.getUser().id : -1;
@@ -61,6 +63,14 @@ angular.module('ultical.team', [])
 	};
 
 	$scope.editTeam = function(team) {
+		serverApi.getAllClubs(function(clubs) {
+			$scope.allClubs = clubs;
+		});
+
+		if (team.foundingDate == 0) {
+			team.foundingDate = '';
+		}
+
 		$scope.editing = true;
 		$scope.teamToEdit = angular.copy(team);
 		$scope.locationToEdit = angular.copy($scope.teamToEdit.location);

@@ -93,6 +93,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			del('roster/' + roster.id, callback);
 		},
 
+		getAllClubs: function(callback) {
+			get('club/all', callback);
+		},
+
 		getTeam: function(teamId, callback) {
 			get('teams/' + teamId, callback);
 		},

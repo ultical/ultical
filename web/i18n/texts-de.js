@@ -202,6 +202,8 @@ TRANSLATIONS['de'] = {
 				facebookUrlLabel: 'Facebook',
 				facebookUrlPlaceholder: 'https://www.facebook.com/...',
 				locationCityLabel: 'Stadt/Land',
+				clubLabel: 'Verein',
+				clubPlaceholder: 'Name des Vereins',
 			},
 			remove: {
 				tooltip: 'Team löschen',

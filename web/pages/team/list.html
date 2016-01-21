@@ -59,6 +59,16 @@
 
 						<div class="row">
 							<div class="col-md-12">
+								<div class="form-group has-feedback">
+									<label for="tteCity">{{ 'team.edit.clubLabel' | translate }}</label>
+									<input type="text" container="body" class="form-control" ng-model="teamToEdit.club" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" bs-options="club as club.name for club in allClubs" placeholder="{{ 'team.edit.clubPlaceholder' | translate }}" bs-typeahead>
+									<span ng-show="teamToEdit.club.id != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-12">
 								<div class="form-group" ng-class="{'has-error': inputForm.contactEmail.$touched && inputForm.contactEmail.$invalid}">
 									<label for="tteContactEmail">{{ 'team.edit.contactEmailLabel' | translate }}</label>
 									<input name="contactEmail" type="email" class="form-control" id="tteContactEmail" ng-model="teamToEdit.contactEmail" placeholder="{{ 'team.edit.contactEmailPlaceholder' | translate }}" />
@@ -201,13 +211,20 @@
 								</div>
 							</div>
 
+							<div class="row" ng-if="team.club | notEmpty">
+								<div class="col-md-12">
+									<span class="glyphicon glyphicon-home fa-fw" aria-hidden="true"></span>
+									{{ team.club.name }}
+								</div>
+							</div>
+
 							<div class="row" ng-if="team.foundingDate != 0">
 								<div class="col-md-12">
 									<i class="fa fa-calendar fa-fw"></i> {{ team.foundingDate }}
 								</div>
 							</div>
 
-							<div class="row margin-top" ng-if="(team.location.city | notEmpty) || (team.foundingDate != 0)">
+							<div class="row margin-top" ng-if="(team.location.city | notEmpty) || (team.foundingDate != 0) || (team.club | notEmpty)">
 								<div class="col-md-12"></div>
 							</div>
 
