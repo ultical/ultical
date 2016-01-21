@@ -1,31 +1,32 @@
 <div class="popover" tabindex="-1" ng-controller="LoginCtrl" id="login-popover">
 	<div class="arrow"></div>
 	<div class="popover-content" id="login-popover-content">
-
-		<div class="row fade-ani" ng-if="loginFail != false">
-			<div class="col-sm-12">
-				<div class="alert alert-danger">
-					<button type="button" class="close" ng-click="hideLoginFail()">&times;</button>
-					<strong ng-bind="'nav.loginFail.' + loginFail.title | translate"></strong><br />
-					<a ng-hide="loginFail.actionText == ''" ng-click="loginFail.action(login)">{{ 'nav.loginFail.' + loginFail.actionText | translate }}</a>
+		<form>
+			<div class="row fade-ani" ng-if="loginFail != false">
+				<div class="col-sm-12">
+					<div class="alert alert-danger">
+						<button type="button" class="close" ng-click="hideLoginFail()">&times;</button>
+						<strong ng-bind="'nav.loginFail.' + loginFail.title | translate"></strong><br />
+						<a ng-hide="loginFail.actionText == ''" ng-click="loginFail.action(login)">{{ 'nav.loginFail.' + loginFail.actionText | translate }}</a>
+					</div>
 				</div>
 			</div>
-		</div>
 
-		<div class="row margin-top-small">
-			<div class="col-sm-12">
-				<input bas-enter="doLogin(login)" type="text" ng-model="login.email" placeholder="{{ 'general.email' | translate }}" />
+			<div class="row margin-top-small">
+				<div class="col-sm-12">
+					<input bas-enter="doLogin(login)" type="text" name="email" ng-model="login.email" placeholder="{{ 'general.email' | translate }}" />
+				</div>
 			</div>
-		</div>
-		<div class="row margin-top-small margin-bottom">
-			<div class="col-sm-12">
-				<input bas-enter="doLogin(login)" type="password" ng-model="login.password" placeholder="{{ 'user.password' | translate }}" />
+			<div class="row margin-top-small margin-bottom">
+				<div class="col-sm-12">
+					<input bas-enter="doLogin(login)" type="password" name="password" ng-model="login.password" placeholder="{{ 'user.password' | translate }}" />
+				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-12 text-center">
-				<button class="btn btn-default" ng-click="doLogin(login)">{{ 'nav.login' | translate }}</button>
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<button class="btn btn-default" ng-click="doLogin(login)">{{ 'nav.login' | translate }}</button>
+				</div>
 			</div>
-		</div>
+		</form>
 	</div>
 </div>
