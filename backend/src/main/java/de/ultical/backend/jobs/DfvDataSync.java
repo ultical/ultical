@@ -33,7 +33,17 @@ public class DfvDataSync extends Job {
         ServiceLocator sl = ServiceLocatorProvider.INSTANCE.getServiceLocator();
 
         if (sl != null) {
-            // First: get the clubs, because the profiles refer to it
+
+            // get the associations, because the clubs refer to it
+            DfvAssociationLoader dal = sl.createAndInitialize(DfvAssociationLoader.class);
+
+            try {
+                dal.getAssociations();
+            } catch (WebApplicationException | PersistenceException pe) {
+                LOGGER.error("Updating DFV associations failed!", pe);
+            }
+
+            // get the clubs, because the profiles refer to it
             DfvClubLoader dcl = sl.createAndInitialize(DfvClubLoader.class);
 
             try {

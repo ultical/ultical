@@ -13,6 +13,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
+import de.ultical.backend.data.mapper.AssociationMapper;
 import de.ultical.backend.data.mapper.BaseMapper;
 import de.ultical.backend.data.mapper.ClubMapper;
 import de.ultical.backend.data.mapper.DfvMvNameMapper;
@@ -26,6 +27,7 @@ import de.ultical.backend.data.mapper.SeasonMapper;
 import de.ultical.backend.data.mapper.TeamMapper;
 import de.ultical.backend.data.mapper.TeamRegistrationMapper;
 import de.ultical.backend.data.mapper.UserMapper;
+import de.ultical.backend.model.Association;
 import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionRegistration;
@@ -273,7 +275,30 @@ public class DataStore {
     }
 
     /*
-     * clear and refill the DfvMvName table
+     * update the dfv association table
+     */
+    public void refreshAssociations(List<Association> retrievedAssociations) {
+        try {
+            AssociationMapper associationMapper = this.sqlSession.getMapper(AssociationMapper.class);
+            Set<Integer> existingAssociations = associationMapper.getAllIds();
+
+            for (Association association : retrievedAssociations) {
+                if (existingAssociations.contains(association.getId())) {
+                    associationMapper.updateBasics(association);
+                } else {
+                    associationMapper.insert(association);
+                }
+            }
+            this.sqlSession.commit();
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    /*
+     * update the dfvMvName table
      */
     public void refreshClubs(List<Club> retrievedClubs) {
         try {

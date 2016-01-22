@@ -6,13 +6,15 @@ import lombok.Data;
 public class Club {
     private String name;
     private int id;
-    private int association;
+    private Association association;
 
     public void setVereinsnr(String clubNumber) {
         this.id = Integer.parseInt(clubNumber);
     }
 
-    public void setVerband(int association) {
+    public void setVerband(int associationId) {
+        Association association = new Association();
+        association.setId(associationId);
         this.association = association;
     }
 

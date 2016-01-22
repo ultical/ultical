@@ -597,7 +597,27 @@
 			<column name="club" type="BIGINT" />
 		</addColumn>
 		<addForeignKeyConstraint constraintName="fk_team_club"
-			referencedTableName="CLUB" baseColumnNames="club"
-			baseTableName="TEAM" referencedColumnNames="id" onDelete="SET NULL" />
+			referencedTableName="CLUB" baseColumnNames="club" baseTableName="TEAM"
+			referencedColumnNames="id" onDelete="SET NULL" />
+	</changeSet>
+	<changeSet author="bas" id="37">
+		<createTable tableName="ASSOCIATION">
+			<column name="id" type="BIGINT">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="VARCHAR(255)">
+				<constraints unique="true" nullable="false"
+					uniqueConstraintName="uk_association_name" />
+			</column>
+			<column name="contact" type="BIGINT" />
+		</createTable>
+		<addForeignKeyConstraint constraintName="fk_association_contact"
+			referencedTableName="CONTACT" baseColumnNames="contact"
+			baseTableName="ASSOCIATION" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet author="bas" id="38">
+		<addForeignKeyConstraint constraintName="fk_club_association"
+			referencedTableName="ASSOCIATION" baseColumnNames="association"
+			baseTableName="CLUB" referencedColumnNames="id" onDelete="SET NULL" />
 	</changeSet>
 </databaseChangeLog>
