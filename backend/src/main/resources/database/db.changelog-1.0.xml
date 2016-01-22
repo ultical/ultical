@@ -643,4 +643,19 @@
 			baseTableName="ASSOCIATION_ULTICAL_USERS" referencedColumnNames="id"
 			onDelete="CASCADE" />
 	</changeSet>
+	<changeSet author="bas" id="41">
+		<addColumn tableName="TOURNAMENT_FORMAT">
+			<column name="association" type="BIGINT"></column>
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_tournament_format_association"
+			referencedTableName="ASSOCIATION" baseColumnNames="association"
+			baseTableName="TOURNAMENT_FORMAT" referencedColumnNames="id" />
+		<dropColumn tableName="TOURNAMENT_FORMAT" columnName="dfv_official" />
+		<dropForeignKeyConstraint baseTableName="TOURNAMENT_EDITION"
+			constraintName="fk_tournament_edition_contact" />
+		<dropColumn tableName="TOURNAMENT_EDITION" columnName="organizer" />
+	</changeSet>
+	<changeSet author="bas" id="42">
+		<dropNotNullConstraint tableName="EVENT" columnName="local_organizer"/>
+	</changeSet>
 </databaseChangeLog>

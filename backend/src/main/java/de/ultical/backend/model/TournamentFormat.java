@@ -25,7 +25,7 @@ public class TournamentFormat extends Identifiable {
 
     private String url;
 
-    private boolean dfvOfficial;
+    private Association association;
 
     @Override
     public Class<TournamentFormatMapper> getMapper() {
