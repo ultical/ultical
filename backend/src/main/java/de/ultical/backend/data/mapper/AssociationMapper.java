@@ -18,15 +18,15 @@ public interface AssociationMapper extends BaseMapper<Association> {
 
     // INSERT
     @Override
-    @Insert("INSERT INTO Association (id, name, contact) VALUES (#{id, jdbcType=INTEGER},#{name, jdbcType=VARCHAR},#{contact.id, jdbcType=INTEGER})")
+    @Insert("INSERT INTO ASSOCIATION (id, name, contact) VALUES (#{id, jdbcType=INTEGER},#{name, jdbcType=VARCHAR},#{contact.id, jdbcType=INTEGER})")
     Integer insert(Association entity);
 
     // UPDATE
     @Override
-    @Update("UPDATE CLUB SET name=#{name, jdbcType=VARCHAR}, contact=#{contact.id, jdbcType=INTEGER} WHERE id=#{id}")
+    @Update("UPDATE ASSOCIATION SET name=#{name, jdbcType=VARCHAR}, contact=#{contact.id, jdbcType=INTEGER} WHERE id=#{id}")
     Integer update(Association entity);
 
-    @Update("UPDATE CLUB SET name=#{name, jdbcType=VARCHAR} WHERE id=#{id}")
+    @Update("UPDATE ASSOCIATION SET name=#{name, jdbcType=VARCHAR} WHERE id=#{id}")
     Integer updateBasics(Association entity);
 
     // SELECT
