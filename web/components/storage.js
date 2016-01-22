@@ -24,6 +24,8 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			userIndexed: {},
 			playerIndexed: {},
 			clubIndexed: {},
+			associationIndexed: {},
+			contactIndexed: {},
 			rosterIndexed: {},
 			seasonIndexed: {},
 
@@ -288,6 +290,35 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 
 	function storeClub(that, club) {
 		that.clubIndexed[club.id] = club;
+
+		if (angular.isObject(club.association)) {
+			storeAssociation(that, club.association);
+		} else {
+			club.association = that.associationIndexed[club.association];
+		}
+	}
+
+	function storeAssociation(that, association) {
+		that.associationIndexed[association.id] = association;
+
+		angular.forEach(association.admins, function(admin, idx) {
+			if (angular.isObject(admin)) {
+				storeUser(that, admin);
+			} else {
+				association.admins[idx] = that.userIndexed[admin];
+			}
+			association.own = authorizer.getUser() != null && (association.own || admin.id == authorizer.getUser().id);
+		});
+
+		if (angular.isObject(association.contact)) {
+			storeUser(that, association.contact);
+		} else {
+			association.contact = that.contactIndexed[association.contact];
+		}
+	}
+
+	function storeContact(that, contact) {
+		that.contactIndexed[contact.id] = contact;
 	}
 
 	function storeEvent(that, event) {
@@ -302,6 +333,15 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				alert("Missing an edition: " + event.tournamentEdition);
 			}
 		}
+
+		angular.forEach(event.admins, function(admin, idx) {
+			if (angular.isObject(admin)) {
+				storeUser(that, admin);
+			} else {
+				event.admins[idx] = that.userIndexed[admin];
+			}
+			event.own = authorizer.getUser() != null && (event.own || admin.id == authorizer.getUser().id);
+		});
 
 		var todayDateString = $filter('date')(new Date(), 'yyyy-MM-dd');
 
@@ -345,6 +385,15 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 
 	function storeTournamentFormat(that, format) {
 		that.tournamentFormats[format.id] = format;
+
+		angular.forEach(format.admins, function(admin, idx) {
+			if (angular.isObject(admin)) {
+				storeUser(that, admin);
+			} else {
+				format.admins[idx] = that.userIndexed[admin];
+			}
+			format.own = authorizer.getUser() != null && (format.own || admin.id == authorizer.getUser().id);
+		});
 	}
 
 	function createEmptyEvent() {

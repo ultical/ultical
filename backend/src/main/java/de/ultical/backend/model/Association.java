@@ -8,6 +8,7 @@ import lombok.Data;
 public class Association {
     private String name;
     private int id;
+    private String acronym;
 
     private Contact contact;
 

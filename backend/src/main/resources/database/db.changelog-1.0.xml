@@ -620,4 +620,27 @@
 			referencedTableName="ASSOCIATION" baseColumnNames="association"
 			baseTableName="CLUB" referencedColumnNames="id" onDelete="SET NULL" />
 	</changeSet>
+	<changeSet author="bas" id="39">
+		<addColumn tableName="ASSOCIATION">
+			<column name="acronym" type="VARCHAR(10)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="40">
+		<createTable tableName="ASSOCIATION_ULTICAL_USERS">
+			<column name="association" type="BIGINT">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="admin" type="BIGINT">
+				<constraints primaryKey="true" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="fk_association_ultical_user_association"
+			referencedTableName="ASSOCIATION" baseColumnNames="association"
+			baseTableName="ASSOCIATION_ULTICAL_USERS" referencedColumnNames="id"
+			onDelete="CASCADE" />
+		<addForeignKeyConstraint constraintName="fk_association_ultical_user_ultical_user"
+			referencedTableName="ULTICAL_USER" baseColumnNames="admin"
+			baseTableName="ASSOCIATION_ULTICAL_USERS" referencedColumnNames="id"
+			onDelete="CASCADE" />
+	</changeSet>
 </databaseChangeLog>

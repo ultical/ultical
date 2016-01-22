@@ -90,6 +90,15 @@ public interface UserMapper extends BaseMapper<User> {
             @Result(column = "dfv_player", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ) })
     List<User> getAdminsForEvent(int eventId);
 
+    @Select({ SELECT_STMT, "FROM ASSOCIATION_ULTICAL_USERS tuu LEFT JOIN ULTICAL_USER u", "ON tuu.admin = u.id",
+            "WHERE tuu.association = #{associationId}" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "email", property = "email"),
+            @Result(column = "email_confirmed", property = "emailConfirmed"),
+            @Result(column = "dfv_email_opt_in", property = "dfvEmailOptIn"),
+            @Result(column = "dfv_player", property = "dfvPlayer", one = @One(select = "de.ultical.backend.data.mapper.DfvPlayerMapper.get") ) })
+    List<User> getAdminsForAssociation(int associationId);
+
     // this is the only query where the password is given out
     @Select({ SELECT_STMT_FULL, "FROM ULTICAL_USER u", "WHERE u.email = #{eMail}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
