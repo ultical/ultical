@@ -71,13 +71,16 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 
 });
 
+//eliminate the hash in the url
+app.config(["$locationProvider", function($locationProvider) {
+	$locationProvider.html5Mode(CONFIG_OBJECT.general.html5Mode);
+}]);
+
 //translation provider
 app.config(function ($translateProvider) {
 	angular.forEach(CONFIG_OBJECT.general.availableLanguages, function(language) {
 		$translateProvider
 		.translations(language.toLowerCase(), TRANSLATIONS[language.toLowerCase()]);
-//		window['TRANSLATIONS_'+language.toUpperCase()]);
-
 	});
 
 	$translateProvider

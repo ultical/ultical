@@ -16,6 +16,8 @@ angular.extend(CONFIG_OBJECT, {
 		defaultLanguage: 'de',
 		// button style
 		actionButtonsBig: false,
+		// set true to remove the hash in the url - make sure to change the <base> tag in index.html accordingly
+		html5Mode: false,
 	},
 
 	registration: {
