@@ -16,7 +16,7 @@ angular.module('ultical.user')
 		
 		serverApi.changePasswordWithMailCode($scope.mailCode.code, $scope.mailCode.user, function(user) {
 			alerter.success('emailCode.successPasswordChangedTitle', 'emailCode.successPasswordChangedText');
-			$state.go('start');
+			$state.go('app.start');
 		});
 	};
 	
@@ -37,7 +37,7 @@ angular.module('ultical.user')
 				successText = 'emailCode.successText';
 			}
 			alerter.success('emailCode.successTitle', successText);
-			$state.go('start');
+			$state.go('app.start');
 		}
 	}, 
 	function() {
@@ -47,7 +47,7 @@ angular.module('ultical.user')
 		} else {
 			alerter.error('emailCode.noCodeTitle', 'emailCode.noCodeConfirm');
 		}
-		$state.go('start');
+		$state.go('app.start');
 	});
 
 	

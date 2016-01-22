@@ -117,7 +117,7 @@ TRANSLATIONS['de'] = {
 
 		emailCode: {
 			noCodeTitle: 'Ungültiger Link',
-			noCodeforgotPw: 'Der benutzte Link ist abgelaufen (er ist 3 Stunden gültig) oder er wurde schon einmal benutzt. Bitte fordere einen neuen Code an',
+			noCodeForgotPw: 'Der benutzte Link ist abgelaufen (er ist 3 Stunden gültig) oder er wurde schon einmal benutzt. Bitte fordere einen neuen Code an',
 			noCodeConfirm: 'Der benutzte Link wurde schon einmal benutzt. Bitte benutze das Login Feld, um einen neuen Code anzufordern.',
 			successTitle: 'Email erfolgreich bestätigt!',
 			successText: 'Du kannst dich nun mit deiner Mailadresse und deinem Passwort einloggen und die Seite nutzen',

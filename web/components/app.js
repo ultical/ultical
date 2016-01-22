@@ -12,54 +12,66 @@ var app = angular.module('ultical',
 		 'ultical.team',
 		 'ultical.user',
 		 'angularMoment',
+		 'slugifier',
 		 ]);
 
 //router ui route
 app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 	// For any unmatched url, redirect to:
-	$urlRouterProvider.otherwise("/calendar");
+	$urlRouterProvider.otherwise("/de/tournaments");
 
 	var version = '3';
 
+	var availableLocales = '';
+	angular.forEach(CONFIG_OBJECT.general.availableLanguages, function(localeCode) {
+		availableLocales += localeCode.toLowerCase() + '|';
+	});
+	availableLocales = availableLocales.substring(0, availableLocales.length - 1);
+
 	$stateProvider
-	.state('start', {
-		url: "/calendar",
+	.state('app', {
+		abstract: true,
+		url: "/{locale:(?:"+availableLocales+")}",
+		template: '<ui-view>',
+	})
+	.state('app.start', {
+		url: "/tournaments",
 		templateUrl: "pages/event/list.html?v="+version,
 	})
-	.state('eventsList', {
-		url: "/calendar",
+	.state('app.eventsList', {
+		url: "/tournaments",
 		templateUrl: "pages/event/list.html?v="+version,
 	})
-	.state('editionEdit', {
-		url: "/tournament/edit/{editionId}/{eventId}",
+	.state('app.editionEdit', {
+		url: "/tournaments/edit/{editionId}/{eventId}",
 		templateUrl: "pages/event/edit.html?v="+version,
 	})
-	.state('eventShow', {
-		url: "/event/{eventId:int}/show",
+	.state('app.eventShow', {
+		url: "/tournaments/{eventSlug}-t{eventId:int}",
 		templateUrl: "pages/event/show.html?v="+version,
 	})
-	.state('teamsList', {
+	.state('app.teamsList', {
 		url: "/teams",
 		templateUrl: "pages/team/list.html?v="+version,
 		params: {
 			activeTab: 'all',
 		},
 	})
-	.state('teamsOwn', {
+	.state('app.teamsOwn', {
 		url: "/teams",
 		templateUrl: "pages/team/list.html?v="+version,
 		params: {
 			activeTab: 'own',
 		},
 	})
-	.state('confirmMails', {
+	.state('app.confirmMails', {
 		url: "/confirm/{code}",
 		templateUrl: "pages/user/mails.html?v="+version,
 		params: {
 			emailCodeType: 'confirm',
 		},
 	})
-	.state('forgotPassword', {
+	.state('app.forgotPassword', {
 		url: "/forgot/password/{code}",
 		templateUrl: "pages/user/mails.html?v="+version,
 		params: {
@@ -126,3 +138,4 @@ app.run(['storage', '$translate', 'amMoment', function(storage, $translate, amMo
 	storage.getSeasons(function() {});
 	amMoment.changeLocale($translate.use().toLowerCase());
 }]);
+

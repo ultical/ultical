@@ -1,8 +1,8 @@
 'use strict';
 
 //nav bar controller
-app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer', 'amMoment',
-                              function($scope, CONFIG, $filter, $translate, $state, authorizer, amMoment) {
+app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer', 'amMoment', '$rootScope', '$stateParams', '$location',
+                              function($scope, CONFIG, $filter, $translate, $state, authorizer, amMoment, $rootScope, $stateParams, $location) {
 
 	$scope.logoSide = "front";
 
@@ -27,7 +27,7 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 	};
 
 	$scope.goTo = function(stateName) {
-		$state.go(stateName);
+		$state.go('app.' + stateName);
 	};
 
 	$scope.logOut = function() {
@@ -48,16 +48,28 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 				});
 	});
 
+	function changeLanguage(locale) {
+		$translate.use(locale);
+		$rootScope.activeLang = locale;
+		$scope.selectedLanguage = locale.toUpperCase();
+	}
+
+	// change language when user chooses from dropdown
 	$scope.setLanguage = function(languageCode) {
 		var oldLanguage = $translate.use();
-		$translate.use(languageCode.toLowerCase())
-		.then(function(key) {
-			if (oldLanguage != key) {
-				$scope.selectedLanguage = key.toUpperCase();
-				amMoment.changeLocale(key.toLowerCase());
-				$state.reload();
-			}
-		});
-	}
+		var key = languageCode.toLowerCase();
+		if (oldLanguage != key) {
+			$rootScope.otherLangURL = $location.url().replace('/' + oldLanguage, '/' + key.toLowerCase());
+			// changes url to fire $stateChangeSuccess
+			$location.url($rootScope.otherLangURL);
+		}
+	};
+
+	// checks language selection through url
+	$scope.$on('$stateChangeSuccess', function rootStateChangeSuccess(event, toState){
+		if($stateParams.locale !== undefined) {
+			changeLanguage($stateParams.locale);
+		}
+	});
 
 }]);
