@@ -9,7 +9,7 @@
 
 
 <head>
-<!-- <base href="/"> -->
+<base href="/ultical-web/">
 <meta charset="utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 <title translate="general.pageTitle">UltiCal</title>
@@ -53,10 +53,15 @@
 
 <body>
 
-	<div ng-include="'html/nav.html'" ng-controller="NavBarCtrl"></div>
-	<div class="container">
-		<div id="pageAlertSpace"></div>
-		<div class="view-container" ng-cloak ui-view></div>
+	<div id="wrapper">
+		<div ng-include="'html/nav.html'" ng-controller="NavBarCtrl"></div>
+
+		<div class="container">
+			<div id="pageAlertSpace"></div>
+			<div class="view-container" ng-cloak ui-view></div>
+		</div>
+
+		<footer ng-include="'html/footer.html'"></footer>
 	</div>
 
 	<!-- bower:js -->
@@ -73,9 +78,11 @@
 	<script src="bower_components/moment/locale/de.js"></script>
 	<script src="bower_components/moment/locale/de-at.js"></script>
 	<script src="bower_components/moment/locale/en-gb.js"></script>
+	<script src="bower_components/angular-slugify/angular-slugify.js"></script>
 	<!-- endbower -->
 
 	<script src="i18n/texts-de.js"></script>
+	<script src="i18n/texts-en.js"></script>
 
 	<script src="config/config.js"></script>
 
@@ -102,7 +109,7 @@
 	<script src="components/general_services.js"></script>
 	<script src="components/general_filters.js"></script>
 	<script src="components/ultical_filters.js"></script>
-	<script src="components/navbar.js"></script>
+	<script src="components/navbar_footer.js"></script>
 
 
 </body>

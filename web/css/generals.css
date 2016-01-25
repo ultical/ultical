@@ -1,5 +1,5 @@
 *:focus {
-    outline: 0;
+	outline: 0;
 }
 
 .margin-top-small {
@@ -83,12 +83,52 @@ a, a:focus, a:hover {
 }
 
 .glyphicon-big {
-    font-size: 160%;
-    margin-top: -10px;
-    top: 6px;
-    left: -4px;
+	font-size: 160%;
+	margin-top: -10px;
+	top: 6px;
+	left: -4px;
 }
 
 textarea {
 	resize: none;
 }
+
+#wrapper {
+	position: relative;
+	min-height: 100%;
+}
+
+footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 60px;
+}
+
+footer .container {
+	border-top: 1px solid #DADADA;
+}
+
+footer .text-muted {
+    margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+footer .fa {
+	font-size: 120%;
+}
+
+footer a {
+	color: #777;
+}
+
+@media ( max-width : 991px) {
+	footer .pull-right {
+		float: none!important;
+	}
+	footer .col-md-6 {
+		text-align: center;
+	}
+}
+
+

@@ -1,16 +1,13 @@
-body {
+html, body {
+	height: 100%;
 	font-size: 13px;
 	font-weight: 300;
 }
 
 .view-container {
 	margin-top: -5px;
-	margin-bottom: 40px;
+	margin-bottom: 65px;
 	margin-top: -5px;
-}
-
-.navbar {
-	font-size: 14px;
 }
 
 h1, h2, h3, h4, h5 {
@@ -77,6 +74,7 @@ button, input, optgroup, select, textarea {
 	color: #777777;
 }
 .navbar {
+	font-size: 14px;
 	background-color: #F3FAFF;
 	color: #666666;
 	border-color: #F3FAFF;
@@ -103,7 +101,7 @@ button, input, optgroup, select, textarea {
 	margin-top: 15px;
 	margin-bottom: 15px;
 	margin-right: 20px;
-	margin-left: 3px;
+	margin-left: 5px;
 }
 
 .navbar-body ul {
@@ -166,12 +164,12 @@ button, input, optgroup, select, textarea {
 }
 
 .panel.panel-ultical {
-	background-color: #F3FAFF;
+	background-color: #FAFAFA;
 	/* 	border-color: #D9E9FF; */
 }
 
 .panel-group .panel-heading+.panel-collapse>.panel-body {
-	border-top-color: #D9E9FF;
+/* 	border-top-color: #D9E9FF; */
 }
 
 .panel.panel-ultical2 {
@@ -352,10 +350,6 @@ select:not([multiple]) {
 }
 
 .event-list-row:hover {
-/* 	TODO: Disable when tournament page is ready */
 /*     background-color: #C2DAF3; */
 /* 	cursor: pointer; */
-}
-
-@media ( min-width : 767px) {
 }

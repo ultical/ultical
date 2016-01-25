@@ -19,6 +19,7 @@ TRANSLATIONS['de'] = {
 			cancel: 'Abbrechen',
 			create: 'Erstellen',
 			done: 'Fertig',
+			or: 'oder',
 		},
 
 		nav: {
@@ -117,7 +118,7 @@ TRANSLATIONS['de'] = {
 
 		emailCode: {
 			noCodeTitle: 'Ungültiger Link',
-			noCodeforgotPw: 'Der benutzte Link ist abgelaufen (er ist 3 Stunden gültig) oder er wurde schon einmal benutzt. Bitte fordere einen neuen Code an',
+			noCodeForgotPw: 'Der benutzte Link ist abgelaufen (er ist 3 Stunden gültig) oder er wurde schon einmal benutzt. Bitte fordere einen neuen Code an',
 			noCodeConfirm: 'Der benutzte Link wurde schon einmal benutzt. Bitte benutze das Login Feld, um einen neuen Code anzufordern.',
 			successTitle: 'Email erfolgreich bestätigt!',
 			successText: 'Du kannst dich nun mit deiner Mailadresse und deinem Passwort einloggen und die Seite nutzen',
@@ -209,6 +210,14 @@ TRANSLATIONS['de'] = {
 				tooltip: 'Team löschen',
 			},
 			confirmDelete: 'Soll dieses Team wirklich gelöscht werden? Dieser Vorgang kann nicht rückgängig gemacht werden!',
+		},
+
+		footer: {
+			mainText: 'Entwickelt vom ultiCal-Team',
+			emailContactText: 'Gib uns Feedback',
+			gitHubBugText: 'Berichte von Bugs',
+			emailSupportText: 'Stelle Fragen',
+			gitHubText: 'Schau dir den Code an',
 		},
 
 		countries: {

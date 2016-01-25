@@ -9,7 +9,7 @@
 				<span class="icon-bar"></span>
 			</button>
 
-			<a ui-sref="start">
+			<a ui-sref="app.start">
 				<flip id="nav-logo" flip-show="{{ logoSide }}" ng-mouseenter="toggleLogoFlip()" ng-mouseleave="toggleLogoFlip()"> <flip-panel> <img title="{{ 'nav.title' | translate }}" src="images/logo_dfv_small.png" /> </flip-panel> <flip-panel>
 				<div>{{ 'nav.titleFlipText' | translate }}</div>
 				</flip-panel> </flip>
@@ -35,8 +35,8 @@
 				</li>
 			</ul>
 			<ul class="dropdown-menu" role="menu">
-				<li><a ui-sref="teamsOwn">{{ 'nav.profileDropdown.ownTeams' | translate }}</a></li>
-				<li><a ui-sref="eventsList">{{ 'nav.profileDropdown.ownEvents' | translate }}</a></li>
+				<li><a ui-sref="app.teamsOwn">{{ 'nav.profileDropdown.ownTeams' | translate }}</a></li>
+				<li><a ui-sref="app.eventsList">{{ 'nav.profileDropdown.ownEvents' | translate }}</a></li>
 				<li class="divider"></li>
 				<li><a href="#" ng-click="logOut()">{{ 'nav.profileDropdown.logout' | translate }}</a></li>
 			</ul>

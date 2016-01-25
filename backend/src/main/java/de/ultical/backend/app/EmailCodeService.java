@@ -80,11 +80,15 @@ public class EmailCodeService {
     }
 
     private String createEmailConfirmationLink(MailCode mailCode) {
-        return this.websiteUrl + "confirm/" + mailCode.getCode();
+        // TODO hardcoded language - we could use a preffered language property
+        // in the user entity
+        return this.websiteUrl + "de/confirm/" + mailCode.getCode();
     }
 
     private String createForgotPasswordLink(MailCode mailCode) {
-        return this.websiteUrl + "forgot/password/" + mailCode.getCode();
+        // TODO hardcoded language - we could use a preffered language property
+        // in the user entity
+        return this.websiteUrl + "de/forgot/password/" + mailCode.getCode();
     }
 
     public MailCode createMailCode(User user, MailCodeType type) {
