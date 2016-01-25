@@ -56,7 +56,7 @@ public class MailClientTest {
         mailConfig.setSmtpUser(SMTP_USER);
         mailConfig.setSmtpPassword(SMTP_PASSWORD);
         mailConfig.setSmtpSender(SMTP_SENDER);
-
+        config.setDebugMode(new UltiCalConfig.DebugMode());
         greenMail.setUser(SMTP_SENDER, SMTP_USER, SMTP_PASSWORD);
     }
 

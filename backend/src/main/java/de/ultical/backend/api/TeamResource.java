@@ -69,37 +69,36 @@ public class TeamResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Team add(Team t, @Auth @NotNull User currentUser) {
+    public Team add(Team t, @Auth @NotNull User currentUser) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        this.dataStore.setAutoCloseSession(false);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
 
-        t = this.prepareTeam(t);
+            t = this.prepareTeam(t);
 
-        if (t.getLocation() == null) {
-            t.setLocation(new Location());
+            if (t.getLocation() == null) {
+                t.setLocation(new Location());
+            }
+
+            this.dataStore.addNew(t.getLocation());
+
+            Team result = null;
+
+            try {
+                result = this.dataStore.addNew(t);
+            } catch (PersistenceException pe) {
+                throw new WebApplicationException(pe);
+            }
+
+            // add admins
+            for (User admin : t.getAdmins()) {
+                this.dataStore.addAdminToTeam(result, admin);
+            }
+
+            return result;
         }
-
-        this.dataStore.addNew(t.getLocation());
-
-        Team result = null;
-
-        try {
-            result = this.dataStore.addNew(t);
-        } catch (PersistenceException pe) {
-            throw new WebApplicationException(pe);
-        }
-
-        // add admins
-        for (User admin : t.getAdmins()) {
-            this.dataStore.addAdminToTeam(result, admin);
-        }
-
-        this.dataStore.closeSession();
-
-        return result;
     }
 
     private Team prepareTeam(Team t) {
@@ -121,86 +120,89 @@ public class TeamResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{teamId}")
-    public void update(Team updatedTeam, @PathParam("teamId") Integer teamId, @Auth @NotNull User currentUser) {
+    public void update(Team updatedTeam, @PathParam("teamId") Integer teamId, @Auth @NotNull User currentUser)
+            throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        this.dataStore.setAutoCloseSession(false);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
 
-        Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
+            Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
 
-        if (!teamId.equals(updatedTeam.getId())) {
-            throw new WebApplicationException(Status.NOT_ACCEPTABLE);
+            if (!teamId.equals(updatedTeam.getId())) {
+                throw new WebApplicationException(Status.NOT_ACCEPTABLE);
+            }
+
+            updatedTeam = this.prepareTeam(updatedTeam);
+
+            this.dataStore.update(updatedTeam.getLocation());
+
+            boolean updated = false;
+            try {
+                updated = this.dataStore.update(updatedTeam);
+            } catch (PersistenceException pe) {
+                throw new WebApplicationException(pe);
+            }
+            if (!updated) {
+                throw new WebApplicationException(Status.CONFLICT);
+            }
+
+            // create the admin mapping
+            // first delete the old mapping
+            this.dataStore.removeAllAdminsFromTeam(updatedTeam);
+
+            for (User admin : updatedTeam.getAdmins()) {
+                this.dataStore.addAdminToTeam(updatedTeam, admin);
+            }
+
         }
-
-        updatedTeam = this.prepareTeam(updatedTeam);
-
-        this.dataStore.update(updatedTeam.getLocation());
-
-        boolean updated = false;
-        try {
-            updated = this.dataStore.update(updatedTeam);
-        } catch (PersistenceException pe) {
-            throw new WebApplicationException(pe);
-        }
-        if (!updated) {
-            throw new WebApplicationException(Status.CONFLICT);
-        }
-
-        // create the admin mapping
-        // first delete the old mapping
-        this.dataStore.removeAllAdminsFromTeam(updatedTeam);
-
-        for (User admin : updatedTeam.getAdmins()) {
-            this.dataStore.addAdminToTeam(updatedTeam, admin);
-        }
-
-        this.dataStore.closeSession();
 
     }
 
     @POST
     @Path("{teamId}/admin/{userId}")
     public void addAdmin(@Auth @NotNull User currentUser, @PathParam("teamId") Integer teamId,
-            @PathParam("userId") Integer userId) {
+            @PathParam("userId") Integer userId) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException();
         }
-        this.dataStore.setAutoCloseSession(false);
-        Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
-        final Team team = new Team();
-        team.setId(teamId);
-        final User admin = new User();
-        admin.setId(userId);
-        try {
-            this.dataStore.setAutoCloseSession(true);
-            this.dataStore.addAdminToTeam(team, admin);
-        } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failed!");
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
+            final Team team = new Team();
+            team.setId(teamId);
+            final User admin = new User();
+            admin.setId(userId);
+            try {
+
+                this.dataStore.addAdminToTeam(team, admin);
+            } catch (PersistenceException pe) {
+                throw new WebApplicationException("Accessing the database failed!");
+            }
         }
     }
 
     @DELETE
     @Path("{teamId}/admin/{userId}")
     public void deleteAdmin(@Auth @NotNull User currentUser, @PathParam("teamId") Integer teamId,
-            @PathParam("userId") Integer userId) {
+            @PathParam("userId") Integer userId) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException();
         }
-        this.dataStore.setAutoCloseSession(false);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
 
-        Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
+            Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
 
-        final Team fakeTeam = new Team();
-        fakeTeam.setId(teamId);
-        final User fakeAdmin = new User();
-        fakeAdmin.setId(userId);
-        try {
-            this.dataStore.setAutoCloseSession(true);
-            this.dataStore.removeAdminFromTeam(fakeTeam, fakeAdmin);
-        } catch (PersistenceException pe) {
-            throw new WebApplicationException("Acessecing the database failes!");
+            final Team fakeTeam = new Team();
+            fakeTeam.setId(teamId);
+            final User fakeAdmin = new User();
+            fakeAdmin.setId(userId);
+            try {
+
+                this.dataStore.removeAdminFromTeam(fakeTeam, fakeAdmin);
+            } catch (PersistenceException pe) {
+                throw new WebApplicationException("Acessecing the database failes!");
+            }
         }
     }
 }

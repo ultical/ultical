@@ -53,35 +53,35 @@ public class RosterResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Roster addRoster(@Auth User currentUser, @NotNull Roster newRoster) {
+    public Roster addRoster(@Auth User currentUser, @NotNull Roster newRoster) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
 
-        this.dataStore.setAutoCloseSession(false);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
 
-        Authenticator.assureTeamAdmin(this.dataStore, newRoster.getTeam().getId(), currentUser);
+            Authenticator.assureTeamAdmin(this.dataStore, newRoster.getTeam().getId(), currentUser);
 
-        // check if roster for this season already exists for this team
-        Roster result = this.dataStore.getRosterOfTeamSeason(newRoster.getTeam().getId(), newRoster.getSeason().getId(),
-                newRoster.getDivisionAge().name(), newRoster.getDivisionType().name());
+            // check if roster for this season already exists for this team
+            Roster result = this.dataStore.getRosterOfTeamSeason(newRoster.getTeam().getId(),
+                    newRoster.getSeason().getId(), newRoster.getDivisionAge().name(),
+                    newRoster.getDivisionType().name());
 
-        if (result != null) {
-            // this roster is already present for this team
-            throw new WebApplicationException("e101 - Roster already exists for team", Status.CONFLICT);
+            if (result != null) {
+                // this roster is already present for this team
+                throw new WebApplicationException("e101 - Roster already exists for team", Status.CONFLICT);
+            }
+
+            try {
+                this.dataStore.addNew(newRoster);
+            } catch (PersistenceException pe) {
+                LOGGER.error("Database access failed!", pe);
+                throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
+            }
+
+            return newRoster;
         }
-
-        try {
-            this.dataStore.addNew(newRoster);
-        } catch (PersistenceException pe) {
-            LOGGER.error("Database access failed!", pe);
-            throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
-        }
-
-        this.dataStore.closeSession();
-
-        return newRoster;
     }
 
     @POST
@@ -89,7 +89,7 @@ public class RosterResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{rosterId}")
     public Player addPlayerToRoster(@Auth User currentUser, @PathParam("rosterId") Integer rosterId,
-            @NotNull DfvMvName dfvMvName) {
+            @NotNull DfvMvName dfvMvName) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injection for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
@@ -100,64 +100,64 @@ public class RosterResource {
             throw new WebApplicationException("User did not agree to publish his data on the web (no DSE present)",
                     Status.FORBIDDEN);
         }
+        try (AutoCloseable c = this.dataStore.getClosable()) {
 
-        this.dataStore.setAutoCloseSession(false);
-
-        Roster roster = this.dataStore.get(rosterId, Roster.class);
-        if (roster == null) {
-            throw new WebApplicationException(String.format("Roster with ID=%d does not exist!", rosterId),
-                    Status.NOT_FOUND);
-        }
-        Authenticator.assureTeamAdmin(this.dataStore, roster.getTeam().getId(), currentUser);
-
-        // get player if exists
-        DfvPlayer player = this.dataStore.getPlayerByDfvNumber(dfvMvName.getDfvNumber());
-
-        if (player != null) {
-            // check if player is already in a roster of this season and
-            // division
-            Roster result = this.dataStore.getRosterOfPlayerSeason(player.getId(), roster.getSeason().getId(),
-                    roster.getDivisionAge().name(), roster.getDivisionType().name());
-
-            if (result != null) {
-                // this player is already in a different roster of this season
-                throw new WebApplicationException(
-                        "e101 - Player is already in a different roster of this season and division", Status.CONFLICT);
+            Roster roster = this.dataStore.get(rosterId, Roster.class);
+            if (roster == null) {
+                throw new WebApplicationException(String.format("Roster with ID=%d does not exist!", rosterId),
+                        Status.NOT_FOUND);
             }
-        } else {
-            // a new player
+            Authenticator.assureTeamAdmin(this.dataStore, roster.getTeam().getId(), currentUser);
 
-            // get full player data from dfv-mv
-            WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profil")
-                    .path(String.valueOf(dfvMvName.getDfvNumber()))
-                    .queryParam("token", this.config.getDfvApi().getToken())
-                    .queryParam("secret", this.config.getDfvApi().getSecret());
+            // get player if exists
+            DfvPlayer player = this.dataStore.getPlayerByDfvNumber(dfvMvName.getDfvNumber());
 
-            Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
-            DfvMvPlayer dfvMvPlayer = invocationBuilder.get(DfvMvPlayer.class);
+            if (player != null) {
+                // check if player is already in a roster of this season and
+                // division
+                Roster result = this.dataStore.getRosterOfPlayerSeason(player.getId(), roster.getSeason().getId(),
+                        roster.getDivisionAge().name(), roster.getDivisionType().name());
 
-            // create and persist player object
-            DfvPlayer dfvPlayer = new DfvPlayer(dfvMvPlayer);
-            dfvPlayer.setFirstName(dfvMvName.getFirstName());
-            dfvPlayer.setLastName(dfvMvName.getLastName());
-            dfvPlayer.setEmail(dfvMvPlayer.getEmail());
+                if (result != null) {
+                    // this player is already in a different roster of this
+                    // season
+                    throw new WebApplicationException(
+                            "e101 - Player is already in a different roster of this season and division",
+                            Status.CONFLICT);
+                }
+            } else {
+                // a new player
 
-            Club club = this.dataStore.getClub(dfvMvPlayer.getVerein());
-            dfvPlayer.setClub(club);
+                // get full player data from dfv-mv
+                WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profil")
+                        .path(String.valueOf(dfvMvName.getDfvNumber()))
+                        .queryParam("token", this.config.getDfvApi().getToken())
+                        .queryParam("secret", this.config.getDfvApi().getSecret());
 
-            player = dfvPlayer;
+                Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
+                DfvMvPlayer dfvMvPlayer = invocationBuilder.get(DfvMvPlayer.class);
 
-            this.dataStore.storeDfvPlayer(dfvPlayer);
+                // create and persist player object
+                DfvPlayer dfvPlayer = new DfvPlayer(dfvMvPlayer);
+                dfvPlayer.setFirstName(dfvMvName.getFirstName());
+                dfvPlayer.setLastName(dfvMvName.getLastName());
+                dfvPlayer.setEmail(dfvMvPlayer.getEmail());
+
+                Club club = this.dataStore.getClub(dfvMvPlayer.getVerein());
+                dfvPlayer.setClub(club);
+
+                player = dfvPlayer;
+
+                this.dataStore.storeDfvPlayer(dfvPlayer);
+            }
+
+            this.checkPlayerEligibility(roster, player);
+
+            // add player to roster
+            this.dataStore.addPlayerToRoster(roster, player);
+
+            return player;
         }
-
-        this.checkPlayerEligibility(roster, player);
-
-        // add player to roster
-        this.dataStore.addPlayerToRoster(roster, player);
-
-        this.dataStore.closeSession();
-
-        return player;
     }
 
     /**
@@ -212,41 +212,42 @@ public class RosterResource {
     @DELETE
     @Path("{rosterId}/player/{playerId}")
     public void deletePlayerFromRoster(@Auth @NotNull User currentUser, @PathParam("rosterId") int rosterId,
-            @PathParam("playerId") int playerId) {
+            @PathParam("playerId") int playerId) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException();
         }
-        this.dataStore.setAutoCloseSession(false);
-        Roster roster = this.dataStore.get(rosterId, Roster.class);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            Roster roster = this.dataStore.get(rosterId, Roster.class);
 
-        Authenticator.assureTeamAdmin(this.dataStore, roster.getTeam().getId(), currentUser);
+            Authenticator.assureTeamAdmin(this.dataStore, roster.getTeam().getId(), currentUser);
 
-        try {
-            this.dataStore.removePlayerFromRoster(playerId, rosterId);
-        } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failes!");
+            try {
+                this.dataStore.removePlayerFromRoster(playerId, rosterId);
+            } catch (PersistenceException pe) {
+                throw new WebApplicationException("Accessing the database failes!");
+            }
+
         }
-
-        this.dataStore.closeSession();
 
     }
 
     @DELETE
     @Path("{rosterId}")
-    public void deleteRoster(@Auth @NotNull User currentUser, @PathParam("rosterId") int rosterId) {
+    public void deleteRoster(@Auth @NotNull User currentUser, @PathParam("rosterId") int rosterId) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException();
         }
-        this.dataStore.setAutoCloseSession(false);
-        Roster rosterToDelete = this.dataStore.get(rosterId, Roster.class);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            Roster rosterToDelete = this.dataStore.get(rosterId, Roster.class);
 
-        Authenticator.assureTeamAdmin(this.dataStore, rosterToDelete.getTeam().getId(), currentUser);
+            Authenticator.assureTeamAdmin(this.dataStore, rosterToDelete.getTeam().getId(), currentUser);
 
-        try {
-            this.dataStore.setAutoCloseSession(true);
-            this.dataStore.remove(rosterId, Roster.class);
-        } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failes!");
+            try {
+
+                this.dataStore.remove(rosterId, Roster.class);
+            } catch (PersistenceException pe) {
+                throw new WebApplicationException("Accessing the database failes!");
+            }
         }
     }
 }

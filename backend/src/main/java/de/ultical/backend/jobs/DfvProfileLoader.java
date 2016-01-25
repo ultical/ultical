@@ -24,27 +24,27 @@ public class DfvProfileLoader {
     @Inject
     private DataStore dataStore;
 
-    public boolean getDfvMvNames() {
+    public boolean getDfvMvNames() throws Exception {
 
         if (!this.config.getJobs().isDfvMvSyncEnabled()) {
             return false;
         }
 
-        this.dataStore.setAutoCloseSession(false);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
 
-        WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profile")
-                .queryParam("token", this.config.getDfvApi().getToken())
-                .queryParam("secret", this.config.getDfvApi().getSecret());
+            WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profile")
+                    .queryParam("token", this.config.getDfvApi().getToken())
+                    .queryParam("secret", this.config.getDfvApi().getSecret());
 
-        Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
+            Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 
-        List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {
-        });
+            List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {
+            });
 
-        this.dataStore.refreshDfvNames(response);
-        this.dataStore.closeSession();
+            this.dataStore.refreshDfvNames(response);
 
-        return true;
+            return true;
+        }
     }
 
 }

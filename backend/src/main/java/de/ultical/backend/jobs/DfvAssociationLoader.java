@@ -24,27 +24,27 @@ public class DfvAssociationLoader {
     @Inject
     private DataStore dataStore;
 
-    public boolean getAssociations() {
+    public boolean getAssociations() throws Exception {
 
         if (!this.config.getJobs().isDfvMvSyncEnabled()) {
             return false;
         }
 
-        this.dataStore.setAutoCloseSession(false);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
 
-        WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("verbaende")
-                .queryParam("token", this.config.getDfvApi().getToken())
-                .queryParam("secret", this.config.getDfvApi().getSecret());
+            WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("verbaende")
+                    .queryParam("token", this.config.getDfvApi().getToken())
+                    .queryParam("secret", this.config.getDfvApi().getSecret());
 
-        Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
+            Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 
-        List<Association> response = invocationBuilder.get(new GenericType<List<Association>>() {
-        });
+            List<Association> response = invocationBuilder.get(new GenericType<List<Association>>() {
+            });
 
-        this.dataStore.refreshAssociations(response);
-        this.dataStore.closeSession();
+            this.dataStore.refreshAssociations(response);
 
-        return true;
+            return true;
+        }
     }
 
 }
