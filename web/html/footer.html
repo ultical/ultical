@@ -1,0 +1,27 @@
+<div class="container" ng-controller="FooterCtrl">
+	<div class="row text-muted">
+		<div class="col-md-6">
+			<span>{{ 'footer.mainText' | translate }}</span>
+			&nbsp;-&nbsp;
+			<a href="mailto:{{ emailContact }}">
+				<i class="fa fa-envelope-o"></i> {{ 'footer.emailContactText' | translate }}
+			</a>
+			&nbsp;{{ 'general.or' | translate }} &nbsp;
+
+			<a href="mailto:{{ emailSupport }}">
+				<i class="fa fa-envelope-o"></i> {{ 'footer.emailSupportText' | translate }}
+			</a>
+		</div>
+		<div class="col-md-6">
+			<div class="pull-right">
+				<a href="{{ codeLink }}">
+					<i class="fa fa-github"></i> {{ 'footer.gitHubText' | translate }}
+				</a>
+				&nbsp; {{ 'general.or' | translate }} &nbsp;
+				<a href="{{ bugLink }}">
+					<i class="fa fa-github"></i> {{ 'footer.gitHubBugText' | translate }}
+				</a>
+			</div>
+		</div>
+	</div>
+</div>

@@ -19,6 +19,7 @@ TRANSLATIONS['de'] = {
 			cancel: 'Abbrechen',
 			create: 'Erstellen',
 			done: 'Fertig',
+			or: 'oder',
 		},
 
 		nav: {
@@ -209,6 +210,14 @@ TRANSLATIONS['de'] = {
 				tooltip: 'Team löschen',
 			},
 			confirmDelete: 'Soll dieses Team wirklich gelöscht werden? Dieser Vorgang kann nicht rückgängig gemacht werden!',
+		},
+
+		footer: {
+			mainText: 'Entwickelt vom ultiCal-Team',
+			emailContactText: 'Gib uns Feedback',
+			gitHubBugText: 'Berichte von Bugs',
+			emailSupportText: 'Stelle Fragen',
+			gitHubText: 'Schau dir den Code an',
 		},
 
 		countries: {
