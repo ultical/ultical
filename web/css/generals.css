@@ -119,7 +119,16 @@ footer .fa {
 }
 
 footer a {
-/* 	margin-left: 12px; */
 	color: #777;
 }
+
+@media ( max-width : 991px) {
+	footer .pull-right {
+		float: none!important;
+	}
+	footer .col-md-6 {
+		text-align: center;
+	}
+}
+
 
