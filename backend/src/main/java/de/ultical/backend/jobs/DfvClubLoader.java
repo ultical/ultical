@@ -24,27 +24,27 @@ public class DfvClubLoader {
     @Inject
     private DataStore dataStore;
 
-    public boolean getClubs() {
+    public boolean getClubs() throws Exception {
 
         if (!this.config.getJobs().isDfvMvSyncEnabled()) {
             return false;
         }
 
-        this.dataStore.setAutoCloseSession(false);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
 
-        WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("vereine")
-                .queryParam("token", this.config.getDfvApi().getToken())
-                .queryParam("secret", this.config.getDfvApi().getSecret());
+            WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("vereine")
+                    .queryParam("token", this.config.getDfvApi().getToken())
+                    .queryParam("secret", this.config.getDfvApi().getSecret());
 
-        Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
+            Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 
-        List<Club> response = invocationBuilder.get(new GenericType<List<Club>>() {
-        });
+            List<Club> response = invocationBuilder.get(new GenericType<List<Club>>() {
+            });
 
-        this.dataStore.refreshClubs(response);
-        this.dataStore.closeSession();
+            this.dataStore.refreshClubs(response);
 
-        return true;
+            return true;
+        }
     }
 
 }

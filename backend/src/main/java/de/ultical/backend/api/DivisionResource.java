@@ -53,23 +53,24 @@ public class DivisionResource {
             }
         }
 
-        this.dStore.setAutoCloseSession(false);
-        Team loadedTeam = this.dStore.get(teamId, Team.class);
-        if (loadedTeam == null) {
-            throw new WebApplicationException(String.format("A team with id %d does not exist", teamId),
-                    Status.NOT_FOUND);
-        } else if (!loadedTeam.getAdmins().contains(currentUser)) {
-            throw new WebApplicationException(String.format("You are not an admin for team %s", loadedTeam.getName()),
-                    Status.FORBIDDEN);
-        }
+        try (AutoCloseable c = this.dStore.getClosable()) {
+            Team loadedTeam = this.dStore.get(teamId, Team.class);
+            if (loadedTeam == null) {
+                throw new WebApplicationException(String.format("A team with id %d does not exist", teamId),
+                        Status.NOT_FOUND);
+            } else if (!loadedTeam.getAdmins().contains(currentUser)) {
+                throw new WebApplicationException(
+                        String.format("You are not an admin for team %s", loadedTeam.getName()), Status.FORBIDDEN);
+            }
 
-        final DivisionRegistrationTeams divisionReg = new DivisionRegistrationTeams();
-        divisionReg.setId(divisionId);
-        try {
-            this.dStore.setAutoCloseSession(true);
+            final DivisionRegistrationTeams divisionReg = new DivisionRegistrationTeams();
+            divisionReg.setId(divisionId);
+
             this.dStore.registerTeamForDivision(divisionReg, teamReg);
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing the database failed!", pe);
+        } catch (Exception e) {
+            // only for the compiler
         }
     }
 
@@ -80,25 +81,27 @@ public class DivisionResource {
         if (this.dStore == null) {
             throw new WebApplicationException("Injection DataStore failed!");
         }
-        this.dStore.setAutoCloseSession(false);
-        Team teamInDB = this.dStore.get(teamId, Team.class);
-        if (teamInDB == null) {
-            throw new WebApplicationException(String.format("Team with id %d does not exist", teamId),
-                    Status.NOT_FOUND);
-        }
-        if (!teamInDB.getAdmins().contains(currentUser)) {
-            throw new WebApplicationException(String.format("You are not an admin for team %s", teamInDB.getName()),
-                    Status.FORBIDDEN);
-        }
-        final DivisionRegistrationTeams fakeReg = new DivisionRegistrationTeams();
-        fakeReg.setId(divId);
-        final Team fakeTeam = new Team();
-        fakeTeam.setId(teamId);
-        try {
-            this.dStore.setAutoCloseSession(true);
+        try (AutoCloseable c = this.dStore.getClosable()) {
+            Team teamInDB = this.dStore.get(teamId, Team.class);
+            if (teamInDB == null) {
+                throw new WebApplicationException(String.format("Team with id %d does not exist", teamId),
+                        Status.NOT_FOUND);
+            }
+            if (!teamInDB.getAdmins().contains(currentUser)) {
+                throw new WebApplicationException(String.format("You are not an admin for team %s", teamInDB.getName()),
+                        Status.FORBIDDEN);
+            }
+            final DivisionRegistrationTeams fakeReg = new DivisionRegistrationTeams();
+            fakeReg.setId(divId);
+            final Team fakeTeam = new Team();
+            fakeTeam.setId(teamId);
+
             this.dStore.unregisterTeamFromDivision(fakeReg, fakeTeam);
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing database failed!", pe);
+        } catch (Exception e) {
+            // only for the compiler
+            throw new WebApplicationException(e);
         }
     }
 }

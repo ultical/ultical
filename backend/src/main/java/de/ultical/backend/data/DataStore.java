@@ -69,6 +69,33 @@ public class DataStore {
     }
 
     /**
+     * Use this method to get access to an <code>AutoCloseable</code> instance
+     * that could be used, to close the <code>DataStore</code>'s internal
+     * {@link SqlSession}.
+     * <p>
+     * The feature provided by this method is useful if you want to do more than
+     * one database access at once and therefore have to avoid that the session
+     * to the databse is closed automatically after the first access. In order
+     * to avoid any problems due to not closed resources you are strongly
+     * encouraged to use this method in conjunction with Java's
+     * try-with-resources feature.
+     *
+     * @return an instance of <code>AutoCloseable</code> that could be used to
+     *         close the DataStore Sql-Connection within a try block.
+     */
+    public AutoCloseable getClosable() {
+        this.autoCloseSession = false;
+        return new AutoCloseable() {
+
+            @Override
+            public void close() {
+                DataStore.this.closeSession();
+
+            }
+        };
+    }
+
+    /**
      * Change this <code>DataStore</code>'s autoClose behavior.
      * <p>
      * If set to <code>false</code> the different operations of this dataStore
@@ -84,7 +111,7 @@ public class DataStore {
      * @param newACS
      *            whether or not the auto-close feature should be used.
      */
-    public void setAutoCloseSession(boolean newACS) {
+    private void setAutoCloseSession(boolean newACS) {
         this.autoCloseSession = newACS;
     }
 
@@ -100,7 +127,7 @@ public class DataStore {
      * @return <code>true</code> if the session has been closed, otherwise
      *         <code>false</code>.
      */
-    public boolean closeSession() {
+    private boolean closeSession() {
         boolean result = false;
         if (this.sqlSession != null && !this.autoCloseSession) {
             this.sqlSession.close();

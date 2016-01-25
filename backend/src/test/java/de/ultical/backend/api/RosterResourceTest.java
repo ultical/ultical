@@ -3,7 +3,6 @@ package de.ultical.backend.api;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -142,61 +141,54 @@ public class RosterResourceTest {
     }
 
     @Test
-    public void testAddMasterToMasters() {
+    public void testAddMasterToMasters() throws Exception {
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_MASTER, this.dfvNameMaster);
-        verify(this.dataStore).closeSession();
         verify(this.dataStore).addPlayerToRoster(this.rosterMaster, this.playerMasters);
     }
 
     @Test
-    public void testAddJuniorToMasters() {
+    public void testAddJuniorToMasters() throws Exception {
         this.expected.expect(WebApplicationException.class);
         this.expected.expectMessage("age does not match");
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_MASTER, this.dfvNameJunior);
-        verify(this.dataStore, times(1)).closeSession();
         verify(this.dataStore, never()).addPlayerToRoster(any(), any());
     }
 
     @Test
-    public void testAddJuniorToJunior() {
+    public void testAddJuniorToJunior() throws Exception {
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_JUNIOR, this.dfvNameJunior);
-        verify(this.dataStore).closeSession();
         verify(this.dataStore).addPlayerToRoster(this.rosterJunior, this.playerJuniors);
     }
 
     @Test
-    public void testAddMasterToJuniors() {
+    public void testAddMasterToJuniors() throws Exception {
         this.expected.expect(WebApplicationException.class);
         this.expected.expectMessage("age does not match");
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_JUNIOR, this.dfvNameMaster);
-        verify(this.dataStore).closeSession();
         verify(this.dataStore, never()).addPlayerToRoster(any(), any());
     }
 
     @Test
-    public void testAddMaleToWomenRoster() {
+    public void testAddMaleToWomenRoster() throws Exception {
         this.expected.expect(WebApplicationException.class);
         this.expected.expectMessage("has wrong gender");
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_WOMEN, this.dfvNameMaster);
-        verify(this.dataStore).closeSession();
         verify(this.dataStore, never()).addPlayerToRoster(any(), any());
     }
 
     @Test
-    public void testAddWomanToWomen() {
+    public void testAddWomanToWomen() throws Exception {
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_WOMEN, this.dfvNameWoman);
-        verify(this.dataStore).closeSession();
         verify(this.dataStore).addPlayerToRoster(this.rosterWomen, this.playerWoman);
     }
 
     @Test
-    public void testAllCanPlayOpen() {
+    public void testAllCanPlayOpen() throws Exception {
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG, this.dfvNameJunior);
         verify(this.dataStore).addPlayerToRoster(this.rosterOpenRegular, this.playerJuniors);
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG, this.dfvNameMaster);
         verify(this.dataStore).addPlayerToRoster(this.rosterOpenRegular, this.playerMasters);
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG, this.dfvNameWoman);
         verify(this.dataStore).addPlayerToRoster(this.rosterOpenRegular, this.playerWoman);
-        verify(this.dataStore, times(3)).closeSession();
     }
 }
