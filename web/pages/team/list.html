@@ -49,9 +49,9 @@
 							<div class="col-md-12">
 								<div class="form-group has-feedback">
 									<label for="tteCity">{{ 'team.edit.locationCityLabel' | translate }}</label>
-									<input type="text" id="ttyCity" container="body" class="form-control" ng-blur="storeLocation(teamToEdit.location)" ng-model="teamToEdit.location" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" data-comparator="locationMatching"
+									<input bas-object-typeahead="location" type="text" id="ttyCity" container="body" class="form-control" ng-model="teamToEdit.location" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" data-comparator="locationMatching"
 										bs-options="location | locationObject as location | location for location in getLocations($viewValue)" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" bs-typeahead
-									>
+									/>
 									<span ng-show="teamToEdit.location.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
 								</div>
 							</div>
@@ -61,7 +61,7 @@
 							<div class="col-md-12">
 								<div class="form-group has-feedback">
 									<label for="tteClub">{{ 'team.edit.clubLabel' | translate }}</label>
-									<input data-min-length="3" id="tteClub" type="text" container="body" class="form-control" ng-model="teamToEdit.club" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" bs-options="club as club.name for club in allClubs"
+									<input bas-object-typeahead="club" data-min-length="3" id="tteClub" type="text" container="body" class="form-control" ng-model="teamToEdit.club" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" bs-options="club as club.name for club in allClubs"
 										placeholder="{{ 'team.edit.clubPlaceholder' | translate }}" bs-typeahead
 									>
 									<span ng-show="teamToEdit.club.id != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
@@ -126,7 +126,7 @@
 									<span ng-click="addAdmin(newAdmin)" class="cursor-pointer input-group-addon">
 										<span class="glyphicon glyphicon-plus"></span>
 									</span>
-									<input type="text" data-container="body" class="form-control" id="tteAdmins" bas-enter="addAdmin(newAdmin)" ng-blur="addAdmin(newAdmin)" ng-model="newAdmin.obj" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0"
+									<input bas-object-typeahead="admins" type="text" data-container="body" class="form-control" id="tteAdmins" bas-enter="addAdmin(newAdmin)" ng-blur="addAdmin(newAdmin)" ng-model="newAdmin.obj" data-animation="am-flip-x" data-auto-select="0" data-trim-value="0"
 										bs-options="user as user.fullName for user in getUsers($viewValue)" placeholder="{{ 'team.edit.adminsPlaceholder' | translate }}" bs-typeahead
 									>
 								</div>
