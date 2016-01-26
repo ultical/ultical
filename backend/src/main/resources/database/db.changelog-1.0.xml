@@ -643,7 +643,10 @@
 			baseTableName="ASSOCIATION_ULTICAL_USERS" referencedColumnNames="id"
 			onDelete="CASCADE" />
 	</changeSet>
-	<changeSet author="bas" id="41">
+	<changeSet author="bas" id="bas41">
+		<tagDatabase tag="v1.1" />
+	</changeSet>
+	<changeSet author="bas" id="bas42">
 		<addColumn tableName="TOURNAMENT_FORMAT">
 			<column name="association" type="BIGINT"></column>
 		</addColumn>
@@ -651,11 +654,19 @@
 			referencedTableName="ASSOCIATION" baseColumnNames="association"
 			baseTableName="TOURNAMENT_FORMAT" referencedColumnNames="id" />
 		<dropColumn tableName="TOURNAMENT_FORMAT" columnName="dfv_official" />
-		<dropForeignKeyConstraint baseTableName="TOURNAMENT_EDITION"
-			constraintName="fk_tournament_edition_contact" />
-		<dropColumn tableName="TOURNAMENT_EDITION" columnName="organizer" />
 	</changeSet>
-	<changeSet author="bas" id="42">
-		<dropNotNullConstraint tableName="EVENT" columnName="local_organizer"/>
+	<changeSet author="bas" id="bas43">
+		<addColumn tableName="DIVISION_REGISTRATION">
+			<column name="division_identifier" type="VARCHAR(50)"
+				defaultValue="">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+		<addUniqueConstraint
+			columnNames="tournament_edition, division_type, division_age, division_identifier"
+			tableName="DIVISION_REGISTRATION" constraintName="uk_division_registration_edition_division" />
+	</changeSet>
+	<changeSet author="bas" id="bas44">
+		<tagDatabase tag="v1.2" />
 	</changeSet>
 </databaseChangeLog>
