@@ -5,6 +5,8 @@ angular.module('ultical.team', [])
 .controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService', 'alerter', '$timeout',
                              function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter, $timeout) {
 
+	$scope.currentLocale = $stateParams.locale;
+
 	$scope.loggedIn = function() {
 		return authorizer.loggedIn();
 	}
