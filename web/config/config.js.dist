@@ -43,6 +43,9 @@ angular.extend(CONFIG_OBJECT, {
 	
 	brand: {
 		emailSupport: 'support@ultical.com',
+		emailContact: 'team@ultical.com',
+		bugLink: 'https://github.com/bastrapp/ultical/issues',
+		codeLink: 'https://github.com/bastrapp/ultical',
 	},
 
 });
