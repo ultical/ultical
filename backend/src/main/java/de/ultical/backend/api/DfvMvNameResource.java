@@ -12,7 +12,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,15 +43,12 @@ public class DfvMvNameResource {
                     Status.INTERNAL_SERVER_ERROR);
         }
         List<DfvMvName> result = null;
-        this.dataStore.setAutoCloseSession(false);
 
-        try {
+        try (AutoCloseable c = this.dataStore.getClosable()) {
             result = this.dataStore.findDfvMvName("%" + searchString + "%");
-        } catch (PersistenceException pe) {
+        } catch (Exception pe) {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
-        } finally {
-            this.dataStore.closeSession();
         }
         return result;
     }

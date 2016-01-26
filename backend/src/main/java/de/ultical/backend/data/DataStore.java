@@ -69,6 +69,33 @@ public class DataStore {
     }
 
     /**
+     * Use this method to get access to an <code>AutoCloseable</code> instance
+     * that could be used, to close the <code>DataStore</code>'s internal
+     * {@link SqlSession}.
+     * <p>
+     * The feature provided by this method is useful if you want to do more than
+     * one database access at once and therefore have to avoid that the session
+     * to the databse is closed automatically after the first access. In order
+     * to avoid any problems due to not closed resources you are strongly
+     * encouraged to use this method in conjunction with Java's
+     * try-with-resources feature.
+     *
+     * @return an instance of <code>AutoCloseable</code> that could be used to
+     *         close the DataStore Sql-Connection within a try block.
+     */
+    public AutoCloseable getClosable() {
+        this.autoCloseSession = false;
+        return new AutoCloseable() {
+
+            @Override
+            public void close() {
+                DataStore.this.closeSession();
+
+            }
+        };
+    }
+
+    /**
      * Change this <code>DataStore</code>'s autoClose behavior.
      * <p>
      * If set to <code>false</code> the different operations of this dataStore
@@ -84,7 +111,7 @@ public class DataStore {
      * @param newACS
      *            whether or not the auto-close feature should be used.
      */
-    public void setAutoCloseSession(boolean newACS) {
+    private void setAutoCloseSession(boolean newACS) {
         this.autoCloseSession = newACS;
     }
 
@@ -100,7 +127,7 @@ public class DataStore {
      * @return <code>true</code> if the session has been closed, otherwise
      *         <code>false</code>.
      */
-    public boolean closeSession() {
+    private boolean closeSession() {
         boolean result = false;
         if (this.sqlSession != null && !this.autoCloseSession) {
             this.sqlSession.close();
@@ -259,19 +286,37 @@ public class DataStore {
     }
 
     public void updateUserWithoutPassword(User user) {
-        UserMapper userMapper = this.sqlSession.getMapper(UserMapper.class);
-        userMapper.updateWithoutPassword(user);
-        this.sqlSession.commit();
+        try {
+            UserMapper userMapper = this.sqlSession.getMapper(UserMapper.class);
+            userMapper.updateWithoutPassword(user);
+            this.sqlSession.commit();
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 
     public Club getClub(int clubId) {
-        ClubMapper clubMapper = this.sqlSession.getMapper(ClubMapper.class);
-        return clubMapper.get(clubId);
+        try {
+            ClubMapper clubMapper = this.sqlSession.getMapper(ClubMapper.class);
+            return clubMapper.get(clubId);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 
     public List<Club> getAllClubs() {
-        ClubMapper clubMapper = this.sqlSession.getMapper(ClubMapper.class);
-        return clubMapper.getAll();
+        try {
+            ClubMapper clubMapper = this.sqlSession.getMapper(ClubMapper.class);
+            return clubMapper.getAll();
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 
     /*
@@ -419,27 +464,29 @@ public class DataStore {
     }
 
     public void updateDfvPlayer(DfvPlayer dfvPlayer) {
+
         /**
          * A DfvPlayer has to be stored in two steps First Player (superclass)
          * then DfvPlayer (subclass)
          */
         boolean orgCloseSession = this.autoCloseSession;
+        try {
+            // only close session at the end
+            this.setAutoCloseSession(false);
 
-        // only close session at the end
-        this.setAutoCloseSession(false);
+            // insert Player with corresponding mapper
+            PlayerMapper playerMapper = this.sqlSession.getMapper(PlayerMapper.class);
+            playerMapper.update(dfvPlayer);
 
-        // insert Player with corresponding mapper
-        PlayerMapper playerMapper = this.sqlSession.getMapper(PlayerMapper.class);
-        playerMapper.update(dfvPlayer);
+            // insert DfvPlayer
+            this.update(dfvPlayer);
+        } finally {
+            // set autoclose to original value
+            this.setAutoCloseSession(orgCloseSession);
 
-        // insert DfvPlayer
-        this.update(dfvPlayer);
-
-        // set autoclose to original value
-        this.setAutoCloseSession(orgCloseSession);
-
-        if (this.sqlSession != null && this.autoCloseSession) {
-            this.sqlSession.close();
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
         }
     }
 
@@ -449,25 +496,26 @@ public class DataStore {
          * then DfvPlayer (subclass)
          */
         boolean orgCloseSession = this.autoCloseSession;
+        try {
+            // only close session at the end
+            this.setAutoCloseSession(false);
 
-        // only close session at the end
-        this.setAutoCloseSession(false);
+            // insert Player with corresponding mapper
+            PlayerMapper playerMapper = this.sqlSession.getMapper(PlayerMapper.class);
+            playerMapper.insert(dfvPlayer);
 
-        // insert Player with corresponding mapper
-        PlayerMapper playerMapper = this.sqlSession.getMapper(PlayerMapper.class);
-        playerMapper.insert(dfvPlayer);
+            // request id to store it in dfvPlayer object
+            dfvPlayer.getId();
 
-        // request id to store it in dfvPlayer object
-        dfvPlayer.getId();
+            // insert DfvPlayer
+            this.addNew(dfvPlayer);
+        } finally {
+            // set autoclose to original value
+            this.setAutoCloseSession(orgCloseSession);
 
-        // insert DfvPlayer
-        this.addNew(dfvPlayer);
-
-        // set autoclose to original value
-        this.setAutoCloseSession(orgCloseSession);
-
-        if (this.sqlSession != null && this.autoCloseSession) {
-            this.sqlSession.close();
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
         }
     }
 
@@ -476,100 +524,128 @@ public class DataStore {
          * A user has to be stored in two steps First DfvPlayer, then User
          */
         boolean orgCloseSession = this.autoCloseSession;
+        try {
+            // only close session at the end
+            this.setAutoCloseSession(false);
 
-        // only close session at the end
-        this.setAutoCloseSession(false);
+            if (playerNewlyCreated) {
+                this.storeDfvPlayer(user.getDfvPlayer());
+            } else {
+                this.updateDfvPlayer(user.getDfvPlayer());
+            }
 
-        if (playerNewlyCreated) {
-            this.storeDfvPlayer(user.getDfvPlayer());
-        } else {
-            this.updateDfvPlayer(user.getDfvPlayer());
-        }
+            // insert User
+            this.addNew(user);
+        } finally {
+            // set autoclose to original value
+            this.setAutoCloseSession(orgCloseSession);
 
-        // insert User
-        this.addNew(user);
-
-        // set autoclose to original value
-        this.setAutoCloseSession(orgCloseSession);
-
-        if (this.sqlSession != null && this.autoCloseSession) {
-            this.sqlSession.close();
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
         }
     }
 
     public User getUserByDfvNr(int dfvNumber) {
 
         final boolean orgCloseSession = this.autoCloseSession;
+        User user;
+        try {
+            // only close session at the end
+            this.setAutoCloseSession(false);
 
-        // only close session at the end
-        this.setAutoCloseSession(false);
+            DfvPlayer dfvPlayer = this.getDfvPlayerByDfvNumber(dfvNumber);
 
-        DfvPlayer dfvPlayer = this.getDfvPlayerByDfvNumber(dfvNumber);
+            if (dfvPlayer == null) {
+                return null;
+            }
 
-        if (dfvPlayer == null) {
-            return null;
-        }
+            UserMapper userMapper = this.sqlSession.getMapper(UserMapper.class);
+            user = userMapper.getByDfvPlayer(dfvPlayer.getId());
 
-        UserMapper userMapper = this.sqlSession.getMapper(UserMapper.class);
-        User user = userMapper.getByDfvPlayer(dfvPlayer.getId());
+            if (user == null) {
+                return null;
+            }
 
-        if (user == null) {
-            return null;
-        }
+            user.setDfvPlayer(dfvPlayer);
+        } finally {
+            // set autoclose to original value
+            this.setAutoCloseSession(orgCloseSession);
 
-        user.setDfvPlayer(dfvPlayer);
-
-        // set autoclose to original value
-        this.setAutoCloseSession(orgCloseSession);
-
-        if (this.sqlSession != null && this.autoCloseSession) {
-            this.sqlSession.close();
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
         }
 
         return user;
     }
 
     public DfvPlayer getDfvPlayerByDfvNumber(int dfvNumber) {
-        DfvPlayerMapper dfvPlayerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
-        return dfvPlayerMapper.getByDfvNumber(dfvNumber);
+        try {
+            DfvPlayerMapper dfvPlayerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
+            return dfvPlayerMapper.getByDfvNumber(dfvNumber);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 
     public MailCode getMailCode(String code) {
-        MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);
-        return mcMapper.get(code);
+        try {
+            MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);
+            return mcMapper.get(code);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 
     public void deleteMailCode(String code) {
-        MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);
-        mcMapper.delete(code);
-        this.sqlSession.commit();
+        try {
+            MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);
+            mcMapper.delete(code);
+            this.sqlSession.commit();
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 
     public boolean saveMailCode(MailCode mailCode) {
-        MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);
-        mcMapper.deletePreviousEntries(mailCode);
-        int insertedRows = mcMapper.insert(mailCode);
-        this.sqlSession.commit();
-        return insertedRows == 1;
+        try {
+            MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);
+            mcMapper.deletePreviousEntries(mailCode);
+            int insertedRows = mcMapper.insert(mailCode);
+            this.sqlSession.commit();
+            return insertedRows == 1;
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 
     public User getUserByEmail(String email) {
         final boolean orgCloseSession = this.autoCloseSession;
+        try {
+            // only close session at the end
+            this.setAutoCloseSession(false);
 
-        // only close session at the end
-        this.setAutoCloseSession(false);
+            UserMapper userMapper = this.sqlSession.getMapper(UserMapper.class);
+            User user = userMapper.getByEmail(email);
+            return user;
+        } finally {
+            // set autoclose to original value
+            this.setAutoCloseSession(orgCloseSession);
 
-        UserMapper userMapper = this.sqlSession.getMapper(UserMapper.class);
-        User user = userMapper.getByEmail(email);
-
-        // set autoclose to original value
-        this.setAutoCloseSession(orgCloseSession);
-
-        if (this.sqlSession != null && this.autoCloseSession) {
-            this.sqlSession.close();
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
         }
 
-        return user;
     }
 
     public List<User> findUser(String searchString) {
@@ -628,23 +704,29 @@ public class DataStore {
     }
 
     public void addAdminToTeam(Team team, User admin) {
+        // try-finally block is inside modifyTeamAdmin
         this.modifyTeamAdmin(team, admin, (t, a) -> {
             final TeamMapper mapper = this.sqlSession.getMapper(t.getMapper());
             mapper.addAdmin(t, a);
         });
+
     }
 
     public void removeAdminFromTeam(Team team, User admin) {
+        // try - finally block is inside modifyTeamAdmin method
         this.modifyTeamAdmin(team, admin, (t, a) -> {
             final TeamMapper mapper = this.sqlSession.getMapper(t.getMapper());
             mapper.removeAdmin(t, a);
         });
+
     }
 
     public void removeAllAdminsFromTeam(Team team) {
+        // try-finally block is inside modifyTeamAdmin
         TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
         teamMapper.removeAllAdmins(team);
         this.sqlSession.commit();
+
     }
 
     private void modifyTeamAdmin(Team team, User admin, BiConsumer<Team, User> dbAction) {

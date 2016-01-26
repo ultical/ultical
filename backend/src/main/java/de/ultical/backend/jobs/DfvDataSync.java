@@ -1,8 +1,5 @@
 package de.ultical.backend.jobs;
 
-import javax.ws.rs.WebApplicationException;
-
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +36,7 @@ public class DfvDataSync extends Job {
 
             try {
                 dal.getAssociations();
-            } catch (WebApplicationException | PersistenceException pe) {
+            } catch (Exception pe) {
                 LOGGER.error("Updating DFV associations failed!", pe);
             }
 
@@ -48,7 +45,7 @@ public class DfvDataSync extends Job {
 
             try {
                 dcl.getClubs();
-            } catch (WebApplicationException | PersistenceException pe) {
+            } catch (Exception pe) {
                 LOGGER.error("Updating DFV clubs failed!", pe);
             }
 
@@ -56,7 +53,7 @@ public class DfvDataSync extends Job {
 
             try {
                 diw.getDfvMvNames();
-            } catch (WebApplicationException | PersistenceException pe) {
+            } catch (Exception pe) {
                 LOGGER.error("Updating DFV profiles failed!", pe);
             }
 
