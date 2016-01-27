@@ -51,6 +51,7 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 	function changeLanguage(locale) {
 		$translate.use(locale);
 		$rootScope.activeLang = locale;
+	    amMoment.changeLocale(locale);
 		$scope.selectedLanguage = locale.toUpperCase();
 	}
 
