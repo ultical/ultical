@@ -74,6 +74,7 @@
 								<div class="form-group" ng-class="{'has-error': inputForm.contactEmail.$touched && inputForm.contactEmail.$invalid}">
 									<label for="tteContactEmail">{{ 'team.edit.contactEmailLabel' | translate }}</label>
 									<input name="contactEmail" type="email" class="form-control" id="tteContactEmail" ng-model="teamToEdit.contactEmail" placeholder="{{ 'team.edit.contactEmailPlaceholder' | translate }}" />
+									<span class="help-block">{{ 'team.edit.contactEmailHelp' | translate }}</span>
 								</div>
 							</div>
 						</div>

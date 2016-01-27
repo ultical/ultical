@@ -302,15 +302,15 @@ angular.module('ultical.team', [])
 				switch(errorResponse.message.substring(0,4)) {
 				case 'e101':
 					// this player is already part of another roster in this season and division
-					alerter.error('', 'team.roster.playerAlreadyInRoster', {container: '#add-player-error' , duration: 5});
+					alerter.error('', 'team.roster.playerAlreadyInRoster', {container: '#add-player-error' , duration: 10});
 					break;
 				case 'e102':
 					// this player has the wrong gender
-					alerter.error('', 'team.roster.playerWrongGender', { container: '#add-player-error', duration: 5});
+					alerter.error('', 'team.roster.playerWrongGender', { container: '#add-player-error', duration: 10});
 					break;
 				case 'e103':
 					// this player has not the right age for this division
-					alerter.error('', 'team.roster.playerWrongAge', { container: '#add-player-error', duration: 5});
+					alerter.error('', 'team.roster.playerWrongAge', { container: '#add-player-error', duration: 10});
 					break;
 				}
 			}
