@@ -8,12 +8,14 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Location extends Identifiable {
 
+    private String title;
+    private boolean main;
     private double longitude, latitude;
     private String city;
     private String country;
     private String countryCode;
     private String street;
-    private int zipCode;
+    private String zipCode;
     private String additionalInfo;
 
     @Override

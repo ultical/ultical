@@ -26,7 +26,7 @@ public class Event extends Identifiable {
 
     private TournamentEdition tournamentEdition;
 
-    private Location location;
+    private List<Location> locations;
 
     // subset of the tournaments divisions and participants
     @MinSize(1)

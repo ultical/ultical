@@ -669,4 +669,36 @@
 	<changeSet author="bas" id="bas44">
 		<tagDatabase tag="v1.2" />
 	</changeSet>
+	<changeSet author="bas" id="bas45">
+		<createTable tableName="EVENT_LOCATION">
+			<column name="event" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="location" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="fk_event_location_event"
+			referencedTableName="EVENT" baseColumnNames="event" baseTableName="EVENT_LOCATION"
+			referencedColumnNames="id" onDelete="CASCADE" />
+		<addForeignKeyConstraint constraintName="fk_event_location_location"
+			referencedTableName="LOCATION" baseColumnNames="location"
+			baseTableName="EVENT_LOCATION" referencedColumnNames="id" onDelete="CASCADE" />
+		<dropForeignKeyConstraint baseTableName="EVENT"
+			constraintName="fk_event_location" />
+		<dropColumn tableName="EVENT" columnName="location" />
+		<addColumn tableName="LOCATION">
+			<column name="title" type="VARCHAR(100)" />
+			<column name="is_main" type="BOOLEAN" defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas46">
+		<tagDatabase tag="bas_v1.3" />
+	</changeSet>
+	<changeSet author="bas" id="bas47">
+		<modifyDataType tableName="LOCATION" columnName="zip_code" newDataType="VARCHAR(20)"/>
+	</changeSet>
+	<changeSet author="bas" id="bas48">
+		<tagDatabase tag="bas_v1.4" />
+	</changeSet>
 </databaseChangeLog>
