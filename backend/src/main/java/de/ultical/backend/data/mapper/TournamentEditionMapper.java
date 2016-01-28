@@ -20,7 +20,7 @@ import de.ultical.backend.model.TournamentFormat;
 public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
 
     final String editionSelectBase = "SELECT id, version, tournament_format, alternative_name, season, "
-            + "registration_start, registration_end, hashtag," + "organizer, alternative_matchday_name "
+            + "registration_start, registration_end, hashtag, organizer, alternative_matchday_name "
             + "FROM TOURNAMENT_EDITION";
 
     // INSERT

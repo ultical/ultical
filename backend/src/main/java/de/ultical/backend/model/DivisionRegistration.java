@@ -13,6 +13,7 @@ public abstract class DivisionRegistration extends Identifiable {
     // define division about gender and age
     private DivisionType divisionType;
     private DivisionAge divisionAge;
+    private String divisionIdentifier;
 
     private int numberSpots;
 }

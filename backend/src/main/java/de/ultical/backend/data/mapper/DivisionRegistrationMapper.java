@@ -23,7 +23,7 @@ import de.ultical.backend.model.TournamentEdition;
 
 public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistration> {
 
-    final String divisionSelect = "SELECT id, version, division_age, division_type, number_of_spots, is_player_registration FROM DIVISION_REGISTRATION";
+    final String divisionSelect = "SELECT id, version, division_age, division_type, number_of_spots, is_player_registration, division_identifier FROM DIVISION_REGISTRATION";
 
     // INSERT
     @InsertProvider(type = DivisionRegistrationInsertProvider.class, method = "getInsertSql")
@@ -33,7 +33,7 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
     // UPDATE
     @Override
     @Update({ "UPDATE DIVISION_REGISTRATION SET version=version+1, division_age=#{divisionAge},",
-            "division_type=#{division_type}, number_of_spots=#{numberOfSpots}",
+            "division_type=#{division_type}, number_of_spots=#{numberOfSpots}, division_identifier=#{divisionIdentifier, jdbcType=VARCHAR}",
             "WHERE version=#{version} AND id=#{id}" })
     Integer update(DivisionRegistration entity);
 
@@ -50,6 +50,7 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
                     @Result(column = "id", property = "registeredTeams", javaType = TeamRegistration.class, many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForDivision") ) }),
             @Case(value = "true", type = DivisionRegistrationPlayers.class) }, jdbcType = JdbcType.BOOLEAN)
     @Results({ @Result(column = "division_age", property = "divisionAge"),
+            @Result(column = "division_identifier", property = "divisionIdentifier"),
             @Result(column = "division_type", property = "divisionType"),
             @Result(column = "number_of_spots", property = "numberSpots") })
     DivisionRegistration get(int id);
@@ -60,6 +61,7 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
             @Case(type = DivisionRegistrationTeams.class, value = "false"),
             @Case(type = DivisionRegistrationPlayers.class, value = "true") }, jdbcType = JdbcType.BOOLEAN)
     @Results({ @Result(column = "division_age", property = "divisionAge"),
+            @Result(column = "division_identifier", property = "divisionIdentifier"),
             @Result(column = "division_type", property = "divisionType"),
             @Result(column = "number_of_spots", property = "numberSpots") })
     List<DivisionRegistration> getAll();
@@ -70,6 +72,7 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
                     @Result(column = "id", property = "registeredTeams", many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForDivision") ) }),
             @Case(value = "true", type = DivisionRegistrationPlayers.class) }, jdbcType = JdbcType.BOOLEAN)
     @Results({ @Result(column = "division_age", property = "divisionAge"),
+            @Result(column = "division_identifier", property = "divisionIdentifier"),
             @Result(column = "division_type", property = "divisionType"),
             @Result(column = "number_of_spots", property = "numberSpots") })
     List<DivisionRegistration> getRegistrationsForEdition(int editionId);
