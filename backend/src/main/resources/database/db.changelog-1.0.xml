@@ -669,4 +669,8 @@
 	<changeSet author="bas" id="bas44">
 		<tagDatabase tag="v1.2" />
 	</changeSet>
+	<changeSet author="bas" id="bas49">
+		<dropDefaultValue tableName="DIVISION_REGISTRATION"
+			columnName="division_identifier" />
+	</changeSet>
 </databaseChangeLog>
