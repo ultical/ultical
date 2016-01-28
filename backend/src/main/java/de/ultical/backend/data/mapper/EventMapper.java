@@ -22,8 +22,9 @@ public interface EventMapper extends BaseMapper<Event> {
 
     // INSERT
     @Override
-    @Insert({ "INSERT INTO EVENT (matchday_number, tournament_edition, start_date, end_date, local_organizer) VALUES",
-            "(#{matchdayNumber, jdbcType=INTEGER},#{tournamentEdition.id, jdbcType=INTEGER},#{startDate, jdbcType=DATE},#{endDate, jdbcType=DATE},#{localOrganizer.id, jdbcType=INTEGER})" })
+    @Insert({
+            "INSERT INTO EVENT (matchday_number, tournament_edition, start_date, end_date, local_organizer, info) VALUES",
+            "(#{matchdayNumber, jdbcType=INTEGER},#{tournamentEdition.id, jdbcType=INTEGER},#{startDate, jdbcType=DATE},#{endDate, jdbcType=DATE},#{localOrganizer.id, jdbcType=INTEGER}, #{info, jdbcType=VARCHAR})" })
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Event event);
 
@@ -33,7 +34,8 @@ public interface EventMapper extends BaseMapper<Event> {
     // UPDATE
     @Override
     @Update({ "UPDATE EVENT SET version=version+1, tournament_edition=#{tournamentEdition.id},",
-            "start_date=#{startDate}, end_date=#{endDate},", "local_organizer=#{localOrganizer.id, jdbcType=INTEGER}",
+            "start_date=#{startDate}, end_date=#{endDate},",
+            "local_organizer=#{localOrganizer.id, jdbcType=INTEGER}, info=#{info, jdbcType=VARCHAR}",
             "WHERE version=#{version} AND id=#{id}" })
     Integer update(Event entity);
 
@@ -56,6 +58,7 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "tournament_edition", property = "tournamentEdition", one = @One(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.getForEvent") ),
             @Result(column = "id", property = "locations", many = @Many(select = "de.ultical.backend.data.mapper.LocationMapper.getForEvent") ),
             @Result(column = "start_date", property = "startDate"), @Result(column = "end_date", property = "endDate"),
+            @Result(column = "info", property = "info"),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForEvent") ),
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent") ),
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") , javaType = Contact.class) })
@@ -68,6 +71,7 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "tournament_edition", property = "tournamentEdition", one = @One(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.getForEvent") ),
             @Result(column = "id", property = "locations", many = @Many(select = "de.ultical.backend.data.mapper.LocationMapper.getForEvent") ),
             @Result(column = "start_date", property = "startDate"), @Result(column = "end_date", property = "endDate"),
+            @Result(column = "info", property = "info"),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForEvent") ),
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent") ),
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") , javaType = Contact.class) })
@@ -79,6 +83,7 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "tournament_edition", property = "tournamentEdition", one = @One(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.get") ),
             @Result(column = "id", property = "locations", many = @Many(select = "de.ultical.backend.data.mapper.LocationMapper.getForEvent") ),
             @Result(column = "start_date", property = "startDate"), @Result(column = "end_date", property = "endDate"),
+            @Result(column = "info", property = "info"),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForEvent") ),
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent") ),
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") , javaType = Contact.class) })

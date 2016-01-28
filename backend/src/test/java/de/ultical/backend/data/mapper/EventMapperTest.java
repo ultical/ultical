@@ -38,6 +38,7 @@ public class EventMapperTest {
     private static TournamentEdition edition;
     private static Season season;
     private static TournamentFormat format;
+    private static String info = "This is some information";
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -81,6 +82,7 @@ public class EventMapperTest {
         this.event.setLocations(locations);
         this.event.setEndDate(LocalDate.of(2015, 12, 6));
         this.event.setStartDate(LocalDate.of(2015, 12, 5));
+        this.event.setInfo(info);
 
         Fee fee = new Fee();
         fee.setAmount(14.14);
@@ -120,6 +122,10 @@ public class EventMapperTest {
         Assert.assertThat(0, CoreMatchers.not(CoreMatchers.equalTo(this.event.getId())));
         final int eventId = this.event.getId();
 
+        LocationMapper locMapper = DBRULE.getSession().getMapper(location.getMapper());
+        locMapper.insert(location);
+        locMapper.addToEvent(this.event.getId(), location.getId());
+
         Event readEvent = mapper.get(eventId);
         assertNotNull(readEvent);
         assertEquals(1, readEvent.getVersion());
@@ -129,6 +135,7 @@ public class EventMapperTest {
         assertNotNull(readEvent.getLocalOrganizer());
         assertNotNull(readEvent.getLocations());
         assertEquals(1, readEvent.getLocations().size());
+        assertEquals(info, readEvent.getInfo());
         assertNotNull(readEvent.getTournamentEdition());
         assertTrue(readEvent.getTournamentEdition() instanceof TournamentEdition);
 
@@ -147,6 +154,7 @@ public class EventMapperTest {
         assertNotNull(readEvent.getFees());
         assertNotNull(readEvent.getLocalOrganizer());
         assertNotNull(readEvent.getLocations());
+        assertEquals(info, readEvent.getInfo());
         assertEquals(1, readEvent.getLocations().size());
         assertNotNull(readEvent.getTournamentEdition());
         assertTrue(readEvent.getTournamentEdition() instanceof TournamentEdition);

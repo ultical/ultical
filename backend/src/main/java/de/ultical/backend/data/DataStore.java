@@ -1,5 +1,6 @@
 package de.ultical.backend.data;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -228,10 +229,23 @@ public class DataStore {
         }
     }
 
-    public Roster getRosterOfPlayerSeason(int playerId, int seasonId, String divisionAge, String divisionType) {
+    public List<LocalDate> getRosterBlockingDates(int rosterId) {
         try {
             RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
-            return rosterMapper.getByPlayerSeasonDivision(playerId, seasonId, divisionAge, divisionType);
+            return rosterMapper.getBlockingDate(rosterId);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public List<Roster> getRosterOfPlayerSeason(int playerId, int seasonId, String divisionAge, String divisionType) {
+        try {
+            RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
+            return rosterMapper.getByPlayerSeasonDivisionQualified(playerId, seasonId, divisionAge, divisionType);
+            // return rosterMapper.getByPlayerSeasonDivision(playerId, seasonId,
+            // divisionAge, divisionType);
         } finally {
             if (this.sqlSession != null && this.autoCloseSession) {
                 this.sqlSession.close();

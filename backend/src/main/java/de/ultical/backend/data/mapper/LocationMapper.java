@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -19,6 +20,9 @@ public interface LocationMapper extends BaseMapper<Location> {
     @Insert("INSERT INTO LOCATION (title, is_main, latitude, longitude, city, street, zip_code, country, country_code, additional_info) VALUES (#{title, jdbcType=VARCHAR}, #{main, jdbcType=BOOLEAN}, #{latitude, jdbcType=DOUBLE}, #{longitude, jdbcType=DOUBLE}, #{city, jdbcType=VARCHAR}, #{street, jdbcType=VARCHAR}, #{zipCode, jdbcType=VARCHAR}, #{country, jdbcType=VARCHAR}, #{countryCode, jdbcType=VARCHAR}, #{additionalInfo, jdbcType=VARCHAR})")
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Location entity);
+
+    @Insert("INSERT INTO EVENT_LOCATION (event, location) VALUES (#{eventId}, #{locationId})")
+    Integer addToEvent(@Param("eventId") int eventId, @Param("locationId") int locationId);
 
     // UPDATE
     @Override

@@ -1,5 +1,6 @@
 package de.ultical.backend.data.mapper;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
@@ -67,8 +68,8 @@ public interface RosterMapper extends BaseMapper<Roster> {
             @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
     List<Roster> getForTeam(Integer teamId);
 
-    // get roster that contains specific player in one season to check for
-    // uniqueness
+    // get roster of a specific team in one season to check for
+    // roster uniqueness
     @Select({ SELECT_STMT,
             "WHERE team = #{teamId} AND season = #{seasonId} AND division_age = #{divisionAge} AND division_type = #{divisionType}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version") })
@@ -76,11 +77,32 @@ public interface RosterMapper extends BaseMapper<Roster> {
             @Param("divisionAge") String divisionAge, @Param("divisionType") String divisionType);
 
     // get roster that contains specific player in one season to check for
-    // uniqueness
+    // player uniqueness
     @Select({ SELECT_STMT,
             "LEFT JOIN ROSTER_PLAYERS rp ON ROSTER.id = rp.roster WHERE rp.player = #{playerId} AND ROSTER.season = #{seasonId} AND division_age = #{divisionAge} AND division_type = #{divisionType}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version") })
-    Roster getByPlayerSeasonDivision(@Param("playerId") Integer playerId, @Param("seasonId") Integer seasonId,
+    List<Roster> getByPlayerSeasonDivision(@Param("playerId") Integer playerId, @Param("seasonId") Integer seasonId,
             @Param("divisionAge") String divisionAge, @Param("divisionType") String divisionType);
 
+    // combine getBlockingDate and getByPlayerSeasonDivision and check if a
+    // player is eligable to be added to a roster - either because she is not
+    // yet on a roster for this season, divisionage/-type or because her team
+    // failed to qualify on their first attempt
+    @Select({ "SELECT e.start_date AS blockingDate FROM EVENT e",
+            "JOIN TOURNAMENT_EDITION te ON e.tournament_edition = te.id JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = te.id",
+            "JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id JOIN TEAM t ON tr.team = t.id",
+            "JOIN ROSTER r ON r.team = t.id AND r.season = te.season AND r.division_age = dr.division_age AND r.division_type = dr.division_type",
+            "WHERE tr.status = 'CONFIRMED' AND tr.not_qualified = false AND r.id", "IN (SELECT ROSTER.id FROM ROSTER",
+            "LEFT JOIN ROSTER_PLAYERS rp ON ROSTER.id = rp.roster",
+            "WHERE rp.player = #{playerId} AND ROSTER.season = #{seasonId} AND division_age = #{divisionAge} AND division_type = #{divisionType})" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version") })
+    List<Roster> getByPlayerSeasonDivisionQualified(@Param("playerId") Integer playerId,
+            @Param("seasonId") Integer seasonId, @Param("divisionAge") String divisionAge,
+            @Param("divisionType") String divisionType);
+
+    // get blocking date for roster
+    @Select({ "SELECT e.start_date AS blockingDate FROM EVENT e",
+            "JOIN TOURNAMENT_EDITION te ON e.tournament_edition = te.id JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = te.id JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id JOIN TEAM t ON tr.team = t.id JOIN ROSTER r ON r.team = t.id AND r.season = te.season AND r.division_age = dr.division_age AND r.division_type = dr.division_type",
+            "WHERE tr.status = 'CONFIRMED' AND tr.not_qualified = false AND r.id = #{rosterId}" })
+    List<LocalDate> getBlockingDate(int rosterId);
 }

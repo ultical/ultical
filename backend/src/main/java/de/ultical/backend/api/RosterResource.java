@@ -1,11 +1,13 @@
 package de.ultical.backend.api;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -33,6 +35,7 @@ import de.ultical.backend.model.DivisionType;
 import de.ultical.backend.model.Gender;
 import de.ultical.backend.model.Player;
 import de.ultical.backend.model.Roster;
+import de.ultical.backend.model.RosterPlayer;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
 
@@ -115,12 +118,13 @@ public class RosterResource {
             if (player != null) {
                 // check if player is already in a roster of this season and
                 // division
-                Roster result = this.dataStore.getRosterOfPlayerSeason(player.getId(), roster.getSeason().getId(),
+
+                List<Roster> result = this.dataStore.getRosterOfPlayerSeason(player.getId(), roster.getSeason().getId(),
                         roster.getDivisionAge().name(), roster.getDivisionType().name());
 
-                if (result != null) {
+                if (result.size() > 0) {
                     // this player is already in a different roster of this
-                    // season
+                    // season (in a qualified team)
                     throw new WebApplicationException(
                             "e101 - Player is already in a different roster of this season and division",
                             Status.CONFLICT);
@@ -222,13 +226,46 @@ public class RosterResource {
             Authenticator.assureTeamAdmin(this.dataStore, roster.getTeam().getId(), currentUser);
 
             try {
+                // get list of start-dates of official tournaments of this
+                // division and season that the team of the roster attends
+                List<LocalDate> blockingDates = this.dataStore.getRosterBlockingDates(rosterId);
+
+                RosterPlayer rosterPlayerToDelete = null;
+                for (RosterPlayer rosterPlayer : roster.getPlayers()) {
+                    if (rosterPlayer.getPlayer().getId() == playerId) {
+                        rosterPlayerToDelete = rosterPlayer;
+                    }
+                }
+
+                if (rosterPlayerToDelete == null) {
+                    throw new WebApplicationException("Player not found in Roster", Status.NOT_FOUND);
+                }
+
+                LocalDate today = LocalDate.now();
+
+                boolean playerBlocked = false;
+                for (LocalDate blockingDate : blockingDates) {
+                    // take all blocking dates including today
+                    if (!blockingDate.isAfter(today)) {
+                        // if the blocking date is after the day the player was
+                        // added, he is blocked
+                        if (blockingDate.isAfter(rosterPlayerToDelete.getDateAdded())) {
+                            playerBlocked = true;
+                        }
+                    }
+                }
+
+                if (playerBlocked) {
+                    throw new WebApplicationException(
+                            "Roster cannot be deleted, because an official tournament has taken place in this division and season with this team attending",
+                            Status.FORBIDDEN);
+                }
+
                 this.dataStore.removePlayerFromRoster(playerId, rosterId);
             } catch (PersistenceException pe) {
                 throw new WebApplicationException("Accessing the database failes!");
             }
-
         }
-
     }
 
     @DELETE
@@ -243,8 +280,46 @@ public class RosterResource {
             Authenticator.assureTeamAdmin(this.dataStore, rosterToDelete.getTeam().getId(), currentUser);
 
             try {
+                // get list of start-dates of official tournaments of this
+                // division and season that the team of the roster attends
+                List<LocalDate> blockingDates = this.dataStore.getRosterBlockingDates(rosterId);
+
+                LocalDate today = LocalDate.now();
+
+                boolean rosterBlocked = false;
+                for (LocalDate blockingDate : blockingDates) {
+                    if (!blockingDate.isAfter(today)) {
+                        rosterBlocked = true;
+                    }
+                }
+
+                if (rosterBlocked) {
+                    throw new WebApplicationException(
+                            "Roster cannot be deleted, because an official tournament has taken place in this division and season with this team attending",
+                            Status.FORBIDDEN);
+                }
 
                 this.dataStore.remove(rosterId, Roster.class);
+            } catch (PersistenceException pe) {
+                throw new WebApplicationException("Accessing the database failes!");
+            }
+        }
+    }
+
+    @GET
+    @Path("{rosterId}/blocking")
+    public List<LocalDate> getBlockingDates(@Auth @NotNull User currentUser, @PathParam("rosterId") int rosterId)
+            throws Exception {
+        if (this.dataStore == null) {
+            throw new WebApplicationException();
+        }
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            Roster rosterToEdit = this.dataStore.get(rosterId, Roster.class);
+
+            Authenticator.assureTeamAdmin(this.dataStore, rosterToEdit.getTeam().getId(), currentUser);
+
+            try {
+                return this.dataStore.getRosterBlockingDates(rosterId);
             } catch (PersistenceException pe) {
                 throw new WebApplicationException("Accessing the database failes!");
             }

@@ -44,6 +44,8 @@ public class Event extends Identifiable {
 
     private Contact localOrganizer;
 
+    private String info;
+
     @Override
     public Class<EventMapper> getMapper() {
         return EventMapper.class;

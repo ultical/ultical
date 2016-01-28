@@ -696,8 +696,11 @@
 		<tagDatabase tag="bas_v1.3" />
 	</changeSet>
 	<changeSet author="bas" id="bas47">
-		<modifyDataType tableName="LOCATION" columnName="zip_code"
-			newDataType="VARCHAR(20)" />
+		<renameColumn tableName="LOCATION" oldColumnName="zip_code"
+			newColumnName="zip_code_int" columnDataType="BIGINT" />
+		<addColumn tableName="LOCATION">
+			<column name="zip_code" type="VARCHAR(20)" />
+		</addColumn>
 	</changeSet>
 	<changeSet author="bas" id="bas48">
 		<tagDatabase tag="bas_v1.4" />
@@ -714,26 +717,45 @@
 			baseTableName="TEAM" referencedColumnNames="id" onDelete="CASCADE" />
 	</changeSet>
 	<changeSet author="bas" id="bas51">
-	<dropColumn tableName="TEAM_REGISTRATION" columnName="sequence"/>
-		<addColumn tableName="TEAM_REGISTRATION">
+		<dropTable tableName="TEAM_REGISTRATION" />
+		<createTable tableName="TEAM_REGISTRATION">
 			<column name="id" type="BIGINT" autoIncrement="true">
 				<constraints nullable="false" primaryKey="true" />
 			</column>
 			<column name="version" type="BIGINT" defaultValueNumeric="1">
 				<constraints nullable="false" />
 			</column>
+			<column name="division_registration" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="time_registered" type="TIMESTAMP"
+				defaultValueComputed="CURRENT_TIMESTAMP()">
+				<constraints nullable="false" />
+			</column>
+			<column name="team" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="comment" type="TEXT" />
 			<column name="sequence" type="SMALLINT" />
 			<column name="standing" type="SMALLINT" />
-			<column name="spirit_score" type="FLOAT(4,2)" />
+			<column name="spirit_score" type="FLOAT(4)" />
 			<column name="paid" type="BOOLEAN" defaultValueBoolean="false" />
 			<column name="status" type="VARCHAR(20)" defaultValue="PENDING">
 				<constraints nullable="false" />
 			</column>
 			<column name="not_qualified" type="BOOLEAN"
 				defaultValueBoolean="false" />
-		</addColumn>
+		</createTable>
 	</changeSet>
 	<changeSet author="bas" id="bas52">
 		<tagDatabase tag="bas_v1.5" />
+	</changeSet>
+	<changeSet author="bas" id="bas53">
+		<addColumn tableName="EVENT">
+			<column name="info" type="TEXT" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas54">
+		<tagDatabase tag="bas_v1.6" />
 	</changeSet>
 </databaseChangeLog>
