@@ -10,6 +10,11 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = DivisionRegistration.class)
 public abstract class DivisionRegistration extends Identifiable {
+
+    public enum DivisionRegistrationStatus {
+        PENDING, CONFIRMED, WAITING_LIST, DECLINED
+    }
+
     // define division about gender and age
     private DivisionType divisionType;
     private DivisionAge divisionAge;

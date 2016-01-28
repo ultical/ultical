@@ -696,9 +696,44 @@
 		<tagDatabase tag="bas_v1.3" />
 	</changeSet>
 	<changeSet author="bas" id="bas47">
-		<modifyDataType tableName="LOCATION" columnName="zip_code" newDataType="VARCHAR(20)"/>
+		<modifyDataType tableName="LOCATION" columnName="zip_code"
+			newDataType="VARCHAR(20)" />
 	</changeSet>
 	<changeSet author="bas" id="bas48">
 		<tagDatabase tag="bas_v1.4" />
+	</changeSet>
+	<changeSet author="bas" id="bas49">
+		<dropDefaultValue tableName="DIVISION_REGISTRATION"
+			columnName="division_identifier" />
+	</changeSet>
+	<changeSet author="bas" id="bas50">
+		<dropForeignKeyConstraint baseTableName="TEAM"
+			constraintName="fk_team_location" />
+		<addForeignKeyConstraint constraintName="fk_team_location"
+			referencedTableName="LOCATION" baseColumnNames="location"
+			baseTableName="TEAM" referencedColumnNames="id" onDelete="CASCADE" />
+	</changeSet>
+	<changeSet author="bas" id="bas51">
+	<dropColumn tableName="TEAM_REGISTRATION" columnName="sequence"/>
+		<addColumn tableName="TEAM_REGISTRATION">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="version" type="BIGINT" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="sequence" type="SMALLINT" />
+			<column name="standing" type="SMALLINT" />
+			<column name="spirit_score" type="FLOAT(4,2)" />
+			<column name="paid" type="BOOLEAN" defaultValueBoolean="false" />
+			<column name="status" type="VARCHAR(20)" defaultValue="PENDING">
+				<constraints nullable="false" />
+			</column>
+			<column name="not_qualified" type="BOOLEAN"
+				defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas52">
+		<tagDatabase tag="bas_v1.5" />
 	</changeSet>
 </databaseChangeLog>
