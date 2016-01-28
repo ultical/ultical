@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -75,7 +76,9 @@ public class EventMapperTest {
     @Before
     public void setUp() throws Exception {
         this.event = new Event();
-        this.event.setLocation(location);
+        List<Location> locations = new ArrayList<Location>();
+        locations.add(location);
+        this.event.setLocations(locations);
         this.event.setEndDate(LocalDate.of(2015, 12, 6));
         this.event.setStartDate(LocalDate.of(2015, 12, 5));
 
@@ -124,7 +127,8 @@ public class EventMapperTest {
         assertEquals(LocalDate.of(2015, 12, 5), readEvent.getStartDate());
         assertNotNull(readEvent.getFees());
         assertNotNull(readEvent.getLocalOrganizer());
-        assertNotNull(readEvent.getLocation());
+        assertNotNull(readEvent.getLocations());
+        assertEquals(1, readEvent.getLocations().size());
         assertNotNull(readEvent.getTournamentEdition());
         assertTrue(readEvent.getTournamentEdition() instanceof TournamentEdition);
 
@@ -142,7 +146,8 @@ public class EventMapperTest {
         assertEquals(LocalDate.of(2015, 12, 4), readEvent.getStartDate());
         assertNotNull(readEvent.getFees());
         assertNotNull(readEvent.getLocalOrganizer());
-        assertNotNull(readEvent.getLocation());
+        assertNotNull(readEvent.getLocations());
+        assertEquals(1, readEvent.getLocations().size());
         assertNotNull(readEvent.getTournamentEdition());
         assertTrue(readEvent.getTournamentEdition() instanceof TournamentEdition);
 

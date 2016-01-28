@@ -22,7 +22,7 @@ public class LocationMapperTest {
 
     private static final String ADDITIONAL_INFO = "le Karli";
 
-    private static final int ZIPCODE = 14482;
+    private static final String ZIPCODE = "14482";
 
     private static final String COUNTRY = "Germany";
 
