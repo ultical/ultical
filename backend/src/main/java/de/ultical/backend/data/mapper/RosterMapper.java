@@ -89,8 +89,7 @@ public interface RosterMapper extends BaseMapper<Roster> {
     // player is eligable to be added to a roster - either because she is not
     // yet on a roster for this season, divisionage/-type or because her team
     // failed to qualify on their first attempt
-    @Select({ "SELECT tr.id FROM TEAM_REGISTRATION tr JOIN TEAM t ON tr.team = t.id",
-            "JOIN ROSTER r ON r.team = t.id AND r.division_age = dr.division_age AND r.division_type = dr.division_type",
+    @Select({ "SELECT tr.id FROM TEAM_REGISTRATION tr JOIN TEAM t ON tr.team = t.id", "JOIN ROSTER r ON r.team = t.id",
             "WHERE tr.status = 'CONFIRMED' AND tr.not_qualified = false AND r.id", "IN (SELECT ROSTER.id FROM ROSTER",
             "LEFT JOIN ROSTER_PLAYERS rp ON ROSTER.id = rp.roster",
             "WHERE rp.player = #{playerId} AND ROSTER.season = #{seasonId} AND division_age = #{divisionAge} AND division_type = #{divisionType})" })
