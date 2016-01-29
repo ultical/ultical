@@ -192,10 +192,10 @@
 					<div class="panel-heading cursor-pointer" role="tab">
 						<h4 class="panel-title" bs-collapse-toggle>
 							<span>{{ team.name }}</span>
-							<div ng-if="false && team.own" ng-click="deleteTeam(team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.remove.tooltip' | translate }}" bs-tooltip>
+							<div ng-if="false && team.x.own" ng-click="deleteTeam(team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.remove.tooltip' | translate }}" bs-tooltip>
 								<i class="fa fa-remove"></i>
 							</div>
-							<div ng-if="team.own" ng-click="editTeam(team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.edit.tooltip' | translate }}" bs-tooltip>
+							<div ng-if="team.x.own" ng-click="editTeam(team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.edit.tooltip' | translate }}" bs-tooltip>
 								<i class="fa fa-pencil"></i>
 							</div>
 						</h4>
@@ -265,18 +265,18 @@
 							</div>
 
 							<!-- ROSTERS -->
-							<div class="row" ng-if="team.rosters.length > 0 || (team.own && !bigButtons)">
+							<div class="row" ng-if="team.rosters.length > 0 || (team.x.own && !bigButtons)">
 								<div class="col-md-12">
 									<i class="fa fa-list fa-fw"></i>
 									<span ng-hide="team.rosters.length == 0 && editingRoster == -1">{{ 'team.roster.label' | translate }}</span>
 
-									<span ng-show="!bigButtons && team.own && !editing && editingRoster == -1 && team.rosters.length != 0"> &nbsp;(</span>
-									<a class="alternative-button-link" ng-click="createNewRoster(team)" ng-show="!bigButtons && team.own && !editing && editingRoster == -1">{{ 'team.roster.newRoster' | translate }}</a>
-									<span ng-show="!bigButtons && team.own && !editing && editingRoster == -1 && team.rosters.length != 0">)</span>
+									<span ng-show="!bigButtons && team.x.own && !editing && editingRoster == -1 && team.rosters.length != 0"> &nbsp;(</span>
+									<a class="alternative-button-link" ng-click="createNewRoster(team)" ng-show="!bigButtons && team.x.own && !editing && editingRoster == -1">{{ 'team.roster.newRoster' | translate }}</a>
+									<span ng-show="!bigButtons && team.x.own && !editing && editingRoster == -1 && team.rosters.length != 0">)</span>
 								</div>
 							</div>
 
-							<div class="row margin-top ffade-in animation-delay" ng-show="bigButtons && team.own && !editing && editingRoster == -1">
+							<div class="row margin-top ffade-in animation-delay" ng-show="bigButtons && team.x.own && !editing && editingRoster == -1">
 								<div class="col-md-12">
 									<button ng-click="createNewRoster(team)" type="button" class="btn btn-primary">
 										<span class="glyphicon glyphicon-plus-sign glyphicon-big" aria-hidden="true"></span>
@@ -336,10 +336,10 @@
 												<h3 class="panel-title" bs-collapse-toggle>
 													<span>{{ roster.season | season : true }} - {{ roster | division }}</span>
 													<span class="panel-title-addon">&nbsp;&nbsp;(&nbsp;{{ roster.players.length }}&nbsp;)</span>
-													<div ng-if="team.own" ng-click="deleteRoster(roster, team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.removeTooltip' | translate }}" bs-tooltip>
+													<div ng-if="team.x.own" ng-click="deleteRoster(roster, team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.removeTooltip' | translate }}" bs-tooltip>
 														<i class="fa fa-remove"></i>
 													</div>
-													<div ng-if="team.own" ng-click="editRoster(roster, team, $index)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip>
+													<div ng-if="team.x.own" ng-click="editRoster(roster, team, $index)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip>
 														<i class="fa fa-pencil"></i>
 													</div>
 												</h3>
@@ -349,7 +349,7 @@
 												<div class="panel-body">
 
 													<!-- adding player to roster - input -->
-													<div class="row" ng-if="team.own && editingRosterPlayers == roster.id">
+													<div class="row" ng-if="team.x.own && editingRosterPlayers == roster.id">
 														<div class="col-md-12">
 															<div class="row">
 																<div class="col-md-12">
@@ -380,7 +380,7 @@
 														<div class="col-md-12">
 															<div ng-if="loggedIn()" class="roster-list" ng-repeat="rosterPlayer in roster.players | orderBy : 'player.lastName'">
 																{{ rosterPlayer.player | playername : true }}
-																<span ng-if="team.own && editingRosterPlayers == roster.id" ng-click="removePlayerFromRoster(rosterPlayer.player, roster, team)" class="ffade player-actions cursor-pointer" data-title="{{ 'team.roster.removePlayerTooltip' | translate }}" bs-tooltip>
+																<span ng-if="team.x.own && editingRosterPlayers == roster.id" ng-click="removePlayerFromRoster(rosterPlayer.player, roster, team)" class="ffade player-actions cursor-pointer" data-title="{{ 'team.roster.removePlayerTooltip' | translate }}" bs-tooltip>
 																	<i class="fa fa-remove"></i>
 																</span>
 															</div>

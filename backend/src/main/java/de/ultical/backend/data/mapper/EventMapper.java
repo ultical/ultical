@@ -80,7 +80,6 @@ public interface EventMapper extends BaseMapper<Event> {
     @Select("SELECT * FROM EVENT WHERE tournament_edition=#{editionId}")
     @Results({ @Result(column = "matchday_number", property = "matchdayNumber"),
             @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
-            @Result(column = "tournament_edition", property = "tournamentEdition", one = @One(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.get") ),
             @Result(column = "id", property = "locations", many = @Many(select = "de.ultical.backend.data.mapper.LocationMapper.getForEvent") ),
             @Result(column = "start_date", property = "startDate"), @Result(column = "end_date", property = "endDate"),
             @Result(column = "info", property = "info"),

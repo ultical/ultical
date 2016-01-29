@@ -71,4 +71,18 @@ public interface TournamentFormatMapper extends BaseMapper<TournamentFormat> {
             @Result(column = "id", property = "editions", many = @Many(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.getEditionsForFormat", fetchType = FetchType.EAGER) ) })
     public List<TournamentFormat> getAll();
 
+    /*
+     * get format by event id
+     */
+    @Select({ "SELECT tf.* FROM TOURNAMENT_FORMAT tf",
+            "JOIN TOURNAMENT_EDITION te ON te.tournament_format = tf.id JOIN EVENT e ON e.tournament_edition = te.id",
+            "WHERE e.id = #{eventId}" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "name", property = "name"), @Result(column = "url", property = "url"),
+            @Result(column = "description", property = "description"),
+            @Result(column = "association", property = "association", one = @One(select = "de.ultical.backend.data.mapper.AssociationMapper.get") ),
+            @Result(column = "id", property = "editions", many = @Many(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.getEditionsForFormat", fetchType = FetchType.EAGER) ),
+            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForFormat") ) })
+    public TournamentFormat getByEvent(@Param("eventId") int eventId);
+
 }

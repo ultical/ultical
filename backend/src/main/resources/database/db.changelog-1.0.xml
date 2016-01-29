@@ -758,4 +758,19 @@
 	<changeSet author="bas" id="bas54">
 		<tagDatabase tag="bas_v1.6" />
 	</changeSet>
+	<changeSet author="bas" id="bas55">
+		<dropColumn tableName="LOCATION" columnName="zip_code_int" />
+	</changeSet>
+	<changeSet author="bas" id="bas56">
+		<addForeignKeyConstraint constraintName="fk_team_registration_team"
+			referencedTableName="TEAM" baseColumnNames="team" baseTableName="TEAM_REGISTRATION"
+			referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_team_registration_division_registration"
+			referencedTableName="DIVISION_REGISTRATION" baseColumnNames="division_registration"
+			baseTableName="TEAM_REGISTRATION" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet author="bas" id="bas57">
+		<tagDatabase tag="bas_v1.7" />
+	</changeSet>
+	
 </databaseChangeLog>

@@ -27,6 +27,7 @@ import de.ultical.backend.data.mapper.RosterPlayerMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
 import de.ultical.backend.data.mapper.TeamMapper;
 import de.ultical.backend.data.mapper.TeamRegistrationMapper;
+import de.ultical.backend.data.mapper.TournamentFormatMapper;
 import de.ultical.backend.data.mapper.UserMapper;
 import de.ultical.backend.model.Association;
 import de.ultical.backend.model.Club;
@@ -41,6 +42,7 @@ import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.TournamentEdition;
+import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.model.User;
 
 /**
@@ -676,6 +678,17 @@ public class DataStore {
         try {
             DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
             return nameMapper.find(searchString);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public TournamentFormat getFormatByEvent(int eventId) {
+        try {
+            TournamentFormatMapper tfMapper = this.sqlSession.getMapper(TournamentFormatMapper.class);
+            return tfMapper.getByEvent(eventId);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();
