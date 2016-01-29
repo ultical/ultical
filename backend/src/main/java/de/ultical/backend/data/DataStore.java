@@ -243,9 +243,9 @@ public class DataStore {
     public List<Roster> getRosterOfPlayerSeason(int playerId, int seasonId, String divisionAge, String divisionType) {
         try {
             RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
-            return rosterMapper.getByPlayerSeasonDivisionQualified(playerId, seasonId, divisionAge, divisionType);
-            // return rosterMapper.getByPlayerSeasonDivision(playerId, seasonId,
-            // divisionAge, divisionType);
+            // return rosterMapper.getByPlayerSeasonDivisionQualified(playerId,
+            // seasonId, divisionAge, divisionType);
+            return rosterMapper.getByPlayerSeasonDivision(playerId, seasonId, divisionAge, divisionType);
         } finally {
             if (this.sqlSession != null && this.autoCloseSession) {
                 this.sqlSession.close();
