@@ -103,21 +103,19 @@ public class TeamResource {
         }
     }
 
-    private Team prepareTeam(Team t) throws Exception {
+    private Team prepareTeam(Team t) {
         // Validation
         if (t.getName().length() < 3) {
             throw new WebApplicationException("Teamname must be at least 2 characters", Status.LENGTH_REQUIRED);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
-            // check if a team with the same name already exists
-            Team checkTeam = this.dataStore.getTeamByName(t.getName());
-            if (checkTeam != null && checkTeam.getId() != t.getId()) {
-                throw new WebApplicationException("Teamname already taken", Status.CONFLICT);
-            }
-
-            return t;
+        // check if a team with the same name already exists
+        Team checkTeam = this.dataStore.getTeamByName(t.getName());
+        if (checkTeam != null && checkTeam.getId() != t.getId()) {
+            throw new WebApplicationException("Teamname already taken", Status.CONFLICT);
         }
+
+        return t;
     }
 
     @PUT
