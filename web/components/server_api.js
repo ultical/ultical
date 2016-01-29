@@ -73,7 +73,7 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 
 	return {
 		getEvent: function(eventId, callback) {
-			get('event/' + eventId, callback);
+			get('events/' + eventId, callback);
 		},
 
 		getEvents: function(callback) {
@@ -93,6 +93,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			del('roster/' + roster.id, callback);
 		},
 
+		getRosterBlockingDate: function(rosterId, callback) {
+			get('roster/' + rosterId + '/blocking', callback);
+		},
+
 		getAllClubs: function(callback) {
 			get('club/all', callback);
 		},
@@ -107,6 +111,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 
 		getOwnTeams: function(callback) {
 			get('teams/own', callback);
+		},
+
+		getFormatByEvent: function(eventId, callback) {
+			get('format/event/' + eventId, callback);
 		},
 
 		saveTeam: function(team, oldTeam, callback) {
@@ -134,6 +142,9 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 
 			var that = this;
 
+			// delete properties added for frontend
+			delete(teamToSend.x);
+
 			if (teamToSend.id == -1) {
 				// this is a team newly created
 				post('teams', teamToSend, function(newTeam) {
@@ -141,7 +152,6 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 				});
 
 			} else {
-				delete(teamToSend.own);
 				put('teams/' + teamToSend.id, teamToSend, function() {
 					that.getTeam(teamToSend.id, callback);
 				});
