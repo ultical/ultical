@@ -106,7 +106,7 @@ public class EventsResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{eventId}/divisions")
     public DivisionRegistration addDivision(@PathParam("eventId") Integer eventId, DivisionRegistration div,
-            @Auth @NotNull User currentUser) {
+            @Auth @NotNull User currentUser) throws Exception {
         this.checkDatatStore();
         /*
          * we only need the event's id, thus we build a fake-event instead of
@@ -116,7 +116,7 @@ public class EventsResource {
         TournamentEdition fakeEdition = new TournamentEdition();
         fakeEdition.setId(eventId);
         DivisionRegistration storedDiv;
-        try {
+        try (AutoCloseable c = this.dataStore.getClosable()) {
             storedDiv = this.dataStore.addDivisionToEdition(fakeEdition, div);
         } catch (PersistenceException pe) {
             throw new WebApplicationException(pe);
@@ -146,9 +146,10 @@ public class EventsResource {
 
     @DELETE
     @Path("/{eventId}/divisions/{divisionId}")
-    public void deleteDivision(@PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser) {
+    public void deleteDivision(@PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser)
+            throws Exception {
         this.checkDatatStore();
-        try {
+        try (AutoCloseable c = this.dataStore.getClosable()) {
             DivisionRegistrationTeams fakeDiv = new DivisionRegistrationTeams();
             fakeDiv.setId(divId.intValue());
             this.dataStore.deleteDivision(fakeDiv);

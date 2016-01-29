@@ -58,12 +58,14 @@ public class TeamResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("own")
-    public List<Team> get(@Auth @NotNull User user) {
+    public List<Team> get(@Auth @NotNull User user) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
-        List<Team> result = this.dataStore.getTeamsByUser(user.getId());
-        return result;
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            return this.dataStore.getTeamsByUser(user.getId());
+        }
     }
 
     @POST
@@ -101,19 +103,21 @@ public class TeamResource {
         }
     }
 
-    private Team prepareTeam(Team t) {
+    private Team prepareTeam(Team t) throws Exception {
         // Validation
         if (t.getName().length() < 3) {
             throw new WebApplicationException("Teamname must be at least 2 characters", Status.LENGTH_REQUIRED);
         }
 
-        // check if a team with the same name already exists
-        Team checkTeam = this.dataStore.getTeamByName(t.getName());
-        if (checkTeam != null && checkTeam.getId() != t.getId()) {
-            throw new WebApplicationException("Teamname already taken", Status.CONFLICT);
-        }
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            // check if a team with the same name already exists
+            Team checkTeam = this.dataStore.getTeamByName(t.getName());
+            if (checkTeam != null && checkTeam.getId() != t.getId()) {
+                throw new WebApplicationException("Teamname already taken", Status.CONFLICT);
+            }
 
-        return t;
+            return t;
+        }
     }
 
     @PUT

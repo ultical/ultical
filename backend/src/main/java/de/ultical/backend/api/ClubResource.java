@@ -30,12 +30,12 @@ public class ClubResource {
     @GET
     @Path("all")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Club> getAllClubs() {
+    public List<Club> getAllClubs() throws Exception {
 
-        try {
+        try (AutoCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getAllClubs();
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed" + pe.getMessage(),
+            throw new WebApplicationException("Accessing database failed - ClubResource - " + pe.getMessage(),
                     Status.INTERNAL_SERVER_ERROR);
         }
     }

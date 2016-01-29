@@ -5,6 +5,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -29,33 +30,39 @@ public class AuthResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public AuthResponse AuthRequest(User requestedUser) {
+    public AuthResponse AuthRequest(User requestedUser) throws Exception {
         if (requestedUser == null) {
             return null;
         }
-
-        User foundUser = this.dataStore.getUserByEmail(requestedUser.getEmail());
-
-        if (foundUser == null) {
-            return new AuthResponse(AuthResponseStatus.WRONG_CREDENTIALS);
+        if (this.dataStore == null) {
+            throw new WebApplicationException(500);
         }
 
-        if (!BCrypt.checkpw(requestedUser.getPassword(), foundUser.getPassword())) {
-            return new AuthResponse(AuthResponseStatus.WRONG_CREDENTIALS);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+
+            User foundUser = this.dataStore.getUserByEmail(requestedUser.getEmail());
+
+            if (foundUser == null) {
+                return new AuthResponse(AuthResponseStatus.WRONG_CREDENTIALS);
+            }
+
+            if (!BCrypt.checkpw(requestedUser.getPassword(), foundUser.getPassword())) {
+                return new AuthResponse(AuthResponseStatus.WRONG_CREDENTIALS);
+            }
+
+            if (!foundUser.isEmailConfirmed()) {
+                return new AuthResponse(AuthResponseStatus.EMAIL_NOT_CONFIRMED);
+            }
+
+            if (!foundUser.isDfvEmailOptIn()) {
+                return new AuthResponse(AuthResponseStatus.DFV_EMAIL_NOT_OPT_IN);
+            }
+
+            AuthResponse successResponse = new AuthResponse(AuthResponseStatus.SUCCESS);
+            successResponse.setUser(foundUser);
+
+            return successResponse;
         }
-
-        if (!foundUser.isEmailConfirmed()) {
-            return new AuthResponse(AuthResponseStatus.EMAIL_NOT_CONFIRMED);
-        }
-
-        if (!foundUser.isDfvEmailOptIn()) {
-            return new AuthResponse(AuthResponseStatus.DFV_EMAIL_NOT_OPT_IN);
-        }
-
-        AuthResponse successResponse = new AuthResponse(AuthResponseStatus.SUCCESS);
-        successResponse.setUser(foundUser);
-
-        return successResponse;
     }
 
 }
