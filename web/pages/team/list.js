@@ -187,10 +187,15 @@ angular.module('ultical.team', [])
 		});
 	};
 
+	$scope.oldPlayerNames = [];
+
 	// return player proposals
 	$scope.getPlayers = function(playerName) {
 		if (playerName.length < 4) {
 			return [];
+		}
+		if (angular.isObject(playerName)) {
+			return $scope.oldPlayerNames;
 		}
 
 		return serverApi.getPlayerProposals(playerName, function(result) {
@@ -200,6 +205,7 @@ angular.module('ultical.team', [])
 					player.fullName += ' <i><small>(' + player.club.name + ')</small></i>';
 				}
 			});
+			$scope.oldPlayerNames = result;
 			return result;
 		});
 	};
@@ -213,10 +219,15 @@ angular.module('ultical.team', [])
 		});
 	}
 
+	$scope.oldLocations = [];
+
 	// return location-proposals from mapbox api
 	$scope.getLocations = function(locationName) {
 		if (locationName.length < 4) {
 			return [];
+		}
+		if (angular.isObject(locationName)) {
+			return oldLocations;
 		}
 
 		return mapService.getLocations(locationName, 'city', function(locations) {
@@ -225,6 +236,7 @@ angular.module('ultical.team', [])
 				location.id = $scope.locationToEdit.id;
 				location.version = $scope.locationToEdit.version;
 			});
+			$scope.oldLocations = locations;
 			return locations;
 		});
 	};
