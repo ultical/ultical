@@ -28,7 +28,7 @@
 				</tr>
 
 				<!-- event -->
-				<tr ng-repeat-end class="event-list-row" ang-click="goToEvent(event.id)">
+				<tr ng-repeat-end class="event-list-row" ang-click="goToEvent(event)">
 					<td class="event-list-date event-list-date-left">
 						<span>{{ event.startDate | amDateFormat : 'D' }}</span>
 					</td>
@@ -46,8 +46,9 @@
 <!-- 								<i class="fa fa-venus-mars"></i> -->
 								<bas ng-repeat="divReg in event.tournamentEdition.divisionRegistrations">{{ divReg | division }}<bas ng-if="!$last">, </bas></bas>
 							</span>
-							<span class="margin-right" ng-if="event.location | notEmpty">
-								<i class="fa fa-map-marker"></i> {{ event.location | location : 'city' }}
+
+							<span class="margin-right" ng-if="false == (event.locations | emptyLocation)">
+								<i class="fa fa-map-marker"></i> {{ event.locations | location : 'city' }}
 							</span>
 							&nbsp;
 						</div>
