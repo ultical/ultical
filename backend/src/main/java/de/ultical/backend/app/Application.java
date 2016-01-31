@@ -17,7 +17,6 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 
-import de.spinscale.dropwizard.jobs.JobsBundle;
 import de.ultical.backend.api.AuthResource;
 import de.ultical.backend.api.ClubResource;
 import de.ultical.backend.api.DfvMvNameResource;
@@ -31,6 +30,7 @@ import de.ultical.backend.api.TeamResource;
 import de.ultical.backend.api.TournamentFormatResource;
 import de.ultical.backend.api.TournamentResource;
 import de.ultical.backend.api.UserResource;
+import de.ultical.backend.app.dfv.DfvBundle;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.LocalDateMixIn;
 import de.ultical.backend.data.mapper.UserMapper;
@@ -63,8 +63,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         ObjectMapper objectMapper = bootstrap.getObjectMapper();
         objectMapper.addMixIn(LocalDate.class, LocalDateMixIn.class);
 
-        // add Jobs bundle to provide schedules tasks
-        bootstrap.addBundle(new JobsBundle("de.ultical.backend.jobs"));
+        bootstrap.addBundle(new DfvBundle());
     }
 
     @Override
