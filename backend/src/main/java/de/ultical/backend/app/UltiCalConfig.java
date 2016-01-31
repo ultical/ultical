@@ -30,16 +30,9 @@ public class UltiCalConfig extends Configuration {
         private String mailCatcher = "";
     }
 
-    @Data
-    public static class JobsConfig {
-        private boolean dfvMvSyncEnabled = false;
-    }
-
     private DfvApiConfig dfvApi;
 
     private DebugMode debugMode;
-
-    private JobsConfig jobs;
 
     @NotNull
     private DataSourceFactory database;
@@ -52,4 +45,6 @@ public class UltiCalConfig extends Configuration {
     private String frontendUrl;
 
     private boolean corsFilterEnabled = false;
+
+    private boolean useDFVRestriction = false;
 }

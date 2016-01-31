@@ -12,6 +12,7 @@ dfvApi:
   token: token
   secret: secret
   url: https://dfv-mv.de/api
+  dfvMvSyncEnabled: false
  
 database:
   driverClass: com.mysql.jdbc.Driver
@@ -28,5 +29,6 @@ mail:
 frontendUrl: http://example.com:1234/front
 corsFilterEnabled: false
 
-jobs:
-  dfvMvSyncEnabled: false
+#change the following line to true if you want to use the 'dfv-mode'
+useDFVRestriction: false
+  

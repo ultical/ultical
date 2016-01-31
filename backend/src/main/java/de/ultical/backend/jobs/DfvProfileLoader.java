@@ -26,7 +26,7 @@ public class DfvProfileLoader {
 
     public boolean getDfvMvNames() throws Exception {
 
-        if (!this.config.getJobs().isDfvMvSyncEnabled()) {
+        if (!this.config.getDfvApi().isDfvMvSyncEnabled()) {
             return false;
         }
 
