@@ -125,6 +125,9 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			// prevent bad requests if the backend tries to parse a string into a location objects
 			if (!angular.isObject(team.club)) {
 				teamToSend.club = null;
+			} else {
+				delete(teamToSend.club.x);
+				delete(teamToSend.club.association);
 			}
 
 			var emailsString = '';
