@@ -228,7 +228,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 
 	function storeWithoutLoops(element, elementIndexed, loopIndex) {
 		// to avoid loops only process every element once
-		if (element.id in elementIndexed && elementIndexed[element.id].x.loopIndex == loopIndex) {
+		if (element.id in elementIndexed && element.x in elementIndexed && elementIndexed[element.id].x.loopIndex == loopIndex) {
 			return false;
 		}
 
