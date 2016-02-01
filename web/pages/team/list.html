@@ -47,12 +47,13 @@
 
 						<div class="row">
 							<div class="col-md-12">
-								<div class="form-group has-feedback">
+								<div class="form-group has-feedback" ng-class="{'has-error': (inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing}">
 									<label for="tteCity">{{ 'team.edit.locationCityLabel' | translate }}</label>
-									<input bas-object-typeahead="location" type="text" id="ttyCity" container="body" class="form-control" ng-model="teamToEdit.location" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" data-comparator="locationMatching"
+									<input name="location" required bas-object-typeahead="location" type="text" id="ttyCity" container="body" class="form-control" ng-model="teamToEdit.location" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" data-comparator="locationMatching"
 										bs-options="location | locationObject as location | location for location in getLocations($viewValue)" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" bs-typeahead
 									/>
 									<span ng-show="teamToEdit.location.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
+									<span ng-if="(inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing" class="help-block">{{ 'team.edit.locationMissing' | translate }}</span>
 								</div>
 							</div>
 						</div>

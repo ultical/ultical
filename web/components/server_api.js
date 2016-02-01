@@ -117,7 +117,7 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			get('format/event/' + eventId, callback);
 		},
 
-		saveTeam: function(team, oldTeam, callback) {
+		saveTeam: function(team, oldTeam, callback, errorCallback) {
 			var teamToSend = angular.copy(team);
 
 			teamToSend.rosters = [];
@@ -151,12 +151,12 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			if (teamToSend.id == -1) {
 				// this is a team newly created
 				post('teams', teamToSend, function(newTeam) {
-					that.getTeam(newTeam.id, callback);
+					that.getTeam(newTeam.id, callback, errorCallback);
 				});
 
 			} else {
 				put('teams/' + teamToSend.id, teamToSend, function() {
-					that.getTeam(teamToSend.id, callback);
+					that.getTeam(teamToSend.id, callback, errorCallback);
 				});
 			}
 		},

@@ -173,7 +173,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				}
 			},
 
-			saveTeam: function(team, callback, activeList) {
+			saveTeam: function(team, callback, errorCallback, activeList) {
 				var that = this;
 				var oldTeam;
 				if (team.id == -1) {
@@ -218,7 +218,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 					} else if (activeList == 'all') {
 						callback(that.teams);
 					}
-				});
+				}, errorCallback);
 			},
 	}
 

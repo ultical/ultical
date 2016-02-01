@@ -219,6 +219,7 @@ TRANSLATIONS['de'] = {
 				facebookUrlLabel: 'Facebook',
 				facebookUrlPlaceholder: 'https://www.facebook.com/...',
 				locationCityLabel: 'Stadt/Land',
+				locationMissing: 'Bitte gib eine Stadt oder ein Land ein, um dein Team zuzuordnen.',
 				clubLabel: 'Verein',
 				clubPlaceholder: 'Name des Vereins',
 			},

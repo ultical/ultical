@@ -78,7 +78,14 @@ angular.module('ultical.team', [])
 		$scope.locationToEdit = angular.copy($scope.teamToEdit.location);
 	};
 
+	$scope.locationIsMissing = false;
+
 	$scope.saveTeam = function(team) {
+		if (!angular.isObject(team.location) || isEmpty(team.location.city)) {
+			$scope.locationIsMissing = true;
+			return;
+		}
+
 		$scope.addAdmin($scope.newAdmin.obj);
 		$scope.addEmail($scope.newEmail);
 
@@ -86,10 +93,18 @@ angular.module('ultical.team', [])
 			$scope.teams = ownTeams;
 			$scope.editing = false;
 			$scope.panel.activePanel = -1;
-		}, $scope.tabs.activeTab);
+			$scope.locationIsMissing = false;
+		}, function(errorResponse) {
+			// probably a validation error
+			if (errorResponse.status == 417) {
+				$scope.locationIsMissing = true;
+			}
+		},
+		$scope.tabs.activeTab);
 	};
 
 	$scope.cancel = function() {
+		$scope.locationIsMissing = false;
 		$scope.teamToEdit = {};
 		$scope.editing = false;
 		$scope.panel.activePanel = -1;
@@ -227,7 +242,7 @@ angular.module('ultical.team', [])
 			return [];
 		}
 		if (angular.isObject(locationName)) {
-			return oldLocations;
+			return $scope.oldLocations;
 		}
 
 		return mapService.getLocations(locationName, 'city', function(locations) {
