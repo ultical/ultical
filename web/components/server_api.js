@@ -84,13 +84,13 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			get('season', callback);
 		},
 
-		postRoster: function(roster, teamId, callback) {
+		postRoster: function(roster, teamId, callback, errorCallback) {
 			roster.team = { id: teamId };
-			post('roster', roster, callback);
+			post('roster', roster, callback, errorCallback);
 		},
 
-		deleteRoster: function(roster, callback) {
-			del('roster/' + roster.id, callback);
+		deleteRoster: function(roster, callback, errorCallback) {
+			del('roster/' + roster.id, callback, errorCallback);
 		},
 
 		getRosterBlockingDate: function(rosterId, callback) {
@@ -195,8 +195,8 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			return get('dfvmvname?search=' + $filter('urlEncode')(playerName), callback);
 		},
 
-		removePlayerFromRoster: function(player, roster, callback) {
-			return del('roster/' + roster.id + '/player/' + player.id, callback);
+		removePlayerFromRoster: function(player, roster, callback, errorCallback) {
+			return del('roster/' + roster.id + '/player/' + player.id, callback, errorCallback);
 		},
 
 		addPlayerToRoster: function(player, roster, callback, errorCallback) {
