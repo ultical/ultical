@@ -118,6 +118,10 @@ button, input, optgroup, select, textarea {
   color: #777;
 }
 
+.nav li a {
+	margin: 0;
+}
+
 .navbar-body > ul:hover,
 .navbar-body ul:hover .navbar-text,
 .dropdown-menu > li > a:hover,
@@ -280,7 +284,7 @@ button, input, optgroup, select, textarea {
 /* disable rounded corners */
 .panel-group .panel, .panel, .panel-group, .panel-heading, .panel-footer,
 	.btn, .modal-content, .form-control, .popover, .dropdown-menu, .alert,
-	.nav-tabs>li>a {
+	.nav-tabs>li>a, .input-group-addon {
 	border-radius: 0px;
 }
 
@@ -350,6 +354,22 @@ select:not([multiple]) {
 }
 
 .event-list-row:hover {
-/*     background-color: #C2DAF3; */
-/* 	cursor: pointer; */
+    background-color: #C2DAF3;
+	cursor: pointer;
+}
+
+.page-sub-title {
+	font-size: 124%;
+}
+
+.location-panel {
+    padding-top: 8px;
+    margin-top: 5px;
+    padding-bottom: 8px;
+    padding-left: 15px;
+    border-left: 2px solid #DDDDDD;
+}
+
+.location-panel .strong {
+	font-weight: 500;
 }
