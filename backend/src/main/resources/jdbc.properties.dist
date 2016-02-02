@@ -2,3 +2,4 @@ jdbc.driverClassName=com.mysql.jdbc.Driver
 jdbc.url=jdbc:mysql://localhost:8889/ultical
 jdbc.username=root
 jdbc.password=root
+jdbc.maxConnections=30

@@ -87,7 +87,28 @@ app.filter('locationObject', ['$translate', function($translate) {
 	};
 }]);
 
-app.filter('location', ['$translate', 'locationObjectFilter', function ($translate, locationObjectFilter) {
+app.filter('emptyLocation', [function() {
+	return function(location) {
+		if (isEmpty(location) || !angular.isObject(location)) {
+			return true;
+		}
+		var result = true;
+		if (angular.isArray(location)) {
+			angular.forEach(location, function(loc) {
+				if (!isEmpty(loc.city)) {
+					result = false;;
+				}
+			});
+		} else {
+			if (!isEmpty(location.city)) {
+				result = false;
+			}
+		}
+		return result;
+	};
+}]);
+
+app.filter('location', ['$translate', 'locationObjectFilter', 'countrynameFilter', function ($translate, locationObjectFilter, countrynameFilter) {
 	return function (location, type) {
 		if (isEmpty(location)) {
 			return '';
@@ -95,6 +116,20 @@ app.filter('location', ['$translate', 'locationObjectFilter', function ($transla
 
 		if (undefined === type) {
 			type = 'full';
+		}
+
+		if (angular.isArray(location)) {
+			var mainLocation = null;
+			angular.forEach(location, function(loc) {
+				if (loc.main) {
+					mainLocation = loc;
+				}
+			});
+			if (mainLocation != null) {
+				location = mainLocation;
+			} else {
+				location = location[0];
+			}
 		}
 
 		// check if it's a raw location directly from mapbox or an location object
@@ -113,7 +148,7 @@ app.filter('location', ['$translate', 'locationObjectFilter', function ($transla
 	function getLocationFromObject(location, type) {
 		var locationString = '';
 
-		if (type == 'full') {
+		if (type == 'full' || type == 'googleMapsUrl') {
 			if (!isEmpty(location.street)) {
 				locationString += location.street;
 			}
@@ -130,15 +165,28 @@ app.filter('location', ['$translate', 'locationObjectFilter', function ($transla
 			if (!isEmpty(locationString)) {
 				locationString += ', ';
 			}
-			var countryTranslation = $translate.instant('countries.' + location.countryCode);
-			if (countryTranslation != 'countries.' + location.countryCode) {
-				locationString += countryTranslation;
-			} else {
-				locationString += location.country;
-			}
+			locationString += countrynameFilter(location);
 		}
+
+		if (type == 'googleMapsUrl') {
+			locationString = 'https://www.google.com/maps/place/' + locationString.split(' ').join('+');
+		}
+
 		return locationString;
 	}
+}]);
+
+app.filter('countryname', ['$translate', function($translate) {
+	return function(location) {
+		var countryString = '';
+		var countryTranslation = $translate.instant('countries.' + location.countryCode);
+		if (countryTranslation != 'countries.' + location.countryCode) {
+			countryString += countryTranslation;
+		} else {
+			countryString += location.country;
+		}
+		return countryString;
+	};
 }]);
 
 app.filter('username', ['playernameFilter', function(playernameFilter) {

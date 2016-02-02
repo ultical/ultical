@@ -20,7 +20,6 @@ import org.apache.ibatis.exceptions.PersistenceException;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
-import de.ultical.backend.model.Location;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
@@ -58,12 +57,14 @@ public class TeamResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("own")
-    public List<Team> get(@Auth @NotNull User user) {
+    public List<Team> get(@Auth @NotNull User user) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
-        List<Team> result = this.dataStore.getTeamsByUser(user.getId());
-        return result;
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            return this.dataStore.getTeamsByUser(user.getId());
+        }
     }
 
     @POST
@@ -78,8 +79,9 @@ public class TeamResource {
 
             t = this.prepareTeam(t);
 
-            if (t.getLocation() == null) {
-                t.setLocation(new Location());
+            if (t.getLocation() == null || t.getLocation().getCity() == null || t.getLocation().getCity().isEmpty()) {
+                throw new WebApplicationException("Location must be specified", Status.EXPECTATION_FAILED);
+                // t.setLocation(new Location());
             }
 
             this.dataStore.addNew(t.getLocation());
@@ -136,6 +138,11 @@ public class TeamResource {
 
             updatedTeam = this.prepareTeam(updatedTeam);
 
+            if (updatedTeam.getLocation() == null || updatedTeam.getLocation().getCity() == null
+                    || updatedTeam.getLocation().getCity().isEmpty()) {
+                throw new WebApplicationException(Status.EXPECTATION_FAILED);
+            }
+
             this.dataStore.update(updatedTeam.getLocation());
 
             boolean updated = false;
@@ -155,9 +162,7 @@ public class TeamResource {
             for (User admin : updatedTeam.getAdmins()) {
                 this.dataStore.addAdminToTeam(updatedTeam, admin);
             }
-
         }
-
     }
 
     @POST

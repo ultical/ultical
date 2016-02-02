@@ -9,6 +9,10 @@ angular.extend(CONFIG_OBJECT, {
 	// put default values for the app
 	general: {
 		// list of two-letter country codes
+		// when adding a locale make sure to have done the following:
+		// 1. include web/i18n/texts-<locale>.js
+		// 2. register locale in app.js - ...registerAvailableLanguageKeys
+		// 3. include bower_components/moment/local/<locale>.js
 		availableLanguages: ['DE'],
 		// map availableLanguages to its name (in this language, so it can be found
 		availableLanguagesFull: ['deutsch', 'spanisch'],
@@ -43,6 +47,9 @@ angular.extend(CONFIG_OBJECT, {
 	
 	brand: {
 		emailSupport: 'support@ultical.com',
+		emailContact: 'team@ultical.com',
+		bugLink: 'https://github.com/bastrapp/ultical/issues',
+		codeLink: 'https://github.com/bastrapp/ultical',
 	},
 
 });

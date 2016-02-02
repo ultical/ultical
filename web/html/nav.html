@@ -17,15 +17,15 @@
 		</div>
 
 		<div id="nav-bar-buttons" bs-collapse-target="c1" class="navbar-body">
-			<ul bs-collapse-toggle="c1" class="nav navbar-nav" ng-click="goTo('eventsList')">
+			<ul bs-collapse-toggle="c1" class="nav navbar-nav">
 				<li data-animation="am-flip-x" XXXbs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
-					<div class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</div>
+					<a ui-sref="app.eventsList({locale: activeLang })" class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</a>
 				</li>
 			</ul>
 
-			<ul bs-collapse-toggle="c1" class="nav navbar-nav" ng-click="goTo('teamsList')">
+			<ul class="nav navbar-nav">
 				<li>
-					<div class="navbar-text">{{ 'nav.teams' | translate }}</div>
+					<a  ui-sref="app.teamsList({locale: activeLang })" class="navbar-text">{{ 'nav.teams' | translate }}</a>
 				</li>
 			</ul>
 
@@ -35,8 +35,8 @@
 				</li>
 			</ul>
 			<ul class="dropdown-menu" role="menu">
-				<li><a ui-sref="app.teamsOwn">{{ 'nav.profileDropdown.ownTeams' | translate }}</a></li>
-				<li><a ui-sref="app.eventsList">{{ 'nav.profileDropdown.ownEvents' | translate }}</a></li>
+				<li><a ui-sref="app.teamsOwn({locale: activeLang })">{{ 'nav.profileDropdown.ownTeams' | translate }}</a></li>
+<!-- 				<li><a ui-sref="app.eventsList">{{ 'nav.profileDropdown.ownEvents' | translate }}</a></li> -->
 				<li class="divider"></li>
 				<li><a href="#" ng-click="logOut()">{{ 'nav.profileDropdown.logout' | translate }}</a></li>
 			</ul>

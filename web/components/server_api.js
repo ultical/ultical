@@ -73,7 +73,7 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 
 	return {
 		getEvent: function(eventId, callback) {
-			get('event/' + eventId, callback);
+			get('events/' + eventId, callback);
 		},
 
 		getEvents: function(callback) {
@@ -84,13 +84,17 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			get('season', callback);
 		},
 
-		postRoster: function(roster, teamId, callback) {
+		postRoster: function(roster, teamId, callback, errorCallback) {
 			roster.team = { id: teamId };
-			post('roster', roster, callback);
+			post('roster', roster, callback, errorCallback);
 		},
 
-		deleteRoster: function(roster, callback) {
-			del('roster/' + roster.id, callback);
+		deleteRoster: function(roster, callback, errorCallback) {
+			del('roster/' + roster.id, callback, errorCallback);
+		},
+
+		getRosterBlockingDate: function(rosterId, callback) {
+			get('roster/' + rosterId + '/blocking', callback);
 		},
 
 		getAllClubs: function(callback) {
@@ -109,7 +113,11 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			get('teams/own', callback);
 		},
 
-		saveTeam: function(team, oldTeam, callback) {
+		getFormatByEvent: function(eventId, callback) {
+			get('format/event/' + eventId, callback);
+		},
+
+		saveTeam: function(team, oldTeam, callback, errorCallback) {
 			var teamToSend = angular.copy(team);
 
 			teamToSend.rosters = [];
@@ -117,6 +125,9 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			// prevent bad requests if the backend tries to parse a string into a location objects
 			if (!angular.isObject(team.club)) {
 				teamToSend.club = null;
+			} else {
+				delete(teamToSend.club.x);
+				delete(teamToSend.club.association);
 			}
 
 			var emailsString = '';
@@ -134,16 +145,18 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 
 			var that = this;
 
+			// delete properties added for frontend
+			delete(teamToSend.x);
+
 			if (teamToSend.id == -1) {
 				// this is a team newly created
 				post('teams', teamToSend, function(newTeam) {
-					that.getTeam(newTeam.id, callback);
+					that.getTeam(newTeam.id, callback, errorCallback);
 				});
 
 			} else {
-				delete(teamToSend.own);
 				put('teams/' + teamToSend.id, teamToSend, function() {
-					that.getTeam(teamToSend.id, callback);
+					that.getTeam(teamToSend.id, callback, errorCallback);
 				});
 			}
 		},
@@ -185,8 +198,8 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			return get('dfvmvname?search=' + $filter('urlEncode')(playerName), callback);
 		},
 
-		removePlayerFromRoster: function(player, roster, callback) {
-			return del('roster/' + roster.id + '/player/' + player.id, callback);
+		removePlayerFromRoster: function(player, roster, callback, errorCallback) {
+			return del('roster/' + roster.id + '/player/' + player.id, callback, errorCallback);
 		},
 
 		addPlayerToRoster: function(player, roster, callback, errorCallback) {

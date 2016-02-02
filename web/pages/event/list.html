@@ -30,9 +30,7 @@
 					<a ng-href="{{ getEventUrl(event) }}">
 				<div class="col-md-7 event-list-row">
 						<div class="event-list-date event-list-date-left">{{ event.startDate | amDateFormat : 'D' }}</div>
-
 						<div class="event-list-date event-list-date-dash">-</div>
-
 						<div class="event-list-date event-list-date-right">{{ event.endDate | amDateFormat : 'D' }}</div>
 						<!-- <span ng-if="(event.startDate | amDateFormat : 'M') != (event.endDate | amDateFormat : 'M')">&nbsp;{{ event.endDate | amDateFormat : 'MMM' }}</span> -->
 

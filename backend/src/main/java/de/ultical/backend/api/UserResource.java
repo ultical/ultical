@@ -52,13 +52,13 @@ public class UserResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> getAllSeasons(@QueryParam("search") String searchString, @Auth User user) {
+    public List<User> getAllSeasons(@QueryParam("search") String searchString, @Auth User user) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
         List<User> result = null;
-        try {
+        try (AutoCloseable c = this.dataStore.getClosable()) {
             result = this.dataStore.findUser("%" + searchString + "%");
         } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);

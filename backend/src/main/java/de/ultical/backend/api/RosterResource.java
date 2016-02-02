@@ -36,6 +36,7 @@ import de.ultical.backend.model.Gender;
 import de.ultical.backend.model.Player;
 import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.RosterPlayer;
+import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
 
@@ -119,8 +120,8 @@ public class RosterResource {
                 // check if player is already in a roster of this season and
                 // division
 
-                List<Roster> result = this.dataStore.getRosterOfPlayerSeason(player.getId(), roster.getSeason().getId(),
-                        roster.getDivisionAge().name(), roster.getDivisionType().name());
+                List<TeamRegistration> result = this.dataStore.getTeamRegistrationOfPlayerSeason(player.getId(),
+                        roster.getSeason().getId(), roster.getDivisionAge().name(), roster.getDivisionType().name());
 
                 if (result.size() > 0) {
                     // this player is already in a different roster of this
@@ -280,16 +281,20 @@ public class RosterResource {
             Authenticator.assureTeamAdmin(this.dataStore, rosterToDelete.getTeam().getId(), currentUser);
 
             try {
-                // get list of start-dates of official tournaments of this
-                // division and season that the team of the roster attends
-                List<LocalDate> blockingDates = this.dataStore.getRosterBlockingDates(rosterId);
-
-                LocalDate today = LocalDate.now();
-
                 boolean rosterBlocked = false;
-                for (LocalDate blockingDate : blockingDates) {
-                    if (!blockingDate.isAfter(today)) {
-                        rosterBlocked = true;
+
+                // roster cannot be blocked if empty
+                if (rosterToDelete.getPlayers().size() > 0) {
+                    // get list of start-dates of official tournaments of this
+                    // division and season that the team of the roster attends
+                    List<LocalDate> blockingDates = this.dataStore.getRosterBlockingDates(rosterId);
+
+                    LocalDate today = LocalDate.now();
+
+                    for (LocalDate blockingDate : blockingDates) {
+                        if (!blockingDate.isAfter(today)) {
+                            rosterBlocked = true;
+                        }
                     }
                 }
 

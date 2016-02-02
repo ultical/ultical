@@ -16,6 +16,7 @@ import org.apache.ibatis.annotations.Update;
 
 import de.ultical.backend.model.Player;
 import de.ultical.backend.model.Roster;
+import de.ultical.backend.model.TeamRegistration;
 
 public interface RosterMapper extends BaseMapper<Roster> {
 
@@ -88,21 +89,20 @@ public interface RosterMapper extends BaseMapper<Roster> {
     // player is eligable to be added to a roster - either because she is not
     // yet on a roster for this season, divisionage/-type or because her team
     // failed to qualify on their first attempt
-    @Select({ "SELECT e.start_date AS blockingDate FROM EVENT e",
-            "JOIN TOURNAMENT_EDITION te ON e.tournament_edition = te.id JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = te.id",
-            "JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id JOIN TEAM t ON tr.team = t.id",
-            "JOIN ROSTER r ON r.team = t.id AND r.season = te.season AND r.division_age = dr.division_age AND r.division_type = dr.division_type",
+    @Select({ "SELECT tr.id FROM TEAM_REGISTRATION tr JOIN TEAM t ON tr.team = t.id", "JOIN ROSTER r ON r.team = t.id",
             "WHERE tr.status = 'CONFIRMED' AND tr.not_qualified = false AND r.id", "IN (SELECT ROSTER.id FROM ROSTER",
             "LEFT JOIN ROSTER_PLAYERS rp ON ROSTER.id = rp.roster",
             "WHERE rp.player = #{playerId} AND ROSTER.season = #{seasonId} AND division_age = #{divisionAge} AND division_type = #{divisionType})" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version") })
-    List<Roster> getByPlayerSeasonDivisionQualified(@Param("playerId") Integer playerId,
+    List<TeamRegistration> getTrByPlayerSeasonDivisionQualified(@Param("playerId") Integer playerId,
             @Param("seasonId") Integer seasonId, @Param("divisionAge") String divisionAge,
             @Param("divisionType") String divisionType);
 
     // get blocking date for roster
     @Select({ "SELECT e.start_date AS blockingDate FROM EVENT e",
-            "JOIN TOURNAMENT_EDITION te ON e.tournament_edition = te.id JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = te.id JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id JOIN TEAM t ON tr.team = t.id JOIN ROSTER r ON r.team = t.id AND r.season = te.season AND r.division_age = dr.division_age AND r.division_type = dr.division_type",
+            "JOIN TOURNAMENT_EDITION te ON e.tournament_edition = te.id JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = te.id",
+            "JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id JOIN TEAM t ON tr.team = t.id",
+            "JOIN ROSTER r ON r.team = t.id AND r.season = te.season AND r.division_age = dr.division_age AND r.division_type = dr.division_type",
             "WHERE tr.status = 'CONFIRMED' AND tr.not_qualified = false AND r.id = #{rosterId}" })
     List<LocalDate> getBlockingDate(int rosterId);
 }

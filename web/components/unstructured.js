@@ -3,12 +3,19 @@ function isEmpty(obj) {
 		return true;
 	}
 	if (!angular.isObject(obj)) {
-		return isEmptyString(obj);
+		switch (typeof obj) {
+		case 'string':
+			return isEmptyString(obj);
+			break;
+		case 'number':
+			return obj == 0;
+			break;
+		}
 	}
-	if (obj instanceof Array) {
+	if (angular.isArray(obj)) {
 		return obj.length == 0;
 	} else {
-		for(var prop in obj) {
+		for (var prop in obj) {
 			return false;
 		}
 	}
@@ -16,7 +23,7 @@ function isEmpty(obj) {
 }
 
 function isEmptyString(str) {
-	return undefined === str || null === str || str.length == 0 || str == '';
+	return undefined === str || null === str || str.length == 0 || str.trim() == '';
 }
 
 function stringStartsWith (string, prefix) {

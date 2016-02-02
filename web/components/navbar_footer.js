@@ -26,10 +26,6 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 		console.log("Create an event");
 	};
 
-	$scope.goTo = function(stateName) {
-		$state.go('app.' + stateName);
-	};
-
 	$scope.logOut = function() {
 		authorizer.logOut();
 		$state.reload();
