@@ -18,7 +18,7 @@ var app = angular.module('ultical',
 //router ui route
 app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 	// For any unmatched url, redirect to:
-	$urlRouterProvider.otherwise("/de/tournaments");
+	$urlRouterProvider.otherwise("/de/calendar");
 
 	var version = '3';
 
@@ -35,11 +35,11 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		template: '<ui-view>',
 	})
 	.state('app.start', {
-		url: "/tournaments",
+		url: "/calendar",
 		templateUrl: "pages/event/list.html?v="+version,
 	})
 	.state('app.eventsList', {
-		url: "/tournaments",
+		url: "/calendar",
 		templateUrl: "pages/event/list.html?v="+version,
 	})
 	.state('app.editionEdit', {
@@ -47,7 +47,7 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		templateUrl: "pages/event/edit.html?v="+version,
 	})
 	.state('app.eventShow', {
-		url: "/tournaments/{eventSlug}-t{eventId:int}",
+		url: "/{eventSlug}-t{eventId:int}",
 		templateUrl: "pages/event/show.html?v="+version,
 	})
 	.state('app.teamsList', {
