@@ -47,12 +47,13 @@
 
 						<div class="row">
 							<div class="col-md-12">
-								<div class="form-group has-feedback">
+								<div class="form-group has-feedback" ng-class="{'has-error': (inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing}">
 									<label for="tteCity">{{ 'team.edit.locationCityLabel' | translate }}</label>
-									<input bas-object-typeahead="location" type="text" id="ttyCity" container="body" class="form-control" ng-model="teamToEdit.location" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" data-comparator="locationMatching"
+									<input name="location" required bas-object-typeahead="location" type="text" id="ttyCity" container="body" class="form-control" ng-model="teamToEdit.location" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" data-comparator="locationMatching"
 										bs-options="location | locationObject as location | location for location in getLocations($viewValue)" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" bs-typeahead
 									/>
 									<span ng-show="teamToEdit.location.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
+									<span ng-if="(inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing" class="help-block">{{ 'team.edit.locationMissing' | translate }}</span>
 								</div>
 							</div>
 						</div>
@@ -184,7 +185,7 @@
 	</div>
 
 	<!-- TEAM LIST -->
-	<div class="row margin-top fade animation-delay" ng-hide="editing">
+	<div class="row margin-top fade" ng-hide="editing">
 
 		<div class="col-md-8">
 			<div class="panel-group" ng-model="panel.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
@@ -276,6 +277,12 @@
 								</div>
 							</div>
 
+							<div class="row">
+								<div class="col-md-12">
+									<div class="margin-top-small" id="roster-error{{ team.id }}"></div>
+								</div>
+							</div>
+
 							<div class="row margin-top ffade-in animation-delay" ng-show="bigButtons && team.x.own && !editing && editingRoster == -1">
 								<div class="col-md-12">
 									<button ng-click="createNewRoster(team)" type="button" class="btn btn-primary">
@@ -336,9 +343,6 @@
 												<h3 class="panel-title" bs-collapse-toggle>
 													<span>{{ roster.season | season : true }} - {{ roster | division }}</span>
 													<span class="panel-title-addon">&nbsp;&nbsp;(&nbsp;{{ roster.players.length }}&nbsp;)</span>
-													<div ng-if="team.x.own" ng-click="deleteRoster(roster, team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.removeTooltip' | translate }}" bs-tooltip>
-														<i class="fa fa-remove"></i>
-													</div>
 													<div ng-if="team.x.own" ng-click="editRoster(roster, team, $index)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip>
 														<i class="fa fa-pencil"></i>
 													</div>
@@ -367,10 +371,11 @@
 																		>
 																	</div>
 																</div>
-																<div class="row">
-																	<div class="col-md-3">
-																		<div class="btn btn-default" ng-click="rosterEditEnd(roster, team)">{{ 'general.done' | translate }}</div>
-																	</div>
+																<div class="col-md-2">
+																	<div class="btn btn-default" ng-click="rosterEditEnd(roster, team)">{{ 'general.done' | translate }}</div>
+																</div>
+																<div class="col-md-3 team-actions-link">
+																	<a href="#" ng-if="team.x.own && !roster.blocked" ng-click="deleteRoster(roster, team)" class="cursor-pointer">{{ 'team.roster.remove' | translate }}</a>
 																</div>
 															</div>
 														</div>
@@ -380,7 +385,7 @@
 														<div class="col-md-12">
 															<div ng-if="loggedIn()" class="roster-list" ng-repeat="rosterPlayer in roster.players | orderBy : 'player.lastName'">
 																{{ rosterPlayer.player | playername : true }}
-																<span ng-if="team.x.own && editingRosterPlayers == roster.id" ng-click="removePlayerFromRoster(rosterPlayer.player, roster, team)" class="ffade player-actions cursor-pointer" data-title="{{ 'team.roster.removePlayerTooltip' | translate }}" bs-tooltip>
+																<span ng-if="team.x.own && editingRosterPlayers == roster.id && !rosterPlayer.blocked" ng-click="removePlayerFromRoster(rosterPlayer.player, roster, team)" class="ffade player-actions cursor-pointer" data-title="{{ 'team.roster.removePlayerTooltip' | translate }}" bs-tooltip>
 																	<i class="fa fa-remove"></i>
 																</span>
 															</div>

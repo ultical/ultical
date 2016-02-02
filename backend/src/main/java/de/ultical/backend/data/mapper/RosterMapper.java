@@ -100,7 +100,9 @@ public interface RosterMapper extends BaseMapper<Roster> {
 
     // get blocking date for roster
     @Select({ "SELECT e.start_date AS blockingDate FROM EVENT e",
-            "JOIN TOURNAMENT_EDITION te ON e.tournament_edition = te.id JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = te.id JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id JOIN TEAM t ON tr.team = t.id JOIN ROSTER r ON r.team = t.id AND r.season = te.season AND r.division_age = dr.division_age AND r.division_type = dr.division_type",
+            "JOIN TOURNAMENT_EDITION te ON e.tournament_edition = te.id JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = te.id",
+            "JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id JOIN TEAM t ON tr.team = t.id",
+            "JOIN ROSTER r ON r.team = t.id AND r.season = te.season AND r.division_age = dr.division_age AND r.division_type = dr.division_type",
             "WHERE tr.status = 'CONFIRMED' AND tr.not_qualified = false AND r.id = #{rosterId}" })
     List<LocalDate> getBlockingDate(int rosterId);
 }

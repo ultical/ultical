@@ -73,11 +73,11 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				});
 			},
 
-			saveRoster: function(roster, team, callback) {
-				serverApi.postRoster(roster, team.id, callback);
+			saveRoster: function(roster, team, callback, errorCallback) {
+				serverApi.postRoster(roster, team.id, callback, errorCallback);
 			},
 
-			deleteRoster: function(roster, team) {
+			deleteRoster: function(roster, team, callback, errorCallback) {
 				serverApi.deleteRoster(roster, function() {
 					var rosterDeleteIdx = -1;
 					angular.forEach(team.rosters, function(teamRoster, idx) {
@@ -88,10 +88,11 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 					if (rosterDeleteIdx >= 0) {
 						team.rosters.splice(rosterDeleteIdx, 1);
 					}
-				});
+					callback();
+				}, errorCallback);
 			},
 
-			removePlayerFromRoster: function(player, roster, callback) {
+			removePlayerFromRoster: function(player, roster, callback, errorCallback) {
 				var that = this;
 				serverApi.removePlayerFromRoster(player, roster, function() {
 					var idxToRemove = -1;
@@ -104,7 +105,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 						roster.players.splice(idxToRemove, 1);
 					}
 					callback();
-				});
+				}, errorCallback);
 			},
 
 			addPlayerToRoster: function(player, roster, callback, errorCallback) {
@@ -172,7 +173,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				}
 			},
 
-			saveTeam: function(team, callback, activeList) {
+			saveTeam: function(team, callback, errorCallback, activeList) {
 				var that = this;
 				var oldTeam;
 				if (team.id == -1) {
@@ -217,7 +218,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 					} else if (activeList == 'all') {
 						callback(that.teams);
 					}
-				});
+				}, errorCallback);
 			},
 	}
 
@@ -227,7 +228,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 
 	function storeWithoutLoops(element, elementIndexed, loopIndex) {
 		// to avoid loops only process every element once
-		if (element.id in elementIndexed && elementIndexed[element.id].x.loopIndex == loopIndex) {
+		if (element.id in elementIndexed && element.x in elementIndexed && elementIndexed[element.id].x.loopIndex == loopIndex) {
 			return false;
 		}
 

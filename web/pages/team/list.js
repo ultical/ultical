@@ -2,8 +2,8 @@
 
 angular.module('ultical.team', [])
 
-.controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService', 'alerter', '$timeout',
-                             function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter, $timeout) {
+.controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService', 'alerter', '$timeout', 'moment',
+                             function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter, $timeout, moment) {
 
 	$scope.currentLocale = $stateParams.locale;
 
@@ -78,7 +78,14 @@ angular.module('ultical.team', [])
 		$scope.locationToEdit = angular.copy($scope.teamToEdit.location);
 	};
 
+	$scope.locationIsMissing = false;
+
 	$scope.saveTeam = function(team) {
+		if (!angular.isObject(team.location) || isEmpty(team.location.city)) {
+			$scope.locationIsMissing = true;
+			return;
+		}
+
 		$scope.addAdmin($scope.newAdmin.obj);
 		$scope.addEmail($scope.newEmail);
 
@@ -86,10 +93,18 @@ angular.module('ultical.team', [])
 			$scope.teams = ownTeams;
 			$scope.editing = false;
 			$scope.panel.activePanel = -1;
-		}, $scope.tabs.activeTab);
+			$scope.locationIsMissing = false;
+		}, function(errorResponse) {
+			// probably a validation error
+			if (errorResponse.status == 417) {
+				$scope.locationIsMissing = true;
+			}
+		},
+		$scope.tabs.activeTab);
 	};
 
 	$scope.cancel = function() {
+		$scope.locationIsMissing = false;
 		$scope.teamToEdit = {};
 		$scope.editing = false;
 		$scope.panel.activePanel = -1;
@@ -227,7 +242,7 @@ angular.module('ultical.team', [])
 			return [];
 		}
 		if (angular.isObject(locationName)) {
-			return oldLocations;
+			return $scope.oldLocations;
 		}
 
 		return mapService.getLocations(locationName, 'city', function(locations) {
@@ -281,6 +296,11 @@ angular.module('ultical.team', [])
 			team.rosters.push(updatedRoster);
 			updatedRoster.players = [];
 			$scope.editingRoster = -1;
+		}, function(errorResponse) {
+			if (errorResponse.status = 409) {
+				// a roster with the same season, division and identifier already exists for this team
+				alerter.error('', 'team.roster.rosterDuplicated', {container: '#roster-error' + team.id, duration: 10});
+			}
 		});
 	};
 
@@ -337,6 +357,30 @@ angular.module('ultical.team', [])
 	$scope.actualRosterEditedPanelIdx = -1;
 
 	$scope.editRoster = function(roster, team, collapseIndex) {
+		roster.blocked = false;
+
+		serverApi.getRosterBlockingDate(roster.id, function(blockingDates) {
+			roster.blockingDates = blockingDates;
+
+			// get the relevant blocking date
+			var today = moment();
+			var lastBlockingDateBeforeToday = moment('1900-01-01');
+
+			angular.forEach(blockingDates, function(blockingDateString) {
+				var blockingDate = moment(blockingDateString.string);
+				if (!blockingDate.isAfter(today)) {
+					roster.blocked = true;
+
+					if (lastBlockingDateBeforeToday.isBefore(blockingDate)) {
+						lastBlockingDateBeforeToday = blockingDate;
+					}
+				}
+			});
+			angular.forEach(roster.players, function(player) {
+				player.blocked = lastBlockingDateBeforeToday.isAfter(moment(player.dateAdded.string));
+			});
+		});
+
 		$scope.actualRosterEditedPanelIdx = collapseIndex;
 		$scope.editRosterBlock = false;
 		$scope.newPlayer = {};
@@ -365,13 +409,26 @@ angular.module('ultical.team', [])
 	};
 
 	$scope.removePlayerFromRoster = function(player, roster) {
-		storage.removePlayerFromRoster(player, roster, function() {});
+		storage.removePlayerFromRoster(player, roster, function() {}, 
+				function(errorResponse) {
+			if (errorResponse.status = 403) {
+				// this player was part of a roster during an official tournament
+				// thus: it cannot be removed at it would falsify the eligibility rules
+				alerter.error('', 'team.roster.playerBlocked', {container: '#add-player-error' , duration: 10});
+			}
+		});
 	};
 
 	$scope.deleteRoster = function(roster, team) {
 		alerter.confirm('team.roster.confirmDelete', function(userResponse) {
 			if (userResponse == true) {
-				storage.deleteRoster(roster, team);
+				storage.deleteRoster(roster, team, function() {},
+						function(errorResponse) {
+					if (errorResponse.status = 403) {
+						// this roster was active during an official tournament - cannot be deleted
+						alerter.error('', 'team.roster.rosterBlocked', {container: '#roster-error' + team.id, duration: 10});
+					}
+				});
 			}
 		});
 	};
