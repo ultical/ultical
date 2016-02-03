@@ -247,12 +247,18 @@ public class RegisterResource {
             }
 
             this.dataStore.storeUser(user, playerNewlyCreated);
-
             EmailCodeService emailCodeService = new EmailCodeService(this.dataStore, this.config.getFrontendUrl());
 
             emailCodeService.sendEmailConfirmMessage(this.mailClient, user);
 
             if (!user.isDfvEmailOptIn()) {
+                // delay 1 second to give mail server time to send first message
+                // (there are problems sometimes)
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
                 emailCodeService.sendEmailDfvOptInMessage(this.mailClient, user, playerToRegister.getEmail());
             }
 
