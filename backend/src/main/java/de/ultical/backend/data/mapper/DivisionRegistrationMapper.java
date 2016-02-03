@@ -49,7 +49,8 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
             @Case(value = "false", type = DivisionRegistrationTeams.class, results = {
                     @Result(column = "id", property = "registeredTeams", javaType = TeamRegistration.class, many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForDivision") ) }),
             @Case(value = "true", type = DivisionRegistrationPlayers.class) }, jdbcType = JdbcType.BOOLEAN)
-    @Results({ @Result(column = "division_age", property = "divisionAge"),
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "divisionAge"),
             @Result(column = "division_identifier", property = "divisionIdentifier"),
             @Result(column = "division_type", property = "divisionType"),
             @Result(column = "number_of_spots", property = "numberSpots") })
@@ -60,7 +61,8 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
     @TypeDiscriminator(column = "is_player_registration", javaType = Boolean.class, cases = {
             @Case(type = DivisionRegistrationTeams.class, value = "false"),
             @Case(type = DivisionRegistrationPlayers.class, value = "true") }, jdbcType = JdbcType.BOOLEAN)
-    @Results({ @Result(column = "division_age", property = "divisionAge"),
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "divisionAge"),
             @Result(column = "division_identifier", property = "divisionIdentifier"),
             @Result(column = "division_type", property = "divisionType"),
             @Result(column = "number_of_spots", property = "numberSpots") })
@@ -71,7 +73,8 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
             @Case(value = "false", type = DivisionRegistrationTeams.class, results = {
                     @Result(column = "id", property = "registeredTeams", many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForDivision") ) }),
             @Case(value = "true", type = DivisionRegistrationPlayers.class) }, jdbcType = JdbcType.BOOLEAN)
-    @Results({ @Result(column = "division_age", property = "divisionAge"),
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "divisionAge"),
             @Result(column = "division_identifier", property = "divisionIdentifier"),
             @Result(column = "division_type", property = "divisionType"),
             @Result(column = "number_of_spots", property = "numberSpots") })
