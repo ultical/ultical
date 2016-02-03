@@ -258,7 +258,7 @@ public class RosterResource {
 
                 if (playerBlocked) {
                     throw new WebApplicationException(
-                            "Roster cannot be deleted, because an official tournament has taken place in this division and season with this team attending",
+                            "Player cannot be deleted, because an official tournament has taken place in this division and season with this team attending",
                             Status.FORBIDDEN);
                 }
 
@@ -313,6 +313,7 @@ public class RosterResource {
 
     @GET
     @Path("{rosterId}/blocking")
+    @Produces(MediaType.APPLICATION_JSON)
     public List<LocalDate> getBlockingDates(@Auth @NotNull User currentUser, @PathParam("rosterId") int rosterId)
             throws Exception {
         if (this.dataStore == null) {
