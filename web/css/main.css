@@ -368,7 +368,7 @@ select:not([multiple]) {
 	font-size: 124%;
 }
 
-.location-panel {
+.location-panel .panel-body {
     padding-top: 8px;
     margin-top: 5px;
     padding-bottom: 8px;
@@ -378,6 +378,10 @@ select:not([multiple]) {
 
 .location-panel .strong {
 	font-weight: 500;
+}
+
+.location-panel .am-collapse {
+	animation-duration: 1s;
 }
 
 
