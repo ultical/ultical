@@ -14,11 +14,11 @@ UltiCal is being developed as a free and open source team and tournament managem
 
 ## Config
 
-Remove the .dist of the following files and change the values according to your needs:
-* backend/src/main/resources/default.yaml.dist
-* backend/src/main/resources/database/liquibase.properties
-* backend/src/main/resources/jdbc.properties (for testing)
-* web/config/config.js.dist
+Create a copy without the `.dist` of the following files and change the values according to your needs:
+* `backend/src/main/resources/default.yaml.dist`
+* `backend/src/main/resources/database/liquibase.properties`
+* `backend/src/main/resources/jdbc.properties` (for testing)
+* `web/config/config.js.dist`
 
 ## Backend
 
