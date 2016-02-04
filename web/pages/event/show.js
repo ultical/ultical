@@ -42,18 +42,23 @@ angular.module('ultical.events')
 
 	// printing
 	$scope.printAll = false;
+	$scope.printing = false;
 
 	$scope.print = function() {
 		$scope.printAll = false;
+		$scope.printing = true;
 		$timeout(function() {
 			$window.print();
+			$scope.printing = false;
 		}, 0);
 	};
 
 	$scope.doPrintAll = function() {
 		$scope.printAll = true;
+		$scope.printing = true;
 		$timeout(function() {
 			$window.print();
+			$scope.printing = false;
 		}, 0);
 	}
 

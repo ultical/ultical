@@ -1,5 +1,5 @@
 <div id="start" ng-controller="EventShowCtrl">
-	<div ng-class="{hidden-print">
+	<div ng-class="{'hidden-print': printing}">
 		<div class="row">
 			<div class="col-md-12">
 				<h3 class="page-title">{{ event | eventname : 'full' }}</h3>
@@ -284,8 +284,8 @@
 		</div>
 	</div>
 
-<!-- PRINTING TEMPLATE -->
-	<div class="visible-print-block" ng-if="loggedIn() && event.x.own">
+	<!-- PRINTING TEMPLATE -->
+	<div class="visible-print-block" ng-if="loggedIn() && event.x.own && printing">
 		<div class="row padding-bottom" ng-class="{'hidden-print': !printAll && panels.divisionPanel != $index, 'border-bottom': printAll}" ng-repeat="division in event.x.divisions | orderBy : divisionOrder">
 
 			<div class="col-xs-12">
