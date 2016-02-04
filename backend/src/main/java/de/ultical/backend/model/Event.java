@@ -2,7 +2,6 @@ package de.ultical.backend.model;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -30,7 +29,7 @@ public class Event extends Identifiable {
 
     // subset of the tournaments divisions and participants
     @MinSize(1)
-    private Set<DivisionConfirmation> divisionConfirmations;
+    private List<DivisionConfirmation> divisionConfirmations;
 
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)

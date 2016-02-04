@@ -239,6 +239,8 @@ app.filter('eventname', ['$translate', 'matchdaynameFilter', function ($translat
 		if (isEmptyString(event.tournamentEdition.alternativeName)) {
 			// use tournament format name
 			eventName = event.tournamentEdition.tournamentFormat.name;
+			// add year
+			eventName += ' ' + event.tournamentEdition.season.year;
 		} else {
 			// this tournament edition uses a different name than the tournament format
 			eventName = event.tournamentEdition.alternativeName;
@@ -308,6 +310,10 @@ app.filter('division', ['$translate', function($translate) {
 		}
 
 		var divisionString = '';
+
+		if (!isEmpty(obj.divisionIdentifier)) {
+			divisionString += obj.divisionIdentifier + ' ';
+		}
 
 		var divAgeStr = '';
 		if (obj.divisionAge.toLowerCase() != 'regular') {

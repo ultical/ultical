@@ -273,7 +273,7 @@ button, input, optgroup, select, textarea {
 	text-align: left;
 }
 
-#roster-listing .panel-group {
+.roster-listing .panel-group {
 	margin-bottom: 0;
 }
 
@@ -376,7 +376,7 @@ select:not([multiple]) {
     border-left: 2px solid #DDDDDD;
 }
 
-.location-panel .strong {
+.strong {
 	font-weight: 500;
 }
 
@@ -384,4 +384,22 @@ select:not([multiple]) {
 	animation-duration: 1s;
 }
 
+.print-heading {
+	font-size: 150%;
+}
 
+.print-team-divider {
+	border-bottom: 1px solid #AAA;
+	padding-bottom: 50px;
+}
+
+.panel-margin {
+	margin-top: 5px;
+}
+
+.panel-body .panel-group {
+	margin-bottom: 0px;
+}
+.print-all {
+	margin-top: -10px;
+}

@@ -118,7 +118,6 @@ app.config(function ($translateProvider) {
 //make sure http(s) and mailto links are valid and not escaped for security reasons
 app.config(function($compileProvider) {   
 	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|mailto):/);
-	// Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
 });
 
 //config element service

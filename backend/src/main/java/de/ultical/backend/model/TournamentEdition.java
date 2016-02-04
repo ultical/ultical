@@ -2,7 +2,6 @@ package de.ultical.backend.model;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -37,7 +36,7 @@ public class TournamentEdition extends Identifiable {
     private List<Fee> fees;
     private Contact organizer;
 
-    private Set<DivisionRegistration> divisionRegistrations;
+    private List<DivisionRegistration> divisionRegistrations;
 
     private List<Event> events;
     private String alternativeMatchdayName;

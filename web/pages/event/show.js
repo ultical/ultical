@@ -2,12 +2,17 @@
 
 angular.module('ultical.events')
 
-.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment',
-                              function($scope, $stateParams, storage, $state, $filter, moment) {
+.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout',
+                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout) {
 
 	$scope.event = {};
 	$scope.mainLocation = null;
 	$scope.curEvent = {};
+	$scope.now = new Date();
+
+	$scope.loggedIn = function() {
+		return authorizer.loggedIn();
+	}
 
 	storage.getFormatForEvent($stateParams.eventId, function(format) {
 		$scope.format = format;
@@ -23,60 +28,93 @@ angular.module('ultical.events')
 		});
 	});
 
+	// collapses
 	$scope.panels = {
 			activeLocationPanel: 1,
+			divisionPanel: -1,
+			teamPanel: -1,
 	};
+
 
 	$scope.toggleLocationPanel = function() {
 		$scope.panels.activeLocationPanel = $scope.panels.activeLocationPanel == 1 ? 0 : 1;
 	}
 
-	$scope.downloadTeamlist = function() {
+	// printing
+	$scope.printAll = false;
 
-		var newLine = '\n';
-		var output = '';
-
-		output += "Spielerliste " + $filter('eventname')($scope.event, true) + newLine;
-		output += "Stand vom: " + moment().format("DD.MM.YYYY - HH:mm") + newLine;
-
-		output += newLine + newLine;
-
-		angular.forEach($scope.event.tournamentEdition.divisionRegistrations, function(divReg) {
-			output += $filter('division')(divReg) + newLine + newLine;
-
-			angular.forEach(divReg.registeredTeams, function(regTeam) {
-				output += regTeam.team.name + newLine + newLine;
-
-				var validRoster = null;
-				angular.forEach(regTeam.team.rosters, function(roster) {
-					if (id($scope.edition.season) == id(roster.season) && divReg.divisionType == roster.divisionType && divReg.divisionAge == roster.divisionAge) {
-						validRoster = roster;
-					}
-				});
-
-				if (validRoster != null) {
-					angular.forEach(validRoster.players, function(regPlayer) {
-//						output += moment(regPlayer.dateAdded).format("DD.MM.YYYY") + "  -  ";
-						output += regPlayer.player.firstName + ' ' + regPlayer.player.lastName + newLine;
-					});
-				}
-
-				output += newLine;
-			});
-		});
-
-		console.log("output", output);
-		return;
-		downloader.performDownload(output, "Reisekostenumlage.csv");
+	$scope.print = function() {
+		$scope.printAll = false;
+		$timeout(function() {
+			$window.print();
+		}, 0);
 	};
 
-	function id(element) {
-		if (angular.isObject(element)) {
-			return element.id;
-		} else {
-			return element;
-		}
+	$scope.doPrintAll = function() {
+		$scope.printAll = true;
+		$timeout(function() {
+			$window.print();
+		}, 0);
 	}
+
+	$scope.getRelevantPlayers = function(regTeam, division, season, event) {
+		// find relevant roster
+		var relevantRoster = null;
+
+		angular.forEach(regTeam.team.rosters, function(roster) {
+			if (roster.divisionAge == division.divisionAge && roster.divisionType == division.divisionType && roster.season.id == season.id) {
+				relevantRoster = roster;
+			}
+		});
+		if (relevantRoster == null) {
+			return [];
+		} else {
+			// remove players that have been added after the event started
+			var relevantPlayers = [];
+			var startDate = moment(event.startDate);
+			angular.forEach(relevantRoster.players, function(rosterPlayer) {
+				if (moment(rosterPlayer.dateAdded).isBefore(startDate)) {
+					relevantPlayers.push(rosterPlayer);
+				}
+			});
+
+			return relevantPlayers;
+		}
+	};
+
+	$scope.teamOrder = function(regTeam) {
+		var orderString = '';
+		switch (regTeam.status) {
+		case 'CONFIRMED':
+			orderString += '1';
+			break;
+		case 'PENDING':
+			orderString += '2';
+			break;
+		case 'WAITING_LIST':
+			orderString += '3';
+			break;
+		case 'DECLINED':
+			orderString += '4';
+			break;
+		}
+		return orderString + regTeam.team.name;
+	};
+
+	$scope.divisionOrder = function(division) {
+		return $filter('division')(division);
+	}
+
+	var teamHeadings = {};
+	$scope.needTeamHeading = function(index, divisionId, teamStatus) {
+		if (index == 0 || !(divisionId in teamHeadings)) {
+			teamHeadings[divisionId] = teamStatus;
+			return true;
+		} else if (teamHeadings[divisionId] != teamStatus) {
+			return true;
+		}
+		return false;
+	};
 
 }]);
 

@@ -65,32 +65,6 @@ app.filter('numberFixedLen', function () {
 	};
 });
 
-app.filter('customDate', ['$filter', '$translate', function($filter, $translate) {
-	return function(input, type) {
-		if (isEmpty(input)) {
-			return null;
-		}
-
-		if (angular.isObject(input)) {
-			input = input.string;
-		}
-
-		switch(type) {
-		case 'datetime_medium':
-			return $filter('date')(input, $translate.instant('general.dateTimeFormat'));
-			break;
-		case 'date_medium':
-			return $filter('date')(input, $translate.instant('general.dateFormat'));
-			break;
-		case 'date_internal':
-			return $filter('date')(input, 'yyyy-MM-dd');
-			break;
-		}  
-
-		return input;
-	};
-}]);
-
 app.filter('currencySymbol', [function() {
 	return function(currencyString) {
 		if (isEmpty(currencyString)) {

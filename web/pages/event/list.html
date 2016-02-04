@@ -37,9 +37,9 @@
 						<div class="event-list-text">
 							<div class="event-list-text-top">{{ event | eventname }}</div>
 							<div class="event-list-text-bottom">
-								<span class="margin-right-small" ng-if="event.tournamentEdition.divisionRegistrations | notEmpty">
+								<span class="margin-right-small" ng-if="event.x.divisions | notEmpty">
 									<!-- 								<i class="fa fa-venus-mars"></i> -->
-									<bas ng-repeat="divReg in event.tournamentEdition.divisionRegistrations">{{ divReg | division }}<bas ng-if="!$last">, </bas></bas>
+									<bas ng-repeat="division in event.x.divisions">{{ division | division }}<bas ng-if="!$last">, </bas></bas>
 								</span>
 								<span class="margin-right" ng-if="event.location | notEmpty">
 									<i class="fa fa-map-marker"></i> {{ event.location | location : 'city' }}

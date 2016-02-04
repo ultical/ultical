@@ -1,7 +1,7 @@
 'use strict';
 
-app.factory('storage', ['$filter', 'serverApi', 'authorizer',
-                        function($filter, serverApi, authorizer) {
+app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
+                        function($filter, serverApi, authorizer, moment) {
 
 	var returnObject = {
 			// init structures
@@ -258,6 +258,14 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			team.x.own = authorizer.getUser() != null && (team.x.own || admin.id == authorizer.getUser().id);
 		});
 
+		if (angular.isObject(team.club)) {
+			storeClub(that, team.club, loopIndex);
+		} else {
+			if (undefined !== that.clubIndexed[team.club]) {
+				team.club = that.clubIndexed[team.club];
+			}
+		}
+
 		angular.forEach(team.rosters, function(roster, idx) {
 			if (angular.isObject(roster)) {
 				storeRoster(that, roster, loopIndex);
@@ -265,12 +273,6 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				team.rosters[idx] = that.rosterIndexed[roster];
 			}
 		});
-
-		if (angular.isObject(team.club)) {
-			storeClub(that, team.club, loopIndex);
-		} else {
-			team.club = that.clubIndexed[team.club];
-		}
 	}
 
 	function storeRoster(that, roster, loopIndex) {
@@ -288,7 +290,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			if (angular.isObject(player.player)) {
 				storePlayer(that, player.player, loopIndex);
 			} else {
-				roster.players[idx].player = that.playerIndexed[player.player];
+				player.player = that.playerIndexed[player.player];
 			}
 		});
 	}
@@ -318,7 +320,9 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 		if (angular.isObject(player.club)) {
 			storeClub(that, player.club, loopIndex);
 		} else {
-			player.club = that.clubIndexed[player.club];
+			if (undefined !== that.clubIndexed[player.club] && null !== that.clubIndexed[player.club]) {
+				player.club = that.clubIndexed[player.club];
+			}
 		}
 	}
 
@@ -382,7 +386,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			} else {
 				event.admins[idx] = that.userIndexed[admin];
 			}
-			event.x.own = authorizer.getUser() != null && (event.x.own || admin.id == authorizer.getUser().id);
+			event.x.own = authorizer.getUser() != null && (event.x.own || admin.id == authorizer.getUser().id || event.tournamentEdition.tournamentFormat.x.own);
 		});
 
 		if (angular.isObject(event.localOrganizer)) {
@@ -391,20 +395,44 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			event.localOrganizer = that.contactIndexed[event.localOrganizer];
 		}
 
-		var todayDateString = $filter('date')(new Date(), 'yyyy-MM-dd');
-
-		event.tournamentEdition.registrationIsOpen = !isEmpty(event.tournamentEdition.registrationStart) && event.tournamentEdition.registrationStart.string <= todayDateString && event.tournamentEdition.registrationEnd.string >= todayDateString;
-		event.tournamentEdition.registrationTime = isEmpty(event.tournamentEdition.registrationStart) ? 'never' : (event.tournamentEdition.registrationStart.string > todayDateString ? 'future' : 'past');
-
 		event.x.isSingleEvent = event.tournamentEdition.isSingleEdition;
 		event.x.hasLocalOrganizer = !isEmpty(event.localOrganizer) && !isEmpty(event.localOrganizer.name) && event.tournamentEdition.organizer.id != event.localOrganizer.id;
 		event.x.hasFees = event.tournamentEdition.fees.length > 0 || event.fees.length > 0;
 
+		var today = moment();
+		if (moment(event.startDate).isAfter(today)) {
+			event.x.timing = 'future';
+		} else if (moment(event.endDate).isBefore(today)) {
+			event.x.timing = 'past';
+		} else {
+			event.x.timing = 'running';
+		}
+
+		// assign the divisions (and maybe teams) that play this event
+		event.x.divisions = [];
+
+		if ('divisionConfirmations' in event && !isEmpty(event.divisionConfirmations)) {
+			// TODO: once we have editions with different divisions per event, this gets interesting
+
+		} else {
+			// this event gets all divisions and teams from the edition
+			if (isEmpty(event.tournamentEdition.divisionRegistrations)) {
+				event.x.divisions = [];
+			} else {
+				event.x.divisions = event.tournamentEdition.divisionRegistrations;
+			}
+		}
 	}
 
 	function storeTournamentEdition(that, edition, loopIndex) {
 		if (!storeWithoutLoops(edition, that.editionIndexed, loopIndex)) {
 			return;
+		}
+
+		if (angular.isObject(edition.season)) {
+			storeSeason(that, edition.season, loopIndex);
+		} else {
+			edition.season = that.seasonIndexed[edition.season];
 		}
 
 		angular.forEach(edition.events, function(event, idx) {
@@ -422,7 +450,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			if (edition.tournamentFormat in that.formatIndexed) {
 				edition.tournamentFormat = that.formatIndexed[edition.tournamentFormat];
 			} else {
-				alert("Missing a format: " + edition.tournamentFormat);
+				console.log("Missing a format: " + edition.tournamentFormat);
 			}
 		}
 
@@ -432,7 +460,32 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			edition.organizer = that.contactIndexed[edition.organizer];
 		}
 
+		angular.forEach(edition.divisionRegistrations, function(divReg, idx) {
+			storeDivReg(that, divReg, loopIndex);
+		});
+
 		edition.x.isSingleEdition = edition.events != null && edition.events.length == 1;		
+
+		var todayDateString = moment().format('YYYY-MM-DD');
+
+		edition.x.registrationIsOpen = !isEmpty(edition.registrationStart) && edition.registrationStart  <= todayDateString && edition.registrationEnd >= todayDateString;
+		edition.x.registrationTime = isEmpty(edition.registrationStart) ? 'never' : (edition.registrationStart > todayDateString ? 'future' : 'past');
+	}
+
+	function storeDivReg(that, divReg, loopIndex) {
+		// divRegs are unique to editions
+
+		angular.forEach(divReg.registeredTeams, function(teamReg, idx) {
+			storeTeamRegistration(that, teamReg, loopIndex);
+		});
+	}
+
+	function storeTeamRegistration(that, teamReg, loopIndex) {
+		if (angular.isObject(teamReg.team)) {
+			storeTeam(that, teamReg.team, loopIndex);
+		} else {
+			teamReg.team = that.teamsIndexed[teamReg.team];
+		}
 	}
 
 	function storeTournamentFormat(that, format, loopIndex) {
@@ -497,7 +550,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			organizerEmail: '',
 			organizerPhone: '',
 			alternativeMatchdayName: '',
-			divisionRegistrations: {},
+			divisionRegistrations: [],
 			events: [],
 			tournamentFormat: {},
 		};
