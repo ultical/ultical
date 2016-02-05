@@ -17,6 +17,8 @@ public class Fee extends Identifiable {
     private String currency;
     private Event event;
     private TournamentEdition tournamentEdition;
+    private boolean perPerson;
+    private boolean multiple;
 
     @Override
     public Class<FeeMapper> getMapper() {

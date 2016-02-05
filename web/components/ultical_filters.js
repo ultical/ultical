@@ -228,23 +228,29 @@ app.filter('playername', [function () {
 	};
 }]);
 
-app.filter('eventname', ['$translate', 'matchdaynameFilter', function ($translate, matchdaynameFilter) {
+app.filter('editionname', ['$translate', 'matchdaynameFilter', function ($translate, matchdaynameFilter) {
+	return function(edition) {
+		var editionName = '';
+		if (isEmptyString(edition.alternativeName)) {
+			// use tournament format name
+			editionName = edition.tournamentFormat.name;
+			// add year
+			editionName += ' ' + edition.season.year;
+		} else {
+			// this tournament edition uses a different name than the tournament format
+			editionName = edition.alternativeName;
+		}
+		return editionName;
+	}
+}]);
+
+app.filter('eventname', ['$translate', 'matchdaynameFilter', 'editionnameFilter', function ($translate, matchdaynameFilter, editionnameFilter) {
 	return function (event) {
 		if (isEmpty(event)) {
 			return '';
 		}
 
-		var eventName;
-
-		if (isEmptyString(event.tournamentEdition.alternativeName)) {
-			// use tournament format name
-			eventName = event.tournamentEdition.tournamentFormat.name;
-			// add year
-			eventName += ' ' + event.tournamentEdition.season.year;
-		} else {
-			// this tournament edition uses a different name than the tournament format
-			eventName = event.tournamentEdition.alternativeName;
-		}
+		var eventName = editionnameFilter(event.tournamentEdition);
 
 		// this is a multi-matchday-tournament
 		if (event.matchdayNumber != -1) {

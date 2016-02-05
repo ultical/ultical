@@ -65,23 +65,31 @@ app.filter('numberFixedLen', function () {
 	};
 });
 
-app.filter('currencySymbol', [function() {
-	return function(currencyString) {
-		if (isEmpty(currencyString)) {
+app.filter('decimal', ['$translate', function($translate) {
+	return function(amount, numDecimals) {
+		if (isEmpty(amount)) {
+			return'';
+		}
+		var parts = (''+amount).split('.');
+		if (parts.length == 1) {
+			parts[1] = '0';
+		}
+		while (parts[1].length < numDecimals) {
+			parts[1] += '0';
+		}
+		if (parts[1].length > numDecimals) {
+			parts[1] = parts[1].substring(0, numDecimals);
+		}
+		return parts[0] + $translate.instant('general.decimalSeparator') + parts[1];
+	}
+}]);
+
+app.filter('money', ['$translate', 'decimalFilter', function($translate, decimalFilter) {
+	return function(currencyCode, amount) {
+		if (isEmpty(amount)) {
 			return '';
 		}
-
-		var output = '';
-
-		switch(currencyString) {
-		case 'EUR':
-			output = '€';
-			break;
-		default:
-			output = '$';
-		}
-
-		return output;
+		return $translate.instant('general.currencyFormat', {amount: decimalFilter(amount, 2), currencySymbol: $translate.instant('currencySymbol.' + currencyCode) });
 	};
 }]);
 

@@ -62,6 +62,60 @@ angular.module('ultical.events')
 		}, 0);
 	}
 
+	$scope.getAllFees = function() {
+		$scope.editionFeeEndIndex = 0;
+		var fees = [];
+		angular.forEach($scope.edition.fees, function(fee) {
+			$scope.editionFeeEndIndex++;
+			if (!('x' in fee)) {
+				fee.x = {};
+			}
+			fee.x.fromEdition = true;
+			fee.x.order = getFeeTypeOrder(fee.type);
+			fees.push(fee);
+		});
+		angular.forEach($scope.event.fees, function(fee) {
+			if (!('x' in fee)) {
+				fee.x = {};
+			}
+			fee.x.fromEdition = false;
+			fee.x.order = getFeeTypeOrder(fee.type) + 100;
+			fees.push(fee);
+		});
+		return fees;
+	};
+
+	function getFeeTypeOrder(feeType) {
+		var feeOrder = 0;
+		switch (feeType) {
+		case 'PLAYER':
+			feeOrder = 5;
+			break;
+		case 'TEAM':
+			feeOrder = 2;
+			break;
+		case 'GUEST':
+			feeOrder = 7;
+			break;
+		case 'BREAKFAST':
+			feeOrder = 11;
+			break;
+		case 'LUNCH':
+			feeOrder = 14;
+			break;
+		case 'DINNER':
+			feeOrder = 17;
+			break;
+		case 'NIGHT':
+			feeOrder = 20;
+			break;
+		case 'OTHER':
+			feeOrder = 23;
+			break;
+		}
+		return feeOrder;
+	}
+
 	$scope.getRelevantPlayers = function(regTeam, division, season, event) {
 		// find relevant roster
 		var relevantRoster = null;

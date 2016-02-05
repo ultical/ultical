@@ -772,5 +772,13 @@
 	<changeSet author="bas" id="bas57">
 		<tagDatabase tag="bas_v1.7" />
 	</changeSet>
-	
+	<changeSet author="bas" id="bas58">
+		<addColumn tableName="FEE">
+			<column name="per_person" type="BOOLEAN" defaultValueBoolean="false" />
+			<column name="multiple" type="BOOLEAN" defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas59">
+		<tagDatabase tag="bas_v1.8" />
+	</changeSet>
 </databaseChangeLog>
