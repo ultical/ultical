@@ -47,7 +47,7 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 	function changeLanguage(locale) {
 		$translate.use(locale);
 		$rootScope.activeLang = locale;
-	    amMoment.changeLocale(locale);
+		amMoment.changeLocale(locale);
 		$scope.selectedLanguage = locale.toUpperCase();
 	}
 
@@ -55,10 +55,12 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 	$scope.setLanguage = function(languageCode) {
 		var oldLanguage = $translate.use();
 		var key = languageCode.toLowerCase();
+
 		if (oldLanguage != key) {
 			$rootScope.otherLangURL = $location.url().replace('/' + oldLanguage, '/' + key.toLowerCase());
 			// changes url to fire $stateChangeSuccess
 			$location.url($rootScope.otherLangURL);
+			changeLanguage(key);
 		}
 	};
 

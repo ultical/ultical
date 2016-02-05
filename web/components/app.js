@@ -138,3 +138,16 @@ app.run(['storage', '$translate', 'amMoment', function(storage, $translate, amMo
 	amMoment.changeLocale($translate.use().toLowerCase());
 }]);
 
+//nav bar controller
+app.controller('HeadCtrl', ['$scope', 'CONFIG', '$state',
+                            function($scope, CONFIG, $state) {
+	$scope.availableLanguages = CONFIG.general.availableLanguages;
+
+	$scope.getCurrentStateUrl = function(locale) {
+		var params = $state.params;
+		params.locale = locale.toLowerCase();
+		return $state.href($state.current.name, params, {absolute: true});
+	};
+
+
+}]);
