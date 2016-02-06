@@ -393,8 +393,10 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			} else {
 				event.admins[idx] = that.userIndexed[admin];
 			}
-			event.x.own = authorizer.getUser() != null && (event.x.own || admin.id == authorizer.getUser().id || event.tournamentEdition.tournamentFormat.x.own);
+			event.x.own = authorizer.getUser() != null && (event.x.own || admin.id == authorizer.getUser().id);
 		});
+
+		event.x.own = authorizer.getUser() != null && (event.x.own ||  event.tournamentEdition.tournamentFormat.x.own);
 
 		if (angular.isObject(event.localOrganizer)) {
 			storeContact(that, event.localOrganizer, loopIndex);
@@ -500,15 +502,6 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			return;
 		}
 
-		angular.forEach(format.editions, function(edition, idx) {
-			if (angular.isObject(edition)) {
-				edition.tournamentFormat = format;
-				storeTournamentEdition(that, edition, loopIndex);
-			} else {
-				format.editions[idx] = that.editionIndexed[edition];
-			}
-		});
-
 		angular.forEach(format.admins, function(admin, idx) {
 			if (angular.isObject(admin)) {
 				storeUser(that, admin, loopIndex);
@@ -516,6 +509,15 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				format.admins[idx] = that.userIndexed[admin];
 			}
 			format.x.own = authorizer.getUser() != null && (format.x.own || admin.id == authorizer.getUser().id);
+		});
+
+		angular.forEach(format.editions, function(edition, idx) {
+			if (angular.isObject(edition)) {
+				edition.tournamentFormat = format;
+				storeTournamentEdition(that, edition, loopIndex);
+			} else {
+				format.editions[idx] = that.editionIndexed[edition];
+			}
 		});
 
 		if (angular.isObject(format.association)) {
