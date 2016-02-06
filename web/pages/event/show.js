@@ -170,6 +170,7 @@ angular.module('ultical.events')
 			teamHeadings[divisionId] = teamStatus;
 			return true;
 		} else if (teamHeadings[divisionId] != teamStatus) {
+			teamHeadings[divisionId] = teamStatus;
 			return true;
 		}
 		return false;

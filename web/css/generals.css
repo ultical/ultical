@@ -71,6 +71,12 @@
 .padding-bottom {
 	padding-bottom: 1em;
 }
+.padding-right {
+	padding-right: 1em;
+}
+.padding-right-small {
+	padding-right: 0.5em;
+}
 .cursor-pointer {
 	cursor: pointer;
 }

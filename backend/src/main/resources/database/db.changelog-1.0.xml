@@ -781,4 +781,8 @@
 	<changeSet author="bas" id="bas59">
 		<tagDatabase tag="bas_v1.8" />
 	</changeSet>
+	<changeSet author="bas" id="bas60">
+		<addUniqueConstraint columnNames="division_registration, team"
+			tableName="TEAM_REGISTRATION" constraintName="uk_team_registration_division_registration_team" />
+	</changeSet>
 </databaseChangeLog>

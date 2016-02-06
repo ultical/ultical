@@ -173,6 +173,13 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				}
 			},
 
+			registerTeamForEdition: function(teamReg, divisionReg, callback) {
+				serverApi.registerTeamForEdition(teamReg, divisionReg, function(newTeamReg) {
+					divisionReg.registeredTeams.push(newTeamReg);
+					callback(newTeamReg);
+				});
+			},
+
 			saveTeam: function(team, callback, errorCallback, activeList) {
 				var that = this;
 				var oldTeam;

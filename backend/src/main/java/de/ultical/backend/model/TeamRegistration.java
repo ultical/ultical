@@ -18,10 +18,11 @@ public class TeamRegistration extends Identifiable {
     private LocalDateTime timeRegistered;
     private String comment;
     private int standing;
-    private float spiritPoints;
+    private float spiritScore;
     private boolean paid;
     private DivisionRegistrationStatus status;
     private boolean notQualified;
+    private int sequence;
 
     @Override
     public Class<TeamRegistrationMapper> getMapper() {

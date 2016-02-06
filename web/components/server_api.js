@@ -206,6 +206,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			var requestPlayer = { lastName: player.lastName, firstName: player.firstName, dse: player.dse, dfvNumber: player.dfvNumber };
 			return post('roster/' + roster.id, requestPlayer, callback, errorCallback);
 		},
+
+		registerTeamForEdition: function(registration, divisionRegistration, callback) {
+			return post('tournaments/' + divisionRegistration.id + '/register/team', registration, callback);
+		},
 	};
 
 	function addAdminsToTeam(teamId, addList, callback) {

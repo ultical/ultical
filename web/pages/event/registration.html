@@ -1,0 +1,48 @@
+<div ng-controller="EventRegistrationCtrl">
+	<div id="registrationModalError"></div>
+	<form name="registrationForm" class="form-horizontal">
+		<fieldset ng-disabled="teamRegistrationPending">
+
+			<div class="form-group">
+				<label class="col-sm-3 control-label"></label>
+				<div class="col-sm-8">{{ 'event.register.description' | translate : { eventName: eventName} }}</div>
+			</div>
+
+			<div class="row margin-top-big">
+				<div class="col-sm-12">
+
+					<div class="form-group">
+						<label for="team-reg-team" class="col-sm-3 control-label">{{ 'general.team' | translate }}*</label>
+						<div class="col-sm-8" ng-class="{'has-error': isAlreadyRegistered(register.team, register.division)}">
+							<select id="team-reg-team" class="form-control" ng-model="register.team">
+								<option ng-repeat="team in ownTeams" value="{{ team.id }}">{{ team.name }}</option>
+							</select>
+							<div class="help-block ani-vslide ani-short" ng-if="isAlreadyRegistered(register.team, register.division)">{{ 'event.register.teamAlreadyInDivision' | translate }}</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="team-reg-div" class="col-sm-3 control-label">{{ 'event.register.division' | translate }}*</label>
+						<div class="col-sm-8">
+							<select id="team-reg-div" class="form-control" ng-model="register.division">
+								<option ng-repeat="division in event.x.divisions" value="{{ division.id }}">{{ division | division }}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="team-reg-comment" class="col-sm-3 control-label">{{ 'event.register.comment' | translate }}</label>
+						<div class="col-sm-8">
+							<textarea ng-model="register.comment" class="form-control" rows="5" id="team-reg-comment" placeholder="{{ 'event.register.commentPlaceholder' | translate }}">
+						</div>
+					</div>
+
+					<div ng-if="!modal">
+						<div class="btn btn-ultical btn-primary">Do Registration</div>
+					</div>
+
+				</div>
+			</div>
+		</fieldset>
+	</form>
+</div>

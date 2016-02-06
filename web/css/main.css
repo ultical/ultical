@@ -286,6 +286,13 @@ button, input, optgroup, select, textarea {
 	cursor: pointer;
 }
 
+.btn-primary.btn-ultical {
+	background-color: #20408E;
+}
+.btn-primary.btn-ultical:hover {
+	background-color: #286090;
+}
+
 /* disable rounded corners */
 .panel-group .panel, .panel, .panel-group, .panel-heading, .panel-footer,
 	.btn, .modal-content, .form-control, .popover, .dropdown-menu, .alert,
@@ -402,4 +409,8 @@ select:not([multiple]) {
 }
 .print-all {
 	margin-top: -10px;
+}
+
+.mega-wide {
+	width: 300px;
 }

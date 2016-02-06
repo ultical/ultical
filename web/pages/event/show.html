@@ -106,26 +106,33 @@
 			<div class="col-md-12">
 				<div class="strong">{{ 'event.fee.label' | translate }}</div>
 
-				<div ng-repeat="fee in getAllFees() | orderBy : 'x.order'">
-					<div ng-if="$index == 0 && fee.x.fromEdition">
-						{{ 'event.fee.editionLabel' | translate }}&nbsp;{{ event.tournamentEdition | editionname }}:
-					</div>
-					<div class="margin-top-small" ng-if="editionFeeEndIndex == $index && $index > 0">
-						{{ 'event.fee.matchdayLabel' | translate }}:
-					</div>
-					<span ng-if="editionFeeEndIndex > 0" class="margin-left"></span>
-					<span ng-if="fee.multiple">{{ 'event.fee.perUnit' | translate }}&nbsp;</span>
-					<span ng-if="fee.type != 'OTHER'">{{ ('event.fee.' + (fee.type | lowercase)) | translate }}</span>
-					<span ng-if="fee.type == 'OTHER'">{{ fee.otherName }}</span>
-					<span>{{ fee.currency | money : fee.amount }}</span>
-					<span ng-if="fee.perPerson">&nbsp;{{ 'event.fee.perPerson' | translate }}</span>
-				</div>
+				<table>
+					<tbody ng-repeat="fee in getAllFees() | orderBy : 'x.order'">
+						<tr ng-if="$index == 0 && fee.x.fromEdition">
+							<td colspan="4">{{ 'event.fee.editionLabel' | translate }}&nbsp;{{ event.tournamentEdition | editionname }}:</td>
+						</tr>
+						<tr ng-if="editionFeeEndIndex == $index && $index > 0">
+							<td colspan="4" class="margin-top-small">{{ 'event.fee.matchdayLabel' | translate }}:</td>
+						</tr>
+						<tr>
+						<td ng-if="editionFeeEndIndex > 0" class="padding-right">&nbsp;</td>
+							<td class="padding-right">
+								<span ng-if="fee.multiple">{{ 'event.fee.perUnit' | translate }}</span>
+								<span ng-if="fee.type != 'OTHER'">{{ ('event.fee.' + (fee.type | lowercase)) | translate }}</span>
+								<span ng-if="fee.type == 'OTHER'">{{ fee.otherName }}</span>
+							</td>
+							<td class="pull-right padding-right-small">{{ fee.currency | money : fee.amount }}</td>
+							<td class="mega-wide" ng-if="fee.perPerson">{{ 'event.fee.perPerson' | translate }}</td>
+						</tr>
+					</tbody>
+				</table>
+
 			</div>
 		</div>
 
 
 		<!-- REGISTRATION INFO -->
-		<div class="row margin-top">
+		<div class="row margin-top" ng-if="event.tournamentEdition.x.registrationTime != 'never' && event.x.timing == 'future'">
 			<div class="col-md-12">
 				<div class="strong">{{ 'event.registration' | translate }}</div>
 
@@ -133,12 +140,13 @@
 					<!-- Registration is going on right now -->
 					<div class="row">
 						<div class="col-md-12">
-							<div class="btn btn-default">{{ 'event.registration' | translate }}</div>
+							<span>{{ 'event.registrationEndsAt' | translate }} {{ event.tournamentEdition.registrationEnd | amDateFormat : ('general.amDateFormatShort' | translate) }}</span>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							<small>{{ 'event.registrationEndsAt' | translate }} {{ event.tournamentEdition.registrationEnd | amDateFormat : ('general.amDateFormatShort' | translate) }}</small>
+							<div ang-if="loggedIn()" class="btn btn-primary btn-ultical margin-top-small" data-animation="am-fade-and-slide-top" data-template-url="pages/event/registration_modal.html?v=2" bs-modal="modal">{{ 'event.register.title' | translate }}</div>
+							<span ng-if="!loggedIn()">{{ 'event.register.notLoggedIn' | translate }}</span>
 						</div>
 					</div>
 				</div>
@@ -154,6 +162,7 @@
 		<!-- DIVISIONS -->
 		<div ng-if="event.x.divisions.length > 0" class="row margin-top">
 			<div class="col-md-7">
+				<div class="strong">{{ 'event.teamList.title' | translate }}</div>
 
 				<div class="panel-group margin-top-small" ng-model="panels.divisionPanel" role="tablist" aria-multiselectable="true" bs-collapse>
 
@@ -168,19 +177,18 @@
 						<div class="panel-collapse" role="tabpanel" bs-collapse-target>
 							<div class="panel-body">
 
-								<!-- Registration Actions -->
-								<div class="row">
-									<div class="col-md-12">
-										<!-- 									<button class="btn btn-default" ng-click="downloadTeamlist()">Download</button> -->
-									</div>
-								</div>
-
 								<!-- Team List -->
 								<div class="row">
 									<div class="col-md-12">
 
 										<div class="panel-group" ng-model="panels.teamPanel" role="tablist" aria-multiselectable="true" bs-collapse>
 
+											<!-- no teams yet -->
+											<div ng-if="division.registeredTeams.length == 0">
+												<span>{{ 'event.teamList.noTeams' | translate }}</span>
+											</div>
+
+											<!-- team list -->
 											<div ng-init="rosterPlayers = getRelevantPlayers(regTeam, division, edition.season, event)" ng-repeat-start="regTeam in division.registeredTeams | orderBy : teamOrder track by regTeam.id">
 												<div class="row margin-bottom-small" ng-class="{'margin-top': !$first}" ng-if="needTeamHeading($index, division.id, regTeam.status)">
 													<div class="col-md-6 strong">{{ ('event.teamList.' + (regTeam.status | lowercase)) | translate }}</div>
@@ -245,9 +253,6 @@
 				</div>
 			</div>
 		</div>
-
-
-
 
 	</div>
 

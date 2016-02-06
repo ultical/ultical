@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.One;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
@@ -19,14 +19,17 @@ import de.ultical.backend.model.TeamRegistration;
 public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
 
     // INSERT
-    @InsertProvider(type = TeamRegistrationInsertProvider.class, method = "getInsertSql")
-    Integer insertAtEnd(@Param("div") DivisionRegistrationTeams div, @Param("team") TeamRegistration reg);
+    // @InsertProvider(type = TeamRegistrationInsertProvider.class, method =
+    // "getInsertSql")
+    // Integer insertAtEnd(@Param("div") DivisionRegistrationTeams div,
+    // @Param("team") TeamRegistration reg);
 
-    @Override
     @Insert({ "INSERT INTO TEAM_REGISTRATION",
-            "(team, sequence, comment, standing, spirit_score, paid, status, not_qualified)",
-            "VALUES (#{team.id}, #{sequence, jdbcType=INTEGER}, #{comment, jdbcType=VARCHAR}, #{standing, jdbcType=INTEGER}, #{spiritScore, jdbcType=REAL}, #{paid}, #{status, jdbcType=VARCHAR}, #{notQualified})" })
-    Integer insert(TeamRegistration entity);
+            "(division_registration, team, sequence, comment, standing, spirit_score, paid, status, not_qualified)",
+            "VALUES (#{divisionRegistrationId}, #{teamReg.team.id}, #{teamReg.sequence, jdbcType=INTEGER}, #{teamReg.comment, jdbcType=VARCHAR}, #{teamReg.standing, jdbcType=INTEGER}, #{teamReg.spiritScore, jdbcType=REAL}, #{teamReg.paid}, #{teamReg.status, jdbcType=VARCHAR}, #{teamReg.notQualified})" })
+    @Options(keyProperty = "teamReg.id", useGeneratedKeys = true)
+    Integer insert(@Param("divisionRegistrationId") int divisionRegistrationId,
+            @Param("teamReg") TeamRegistration teamReg);
 
     // UPDATE
     @Override
