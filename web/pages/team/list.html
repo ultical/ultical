@@ -15,7 +15,7 @@
 		</div>
 	</div>
 
-	<div class="row margin-top ani-fade ani-vslide large" ng-if="editing">
+	<div class="row margin-top ani-fade ani-vslide ani-large" ng-if="editing">
 		<div class="col-md-7">
 			<div class="panel panel-ultical">
 				<div class="panel-body">
@@ -53,7 +53,7 @@
 										bs-options="location | locationObject as location | location for location in getLocations($viewValue)" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" bs-typeahead
 									/>
 									<span ng-show="teamToEdit.location.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
-									<span ng-if="(inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide short help-block">{{ 'team.edit.locationMissing' | translate }}</span>
+									<span ng-if="(inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'team.edit.locationMissing' | translate }}</span>
 								</div>
 							</div>
 						</div>
@@ -292,7 +292,7 @@
 								</div>
 							</div>
 
-							<div class="row padding-top ani-fade ani-vslide short" ng-if="editingRoster == team.id">
+							<div class="row padding-top ani-fade ani-vslide ani-short" ng-if="editingRoster == team.id">
 								<div class="col-md-9">
 									<div class="row" id="new-roster-form">
 										<div class="col-md-7">
