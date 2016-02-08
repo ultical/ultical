@@ -3,16 +3,12 @@ package de.ultical.backend.app;
 import java.time.LocalDate;
 import java.util.EnumSet;
 
-import javax.mail.Session;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
-import javax.ws.rs.client.Client;
 
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
-import org.glassfish.hk2.api.Factory;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
@@ -31,7 +27,6 @@ import de.ultical.backend.api.TournamentFormatResource;
 import de.ultical.backend.api.TournamentResource;
 import de.ultical.backend.api.UserResource;
 import de.ultical.backend.app.dfv.DfvBundle;
-import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.LocalDateMixIn;
 import de.ultical.backend.data.mapper.UserMapper;
 import de.ultical.backend.model.User;
@@ -42,12 +37,9 @@ import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.CachingAuthenticator;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.basic.BasicCredentials;
-import io.dropwizard.client.JerseyClientBuilder;
-import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Duration;
 
 public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
@@ -78,61 +70,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
          */
         final MyBatisManager mbm = new MyBatisManager(mds);
         env.lifecycle().manage(mbm);
-        env.jersey().register(new AbstractBinder() {
-
-            @Override
-            protected void configure() {
-                /*
-                 * we use the MyBatisManager as a factory to provide access to a
-                 * SqlSession.
-                 */
-                this.bindFactory(mbm).to(SqlSession.class);
-                this.bindFactory(DataStoreFactory.class).to(DataStore.class);
-
-                // Create factory to inject Client
-                this.bindFactory(new Factory<Client>() {
-
-                    private Client clientInstance;
-
-                    @Override
-                    public void dispose(Client instance) {
-                        if (instance != null) {
-                            instance.close();
-                        }
-                    }
-
-                    @Override
-                    public Client provide() {
-
-                        if (this.clientInstance == null) {
-                            JerseyClientConfiguration conf = new JerseyClientConfiguration();
-                            conf.setTimeout(Duration.milliseconds(7000));
-                            conf.setConnectionTimeout(Duration.milliseconds(7000));
-
-                            this.clientInstance = new JerseyClientBuilder(env).using(conf).using(env).build("dfvApi");
-                        }
-                        return this.clientInstance;
-                    }
-
-                }).to(Client.class);
-
-                this.bindFactory(new Factory<UltiCalConfig>() {
-
-                    @Override
-                    public UltiCalConfig provide() {
-                        return config;
-                    }
-
-                    @Override
-                    public void dispose(UltiCalConfig instance) {
-                    }
-
-                }).to(UltiCalConfig.class);
-                this.bindAsContract(MailClient.class);
-                this.bindFactory(SessionFactory.class).to(Session.class);
-
-            }
-        });
+        env.jersey().register(new UlticalBinder(mbm, env, config));
 
         // add healthcheck
         env.healthChecks().register("Database healthcheck", new DatabaseHealthCheck(mds));
