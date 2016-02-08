@@ -15,7 +15,7 @@
 						<label for="team-reg-team" class="col-sm-3 control-label">{{ 'general.team' | translate }}*</label>
 						<div class="col-sm-8" ng-class="{'has-error': isAlreadyRegistered(register.team, register.division)}">
 							<select id="team-reg-team" class="form-control" ng-model="register.team">
-								<option ng-repeat="team in ownTeams" value="{{ team.id }}">{{ team.name }}</option>
+								<option ng-repeat="team in ownTeams | orderBy : 'name'" value="{{ team.id }}">{{ team.name }}</option>
 							</select>
 							<div class="help-block ani-vslide ani-short" ng-if="isAlreadyRegistered(register.team, register.division)">{{ 'event.register.teamAlreadyInDivision' | translate }}</div>
 						</div>

@@ -785,4 +785,15 @@
 		<addUniqueConstraint columnNames="division_registration, team"
 			tableName="TEAM_REGISTRATION" constraintName="uk_team_registration_division_registration_team" />
 	</changeSet>
+	<changeSet author="bas" id="bas61">
+		<addColumn tableName="ASSOCIATION">
+			<column name="version" type="BIGINT" defaultValueNumeric="1" />
+		</addColumn>
+		<addColumn tableName="CLUB">
+			<column name="version" type="BIGINT" defaultValueNumeric="1" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas62">
+		<tagDatabase tag="bas_v1.9" />
+	</changeSet>
 </databaseChangeLog>

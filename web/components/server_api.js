@@ -37,6 +37,14 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			console.log("API Request", config.method, config.url, config.data);
 		}
 
+		var defaultTransform = angular.isArray($http.defaults.transformResponse) ? $http.defaults.transformResponse[0] : $http.defaults.transformResponse;
+
+		var jsogTransform = function(data) {
+			return JSOG.parse(data);
+		}
+
+		config.transformResponse =  [jsogTransform, defaultTransform];
+
 		return $http(config).then(
 				function (response) {
 					if (CONFIG.debug) {

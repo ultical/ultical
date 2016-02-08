@@ -410,6 +410,9 @@ select:not([multiple]) {
 .print-all {
 	margin-top: -10px;
 }
+.print-size {
+	font-size: 11px;
+}
 
 .mega-wide {
 	width: 300px;

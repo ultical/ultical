@@ -8,9 +8,8 @@ import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.mapping.FetchType;
 
-import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 
 public interface DfvPlayerMapper extends BaseMapper<DfvPlayer> {
@@ -31,17 +30,17 @@ public interface DfvPlayerMapper extends BaseMapper<DfvPlayer> {
     @Override
     @Select({ SELECT_STMT, "WHERE id = #{pk} AND is_registered=true" })
     @Results({
-            @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
     DfvPlayer get(int pk);
 
     @Override
     @Select(SELECT_STMT)
     @Results({
-            @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get", fetchType = FetchType.EAGER) ) })
     List<DfvPlayer> getAll();
 
     @Select({ SELECT_STMT, "WHERE dfv_number = #{dfvNumber} AND is_registered=true" })
     @Results({
-            @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get", fetchType = FetchType.EAGER) ) })
     DfvPlayer getByDfvNumber(int dfvNumber);
 }

@@ -130,7 +130,6 @@
 			</div>
 		</div>
 
-
 		<!-- REGISTRATION INFO -->
 		<div class="row margin-top" ng-if="event.tournamentEdition.x.registrationTime != 'never' && event.x.timing == 'future'">
 			<div class="col-md-12">
@@ -145,7 +144,7 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							<div ang-if="loggedIn()" class="btn btn-primary btn-ultical margin-top-small" data-animation="am-fade-and-slide-top" data-template-url="pages/event/registration_modal.html?v=2" bs-modal="modal">{{ 'event.register.title' | translate }}</div>
+							<div ang-if="loggedIn()" class="btn btn-primary btn-ultical margin-top-small" data-animation="am-fade-and-slide-top" data-template-url="pages/event/registration_modal.html?v=3" bs-modal="modal">{{ 'event.register.title' | translate }}</div>
 							<span ng-if="!loggedIn()">{{ 'event.register.notLoggedIn' | translate }}</span>
 						</div>
 					</div>
@@ -257,7 +256,7 @@
 	</div>
 
 	<!-- PRINTING TEMPLATE -->
-	<div class="visible-print-block" ng-if="loggedIn() && event.x.own && printing">
+	<div class="print-size visible-print-block" ng-if="loggedIn() && event.x.own && printing">
 		<div class="row padding-bottom" ng-class="{'hidden-print': !printAll && panels.divisionPanel != $index, 'border-bottom': printAll}" ng-repeat="division in event.x.divisions | orderBy : divisionOrder">
 
 			<div class="col-xs-12">
@@ -285,10 +284,13 @@
 				</div>
 
 				<div class="row" ng-init="innerIndex = $index" ng-class="{'margin-top':!$first}" ng-repeat-start="regTeam in division.registeredTeams | filter : {status: 'CONFIRMED'} | orderBy : teamOrder track by regTeam.id">
-					<div class="col-xs-8">
+					<div class="col-xs-5">
 						<span class="strong print-heading">{{ regTeam.team.name }}</span>
 					</div>
 					<div class="col-xs-4">
+						<span class="margin-top-small pull-left">{{ 'general.club' | translate }}</span>
+					</div>
+					<div class="col-xs-3">
 						<span class="pull-right margin-top-small">{{ 'event.datePlayerAdded' | translate }}</span>
 					</div>
 				</div>
@@ -296,7 +298,7 @@
 				<div class="row" ng-class="{'margin-bottom-huge': $last, highlight: $index % 2 == 1}" ng-repeat="rosterPlayer in getRelevantPlayers(regTeam, division, edition.season, event) | orderBy : 'player.lastName'">
 					<div ng-if="$index % 5 == 0" class="col-xs-12 border-bottom-light"></div>
 					<div class="col-xs-5">{{ rosterPlayer.player | playername : true }}</div>
-					<div class="col-xs-4">{{ rosterPlayer.club.name }}</div>
+					<div class="col-xs-4">{{ rosterPlayer.player.club.name }}</div>
 					<div class="col-xs-3">
 						<span class="pull-right"> {{ rosterPlayer.dateAdded | amDateFormat : ('general.amDateFormat' | translate) }}</span>
 					</div>

@@ -1,9 +1,12 @@
 package de.ultical.backend.model;
 
+import de.ultical.backend.data.mapper.ClubMapper;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class Club {
+@EqualsAndHashCode(callSuper = true)
+public class Club extends Identifiable {
     private String name;
     private int id;
     private Association association;
@@ -18,4 +21,8 @@ public class Club {
         this.association = association;
     }
 
+    @Override
+    public Class<ClubMapper> getMapper() {
+        return ClubMapper.class;
+    }
 }

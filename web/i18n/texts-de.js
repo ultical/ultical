@@ -33,6 +33,7 @@ TRANSLATIONS['de'] = {
 			players: 'Spieler',
 			currencyFormat: '{{ amount }} {{ currencySymbol }}',
 			decimalSeparator: ',',
+			club: 'Verein',
 		},
 
 		nav: {
