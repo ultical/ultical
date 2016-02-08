@@ -772,5 +772,62 @@
 	<changeSet author="bas" id="bas57">
 		<tagDatabase tag="bas_v1.7" />
 	</changeSet>
-	
+	<changeSet id="bb58" author="bb">
+		<createTable tableName="REGISTERED_PLAYER">
+			<column name="player_id" type="BIGINT"></column>
+			<column name="birth_date" type="DATE"></column>
+		</createTable>
+	</changeSet>
+	<changeSet id="bb59" author="bb" context="dfv">
+		<addColumn tableName="REGISTERED_PLAYER">
+			<column name="dfv_number" type="java.sql.types.VARCHAR(10)">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="bb60" author="bb">
+		<addForeignKeyConstraint constraintName="fk_registered_player_player"
+			referencedTableName="PLAYER" baseColumnNames="player_id"
+			baseTableName="REGISTERED_PLAYER" referencedColumnNames="id"
+			onDelete="CASCADE" />
+	</changeSet>
+	<changeSet id="bb61" author="bb" context="!dfv">
+		<sql>insert into REGISTERED_PLAYER (player_id,birth_date) values
+			(select player_id,birth_date from DFV_PLAYER)</sql>
+		<comment>copy data from DFV_PLAYER into new table REGISTERED_PLAYER</comment>
+	</changeSet>
+	<changeSet id="bb62" author="bb2" context="dfv">
+		<sql> insert into REGSITERED_PLAYER (player_id,birth_date,dfv_number)
+			values (select player_id,birth_date,dfv_numer from DFV_PLAYER)</sql>
+		<comment>copy data from DFV_PLAYER into new table REGISTERED_PLAYER (dfv case)</comment>
+	</changeSet>
+	<changeSet id="bb63" author="bb">
+		<dropTable tableName="DFV_PLAYER" />
+	</changeSet>
+	<changeSet id="bb64" author="bb">
+		<addColumn tableName="PLAYER">
+			<column name="email"></column>
+		</addColumn>
+		<rollback>
+			<dropColumn tableName="PLAYER" columnName="email" />
+		</rollback>
+	</changeSet>
+	<changeSet id="bb65" author="bb">
+		<sql>update PLAYER set email = (select u.email from
+			UNREGISTERED_PLAYER where u.id = PLAYER.id);
+		</sql>
+		<comment>Copy emails from UNREGISTERED_PLAYER to PLAYER</comment>
+	</changeSet>
+	<changeSet id="bb66" author="bb">
+		<dropForeignKeyConstraint baseTableName="UNREGISTERED_PLAYER"
+			constraintName="fk_unregistered_player_player" />
+	</changeSet>
+	<changeSet id="bb67" author="bb">
+		<preConditions onError="HALT">
+			<changeSetExecuted changeLogFile="db.changelog-1.0.xml"
+				author="bb" id="bb66" />
+				
+		</preConditions>
+		<dropTable tableName="UNREGISTERED_PLAYER" />
+	</changeSet>
 </databaseChangeLog>
