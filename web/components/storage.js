@@ -41,8 +41,9 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				callback(that.teams);
 				serverApi.getAllTeams(function(teams) {
 					that.teams = teams;
+					var loopIndex = newLoopIndex();
 					angular.forEach(teams, function(team) {
-						storeTeam(team, newLoopIndex());
+						storeTeam(team, loopIndex);
 					});
 					callback(that.teams);
 				});
@@ -53,8 +54,9 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				callback(that.own.teams);
 				serverApi.getOwnTeams(function(teams) {
 					that.own.teams = teams;
+					var loopIndex = newLoopIndex();
 					angular.forEach(teams, function(team) {
-						storeTeam(team, newLoopIndex());
+						storeTeam(team, loopIndex);
 					});
 					callback(that.own.teams);
 				});
@@ -145,9 +147,11 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 					serverApi.getEvents(function(data) {
 						that.events = data;
 
+						var loopIndex = newLoopIndex();
+
 						// add some fields
 						angular.forEach(data, function(event) {
-							storeEvent(event, newLoopIndex());
+							storeEvent(event, loopIndex);
 						});
 
 						callback(that.events);
