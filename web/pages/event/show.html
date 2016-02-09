@@ -183,12 +183,12 @@
 										<div class="panel-group" ng-model="panels.teamPanel" role="tablist" aria-multiselectable="true" bs-collapse>
 
 											<!-- no teams yet -->
-											<div ng-if="division.registeredTeams.length == 0">
+											<div ng-if="division.playingTeams.length == 0">
 												<span>{{ 'event.teamList.noTeams' | translate }}</span>
 											</div>
 
 											<!-- team list -->
-											<div ng-init="rosterPlayers = getRelevantPlayers(regTeam, division, edition.season, event)" ng-repeat-start="regTeam in division.registeredTeams | orderBy : teamOrder track by regTeam.id">
+											<div ng-init="rosterPlayers = getRelevantPlayers(regTeam, division, event.tournamentEdition.season, event)" ng-repeat-start="regTeam in division.playingTeams | orderBy : teamOrder track by regTeam.id">
 												<div class="row margin-bottom-small" ng-class="{'margin-top': !$first}" ng-if="needTeamHeading($index, division.id, regTeam.status)">
 													<div class="col-md-6 strong">{{ ('event.teamList.' + (regTeam.status | lowercase)) | translate }}</div>
 													<div class="col-md-6" ng-if="regTeam.status == 'CONFIRMED' && event.x.own" ng-click="print()">
@@ -283,7 +283,7 @@
 					<div class="col-xs-12 print-heading">{{ division | division}}</div>
 				</div>
 
-				<div class="row" ng-init="innerIndex = $index" ng-class="{'margin-top':!$first}" ng-repeat-start="regTeam in division.registeredTeams | filter : {status: 'CONFIRMED'} | orderBy : teamOrder track by regTeam.id">
+				<div class="row" ng-init="innerIndex = $index" ng-class="{'margin-top':!$first}" ng-repeat-start="regTeam in division.playingTeams | filter : {status: 'CONFIRMED'} | orderBy : teamOrder track by regTeam.id">
 					<div class="col-xs-5">
 						<span class="strong print-heading">{{ regTeam.team.name }}</span>
 					</div>
@@ -295,7 +295,7 @@
 					</div>
 				</div>
 
-				<div class="row" ng-class="{'margin-bottom-huge': $last, highlight: $index % 2 == 1}" ng-repeat="rosterPlayer in getRelevantPlayers(regTeam, division, edition.season, event) | orderBy : 'player.lastName'">
+				<div class="row" ng-class="{'margin-bottom-huge': $last, highlight: $index % 2 == 1}" ng-repeat="rosterPlayer in getRelevantPlayers(regTeam, division, event.tournamentEdition.season, event) | orderBy : 'player.lastName'">
 					<div ng-if="$index % 5 == 0" class="col-xs-12 border-bottom-light"></div>
 					<div class="col-xs-5">{{ rosterPlayer.player | playername : true }}</div>
 					<div class="col-xs-4">{{ rosterPlayer.player.club.name }}</div>

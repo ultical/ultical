@@ -20,11 +20,11 @@ import de.ultical.backend.model.DivisionRegistration;
 
 public interface DivisionConfirmationMapper extends BaseMapper<DivisionConfirmation> {
 
-    final String divisionSelect = "SELECT dc.id, dc.version, dc.division_registration, dc.event, dr.is_player_registration FROM DIVISION_CONFIRMATION dc LEFT JOIN DIVISION_REGISTRATION dr ON dr.id = dc.division_registration";
+    final String divisionSelect = "SELECT dc.id, dc.version, dc.division_registration, dc.event,dc.individual_assignment, dr.is_player_registration FROM DIVISION_CONFIRMATION dc LEFT JOIN DIVISION_REGISTRATION dr ON dr.id = dc.division_registration";
 
     // INSERT
     @Override
-    @Insert("INSERT INTO DIVISION_CONFIRMATION (division_registration, event) VALUES (#{divisionRegistration.id}, #{event.id})")
+    @Insert("INSERT INTO DIVISION_CONFIRMATION (division_registration, event, individual_assignment) VALUES (#{divisionRegistration.id}, #{event.id}, #{individualAssignment})")
     Integer insert(DivisionConfirmation entity);
 
     // DELETE
@@ -40,6 +40,7 @@ public interface DivisionConfirmationMapper extends BaseMapper<DivisionConfirmat
                     @Result(column = "id", property = "teams", many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForConfirmation") ) }),
             @Case(value = "true", type = DivisionConfirmationPlayers.class) }, jdbcType = JdbcType.BOOLEAN)
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "individual_assignment", property = "individualAssignment", javaType = Boolean.class, jdbcType = JdbcType.BOOLEAN),
             @Result(column = "division_registration", property = "divisionRegistration", javaType = DivisionRegistration.class, one = @One(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.get") ) })
     DivisionConfirmation get(int id);
 
@@ -49,6 +50,7 @@ public interface DivisionConfirmationMapper extends BaseMapper<DivisionConfirmat
                     @Result(column = "id", property = "teams", many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForConfirmation") ) }),
             @Case(value = "true", type = DivisionConfirmationPlayers.class) }, jdbcType = JdbcType.BOOLEAN)
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "individual_assignment", property = "individualAssignment", javaType = Boolean.class, jdbcType = JdbcType.BOOLEAN),
             @Result(column = "division_registration", property = "divisionRegistration", javaType = DivisionRegistration.class, one = @One(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.get") ) })
     List<DivisionConfirmation> getByEvent(int eventId);
 }

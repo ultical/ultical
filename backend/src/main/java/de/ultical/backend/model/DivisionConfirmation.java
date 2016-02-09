@@ -18,4 +18,5 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public abstract class DivisionConfirmation extends Identifiable {
     private DivisionRegistration divisionRegistration;
+    private boolean individualAssignment;
 }

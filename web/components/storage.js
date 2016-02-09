@@ -114,9 +114,6 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				if (isEmpty(this.seasons)) {
 					serverApi.getSeasons(function(seasons) {
 						that.seasons = seasons;
-						angular.forEach(seasons, function(season) {
-							storeSeason(season, newLoopIndex());
-						});
 					});
 				} else {
 					callback(this.seasons);
@@ -259,19 +256,10 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			return;
 		}
 
-		storeSeason(roster.season, loopIndex);
-
 		angular.forEach(roster.players, function(player, idx) {
 			storePlayer(player.player, loopIndex);
 		});
 	}
-
-	function storeSeason(season, loopIndex) {
-		if (!storeWithoutLoops(season, loopIndex)) {
-			return;
-		}
-	}
-
 
 	function storeUser(user, loopIndex) {
 		if (!storeWithoutLoops(user, loopIndex)) {
@@ -324,6 +312,8 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 		storeTournamentEdition(event.tournamentEdition, loopIndex);
 
+		storeContact(event.localOrganizer, loopIndex);
+
 		angular.forEach(event.admins, function(admin, idx) {
 			storeUser(admin, loopIndex);
 
@@ -331,8 +321,6 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 		});
 
 		event.x.own = authorizer.getUser() != null && (event.x.own ||  event.tournamentEdition.tournamentFormat.x.own);
-
-		storeContact(event.localOrganizer, loopIndex);
 
 		event.x.isSingleEvent = event.tournamentEdition.isSingleEdition;
 		event.x.hasLocalOrganizer = !isEmpty(event.localOrganizer) && !isEmpty(event.localOrganizer.name) && event.tournamentEdition.organizer.id != event.localOrganizer.id;
@@ -351,14 +339,28 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 		event.x.divisions = [];
 
 		if ('divisionConfirmations' in event && !isEmpty(event.divisionConfirmations)) {
-			// TODO: once we have editions with different divisions per event, this gets interesting
+			angular.forEach(event.divisionConfirmations, function(divisionConfirmation) {
+				var division = angular.copy(divisionConfirmation.divisionRegistration);
 
+				// if individual assignment is set to false, all teams/players of the registration will play
+				if (divisionConfirmation.individualAssignment) {
+					division.playingTeams = divisionConfirmation.teams;
+				} else {
+					// we take all teams of the divisionRegistration
+					division.playingTeams = division.registeredTeams;
+				}
+				event.x.divisions.push(angular.copy(division));
+			});
 		} else {
 			// this event gets all divisions and teams from the edition
 			if (isEmpty(event.tournamentEdition.divisionRegistrations)) {
 				event.x.divisions = [];
 			} else {
-				event.x.divisions = event.tournamentEdition.divisionRegistrations;
+				event.x.divisions = angular.copy(event.tournamentEdition.divisionRegistrations);
+				angular.forEach(event.x.divisions, function(division) {
+					division.playingTeams = division.registeredTeams;
+				});
+
 			}
 		}
 	}
@@ -367,8 +369,6 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 		if (!storeWithoutLoops(edition, loopIndex)) {
 			return;
 		}
-
-		storeSeason(edition.season, loopIndex);
 
 		angular.forEach(edition.events, function(event, idx) {
 			event.tournamentEdition = edition;

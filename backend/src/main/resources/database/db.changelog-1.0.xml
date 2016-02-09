@@ -843,4 +843,13 @@
 	<changeSet author="bas" id="bas65">
 		<tagDatabase tag="bas_v1.10" />
 	</changeSet>
+	<changeSet author="bas" id="bas66">
+		<addColumn tableName="DIVISION_CONFIRMATION">
+			<column name="individual_assignment" type="BOOLEAN"
+				defaultValueBoolean="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas67">
+		<tagDatabase tag="bas_v1.11" />
+	</changeSet>
 </databaseChangeLog>
