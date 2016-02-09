@@ -15,7 +15,7 @@
 		</div>
 	</div>
 
-	<div class="row margin-top fade-ani" ng-if="editing">
+	<div class="row margin-top ani-fade ani-vslide ani-large" ng-if="editing">
 		<div class="col-md-7">
 			<div class="panel panel-ultical">
 				<div class="panel-body">
@@ -53,7 +53,7 @@
 										bs-options="location | locationObject as location | location for location in getLocations($viewValue)" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" bs-typeahead
 									/>
 									<span ng-show="teamToEdit.location.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
-									<span ng-if="(inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing" class="help-block">{{ 'team.edit.locationMissing' | translate }}</span>
+									<span ng-if="(inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'team.edit.locationMissing' | translate }}</span>
 								</div>
 							</div>
 						</div>
@@ -116,7 +116,7 @@
 								<div class="form-control-static">
 									<div class="editable-list" ng-repeat="admin in teamToEdit.admins">
 										<div class="editable-list-item" ng-class="{'no-remove': (admin.id == activeUserId && teamToEdit.id == -1) || (teamToEdit.admins.length < 2) }">{{ admin.dfvPlayer != null ? admin.dfvPlayer.firstName + ' ' + admin.dfvPlayer.lastName : admin.email }}</div>
-										<div ng-hide="(admin.id == activeUserId && teamToEdit.id == -1) || (teamToEdit.admins.length < 2)" ng-click="removeAdmin(admin.id)" class="fade-ani editable-list-remove cursor-pointer" data-title="{{ 'team.edit.adminsRemoveTooltip' | translate }}" bs-tooltip>
+										<div ng-hide="(admin.id == activeUserId && teamToEdit.id == -1) || (teamToEdit.admins.length < 2)" ng-click="removeAdmin(admin.id)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'team.edit.adminsRemoveTooltip' | translate }}" bs-tooltip>
 											<span class="fa-stack fa-lg">
 												<i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x fa-inverse"></i>
 											</span>
@@ -145,7 +145,7 @@
 								<div class="form-control-static" ng-hide="teamToEdit.emails.length == 0">
 									<div class="editable-list" ng-repeat="email in teamToEdit.emails">
 										<div class="editable-list-item">{{ email }}</div>
-										<div ng-click="removeEmail(email)" class="fade-ani editable-list-remove cursor-pointer" data-title="{{ 'team.edit.emailsRemoveTooltip' | translate }}" bs-tooltip>
+										<div ng-click="removeEmail(email)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'team.edit.emailsRemoveTooltip' | translate }}" bs-tooltip>
 											<span class="fa-stack fa-lg">
 												<i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x fa-inverse"></i>
 											</span>
@@ -292,7 +292,7 @@
 								</div>
 							</div>
 
-							<div class="row margin-top fade-ani" ng-if="editingRoster == team.id">
+							<div class="row padding-top ani-fade ani-vslide ani-short" ng-if="editingRoster == team.id">
 								<div class="col-md-9">
 									<div class="row" id="new-roster-form">
 										<div class="col-md-7">
@@ -333,7 +333,7 @@
 								</div>
 							</div>
 
-							<div class="row margin-top-small" id="roster-listing" ng-if="team.rosters.length > 0">
+							<div class="row margin-top-small" class="roster-listing" ng-if="team.rosters.length > 0">
 								<div class="col-md-12">
 
 									<div class="panel-group" ng-model="teamPanels.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
@@ -342,7 +342,7 @@
 											<div class="panel-heading cursor-pointer" role="tab">
 												<h3 class="panel-title" bs-collapse-toggle>
 													<span>{{ roster.season | season : true }} - {{ roster | division }}</span>
-													<span class="panel-title-addon">&nbsp;&nbsp;(&nbsp;{{ roster.players.length }}&nbsp;)</span>
+													<span ng-if="loggedIn()" class="panel-title-addon">&nbsp;&nbsp;(&nbsp;{{ roster.players.length }}&nbsp;)</span>
 													<div ng-if="team.x.own" ng-click="editRoster(roster, team, $index)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip>
 														<i class="fa fa-pencil"></i>
 													</div>
@@ -383,14 +383,14 @@
 
 													<div class="row">
 														<div class="col-md-12">
-															<div ng-if="loggedIn()" class="roster-list" ng-repeat="rosterPlayer in roster.players | orderBy : 'player.lastName'">
+															<div ng-if="loggedIn() && roster.players.length > 0" class="roster-list" ng-repeat="rosterPlayer in roster.players | orderBy : 'player.lastName'">
 																{{ rosterPlayer.player | playername : true }}
 																<span ng-if="team.x.own && editingRosterPlayers == roster.id && !rosterPlayer.blocked" ng-click="removePlayerFromRoster(rosterPlayer.player, roster, team)" class="ffade player-actions cursor-pointer" data-title="{{ 'team.roster.removePlayerTooltip' | translate }}" bs-tooltip>
 																	<i class="fa fa-remove"></i>
 																</span>
 															</div>
-															<div ng-if="roster.players.length == 0">{{ 'team.roster.empty' | translate }}</div>
-															<div ng-if="roster.players.length > 0 && !loggedIn()">{{ 'team.roster.notLoggedIn' | translate }}</div>
+															<div ng-if="loggedIn() && roster.players.length == 0">{{ 'team.roster.empty' | translate }}</div>
+															<div ng-if="!loggedIn()">{{ 'team.roster.notLoggedIn' | translate }}</div>
 														</div>
 													</div>
 												</div>

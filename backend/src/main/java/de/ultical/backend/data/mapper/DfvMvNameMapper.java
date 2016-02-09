@@ -34,7 +34,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.One;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
@@ -50,12 +49,10 @@ public interface DfvMvNameMapper {
 
     // INSERT
     @Insert("INSERT INTO DFV_MV_NAME (dfv_number, first_name, last_name, dse, club) VALUES (#{dfvNumber, jdbcType=INTEGER},#{firstName, jdbcType=VARCHAR},#{lastName, jdbcType=VARCHAR},#{dse},#{club.id, jdbcType=INTEGER})")
-    @Options(flushCache = true)
     Integer insert(DfvMvName entity);
 
     // DELETE
     @Delete("DELETE FROM DFV_MV_NAME WHERE 1=1")
-    @Options(flushCache = true)
     void deleteAll();
 
     // SELECT

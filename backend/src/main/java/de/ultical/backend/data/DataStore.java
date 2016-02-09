@@ -49,6 +49,7 @@ import de.ultical.backend.data.mapper.ClubMapper;
 import de.ultical.backend.data.mapper.DfvMvNameMapper;
 import de.ultical.backend.data.mapper.DfvPlayerMapper;
 import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
+import de.ultical.backend.data.mapper.EventMapper;
 import de.ultical.backend.data.mapper.MailCodeMapper;
 import de.ultical.backend.data.mapper.PlayerMapper;
 import de.ultical.backend.data.mapper.RosterMapper;
@@ -63,6 +64,7 @@ import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
+import de.ultical.backend.model.Event;
 import de.ultical.backend.model.Identifiable;
 import de.ultical.backend.model.MailCode;
 import de.ultical.backend.model.Player;
@@ -714,6 +716,17 @@ public class DataStore {
         }
     }
 
+    public Event getEventByDivision(int divisionId) {
+        try {
+            EventMapper em = this.sqlSession.getMapper(EventMapper.class);
+            return em.getByDivisionRegistration(divisionId);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public TournamentFormat getFormatByEvent(int eventId) {
         try {
             TournamentFormatMapper tfMapper = this.sqlSession.getMapper(TournamentFormatMapper.class);
@@ -736,10 +749,13 @@ public class DataStore {
         }
     }
 
-    public void registerTeamForDivision(DivisionRegistrationTeams div, TeamRegistration teamReg) {
+    public TeamRegistration registerTeamForEdition(int divisionRegistrationId, TeamRegistration teamReg) {
         try {
             final TeamRegistrationMapper mapper = this.sqlSession.getMapper(TeamRegistrationMapper.class);
-            mapper.insertAtEnd(div, teamReg);
+            mapper.insert(divisionRegistrationId, teamReg);
+            this.sqlSession.commit();
+            return teamReg;
+            // mapper.insertAtEnd(div, teamReg);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

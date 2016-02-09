@@ -34,12 +34,16 @@ import java.util.List;
 import org.apache.ibatis.annotations.Case;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.TypeDiscriminator;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.type.JdbcType;
 
+import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.Player;
 import de.ultical.backend.model.UnregisteredPlayer;
@@ -71,11 +75,15 @@ public interface PlayerMapper extends BaseMapper<Player> {
     @Select({ SELECT_STMT, "WHERE id=#{id}" })
     @TypeDiscriminator(column = "is_registered", javaType = Boolean.class, jdbcType = JdbcType.BOOLEAN, cases = {
             @Case(type = DfvPlayer.class, value = "true"), @Case(type = UnregisteredPlayer.class, value = "false") })
+    @Results({
+            @Result(column = "club", property = "club", javaType = Club.class, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
     Player get(int id);
 
     @Override
     @Select(SELECT_STMT)
     @TypeDiscriminator(column = "is_registered", javaType = Boolean.class, jdbcType = JdbcType.BOOLEAN, cases = {
             @Case(type = DfvPlayer.class, value = "true"), @Case(type = UnregisteredPlayer.class, value = "false") })
+    @Results({
+            @Result(column = "club", property = "club", javaType = Club.class, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
     List<Player> getAll();
 }

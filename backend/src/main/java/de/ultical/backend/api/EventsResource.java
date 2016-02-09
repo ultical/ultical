@@ -49,6 +49,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
 
+import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
@@ -114,12 +115,15 @@ public class EventsResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{eventId}")
-    public void updateEvent(@PathParam("eventId") Integer id, Event event, @Auth @NotNull User currentUser) {
+    public void updateEvent(@PathParam("eventId") Integer id, Event event, @Auth @NotNull User currentUser)
+            throws Exception {
         this.checkDatatStore();
         if (id.equals(event.getId()) == false) {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
         }
-        try {
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            Authenticator.assureEventAdmin(this.dataStore, event.getId(), currentUser);
             boolean updated = this.dataStore.update(event);
             if (!updated) {
                 throw new WebApplicationException(
@@ -130,6 +134,9 @@ public class EventsResource {
         }
     }
 
+    /*
+     * DIVISIONS
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -137,6 +144,7 @@ public class EventsResource {
     public DivisionRegistration addDivision(@PathParam("eventId") Integer eventId, DivisionRegistration div,
             @Auth @NotNull User currentUser) throws Exception {
         this.checkDatatStore();
+
         /*
          * we only need the event's id, thus we build a fake-event instead of
          * reading it from the db. If the event does not exist the database's
@@ -146,6 +154,7 @@ public class EventsResource {
         fakeEdition.setId(eventId);
         DivisionRegistration storedDiv;
         try (AutoCloseable c = this.dataStore.getClosable()) {
+            Authenticator.assureEventAdmin(this.dataStore, eventId, currentUser);
             storedDiv = this.dataStore.addDivisionToEdition(fakeEdition, div);
         } catch (PersistenceException pe) {
             throw new WebApplicationException(pe);
@@ -157,12 +166,14 @@ public class EventsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{eventId}/divisions/{divisionId}")
     public void updateDivsion(@PathParam("eventId") Integer eventId, DivisionRegistration div,
-            @PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser) {
+            @PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser) throws Exception {
         this.checkDatatStore();
         if (!Integer.valueOf(div.getId()).equals(divId)) {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
         }
-        try {
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            Authenticator.assureEventAdmin(this.dataStore, eventId, currentUser);
             final boolean updated = this.dataStore.update(div);
             if (!updated) {
                 throw new WebApplicationException(
@@ -179,6 +190,8 @@ public class EventsResource {
             throws Exception {
         this.checkDatatStore();
         try (AutoCloseable c = this.dataStore.getClosable()) {
+            Authenticator.assureEventDivisionAdmin(this.dataStore, divId, currentUser);
+
             DivisionRegistrationTeams fakeDiv = new DivisionRegistrationTeams();
             fakeDiv.setId(divId.intValue());
             this.dataStore.deleteDivision(fakeDiv);

@@ -32,8 +32,6 @@ package de.ultical.backend.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import de.ultical.backend.data.mapper.RosterMapper;
 import lombok.Data;
@@ -41,7 +39,6 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Roster.class)
 public class Roster extends Identifiable {
 
     @JsonBackReference

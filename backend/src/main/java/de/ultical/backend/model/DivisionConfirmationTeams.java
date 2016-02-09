@@ -29,8 +29,9 @@
  */
 package de.ultical.backend.model;
 
-import java.util.Set;
+import java.util.List;
 
+import de.ultical.backend.data.mapper.DivisionConfirmationMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -39,5 +40,10 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class DivisionConfirmationTeams extends DivisionConfirmation {
-	private Set<Team> teams;
+    private List<TeamRegistration> teams;
+
+    @Override
+    public Class<DivisionConfirmationMapper> getMapper() {
+        return DivisionConfirmationMapper.class;
+    }
 }

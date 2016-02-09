@@ -95,5 +95,6 @@
 		<mapper class="de.ultical.backend.data.mapper.ClubMapper" />
 		<mapper class="de.ultical.backend.data.mapper.RosterPlayerMapper" />
 		<mapper class="de.ultical.backend.data.mapper.AssociationMapper" />
+		<mapper class="de.ultical.backend.data.mapper.DivisionConfirmationMapper" />
 	</mappers>
 </configuration>

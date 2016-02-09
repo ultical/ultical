@@ -41,6 +41,7 @@ import org.junit.Test;
 import de.ultical.backend.model.Contact;
 import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionRegistration;
+import de.ultical.backend.model.DivisionRegistration.DivisionRegistrationStatus;
 import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.DivisionType;
 import de.ultical.backend.model.Season;
@@ -125,22 +126,25 @@ public class TeamRegistrationMapperTest {
         TeamRegistration goldfingersRegistration = new TeamRegistration();
         goldfingersRegistration.setTeam(this.team);
         goldfingersRegistration.setComment("the GUC is coming!");
-        this.mapper.insertAtEnd(this.divisionRegOpen, goldfingersRegistration);
+        goldfingersRegistration.setStatus(DivisionRegistrationStatus.WAITING_LIST);
+        this.mapper.insert(this.divisionRegOpen.getId(), goldfingersRegistration);
 
         Team gucMixed = new Team();
         gucMixed.setName("Goldfingers");
         TeamRegistration gucMixedReg = new TeamRegistration();
         gucMixedReg.setTeam(gucMixed);
+        gucMixedReg.setStatus(DivisionRegistrationStatus.PENDING);
         RULE.getSession().getMapper(gucMixed.getMapper()).insert(gucMixed);
-        this.mapper.insertAtEnd(this.divisionRegMxd, gucMixedReg);
+        this.mapper.insert(this.divisionRegMxd.getId(), gucMixedReg);
 
         Team wallCity = new Team();
         wallCity.setName("WallCity");
         TeamRegistration wallCityReg = new TeamRegistration();
         wallCityReg.setComment("Down comes the hammer!");
         wallCityReg.setTeam(wallCity);
+        wallCityReg.setStatus(DivisionRegistrationStatus.CONFIRMED);
         RULE.getSession().getMapper(wallCity.getMapper()).insert(wallCity);
-        this.mapper.insertAtEnd(this.divisionRegOpen, wallCityReg);
+        this.mapper.insert(this.divisionRegOpen.getId(), wallCityReg);
 
         foundEdition = RULE.getSession().getMapper(this.tes.getMapper()).get(this.tes.getId());
         assertNotNull(foundEdition);

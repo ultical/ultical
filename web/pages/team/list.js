@@ -377,7 +377,7 @@ angular.module('ultical.team', [])
 				}
 			});
 			angular.forEach(roster.players, function(player) {
-				player.blocked = lastBlockingDateBeforeToday.isAfter(moment(player.dateAdded.string));
+				player.blocked = lastBlockingDateBeforeToday.isAfter(moment(player.dateAdded));
 			});
 		});
 

@@ -772,5 +772,84 @@
 	<changeSet author="bas" id="bas57">
 		<tagDatabase tag="bas_v1.7" />
 	</changeSet>
-	
+	<changeSet author="bas" id="bas58">
+		<addColumn tableName="FEE">
+			<column name="per_person" type="BOOLEAN" defaultValueBoolean="false" />
+			<column name="multiple" type="BOOLEAN" defaultValueBoolean="false" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas59">
+		<tagDatabase tag="bas_v1.8" />
+	</changeSet>
+	<changeSet author="bas" id="bas60">
+		<addUniqueConstraint columnNames="division_registration, team"
+			tableName="TEAM_REGISTRATION" constraintName="uk_team_registration_division_registration_team" />
+	</changeSet>
+	<changeSet author="bas" id="bas61">
+		<addColumn tableName="ASSOCIATION">
+			<column name="version" type="BIGINT" defaultValueNumeric="1" />
+		</addColumn>
+		<addColumn tableName="CLUB">
+			<column name="version" type="BIGINT" defaultValueNumeric="1" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas62">
+		<tagDatabase tag="bas_v1.9" />
+	</changeSet>
+	<changeSet author="bas" id="bas63">
+		<createTable tableName="DIVISION_CONFIRMATION">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="version" type="BIGINT" defaultValueNumeric="1" />
+			<column name="division_registration" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="event" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addUniqueConstraint
+			constraintName="uk_division_confirmation_division_registration_event"
+			columnNames="division_registration,event" tableName="DIVISION_CONFIRMATION" />
+		<addForeignKeyConstraint
+			constraintName="fk_division_confirmation_division_registration"
+			referencedTableName="DIVISION_REGISTRATION" baseColumnNames="division_registration"
+			baseTableName="DIVISION_CONFIRMATION" referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_division_confirmation_event"
+			referencedTableName="EVENT" baseColumnNames="event" baseTableName="DIVISION_CONFIRMATION"
+			referencedColumnNames="id" />
+		<createTable tableName="DIVISION_CONFIRMATION_TEAMS">
+			<column name="division_confirmation" type="BIGINT">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="team_registration" type="BIGINT">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint
+			constraintName="fk_division_confirmation_teams_division_confirmation"
+			referencedTableName="DIVISION_CONFIRMATION" baseColumnNames="division_confirmation"
+			baseTableName="DIVISION_CONFIRMATION_TEAMS" referencedColumnNames="id" />
+		<addForeignKeyConstraint
+			constraintName="fk_division_confirmation_teams_team_registration"
+			referencedTableName="TEAM_REGISTRATION" baseColumnNames="team_registration"
+			baseTableName="DIVISION_CONFIRMATION_TEAMS" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet author="bas" id="bas64">
+		<addNotNullConstraint tableName="DIVISION_CONFIRMATION"
+			columnDataType="BIGINT" columnName="version" />
+	</changeSet>
+	<changeSet author="bas" id="bas65">
+		<tagDatabase tag="bas_v1.10" />
+	</changeSet>
+	<changeSet author="bas" id="bas66">
+		<addColumn tableName="DIVISION_CONFIRMATION">
+			<column name="individual_assignment" type="BOOLEAN"
+				defaultValueBoolean="false"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas67">
+		<tagDatabase tag="bas_v1.11" />
+	</changeSet>
 </databaseChangeLog>
