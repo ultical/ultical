@@ -65,7 +65,18 @@
 .padding-top-big {
 	padding-top: 1.5em;
 }
-
+.padding-top-huge {
+	padding-top: 2.5em;
+}
+.padding-bottom {
+	padding-bottom: 1em;
+}
+.padding-right {
+	padding-right: 1em;
+}
+.padding-right-small {
+	padding-right: 0.5em;
+}
 .cursor-pointer {
 	cursor: pointer;
 }
@@ -131,4 +142,12 @@ footer a {
 	}
 }
 
-
+.border-bottom {
+	border-bottom: 1px solid #BBB;
+}
+.border-bottom-light {
+	border-bottom: 1px solid #DDD;
+}
+.border-top {
+	border-top: 1px solid #AAA;
+}

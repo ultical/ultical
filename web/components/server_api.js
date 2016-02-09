@@ -37,6 +37,18 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			console.log("API Request", config.method, config.url, config.data);
 		}
 
+		var defaultTransform = angular.isArray($http.defaults.transformResponse) ? $http.defaults.transformResponse[0] : $http.defaults.transformResponse;
+
+		var jsogTransform = function(data) {
+			try {
+				return JSOG.parse(data);
+			} catch(e) {
+				return data;
+			}
+		}
+
+		config.transformResponse =  [jsogTransform, defaultTransform];
+
 		return $http(config).then(
 				function (response) {
 					if (CONFIG.debug) {
@@ -205,6 +217,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		addPlayerToRoster: function(player, roster, callback, errorCallback) {
 			var requestPlayer = { lastName: player.lastName, firstName: player.firstName, dse: player.dse, dfvNumber: player.dfvNumber };
 			return post('roster/' + roster.id, requestPlayer, callback, errorCallback);
+		},
+
+		registerTeamForEdition: function(registration, divisionRegistration, callback) {
+			return post('tournaments/' + divisionRegistration.id + '/register/team', registration, callback);
 		},
 	};
 
