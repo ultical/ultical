@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import de.ultical.backend.app.LocalDateDeserializer;
 import de.ultical.backend.app.LocalDateSerializer;
 import de.ultical.backend.data.mapper.EventMapper;
-import io.dropwizard.validation.MinSize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -25,7 +24,6 @@ public class Event extends Identifiable {
     private List<Location> locations;
 
     // subset of the tournaments divisions and participants
-    @MinSize(1)
     private List<DivisionConfirmation> divisionConfirmations;
 
     @JsonSerialize(using = LocalDateSerializer.class)

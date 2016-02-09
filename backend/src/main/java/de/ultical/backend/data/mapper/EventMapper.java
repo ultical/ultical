@@ -61,6 +61,7 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "info", property = "info"),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForEvent") ),
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent") ),
+            @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getByEvent") ),
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") , javaType = Contact.class) })
     Event get(int id);
 
@@ -74,6 +75,7 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "info", property = "info"),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForEvent") ),
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent") ),
+            @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getByEvent") ),
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") , javaType = Contact.class) })
     List<Event> getAll();
 
@@ -85,6 +87,7 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "info", property = "info"),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForEvent") ),
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent") ),
+            @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getByEvent") ),
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") , javaType = Contact.class) })
     List<Event> getEventsForEdition(int editionId);
 
@@ -96,6 +99,7 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "info", property = "info"),
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForEvent") ),
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent") ),
+            @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getByEvent") ),
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") , javaType = Contact.class) })
     Event getByDivisionRegistration(@Param("divisionId") int divisionId);
 }
