@@ -18,7 +18,6 @@ import org.apache.ibatis.type.JdbcType;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationPlayers;
 import de.ultical.backend.model.DivisionRegistrationTeams;
-import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.TournamentEdition;
 
 public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistration> {
@@ -47,7 +46,7 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
     @Select({ divisionSelect, "WHERE id=#{id}" })
     @TypeDiscriminator(column = "is_player_registration", javaType = Boolean.class, cases = {
             @Case(value = "false", type = DivisionRegistrationTeams.class, results = {
-                    @Result(column = "id", property = "registeredTeams", javaType = TeamRegistration.class, many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForDivision") ) }),
+                    @Result(column = "id", property = "registeredTeams", many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForDivision") ) }),
             @Case(value = "true", type = DivisionRegistrationPlayers.class) }, jdbcType = JdbcType.BOOLEAN)
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "division_age", property = "divisionAge"),

@@ -2,7 +2,7 @@ package de.ultical.backend.model;
 
 import java.util.List;
 
-import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
+import de.ultical.backend.data.mapper.DivisionConfirmationMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,7 +14,7 @@ public class DivisionConfirmationPlayers extends DivisionConfirmation {
     private List<Player> players;
 
     @Override
-    public Class<DivisionRegistrationMapper> getMapper() {
-        return DivisionRegistrationMapper.class;
+    public Class<DivisionConfirmationMapper> getMapper() {
+        return DivisionConfirmationMapper.class;
     }
 }

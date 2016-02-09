@@ -17,7 +17,6 @@ import de.ultical.backend.model.DivisionConfirmation;
 import de.ultical.backend.model.DivisionConfirmationPlayers;
 import de.ultical.backend.model.DivisionConfirmationTeams;
 import de.ultical.backend.model.DivisionRegistration;
-import de.ultical.backend.model.Event;
 
 public interface DivisionConfirmationMapper extends BaseMapper<DivisionConfirmation> {
 
@@ -41,8 +40,7 @@ public interface DivisionConfirmationMapper extends BaseMapper<DivisionConfirmat
                     @Result(column = "id", property = "teams", many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForConfirmation") ) }),
             @Case(value = "true", type = DivisionConfirmationPlayers.class) }, jdbcType = JdbcType.BOOLEAN)
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
-            @Result(column = "division_registration", property = "divisionRegistration", javaType = DivisionRegistration.class, one = @One(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.get") ),
-            @Result(column = "event", property = "event", javaType = Event.class, one = @One(select = "de.ultical.backend.data.mapper.EventMapper.get") ) })
+            @Result(column = "division_registration", property = "divisionRegistration", javaType = DivisionRegistration.class, one = @One(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.get") ) })
     DivisionConfirmation get(int id);
 
     @Select({ divisionSelect, "WHERE dc.event=#{eventId}" })
