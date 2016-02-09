@@ -79,6 +79,7 @@ This project includes:
   Jackson-datatype-Joda under The Apache Software License, Version 2.0
   Jackson-JAXRS-base under The Apache Software License, Version 2.0
   Jackson-JAXRS-JSON under The Apache Software License, Version 2.0
+  Jackson-JSOG under MIT License
   Jackson-module-Afterburner under The Apache Software License, Version 2.0
   Jackson-module-JAXB-annotations under The Apache Software License, Version 2.0
   Java Servlet API under CDDL + GPLv2 with classpath exception
