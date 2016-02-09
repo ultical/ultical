@@ -10,8 +10,8 @@
     "amd",
     "globals"
   ],
-  "license": "MIT",
-  "homepage": "",
+  "license": "GPLv3",
+  "homepage": "https://www.dfv-turniere.de",
   "private": true,
   "ignore": [
     "**/.*",
