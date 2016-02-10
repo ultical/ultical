@@ -417,3 +417,6 @@ select:not([multiple]) {
 .mega-wide {
 	width: 300px;
 }
+.hard-limit {
+	overflow: hidden;
+}
