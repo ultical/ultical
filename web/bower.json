@@ -5,7 +5,9 @@
     "bas <sebastian.trapp@gmail.com>"
   ],
   "description": "Ultimate Tournament Management",
-  "main": "index.html",
+  "main": [
+    "index.html"
+  ],
   "moduleType": [
     "amd",
     "globals"
