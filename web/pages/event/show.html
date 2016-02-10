@@ -1,5 +1,5 @@
 <div id="start" ng-controller="EventShowCtrl">
-	<div ng-class="{'hidden-print': printing}">
+	<div ng-class="{'hidden-print': printing}" ng-show="event | notEmpty">
 		<div class="row">
 			<div class="col-md-12">
 				<h3 class="page-title">{{ event | eventname : 'full' }}</h3>
