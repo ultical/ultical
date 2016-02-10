@@ -16,6 +16,8 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			teams: [],
 			seasons: [],
 
+			formatsByEventIndexed: {},
+
 			getEmptyEvent: function() {
 				return createEmptyEvent();
 			},
@@ -41,6 +43,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				callback(that.teams);
 				serverApi.getAllTeams(function(teams) {
 					that.teams = teams;
+
 					var loopIndex = newLoopIndex();
 					angular.forEach(teams, function(team) {
 						storeTeam(team, loopIndex);
@@ -125,8 +128,12 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			getFormatForEvent: function(eventId, callback) {
 				var that = this;
 
+				if (eventId in this.formatsByEventIndexed) {
+					callback(this.formatsByEventIndexed[eventId]);
+				}
 				serverApi.getFormatByEvent(eventId, function(data) {
 					storeTournamentFormat(data, newLoopIndex());
+					that.formatsByEventIndexed[eventId] = data;
 					callback(data);
 				});
 			},
@@ -142,23 +149,21 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 			getEvents: function(callback) {
 				var that = this;
-				if (isEmpty(this.allEvents)) {
-					// make API call
-					serverApi.getEvents(function(data) {
-						that.events = data;
+				callback(this.events);
 
-						var loopIndex = newLoopIndex();
+				// make API call
+				serverApi.getEvents(function(data) {
+					that.events = data;
 
-						// add some fields
-						angular.forEach(data, function(event) {
-							storeEvent(event, loopIndex);
-						});
+					var loopIndex = newLoopIndex();
 
-						callback(that.events);
+					// add some fields
+					angular.forEach(data, function(event) {
+						storeEvent(event, loopIndex);
 					});
-				} else {
-					callback(this.events);
-				}
+
+					callback(that.events);
+				});
 			},
 
 			registerTeamForEdition: function(teamReg, divisionReg, callback) {
