@@ -323,9 +323,16 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 		storeContact(event.localOrganizer, loopIndex);
 
+		// get main location
+		event.x.mainLocation = {};
+		angular.forEach(event.locations, function(location) {
+			if (location.main || isEmpty(event.x.mainLocation)) {
+				event.x.mainLocation = location;
+			}
+		});
+
 		angular.forEach(event.admins, function(admin, idx) {
 			storeUser(admin, loopIndex);
-
 			event.x.own = authorizer.getUser() != null && (event.x.own || admin.id == authorizer.getUser().id);
 		});
 
