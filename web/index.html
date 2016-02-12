@@ -57,14 +57,14 @@
 <body>
 
 	<div id="wrapper">
-		<div ng-include="'html/nav.html'" ng-controller="NavBarCtrl"></div>
+		<div ng-include="'navbar/nav.html'" ng-controller="NavBarCtrl"></div>
 
 		<div class="container">
 			<div id="pageAlertSpace"></div>
 			<div class="view-container" ng-cloak ui-view></div>
 		</div>
 
-		<footer ng-include="'html/footer.html'"></footer>
+		<footer ng-include="'footer/footer.html'"></footer>
 	</div>
 
 	<!-- bower:js -->
@@ -115,7 +115,8 @@
 	<script src="components/general_services.js"></script>
 	<script src="components/general_filters.js"></script>
 	<script src="components/ultical_filters.js"></script>
-	<script src="components/navbar_footer.js"></script>
+	<script src="navbar/navbar.js"></script>
+	<script src="footer/footer.js"></script>
 
 
 </body>

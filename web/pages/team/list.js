@@ -22,14 +22,12 @@ angular.module('ultical.team', [])
 
 	$scope.newEmail = { text: ''};
 	$scope.newAdmin = { obj: {}};
+
 	$scope.teams = [];
+	getTeams();
 
 	$scope.$watch('tabs.activeTab', function() {
-		$scope.teamPanels.activePanel = -1;
-		$scope.editingRoster = -1;
-		$scope.editing = false;
-		$scope.teams = [];
-		getTeams();
+		$state.go('app.teams' + ($scope.tabs.activeTab == 'all' ? 'List' : 'Own'));
 	});
 
 	$scope.teamOrder = 'name';

@@ -5,6 +5,7 @@ angular.module('ultical.events', [])
 .controller('EventListCtrl', ['$scope', 'storage', '$state', '$filter', 'Slug',
                               function($scope, storage, $state, $filter, slug) {
 
+
 	$scope.sortKey = 'startDate';
 	$scope.sortOrderDesc = false;
 
@@ -13,7 +14,6 @@ angular.module('ultical.events', [])
 	}
 
 	storage.getEvents(function(data) {
-
 		$scope.events = data;
 	});
 

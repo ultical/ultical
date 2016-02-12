@@ -34,10 +34,6 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		url: "/{locale:(?:"+availableLocales+")}",
 		template: '<ui-view>',
 	})
-	.state('app.start', {
-		url: "/calendar",
-		templateUrl: "pages/event/list.html?v="+version,
-	})
 	.state('app.eventsList', {
 		url: "/calendar",
 		templateUrl: "pages/event/list.html?v="+version,
@@ -58,7 +54,7 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		},
 	})
 	.state('app.teamsOwn', {
-		url: "/teams",
+		url: "/teams/own",
 		templateUrl: "pages/team/list.html?v="+version,
 		params: {
 			activeTab: 'own',
@@ -78,8 +74,6 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 			emailCodeType: 'password',
 		},
 	});
-
-	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|blob):/);
 
 });
 
@@ -117,7 +111,7 @@ app.config(function ($translateProvider) {
 
 //make sure http(s) and mailto links are valid and not escaped for security reasons
 app.config(function($compileProvider) {   
-	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|mailto):/);
+	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|mailto|blob):/);
 });
 
 //config element service
@@ -138,7 +132,7 @@ app.run(['storage', '$translate', 'amMoment', function(storage, $translate, amMo
 	amMoment.changeLocale($translate.use().toLowerCase());
 }]);
 
-//nav bar controller
+// <head> controller
 app.controller('HeadCtrl', ['$scope', 'CONFIG', '$state',
                             function($scope, CONFIG, $state) {
 	$scope.availableLanguages = CONFIG.general.availableLanguages;
