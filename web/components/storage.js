@@ -17,6 +17,8 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			seasons: [],
 
 			formatsByEventIndexed: {},
+			teamsIndexed: {},
+			playerIndexed: {},
 
 			getEmptyEvent: function() {
 				return createEmptyEvent();
@@ -179,7 +181,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				if (team.id == -1) {
 					oldTeam = null;
 				} else {
-					oldTeam = this.teamsIndexed[team.id];
+					oldTeam = team;
 					if (!angular.isObject(team.location)) {
 						team.location = {
 								id: oldTeam.location.id,
