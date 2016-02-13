@@ -17,6 +17,11 @@ angular.module('ultical.team', [])
 
 	$scope.activeUserId = authorizer.getUser() != null ? authorizer.getUser().id : -1;
 
+	// make sure that we only watch 'own' teams if we are logged in
+	if ($stateParams.activeTab == 'own' && !authorizer.loggedIn()) {
+		$stateParams.activeTab = 'all';
+	}
+
 	// make sure we are directly at the right tab ('own' or 'all')
 	$scope.tabs = { activeTab: $stateParams.activeTab ? $stateParams.activeTab: 'all' };
 
