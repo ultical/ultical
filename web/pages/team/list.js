@@ -258,6 +258,8 @@ angular.module('ultical.team', [])
 		return true;
 	};
 
+	$scope.editingRoster = -1;
+
 	$scope.createNewRoster = function(team) {
 		$scope.editingRoster = team.id;
 		$scope.newRoster = {
