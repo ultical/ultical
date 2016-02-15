@@ -9,6 +9,11 @@ html, body {
 	margin-bottom: 65px;
 	margin-top: -5px;
 }
+@media ( min-width: 768px) {
+	.view-container {
+		padding-bottom: 50px;
+	}
+}
 
 h1, h2, h3, h4, h5 {
 	font-weight: 400;

@@ -32,7 +32,8 @@ angular.module('ultical.team', [])
 	getTeams();
 
 	$scope.$watch('tabs.activeTab', function() {
-		$state.go('app.teams' + ($scope.tabs.activeTab == 'all' ? 'List' : 'Own'));
+		var newState = 'app.teams' + ($scope.tabs.activeTab == 'all' ? 'List' : 'Own');
+		$state.go(newState);
 	});
 
 	$scope.teamOrder = 'name';

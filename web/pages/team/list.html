@@ -21,6 +21,12 @@
 				<div class="panel-body">
 					<form name="inputForm">
 
+						<div class="row margin-bottom" ng-if="teamToEdit.id == -1" >
+							<div class="col-md-12">
+								<span class="help-block">{{ 'team.edit.introduction' | translate }}</span>
+							</div>
+						</div>
+
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group" ng-class="{'has-error': inputForm.name.$touched && inputForm.name.$invalid}">

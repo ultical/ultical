@@ -149,10 +149,10 @@ TRANSLATIONS['de'] = {
 			},
 			matchday: 'Spieltag',
 			registration: 'Anmeldung',
-			registrationIsOverSince: 'Ist vorbei seit dem',
-			registrationStartsAt: 'Beginnt am',
-			registrationEndsAt: 'Offen bis zum',
-			registrationUndefined: 'Es gibt noch keine Informationen zur Anmeldung',
+			registrationIsOverSince: 'ist vorbei seit dem',
+			registrationStartsAt: 'beginnt am',
+			registrationEndsAt: 'offen bis zum',
+			registrationUndefined: 'Es gibt keine Informationen zur Anmeldung',
 			register: {
 				notLoggedIn: 'Bitte einloggen, um ein Team anzumelden.',
 				title: 'Team anmelden',
@@ -228,6 +228,7 @@ TRANSLATIONS['de'] = {
 				notLoggedIn: 'Spieler sind nur für angemeldete Benutzer sichtbar',
 			},
 			edit: {
+				introduction: 'Um ein Team zu erstellen fülle bitte die folgenden Felder aus. In einem Team können verschiedenen Divisionen und Altersklassen gemeinsam verwaltet werden (also beispielsweise Open und Damen Teams oder U14 und U17 Teams), wenn sie unter dem gleichen Namen antreten.',
 				tooltip: 'Team bearbeiten',
 				nameLabel: 'Name',
 				namePlaceholder: 'Teamname',
