@@ -1,4 +1,28 @@
 <div id="start" ng-controller="EventShowCtrl">
+
+	<script type="application/ld+json">
+	{
+	  "@context": "http://schema.org",
+	  "@type": "SportsEvent",
+	  "name": "{{ event | eventname }}",
+	  "startDate" : "{{ event.startDate }}",
+		"endDate": "{{ event.endDate }}",
+	  "url" : "http://example.com/tourdates.html",
+	  "location" : {
+	    "@type": "PostalAddress",
+			"addressCountry": "{{ event.location.countryCode }}",
+	     "addressLocality": "{{ event.location.city }}",
+	     "postalCode": "{{ event.location.zipCode }}",
+	     "streetAddress": "{{ event.location.street }}",
+	  },
+		"description": "{{ event.tournamentEdition.tournamentFormat.description }}",
+		"organizer": {
+			"@type": "Organization",
+			"name": "{{ event.tournamentEdition.tournamentFormat.association.name }}"
+		}
+	}
+	</script>
+
 	<div ng-class="{'hidden-print': printing}" ng-show="event | notEmpty">
 		<div class="row">
 			<div class="col-md-12">
