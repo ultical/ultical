@@ -73,7 +73,7 @@ angular.module('ultical.team', [])
       $scope.cancel();
     }, function(response) {
       if (response.message.indexOf('c17') == 0) {
-        alerter.error('', 'team.edit.deletionFailed', {container: '#delete-error' + team.id, duration: 10});
+        alerter.error('', 'team.edit.deletionFailed', {container: '#team-edit-error' + team.id, duration: 10});
       }
     });
   };
@@ -97,6 +97,7 @@ angular.module('ultical.team', [])
 	$scope.saveTeam = function(team) {
 		if (!angular.isObject(team.location) || isEmpty(team.location.city)) {
 			$scope.locationIsMissing = true;
+      alerter.error('', 'team.edit.locationMissing', {container: '#team-edit-error' + team.id, duration: 10});
 			return;
 		}
 
