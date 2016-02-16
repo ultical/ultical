@@ -28,6 +28,13 @@ angular.module('ultical.events')
     angular.forEach($scope.event.x.divisions, function(division) {
       division.registrationComplete = false;
 
+      // get number of confirmed teams
+      division.numTeamsConfirmed = 0;
+      angular.forEach(division.playingTeams, function(teamReg) {
+          if (teamReg.status == 'CONFIRMED') {
+          division.numTeamsConfirmed++;
+        }
+      });
 
       if ($scope.event.tournamentEdition.x.registrationTime == 'never' || $scope.event.x.timing != 'future') {
         division.registrationComplete = true;
@@ -35,12 +42,6 @@ angular.module('ultical.events')
         // if registration is yet to come or still open, it's obviously not complete
         if ($scope.event.tournamentEdition.x.registrationTime == 'past' && !$scope.event.tournamentEdition.x.registrationIsOpen) {
           // ...but if it's closed we have to check whether or not enough teams were selected
-          var numTeamsConfirmed = 0;
-          angular.forEach(division.playingTeams, function(teamReg) {
-            if (teamReg.status == 'CONFIRMED') {
-              numTeamsConfirmed++;
-            }
-          });
           if (numTeamsConfirmed == division.numberSpots || numTeamsConfirmed == division.playingTeams.length) {
             division.registrationComplete = true;
           }
