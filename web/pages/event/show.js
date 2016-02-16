@@ -42,7 +42,7 @@ angular.module('ultical.events')
         // if registration is yet to come or still open, it's obviously not complete
         if ($scope.event.tournamentEdition.x.registrationTime == 'past' && !$scope.event.tournamentEdition.x.registrationIsOpen) {
           // ...but if it's closed we have to check whether or not enough teams were selected
-          if (numTeamsConfirmed == division.numberSpots || numTeamsConfirmed == division.playingTeams.length) {
+          if (division.numTeamsConfirmed == division.numberSpots || division.numTeamsConfirmed == division.playingTeams.length) {
             division.registrationComplete = true;
           }
         }
