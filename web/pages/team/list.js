@@ -68,6 +68,16 @@ angular.module('ultical.team', [])
 		});
 	};
 
+  $scope.deleteTeam = function(team) {
+    storage.deleteTeam(team, function() {
+      $scope.cancel();
+    }, function(response) {
+      if (response.message.indexOf('c17') == 0) {
+        alerter.error('', 'team.edit.deletionFailed', {container: '#delete-error' + team.id, duration: 10});
+      }
+    });
+  };
+
 	$scope.editTeam = function(team) {
 		serverApi.getAllClubs(function(clubs) {
 			$scope.allClubs = clubs;
@@ -228,15 +238,6 @@ angular.module('ultical.team', [])
 			return result;
 		});
 	};
-
-	$scope.deleteTeam = function(team) {
-		alerter.confirm('team.confirmDelete', function(userResponse) {
-			if (userResponse == true) {
-				// not yet implemented
-				// storage.deleteTeam(team);
-			}
-		});
-	}
 
 	$scope.oldLocations = [];
 
@@ -415,7 +416,7 @@ angular.module('ultical.team', [])
 	};
 
 	$scope.removePlayerFromRoster = function(player, roster) {
-		storage.removePlayerFromRoster(player, roster, function() {}, 
+		storage.removePlayerFromRoster(player, roster, function() {},
 				function(errorResponse) {
 			if (errorResponse.status = 403) {
 				// this player was part of a roster during an official tournament

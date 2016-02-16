@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter', 
+app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
                           function(CONFIG, $http, Base64, authorizer, $filter) {
 
 	function get(resource, successCallback, errorCallback, includeHeader) {
@@ -124,6 +124,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		getOwnTeams: function(callback) {
 			get('teams/own', callback);
 		},
+
+    deleteTeam: function(teamId, callback, errCallback) {
+        del('teams/' + teamId, callback, errCallback);
+    },
 
 		getFormatByEvent: function(eventId, callback) {
 			get('format/event/' + eventId, callback);

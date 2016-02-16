@@ -18,7 +18,7 @@ app.filter('url', [function() {
 			return '';
 		}
 		if (url.indexOf('http') != 0) {
-			url = 'http://' + url; 
+			url = 'http://' + url;
 		}
 		return url;
 	};
@@ -94,5 +94,5 @@ app.filter('money', ['$translate', 'decimalFilter', function($translate, decimal
 }]);
 
 app.filter('urlEncode', function($window) {
-	  return $window.encodeURIComponent;
-	});
+  return $window.encodeURIComponent;
+});

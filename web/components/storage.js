@@ -67,6 +67,33 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				});
 			},
 
+      deleteTeam: function(team, callback, errorCallback) {
+        var that = this;
+        serverApi.deleteTeam(team.id, function() {
+          delete that.teamsIndexed[team.id];
+
+          var teamIndexToDelete = -1;
+          angular.forEach(that.teams, function(oneTeam, idx) {
+            if (oneTeam.id == team.id) {
+              teamIndexToDelete = idx;
+            }
+          });
+          if (teamIndexToDelete >= 0) {
+            that.teams.splice(teamIndexToDelete, 1);
+          }
+          var ownTeamIndexToDelete = -1;
+          angular.forEach(that.own.teams, function(oneTeam, idx) {
+            if (oneTeam.id == team.id) {
+              ownTeamIndexToDelete = idx;
+            }
+          });
+          if (ownTeamIndexToDelete >= 0) {
+            that.own.teams.splice(ownTeamIndexToDelete, 1);
+          }
+          callback();
+        }, errorCallback);
+      },
+
 			saveRoster: function(roster, team, callback, errorCallback) {
 				serverApi.postRoster(roster, team.id, callback, errorCallback);
 			},

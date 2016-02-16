@@ -24,6 +24,7 @@ TRANSLATIONS['de'] = {
 			optional: 'optional',
 			save: 'Speichern',
 			cancel: 'Abbrechen',
+			delete: 'Löschen',
 			create: 'Erstellen',
 			done: 'Fertig',
 			or: 'oder',
@@ -230,6 +231,8 @@ TRANSLATIONS['de'] = {
 				notLoggedIn: 'Spieler sind nur für angemeldete Benutzer sichtbar',
 			},
 			edit: {
+				deleteTeam: 'Team löschen',
+				deletionFailed: 'Dieses Team kann nicht gelöscht werden, da es für mindestens ein Turnier angemeldet war oder ist.',
 				introduction: 'Um ein Team zu erstellen fülle bitte die folgenden Felder aus. In einem Team können verschiedenen Divisionen und Altersklassen gemeinsam verwaltet werden (also beispielsweise Open und Damen Teams oder U14 und U17 Teams), wenn sie unter dem gleichen Namen antreten.',
 				tooltip: 'Team bearbeiten',
 				nameLabel: 'Name',

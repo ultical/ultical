@@ -56,7 +56,7 @@
 								<div class="form-group has-feedback" ng-class="{'has-error': (inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing}">
 									<label for="tteCity">{{ 'team.edit.locationCityLabel' | translate }}</label>
 									<input name="location" required bas-object-typeahead="location" type="text" id="ttyCity" container="body" class="form-control" ng-model="teamToEdit.location" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" data-comparator="locationMatching"
-										bs-options="location | locationObject as location | location for location in getLocations($viewValue)" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" bs-typeahead
+									bs-options="location | locationObject as location | location for location in getLocations($viewValue)" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" bs-typeahead
 									/>
 									<span ng-show="teamToEdit.location.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
 									<span ng-if="(inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'team.edit.locationMissing' | translate }}</span>
@@ -69,7 +69,7 @@
 								<div class="form-group has-feedback">
 									<label for="tteClub">{{ 'team.edit.clubLabel' | translate }}</label>
 									<input bas-object-typeahead="club" data-min-length="3" id="tteClub" type="text" container="body" class="form-control" ng-model="teamToEdit.club" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" bs-options="club as club.name for club in allClubs"
-										placeholder="{{ 'team.edit.clubPlaceholder' | translate }}" bs-typeahead
+									placeholder="{{ 'team.edit.clubPlaceholder' | translate }}" bs-typeahead
 									>
 									<span ng-show="teamToEdit.club.id != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
 								</div>
@@ -135,7 +135,7 @@
 										<span class="glyphicon glyphicon-plus"></span>
 									</span>
 									<input bas-object-typeahead="admins" type="text" data-container="body" class="form-control" id="tteAdmins" bas-enter="addAdmin(newAdmin)" ng-blur="addAdmin(newAdmin)" ng-model="newAdmin.obj" data-animation="am-flip-x" data-auto-select="0" data-trim-value="0"
-										bs-options="user as user.fullName for user in getUsers($viewValue)" placeholder="{{ 'team.edit.adminsPlaceholder' | translate }}" bs-typeahead
+									bs-options="user as user.fullName for user in getUsers($viewValue)" placeholder="{{ 'team.edit.adminsPlaceholder' | translate }}" bs-typeahead
 									>
 								</div>
 								<span class="help-block">{{ 'team.edit.adminsHelp' | translate }}</span>
@@ -172,8 +172,19 @@
 						</div>
 					</div>
 
-					<button type="click" ng-click="saveTeam(teamToEdit)" class="btn btn-primary">{{ 'general.save' | translate }}</button>
-					<button type="click" ng-click="cancel()" class="btn btn-default">{{ 'general.cancel' | translate }}</button>
+					<div class="row">
+						<div class="col-md-12" id="delete-error{{ teamToEdit.id }}">
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<button type="click" ng-click="saveTeam(teamToEdit)" class="btn btn-primary">{{ 'general.save' | translate }}</button>
+							<button type="click" ng-click="cancel()" class="btn btn-default">{{ 'general.cancel' | translate }}</button>
+
+							<button ng-if="teamToEdit.id != -1" type="click" ng-click="deleteTeam(teamToEdit)" class="btn btn-danger pull-right">{{ 'team.edit.deleteTeam' | translate }}</button>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -373,7 +384,7 @@
 																			<span class="glyphicon glyphicon-plus"></span>
 																		</span>
 																		<input ng-change="addPlayerToRoster(newPlayer, roster)" ng-disabled="editRosterBlock" type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj"
-																			data-animation="am-flip-x" data-auto-select="0" data-trim-value="0" data-html="1" bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
+																		data-animation="am-flip-x" data-auto-select="0" data-trim-value="0" data-html="1" bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
 																		>
 																	</div>
 																</div>
