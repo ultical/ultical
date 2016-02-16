@@ -401,7 +401,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			storeDivReg(divReg, loopIndex);
 		});
 
-		edition.x.isSingleEdition = edition.events != null && edition.events.length == 1;		
+		edition.x.isSingleEdition = edition.events != null && edition.events.length == 1;
 
 		var todayDateString = moment().format('YYYY-MM-DD');
 

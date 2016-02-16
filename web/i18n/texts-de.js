@@ -166,6 +166,8 @@ TRANSLATIONS['de'] = {
 			organizer: 'Ausrichter',
 			localOrganizer: 'Veranstalter vor Ort',
 			linkToMaps: 'Google Maps Link',
+			spotsAvailable: 'Plätze',
+			spotsApplied: 'Anmeldungen',
 			fee: {
 				label: 'Kosten',
 				team: 'Teamfee',
