@@ -69,11 +69,15 @@ angular.module('ultical.team', [])
 	};
 
   $scope.deleteTeam = function(team) {
-    storage.deleteTeam(team, function() {
-      $scope.cancel();
-    }, function(response) {
-      if (response.message.indexOf('c17') == 0) {
-        alerter.error('', 'team.edit.deletionFailed', {container: '#team-edit-error' + team.id, duration: 10});
+    alerter.confirm('team.edit.deletionConfirm', function(userResponse) {
+      if (userResponse == true) {
+        storage.deleteTeam(team, function() {
+          $scope.cancel();
+        }, function(response) {
+          if (response.message.indexOf('c17') == 0) {
+            alerter.error('', 'team.edit.deletionFailed', {container: '#team-edit-error' + team.id, duration: 10});
+          }
+        });
       }
     });
   };
