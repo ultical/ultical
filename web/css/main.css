@@ -362,7 +362,7 @@ select:not([multiple]) {
 .event-list h5 {
  	font-weight: 500;
  }
- 
+
 .event-list h4 {
  	font-weight: 300;
  }
@@ -424,4 +424,7 @@ select:not([multiple]) {
 }
 .hard-limit {
 	overflow: hidden;
+}
+.user-textarea {
+	white-space: pre-wrap;
 }

@@ -98,7 +98,7 @@
 
 		<!-- INFO -->
 		<div class="row margin-top" ng-if="event.info | notEmpty">
-			<div class="col-md-12">{{ event.info }}</div>
+			<div class="col-md-12 user-textarea">{{ event.info }}</div>
 		</div>
 
 		<!-- FEES -->
@@ -115,7 +115,7 @@
 							<td colspan="4" class="margin-top-small">{{ 'event.fee.matchdayLabel' | translate }}:</td>
 						</tr>
 						<tr>
-						<td ng-if="editionFeeEndIndex > 0" class="padding-right">&nbsp;</td>
+							<td ng-if="editionFeeEndIndex > 0" class="padding-right">&nbsp;</td>
 							<td class="padding-right">
 								<span ng-if="fee.multiple">{{ 'event.fee.perUnit' | translate }}</span>
 								<span ng-if="fee.type != 'OTHER'">{{ ('event.fee.' + (fee.type | lowercase)) | translate }}</span>
@@ -311,4 +311,3 @@
 		</div>
 	</div>
 </div>
-
