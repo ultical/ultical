@@ -2,9 +2,10 @@
 
 angular.module('ultical.events', [])
 
-.controller('EventListCtrl', ['$scope', 'storage', '$state', '$filter', 'Slug',
-                              function($scope, storage, $state, $filter, slug) {
+.controller('EventListCtrl', ['$scope', 'storage', '$state', '$filter', 'Slug', 'headService',
+                              function($scope, storage, $state, $filter, slug, headService) {
 
+  headService.setTitle('event.list.title', {});
 
 	$scope.sortKey = 'startDate';
 	$scope.sortOrderDesc = false;
@@ -19,4 +20,3 @@ angular.module('ultical.events', [])
 
 
 }]);
-

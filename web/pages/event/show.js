@@ -2,8 +2,8 @@
 
 angular.module('ultical.events')
 
-.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout',
-                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout) {
+.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout', 'headService',
+                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout, headService) {
 
 	$scope.event = {};
 	$scope.now = new Date();
@@ -24,6 +24,8 @@ angular.module('ultical.events')
 				}
 			});
 		});
+
+    headService.setTitle($filter('eventname')($scope.event), {});
 
     angular.forEach($scope.event.x.divisions, function(division) {
       division.registrationComplete = false;

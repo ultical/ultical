@@ -2,10 +2,10 @@
 
 angular.module('ultical.team', [])
 
-.controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService', 'alerter', '$timeout', 'moment',
-                             function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter, $timeout, moment) {
+.controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService', 'alerter', '$timeout', 'moment', 'headService',
+                             function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter, $timeout, moment, headService) {
 
-	$scope.currentLocale = $stateParams.locale;
+  $scope.currentLocale = $stateParams.locale;
 
 	$scope.loggedIn = function() {
 		return authorizer.loggedIn();
@@ -24,6 +24,8 @@ angular.module('ultical.team', [])
 
 	// make sure we are directly at the right tab ('own' or 'all')
 	$scope.tabs = { activeTab: $stateParams.activeTab ? $stateParams.activeTab: 'all' };
+
+  headService.setTitle('team.list.' + $stateParams.activeTab, {});
 
 	$scope.newEmail = { text: ''};
 	$scope.newAdmin = { obj: {}};

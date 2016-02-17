@@ -1,9 +1,9 @@
 'use strict';
 
 //Declare app level module which depends on views, and components
-var app = angular.module('ultical', 
+var app = angular.module('ultical',
 		['ui.router',
-		 'mgcrea.ngStrap',		
+		 'mgcrea.ngStrap',
 		 'ngAnimate',
 		 'pascalprecht.translate',
 		 'ngSanitize',
@@ -110,7 +110,7 @@ app.config(function ($translateProvider) {
 });
 
 //make sure http(s) and mailto links are valid and not escaped for security reasons
-app.config(function($compileProvider) {   
+app.config(function($compileProvider) {
 	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|mailto|blob):/);
 });
 
@@ -133,9 +133,12 @@ app.run(['storage', '$translate', 'amMoment', function(storage, $translate, amMo
 }]);
 
 // <head> controller
-app.controller('HeadCtrl', ['$scope', 'CONFIG', '$state',
-                            function($scope, CONFIG, $state) {
+app.controller('HeadCtrl', ['$scope', 'CONFIG', '$state', 'headService',
+                            function($scope, CONFIG, $state, headService) {
+
 	$scope.availableLanguages = CONFIG.general.availableLanguages;
+
+	$scope.getTitle = headService.getTitle;
 
 	$scope.getCurrentStateUrl = function(locale) {
 		var params = $state.params;
