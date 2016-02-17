@@ -268,7 +268,7 @@ angular.module('ultical.team', [])
 		});
 	};
 
-	$scope.locationMatching = function() {
+	$scope.typeaheadPreMatching = function() {
 		return true;
 	};
 
