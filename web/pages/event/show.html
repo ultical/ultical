@@ -24,6 +24,10 @@
 	</script>
 
 	<div ng-class="{'hidden-print': printing}" ng-show="event | notEmpty">
+
+		<div class="row">
+			<div class="col-md-7">
+
 		<div class="row">
 			<div class="col-md-12">
 				<h3 class="page-title">{{ event | eventname : 'full' }}</h3>
@@ -31,10 +35,10 @@
 		</div>
 
 		<div class="row">
-			<div class="col-md-5 page-sub-title">
+			<div class="col-md-8 page-sub-title">
 				{{ event.startDate | amDateFormat : ('general.amDateFromSameMonth' | translate) }} - {{ event.endDate | amDateFormat : ('general.amDateToFull' | translate) }}<br />
 			</div>
-			<div class="col-md-3 page-sub-title">{{ 'season.season' | translate }}: {{ event.tournamentEdition.season | season : true}}</div>
+			<div class="col-md-4 text-right page-sub-title">{{ 'season.season' | translate }}: {{ event.tournamentEdition.season | season : true}}</div>
 		</div>
 
 		<!-- LOCATION -->
@@ -184,7 +188,7 @@
 
 		<!-- DIVISIONS -->
 		<div ng-if="event.x.divisions.length > 0" class="row margin-top">
-			<div class="col-md-7">
+			<div class="col-md-12">
 				<div class="strong">{{ 'event.teamList.title' | translate }}</div>
 
 				<div class="panel-group margin-top-small" ng-model="panels.divisionPanel" role="tablist" aria-multiselectable="true" bs-collapse>
@@ -279,6 +283,8 @@
 		</div>
 
 	</div>
+</div>
+</div>
 
 	<!-- PRINTING TEMPLATE -->
 	<div class="print-size visible-print-block" ng-if="loggedIn() && event.x.own && printing">
