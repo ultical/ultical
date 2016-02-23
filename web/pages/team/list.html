@@ -206,7 +206,7 @@
 
 		<div class="col-md-8">
 			<div class="panel-group" ng-model="panel.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
-				<div class="panel panel-ultical" ng-repeat="team in teams | orderBy : teamOrder track by team.id">
+				<div class="panel panel-ultical" ng-repeat="team in teams | orderLocaleBy : teamOrder track by team.id">
 					<div class="panel-heading cursor-pointer" role="tab">
 						<h4 class="panel-title" bs-collapse-toggle>
 							<span>{{ team.name }}</span>
