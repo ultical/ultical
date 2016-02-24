@@ -84,8 +84,8 @@
 			</div>
 		</div>
 
-		<!-- TODO decide if it should be hidden in multi-event-editions -->
-		<div class="row margin-top" ng-if="event.tournamentEdition.tournamentFormat.description | notEmpty">
+		<!-- FORMAT DESCRIPTION-->
+		<div class="row margin-top" ng-if="(event.tournamentEdition.tournamentFormat.description | notEmpty) && event.x.isSingleEvent">
 			<div class="col-md-12">{{ event.tournamentEdition.tournamentFormat.description }}</div>
 		</div>
 
@@ -126,7 +126,9 @@
 
 		<!-- INFO -->
 		<div class="row margin-top" ng-if="event.info | notEmpty">
-			<div class="col-md-12 user-textarea">{{ event.info }}</div>
+			<div class="col-md-12">
+				<div class="info-text user-textarea">{{ event.info }}</div>
+			</div>
 		</div>
 
 		<!-- FEES -->
