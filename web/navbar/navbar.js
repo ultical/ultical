@@ -6,6 +6,11 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 
 	$scope.logoSide = "front";
 
+	$scope.goTo = function() {
+		console.log("go");
+		$state.go('app.eventsList');
+	}
+	
 	$scope.toggleLogoFlip = function(){
 		$scope.logoSide = toggle($scope.logoSide);
 	}
@@ -70,15 +75,5 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 			changeLanguage($stateParams.locale);
 		}
 	});
-
-}]);
-
-app.controller('FooterCtrl', ['$scope', 'CONFIG',
-                              function($scope, CONFIG) {
-
-	$scope.emailSupport = CONFIG.brand.emailSupport;
-	$scope.bugLink = CONFIG.brand.bugLink;
-	$scope.emailContact = CONFIG.brand.emailContact;
-	$scope.codeLink = CONFIG.brand.codeLink;
 
 }]);

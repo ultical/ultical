@@ -20,6 +20,7 @@ import org.apache.ibatis.exceptions.PersistenceException;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.model.Location;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
@@ -162,6 +163,23 @@ public class TeamResource {
             for (User admin : updatedTeam.getAdmins()) {
                 this.dataStore.addAdminToTeam(updatedTeam, admin);
             }
+        }
+    }
+
+    @DELETE
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("{teamId}")
+    public void delete(@PathParam("teamId") Integer teamId, @Auth @NotNull User currentUser) throws Exception {
+        if (this.dataStore == null) {
+            throw new WebApplicationException(500);
+        }
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
+            Team teamToDelete = this.dataStore.get(teamId, Team.class);
+            this.dataStore.remove(teamToDelete.getLocation().getId(), Location.class);
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("c17 - Deletion not successful!", Status.CONFLICT);
         }
     }
 

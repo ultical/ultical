@@ -2,8 +2,8 @@
 
 angular.module('ultical.events')
 
-.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout',
-                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout) {
+.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout', 'headService',
+                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout, headService) {
 
 	$scope.event = {};
   $scope.edition = {};
@@ -15,6 +15,7 @@ angular.module('ultical.events')
 		return authorizer.loggedIn();
 	}
 
+
 	storage.getFormatForEvent($stateParams.eventId, function(format) {
 		$scope.format = format;
 
@@ -23,10 +24,35 @@ angular.module('ultical.events')
 				if (event.id == $stateParams.eventId) {
 					// this is the right event
 					$scope.event = event;
-					$scope.edition = edition;
 				}
 			});
 		});
+
+    headService.setTitle($filter('eventname')($scope.event), {});
+
+    angular.forEach($scope.event.x.divisions, function(division) {
+      division.registrationComplete = false;
+
+      // get number of confirmed teams
+      division.numTeamsConfirmed = 0;
+      angular.forEach(division.playingTeams, function(teamReg) {
+          if (teamReg.status == 'CONFIRMED') {
+          division.numTeamsConfirmed++;
+        }
+      });
+
+      if ($scope.event.tournamentEdition.x.registrationTime == 'never' || $scope.event.x.timing != 'future') {
+        division.registrationComplete = true;
+      } else {
+        // if registration is yet to come or still open, it's obviously not complete
+        if ($scope.event.tournamentEdition.x.registrationTime == 'past' && !$scope.event.tournamentEdition.x.registrationIsOpen) {
+          // ...but if it's closed we have to check whether or not enough teams were selected
+          if (division.numTeamsConfirmed == division.numberSpots || division.numTeamsConfirmed == division.playingTeams.length) {
+            division.registrationComplete = true;
+          }
+        }
+      }
+    });
 	});
 
 	// collapses
@@ -65,7 +91,7 @@ angular.module('ultical.events')
 	$scope.getAllFees = function() {
 		$scope.editionFeeEndIndex = 0;
 		var fees = [];
-		angular.forEach($scope.edition.fees, function(fee) {
+		angular.forEach($scope.event.tournamentEdition.fees, function(fee) {
 			$scope.editionFeeEndIndex++;
 			if (!('x' in fee)) {
 				fee.x = {};

@@ -7,17 +7,17 @@ app.filter('arrayDiff', [function() {
       return arr1;
     }
     angular.forEach(arr1, function(obj1) {
-			var isInArr2 = false;
-			angular.forEach(arr2, function(obj2) {
-				if (obj1[propertyName] == obj2[propertyName]) {
-					isInArr2 = true;
-				}
-			});
-			if (!isInArr2) {
-				res.push(obj1);
-			}
+      var isInArr2 = false;
+      angular.forEach(arr2, function(obj2) {
+        if (obj1[propertyName] == obj2[propertyName]) {
+          isInArr2 = true;
+        }
+      });
+      if (!isInArr2) {
+        res.push(obj1);
+      }
     });
-		return res;
+    return res;
   };
 }]);
 
@@ -60,6 +60,15 @@ app.filter('implode', [function() {
     return arr.join(separator);
   };
 }]);
+
+app.filter('orderLocaleBy', function() {
+  return function(items, property) {
+    items.sort(function(a, b) {
+      return a[property].localeCompare(b[property]);
+    });
+    return items;
+  };
+});
 
 app.filter('isEmpty', [function() {
   return function(obj) {
@@ -161,5 +170,5 @@ app.filter('money', ['$translate', 'decimalFilter', function($translate, decimal
 }]);
 
 app.filter('urlEncode', function($window) {
-	  return $window.encodeURIComponent;
-	});
+  return $window.encodeURIComponent;
+});
