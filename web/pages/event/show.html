@@ -199,7 +199,7 @@
 						<div class="panel-heading cursor-pointer" role="tab">
 							<h3 class="panel-title" bs-collapse-toggle>
 								<span>{{ division | division }}</span>
-								<span ng-if="!division.registrationComplete" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numberSpots }} {{ 'event.spotsAvailable' | translate }}</span><span class="panel-title-addon" ng-if="!division.registrationComplete && division.playingTeams.length > 0"> - {{ division.playingTeams.length }} {{ 'event.spotsApplied' | translate }}</span>
+								<span ng-if="!division.registrationComplete && division.numberSpots != 0" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numberSpots }} {{ 'event.spotsAvailable' | translate }}</span><span class="panel-title-addon" ng-if="!division.registrationComplete && division.playingTeams.length > 0"> - {{ division.playingTeams.length }} {{ 'event.spotsApplied' | translate }}</span>
 								<span ng-if="division.registrationComplete" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numTeamsConfirmed }} {{ 'general.teams' | translate }} &nbsp;</span>
 							</h3>
 						</div>
