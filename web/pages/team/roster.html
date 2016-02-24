@@ -1,0 +1,99 @@
+<div ng-controller="RosterCtrl">
+  <div id="rosterError"></div>
+  <form name="rosterToEditForm" class="form-horizontal">
+    <fieldset ng-disabled="rosterCreationPending">
+
+      <div class="row">
+        <div class="col-md-12">
+
+          <div class="form-group new-roster-form">
+            <label for="rosDivAge" class="col-sm-3 control-label">{{ 'team.roster.divisionAgeLabel' | translate }}</label>
+            <div class="col-sm-4">
+              <button ng-disabled="rosterToEdit.id != -1" id="rosDivAge" type="button" class="btn btn-default" ng-model="rosterToEdit.divisionAge" bs-options="divisionAge as 'division.' + divisionAge | translate for divisionAge in selects.divisionAges" bs-select>
+                <span class="caret"></span>
+              </button>
+            </div>
+            <div class="col-sm-3">
+              <button ng-disabled="rosterToEdit.id != -1" id="rosDivType" type="button" class="btn btn-default" ng-model="rosterToEdit.divisionType" bs-options="divisionType as 'division.' + divisionType | translate for divisionType in selects.divisionTypes" bs-select>
+                <span class="caret"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group new-roster-form">
+            <label for="rosSeason" class="col-sm-3 control-label">{{ 'season.season' | translate }}</label>
+            <div class="col-sm-4">
+              <button ng-disabled="rosterToEdit.id != -1" id="rosSeason" type="button" class="btn btn-default" ng-model="rosterToEdit.season" bs-options="season as season | season : 'fullName' for season in selects.seasons | orderBy : ['-year', '-plusOneYear']" bs-select>
+                <span class="caret"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group new-roster-form margin-top">
+            <label for="rosNameAddition" class="col-sm-3 control-label">{{ 'team.roster.nameAdditionLabel' | translate }}</label>
+            <div class="col-sm-9">
+              <div class="row">
+                <div class="col-sm-5">
+                  <input class="form-control" id="rosNameAddition" ng-model="rosterToEdit.nameAddition" maxlength="10" type="text"/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="help-block">{{ 'team.roster.nameAdditionHelp' | translate }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group new-roster-form">
+            <label for="rosContext" class="col-sm-3 control-label">{{ 'team.roster.contextLabel' | translate }}</label>
+            <div class="col-sm-9">
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="input-group input-group-colored col-sm-11">
+                    <span ng-click="addContext()" class="cursor-pointer input-group-addon">
+                      <span class="glyphicon glyphicon-plus"></span>
+                    </span>
+                    <button ng-change="addContext()" id="rosContext" type="button" class="btn btn-default" ng-model="chosenContext" data-placeholder="{{ 'team.roster.contextPlaceholder' | translate }}" bs-options="context as (context.acronym + ' - ' + context.name) for context in getSelectContexts() | orderBy : 'acronym'" bs-select>
+                      <span class="caret"></span>
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-9">
+                  <div class="form-control-static ani-vslide ani-short ani-fade padding-top-big" ng-if="rosterToEdit.contexts.length > 0">
+                    <div class="editable-list" ng-repeat="context in rosterToEdit.contexts | orderBy : 'acronym'">
+                      <div class="editable-list-item">{{ context.acronym }}</div>
+                      <div ng-click="removeContext(context)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'general.remove' | translate }}" bs-tooltip>
+                        <span class="fa-stack fa-lg">
+                          <i class="fa fa-circle fa-stack-2x"></i>
+                          <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="help-block">{{ 'team.roster.contextHelp' | translate }}</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="form-group" ng-if="rosterToEdit.id != -1">
+            <label for="rosDelete" class="col-sm-3 control-label">{{ 'team.roster.remove' | translate }}</label>
+            <div class="col-sm-3">
+              <button href="#" ng-if="!rosterToEdit.x.blocked" ng-click="deleteRoster(rosterToEdit)" class="btn btn-danger">{{ 'team.roster.remove' | translate }}</button>
+              <div ng-if="rosterToEdit.x.blocked" class="help-block">{{ 'team.roster.rosterBlocked' | translate }}</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </fieldset>
+  </form>
+</div>

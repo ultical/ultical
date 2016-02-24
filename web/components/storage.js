@@ -15,6 +15,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			events: [],
 			teams: [],
 			seasons: [],
+      contexts: [],
 
 			formatsByEventIndexed: {},
 
@@ -66,7 +67,13 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			},
 
 			saveRoster: function(roster, team, callback, errorCallback) {
-				serverApi.postRoster(roster, team.id, callback, errorCallback);
+        if (roster.id != -1) {
+          var rosterToSend = angular.copy(roster);
+          rosterToSend.players = [];
+          serverApi.putRoster(rosterToSend, team, callback, errorCallback);
+        } else {
+				  serverApi.postRoster(roster, team.id, callback, errorCallback);
+        }
 			},
 
 			deleteRoster: function(roster, team, callback, errorCallback) {
@@ -119,9 +126,22 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				if (isEmpty(this.seasons)) {
 					serverApi.getSeasons(function(seasons) {
 						that.seasons = seasons;
+            callback(seasons);
 					});
 				} else {
 					callback(this.seasons);
+				}
+			},
+
+      getContexts: function(callback) {
+				var that = this;
+				if (isEmpty(this.contexts)) {
+					serverApi.getContexts(function(contexts) {
+						that.contexts = contexts;
+            callback(contexts);
+					});
+				} else {
+					callback(this.contexts);
 				}
 			},
 

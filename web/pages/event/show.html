@@ -1,4 +1,28 @@
 <div id="start" ng-controller="EventShowCtrl">
+
+	<script type="application/ld+json">
+	{
+		"@context": "http://schema.org",
+		"@type": "SportsEvent",
+		"name": "{{ event | eventname }}",
+		"startDate" : "{{ event.startDate }}",
+		"endDate": "{{ event.endDate }}",
+		"url" : "http://example.com/tourdates.html",
+		"location" : {
+			"@type": "PostalAddress",
+			"addressCountry": "{{ event.location.countryCode }}",
+			"addressLocality": "{{ event.location.city }}",
+			"postalCode": "{{ event.location.zipCode }}",
+			"streetAddress": "{{ event.location.street }}",
+		},
+		"description": "{{ event.tournamentEdition.tournamentFormat.description }}",
+		"organizer": {
+			"@type": "Organization",
+			"name": "{{ event.tournamentEdition.tournamentFormat.association.name }}"
+		}
+	}
+	</script>
+
 	<div ng-class="{'hidden-print': printing}" ng-show="event | notEmpty">
 		<div class="row">
 			<div class="col-md-12">
@@ -201,7 +225,7 @@
 
 												<div class="panel-heading cursor-pointer" role="tab">
 													<h3 class="panel-title" bs-collapse-toggle>
-														<span>{{ regTeam.team.name }}</span>
+														<span>{{ regTeam.team.name }} {{ regTeam.roster.nameAddition }}</span>
 														<span ng-if="loggedIn()" class="panel-title-addon">&nbsp;&nbsp;(&nbsp;{{ rosterPlayers.length }}&nbsp;)</span>
 
 														<!-- 													<div ng-if="team.x.own" ng-click="editRoster(roster, team, $index)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip> -->
@@ -311,4 +335,3 @@
 		</div>
 	</div>
 </div>
-

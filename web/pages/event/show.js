@@ -6,8 +6,9 @@ angular.module('ultical.events')
                               function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout) {
 
 	$scope.event = {};
-	$scope.mainLocation = null;
-	$scope.curEvent = {};
+  $scope.edition = {};
+  $scope.format = {};
+
 	$scope.now = new Date();
 
 	$scope.loggedIn = function() {
@@ -34,7 +35,6 @@ angular.module('ultical.events')
 			divisionPanel: -1,
 			teamPanel: -1,
 	};
-
 
 	$scope.toggleLocationPanel = function() {
 		$scope.panels.activeLocationPanel = $scope.panels.activeLocationPanel == 1 ? 0 : 1;
@@ -117,21 +117,13 @@ angular.module('ultical.events')
 	}
 
 	$scope.getRelevantPlayers = function(regTeam, division, season, event) {
-		// find relevant roster
-		var relevantRoster = null;
-
-		angular.forEach(regTeam.team.rosters, function(roster) {
-			if (roster.divisionAge == division.divisionAge && roster.divisionType == division.divisionType && roster.season.id == season.id) {
-				relevantRoster = roster;
-			}
-		});
-		if (relevantRoster == null) {
+		if (regTeam.roster == null) {
 			return [];
 		} else {
 			// remove players that have been added after the event started
 			var relevantPlayers = [];
 			var startDate = moment(event.startDate);
-			angular.forEach(relevantRoster.players, function(rosterPlayer) {
+			angular.forEach(regTeam.roster.players, function(rosterPlayer) {
 				if (moment(rosterPlayer.dateAdded).isBefore(startDate)) {
 					relevantPlayers.push(rosterPlayer);
 				}
@@ -177,4 +169,3 @@ angular.module('ultical.events')
 	};
 
 }]);
-

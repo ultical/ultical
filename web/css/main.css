@@ -145,7 +145,7 @@ button, input, optgroup, select, textarea {
 	padding: 0 0 5px 0;
 }
 
-#login-popover, .dropdown-menu {
+#login-popover, .navbar .dropdown-menu {
 	background-color: #F3FAFF;
 	-webkit-box-shadow: none;
 	box-shadow: none;
@@ -253,23 +253,27 @@ button, input, optgroup, select, textarea {
 	opacity: 1;
 }
 
-#new-roster-form button {
+.new-roster-form .roster-input {
+	width: 150px;
+}
+
+.new-roster-form button {
 	width: 100%;
 }
 
-#new-roster-form .btn .caret {
+.new-roster-form .btn .caret {
 	float: right;
 	top: 8px;
 	position: relative;
 }
 
 @-moz-document url-prefix() {
-    #new-roster-form .btn .caret {
+    .new-roster-form .btn .caret {
 		top: -11px;
 	}
 }
 
-#new-roster-form .btn {
+.new-roster-form .btn {
 	text-align: left;
 }
 
