@@ -27,7 +27,7 @@ public interface PlayerMapper extends BaseMapper<Player> {
     // INSERT
     @Insert({ "INSERT INTO PLAYER (first_name, last_name, gender, is_registered)",
             "VALUES (#{player.firstName, jdbcType=VARCHAR}, #{player.lastName, jdbcType=VARCHAR}, #{player.gender, jdbcType=VARCHAR}, #{isRegistered, jdbcType=BOOLEAN})" })
-    @Options(keyProperty = "id", useGeneratedKeys = true)
+    @Options(keyProperty = "player.id", useGeneratedKeys = true)
     Integer insertPlayer(@Param("player") Player entity, @Param("isRegistered") boolean isRegistered);
 
     // UPDATE

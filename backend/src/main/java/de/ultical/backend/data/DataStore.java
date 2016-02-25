@@ -521,9 +521,6 @@ public class DataStore {
             PlayerMapper playerMapper = this.sqlSession.getMapper(PlayerMapper.class);
             playerMapper.insertPlayer(dfvPlayer, dfvPlayer instanceof DfvPlayer);
 
-            // request id to store it in dfvPlayer object
-            dfvPlayer.getId();
-
             // insert DfvPlayer
             this.addNew(dfvPlayer);
         } finally {
