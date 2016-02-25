@@ -1,9 +1,9 @@
 'use strict';
 
 //Declare app level module which depends on views, and components
-var app = angular.module('ultical', 
+var app = angular.module('ultical',
 		['ui.router',
-		 'mgcrea.ngStrap',		
+		 'mgcrea.ngStrap',
 		 'ngAnimate',
 		 'pascalprecht.translate',
 		 'ngSanitize',
@@ -18,7 +18,7 @@ var app = angular.module('ultical',
 //router ui route
 app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 	// For any unmatched url, redirect to:
-	$urlRouterProvider.otherwise("/de/tournaments");
+	$urlRouterProvider.otherwise("/de/calendar");
 
 	var version = '3';
 
@@ -34,12 +34,8 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		url: "/{locale:(?:"+availableLocales+")}",
 		template: '<ui-view>',
 	})
-	.state('app.start', {
-		url: "/tournaments",
-		templateUrl: "pages/event/list.html?v="+version,
-	})
 	.state('app.eventsList', {
-		url: "/tournaments",
+		url: "/calendar",
 		templateUrl: "pages/event/list.html?v="+version,
 	})
 	.state('app.editionEdit', {
@@ -47,7 +43,7 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		templateUrl: "pages/event/edit.html?v="+version,
 	})
 	.state('app.eventShow', {
-		url: "/tournaments/{eventSlug}-t{eventId:int}",
+		url: "/{eventSlug}-t{eventId:int}",
 		templateUrl: "pages/event/show.html?v="+version,
 	})
 	.state('app.teamsList', {
@@ -58,7 +54,7 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		},
 	})
 	.state('app.teamsOwn', {
-		url: "/teams",
+		url: "/teams/own",
 		templateUrl: "pages/team/list.html?v="+version,
 		params: {
 			activeTab: 'own',
@@ -78,8 +74,6 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 			emailCodeType: 'password',
 		},
 	});
-
-	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|blob):/);
 
 });
 
@@ -116,9 +110,8 @@ app.config(function ($translateProvider) {
 });
 
 //make sure http(s) and mailto links are valid and not escaped for security reasons
-app.config(function($compileProvider) {   
-	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|mailto):/);
-	// Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
+app.config(function($compileProvider) {
+	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|mailto|blob):/);
 });
 
 //config element service
@@ -139,3 +132,19 @@ app.run(['storage', '$translate', 'amMoment', function(storage, $translate, amMo
 	amMoment.changeLocale($translate.use().toLowerCase());
 }]);
 
+// <head> controller
+app.controller('HeadCtrl', ['$scope', 'CONFIG', '$state', 'headService',
+                            function($scope, CONFIG, $state, headService) {
+
+	$scope.availableLanguages = CONFIG.general.availableLanguages;
+
+	$scope.getTitle = headService.getTitle;
+
+	$scope.getCurrentStateUrl = function(locale) {
+		var params = $state.params;
+		params.locale = locale.toLowerCase();
+		return $state.href($state.current.name, params, {absolute: true});
+	};
+
+
+}]);

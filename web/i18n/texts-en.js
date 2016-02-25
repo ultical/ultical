@@ -19,7 +19,9 @@ TRANSLATIONS['en'] = {
 			cancel: 'Abbrechen',
 			create: 'Erstellen',
 			done: 'Fertig',
-		},
+			currencyFormat: '{{ currencySymbol }} {{ amount }}',
+			decimalSeparator: '.',
+	},
 
 		nav: {
 			titleFlipText: 'Deutscher Frisbeesport Verband e.V.',

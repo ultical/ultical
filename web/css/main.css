@@ -9,6 +9,11 @@ html, body {
 	margin-bottom: 65px;
 	margin-top: -5px;
 }
+@media ( min-width: 768px) {
+	.view-container {
+		padding-bottom: 50px;
+	}
+}
 
 h1, h2, h3, h4, h5 {
 	font-weight: 400;
@@ -186,7 +191,7 @@ button, input, optgroup, select, textarea {
 }
 
 .panel-title-addon {
-	font-weight: 400;
+	font-weight: 300;
 }
 
 .input-group-colored .input-group-addon {
@@ -273,7 +278,7 @@ button, input, optgroup, select, textarea {
 	text-align: left;
 }
 
-#roster-listing .panel-group {
+.roster-listing .panel-group {
 	margin-bottom: 0;
 }
 
@@ -284,6 +289,13 @@ button, input, optgroup, select, textarea {
 
 .alternative-button-link {
 	cursor: pointer;
+}
+
+.btn-primary.btn-ultical {
+	background-color: #20408E;
+}
+.btn-primary.btn-ultical:hover {
+	background-color: #286090;
 }
 
 /* disable rounded corners */
@@ -307,23 +319,28 @@ select:not([multiple]) {
 	font-weight: 300;
     vertical-align: middle;
 	font-size: 120%;
+	display: table-cell;
 }
 
 .event-list-date-left {
 	text-align: right;
-	padding-left: 10px;
+	width: 30px;
 }
 
 .event-list-date-dash {
     text-align: left;
     padding-left: 3px;
     padding-right: 2px;
+    width: 10px;
 }
 .event-list-date-right {
-	padding-right: 15px;
 	text-align: left;
+	width: 33px;
 }
 
+.event-list-text {
+	display: table-cell;
+}
 .event-list-text-top {
 	margin-bottom: -3px;
 	margin-top: 2px;
@@ -338,18 +355,14 @@ select:not([multiple]) {
 }
 
 .event-list-row {
-	height: 22px;
-}
-
-.event-list-row {
-	padding-top: 4px;
-	padding-bottom: 4px;	
+	height: 100%;
+	display: table;
 }
 
 .event-list h5 {
  	font-weight: 500;
  }
- 
+
 .event-list h4 {
  	font-weight: 300;
  }
@@ -367,7 +380,7 @@ select:not([multiple]) {
 	font-size: 124%;
 }
 
-.location-panel {
+.location-panel .panel-body {
     padding-top: 8px;
     margin-top: 5px;
     padding-bottom: 8px;
@@ -375,6 +388,43 @@ select:not([multiple]) {
     border-left: 2px solid #DDDDDD;
 }
 
-.location-panel .strong {
+.strong {
 	font-weight: 500;
+}
+
+.location-panel .am-collapse {
+	animation-duration: 1s;
+}
+
+.print-heading {
+	font-size: 150%;
+}
+
+.print-team-divider {
+	border-bottom: 1px solid #AAA;
+	padding-bottom: 50px;
+}
+
+.panel-margin {
+	margin-top: 5px;
+}
+
+.panel-body .panel-group {
+	margin-bottom: 0px;
+}
+.print-all {
+	margin-top: -10px;
+}
+.print-size {
+	font-size: 11px;
+}
+
+.mega-wide {
+	width: 300px;
+}
+.hard-limit {
+	overflow: hidden;
+}
+.user-textarea {
+	white-space: pre-wrap;
 }

@@ -1,4 +1,4 @@
-<div class="navbar navbar-default navbar-fixed-top" role="banner" bs-navbar ng-cloak>
+<div class="navbar navbar-default navbar-fixed-top hidden-print" role="banner" bs-navbar ng-cloak>
 	<div class="container" bs-collapse data-start-collapsed="true">
 
 		<div class="navbar-header">
@@ -19,7 +19,7 @@
 		<div id="nav-bar-buttons" bs-collapse-target="c1" class="navbar-body">
 			<ul bs-collapse-toggle="c1" class="nav navbar-nav">
 				<li data-animation="am-flip-x" XXXbs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
-					<a ui-sref="app.eventsList({locale: activeLang })" class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</a>
+					<a ui-sref="app.eventsList" class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</a>
 				</li>
 			</ul>
 
@@ -42,12 +42,12 @@
 			</ul>
 
 			<ul ng-show="!loggedIn()" class="nav navbar-right navbar-nav">
-				<li data-placement="bottom-right" data-template-url="pages/user/login_popover.html?v=11" data-animation="am-flip-x" data-auto-close="1" bs-popover>
+				<li data-placement="bottom-right" data-template-url="pages/user/login_popover.html?v=13" data-animation="am-flip-x" data-auto-close="1" bs-popover>
 					<div class="navbar-text">{{ 'nav.login' | translate }}</div>
 				</li>
 			</ul>
 
-			<ul class="nav navbar-right navbar-nav" ng-show="!loggedIn()" data-animation="am-fade-and-slide-top" data-template-url="pages/user/registration_modal.html?v=13" bs-modal="modal">
+			<ul class="nav navbar-right navbar-nav" ng-show="!loggedIn()" data-animation="am-fade-and-slide-top" data-template-url="pages/user/registration_modal.html?v=14" bs-modal="modal">
 				<li>
 					<div class="navbar-text">{{ 'nav.register' | translate }}</div>
 				</li>

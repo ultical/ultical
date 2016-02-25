@@ -32,6 +32,7 @@
     "respond": "*",
     "fontawesome": "*",
     "angular-moment": "*",
-    "angular-slugify": "*"
+    "angular-slugify": "*",
+    "jsog": "*"
   }
 }

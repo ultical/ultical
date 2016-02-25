@@ -1,7 +1,7 @@
 'use strict';
 
-app.factory('storage', ['$filter', 'serverApi', 'authorizer',
-                        function($filter, serverApi, authorizer) {
+app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
+                        function($filter, serverApi, authorizer, moment) {
 
 	var returnObject = {
 			// init structures
@@ -16,18 +16,9 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			teams: [],
 			seasons: [],
 
-			editionIndexed: {},
-			formatIndexed: {},
-
-			eventsIndexed: {},
+			formatsByEventIndexed: {},
 			teamsIndexed: {},
-			userIndexed: {},
 			playerIndexed: {},
-			clubIndexed: {},
-			associationIndexed: {},
-			contactIndexed: {},
-			rosterIndexed: {},
-			seasonIndexed: {},
 
 			getEmptyEvent: function() {
 				return createEmptyEvent();
@@ -44,7 +35,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			getTeam: function(teamId, callback) {
 				var that = this;
 				serverApi.getTeam(teamId, function(team) {
-					storeTeam(that, team, newLoopIndex());
+					storeTeam(team, newLoopIndex());
 					callback(team);
 				});
 			},
@@ -54,8 +45,10 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				callback(that.teams);
 				serverApi.getAllTeams(function(teams) {
 					that.teams = teams;
+
+					var loopIndex = newLoopIndex();
 					angular.forEach(teams, function(team) {
-						storeTeam(that, team, newLoopIndex());
+						storeTeam(team, loopIndex);
 					});
 					callback(that.teams);
 				});
@@ -66,12 +59,40 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				callback(that.own.teams);
 				serverApi.getOwnTeams(function(teams) {
 					that.own.teams = teams;
+					var loopIndex = newLoopIndex();
 					angular.forEach(teams, function(team) {
-						storeTeam(that, team, newLoopIndex());
+						storeTeam(team, loopIndex);
 					});
 					callback(that.own.teams);
 				});
 			},
+
+      deleteTeam: function(team, callback, errorCallback) {
+        var that = this;
+        serverApi.deleteTeam(team.id, function() {
+          delete that.teamsIndexed[team.id];
+
+          var teamIndexToDelete = -1;
+          angular.forEach(that.teams, function(oneTeam, idx) {
+            if (oneTeam.id == team.id) {
+              teamIndexToDelete = idx;
+            }
+          });
+          if (teamIndexToDelete >= 0) {
+            that.teams.splice(teamIndexToDelete, 1);
+          }
+          var ownTeamIndexToDelete = -1;
+          angular.forEach(that.own.teams, function(oneTeam, idx) {
+            if (oneTeam.id == team.id) {
+              ownTeamIndexToDelete = idx;
+            }
+          });
+          if (ownTeamIndexToDelete >= 0) {
+            that.own.teams.splice(ownTeamIndexToDelete, 1);
+          }
+          callback();
+        }, errorCallback);
+      },
 
 			saveRoster: function(roster, team, callback, errorCallback) {
 				serverApi.postRoster(roster, team.id, callback, errorCallback);
@@ -127,9 +148,6 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				if (isEmpty(this.seasons)) {
 					serverApi.getSeasons(function(seasons) {
 						that.seasons = seasons;
-						angular.forEach(seasons, function(season) {
-							storeSeason(that, season, newLoopIndex());
-						});
 					});
 				} else {
 					callback(this.seasons);
@@ -139,8 +157,12 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			getFormatForEvent: function(eventId, callback) {
 				var that = this;
 
+				if (eventId in this.formatsByEventIndexed) {
+					callback(this.formatsByEventIndexed[eventId]);
+				}
 				serverApi.getFormatByEvent(eventId, function(data) {
-					storeTournamentFormat(that, data, newLoopIndex());
+					storeTournamentFormat(data, newLoopIndex());
+					that.formatsByEventIndexed[eventId] = data;
 					callback(data);
 				});
 			},
@@ -149,28 +171,35 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				var that = this;
 
 				serverApi.getEvent(eventId, function(data) {
-					storeEvent(that, data, newLoopIndex());
+					storeEvent(data, newLoopIndex());
 					callback(data);
 				});
 			},
 
 			getEvents: function(callback) {
 				var that = this;
-				if (isEmpty(this.allEvents)) {
-					// make API call
-					serverApi.getEvents(function(data) {
-						that.events = data;
+				callback(this.events);
 
-						// add some fields
-						angular.forEach(data, function(event) {
-							storeEvent(that, event, newLoopIndex());
-						});
+				// make API call
+				serverApi.getEvents(function(data) {
+					that.events = data;
 
-						callback(that.events);
+					var loopIndex = newLoopIndex();
+
+					// add some fields
+					angular.forEach(data, function(event) {
+						storeEvent(event, loopIndex);
 					});
-				} else {
-					callback(this.events);
-				}
+
+					callback(that.events);
+				});
+			},
+
+			registerTeamForEdition: function(teamReg, divisionReg, callback) {
+				serverApi.registerTeamForEdition(teamReg, divisionReg, function(newTeamReg) {
+					divisionReg.registeredTeams.push(newTeamReg);
+					callback(newTeamReg);
+				});
 			},
 
 			saveTeam: function(team, callback, errorCallback, activeList) {
@@ -179,7 +208,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 				if (team.id == -1) {
 					oldTeam = null;
 				} else {
-					oldTeam = this.teamsIndexed[team.id];
+					oldTeam = team;
 					if (!angular.isObject(team.location)) {
 						team.location = {
 								id: oldTeam.location.id,
@@ -211,7 +240,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 					}
 					that.teams.push(savedTeam);
 
-					storeTeam(that, savedTeam, newLoopIndex());
+					storeTeam(savedTeam, newLoopIndex());
 
 					if (activeList == 'own') {
 						callback(that.own.teams);
@@ -226,20 +255,19 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 		return Math.floor(Math.random()*10000);
 	}
 
-	function storeWithoutLoops(element, elementIndexed, loopIndex) {
+	function storeWithoutLoops(element, loopIndex) {
 		// to avoid loops only process every element once
-		if (element.id in elementIndexed && element.x in elementIndexed && elementIndexed[element.id].x.loopIndex == loopIndex) {
+		if (element == null || ('x' in element && element.x.loopIndex == loopIndex)) {
 			return false;
 		}
 
 		element.x = {loopIndex: loopIndex};
-		elementIndexed[element.id] = element;
 
 		return true;
 	}
 
-	function storeTeam(that, team, loopIndex) {
-		if (!storeWithoutLoops(team, that.teamsIndexed, loopIndex)) {
+	function storeTeam(team, loopIndex) {
+		if (!storeWithoutLoops(team, loopIndex)) {
 			return;
 		}
 
@@ -250,219 +278,192 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 		}
 
 		angular.forEach(team.admins, function(admin, idx) {
-			if (angular.isObject(admin)) {
-				storeUser(that, admin, loopIndex);
-			} else {
-				team.admins[idx] = that.userIndexed[admin];
-			}
+			storeUser(admin, loopIndex);
 			team.x.own = authorizer.getUser() != null && (team.x.own || admin.id == authorizer.getUser().id);
 		});
 
-		angular.forEach(team.rosters, function(roster, idx) {
-			if (angular.isObject(roster)) {
-				storeRoster(that, roster, loopIndex);
-			} else {
-				team.rosters[idx] = that.rosterIndexed[roster];
-			}
-		});
+		storeClub(team.club, loopIndex);
 
-		if (angular.isObject(team.club)) {
-			storeClub(that, team.club, loopIndex);
-		} else {
-			team.club = that.clubIndexed[team.club];
-		}
+		angular.forEach(team.rosters, function(roster, idx) {
+			storeRoster(roster, loopIndex);
+		});
 	}
 
-	function storeRoster(that, roster, loopIndex) {
-		if (!storeWithoutLoops(roster, that.rosterIndexed, loopIndex)) {
+	function storeRoster(roster, loopIndex) {
+		if (!storeWithoutLoops(roster, loopIndex)) {
 			return;
-		}
-
-		if (angular.isObject(roster.season)) {
-			storeSeason(that, roster.season, loopIndex);
-		} else {
-			roster.season = that.seasonIndexed[roster.season];
 		}
 
 		angular.forEach(roster.players, function(player, idx) {
-			if (angular.isObject(player.player)) {
-				storePlayer(that, player.player, loopIndex);
-			} else {
-				roster.players[idx].player = that.playerIndexed[player.player];
-			}
+			storePlayer(player.player, loopIndex);
 		});
 	}
 
-	function storeSeason(that, season, loopIndex) {
-		that.seasonIndexed[season.id] = season;
-	}
-
-
-	function storeUser(that, user, loopIndex) {
-		if (!storeWithoutLoops(user, that.userIndexed, loopIndex)) {
+	function storeUser(user, loopIndex) {
+		if (!storeWithoutLoops(user, loopIndex)) {
 			return;
 		}
 
-		if (angular.isObject(user.dfvPlayer)) {
-			storePlayer(that, user.dfvPlayer, loopIndex);
-		} else {
-			user.dfvPlayer = that.playerIndexed[user.dfvPlayer];
-		}
+		storePlayer(user.dfvPlayer, loopIndex);
 	}
 
-	function storePlayer(that, player, loopIndex) {
-		if (!storeWithoutLoops(player, that.playerIndexed, loopIndex)) {
+	function storePlayer(player, loopIndex) {
+		if (!storeWithoutLoops(player, loopIndex)) {
 			return;
 		}
 
-		if (angular.isObject(player.club)) {
-			storeClub(that, player.club, loopIndex);
-		} else {
-			player.club = that.clubIndexed[player.club];
-		}
+		storeClub(player.club, loopIndex);
+
 	}
 
-	function storeClub(that, club, loopIndex) {
-		if (!storeWithoutLoops(club, that.clubIndexed, loopIndex)) {
+	function storeClub(club, loopIndex) {
+		if (!storeWithoutLoops(club, loopIndex)) {
 			return;
 		}
 
-		if (angular.isObject(club.association)) {
-			storeAssociation(that, club.association, loopIndex);
-		} else {
-			club.association = that.associationIndexed[club.association];
-		}
+		storeAssociation(club.association, loopIndex);
 	}
 
-	function storeAssociation(that, association, loopIndex) {
-		if (!storeWithoutLoops(association, that.associationIndexed, loopIndex)) {
+	function storeAssociation(association, loopIndex) {
+		if (!storeWithoutLoops(association, loopIndex)) {
 			return;
 		}
-
-		association.x = {};
 
 		angular.forEach(association.admins, function(admin, idx) {
-			if (angular.isObject(admin)) {
-				storeUser(that, admin, loopIndex);
-			} else {
-				association.admins[idx] = that.userIndexed[admin];
-			}
+			storeUser(admin, loopIndex);
 			association.x.own = authorizer.getUser() != null && (association.x.own || admin.id == authorizer.getUser().id);
 		});
 
-		if (angular.isObject(association.contact)) {
-			storeUser(that, association.contact, loopIndex);
-		} else {
-			association.contact = that.contactIndexed[association.contact];
+		storeUser(association.contact, loopIndex);
+	}
+
+	function storeContact(contact, loopIndex) {
+		if (!storeWithoutLoops(contact, loopIndex)) {
+			return;
 		}
 	}
 
-	function storeContact(that, contact, loopIndex) {
-		that.contactIndexed[contact.id] = contact;
-	}
-
-	function storeEvent(that, event, loopIndex) {
-		if (!storeWithoutLoops(event, that.eventsIndexed, loopIndex)) {
+	function storeEvent(event, loopIndex) {
+		if (!storeWithoutLoops(event, loopIndex)) {
 			return;
 		}
 
-		if (angular.isObject(event.tournamentEdition)) {
-			storeTournamentEdition(that, event.tournamentEdition, loopIndex);
-		} else {
-			if (event.tournamentEdition in that.editionIndexed) {
-				event.tournamentEdition = that.editionIndexed[event.tournamentEdition];
-			} else {
-				alert("Missing an edition: " + event.tournamentEdition);
+		storeTournamentEdition(event.tournamentEdition, loopIndex);
+
+		storeContact(event.localOrganizer, loopIndex);
+
+		// get main location
+		event.x.mainLocation = {};
+		angular.forEach(event.locations, function(location) {
+			if (location.main || isEmpty(event.x.mainLocation)) {
+				event.x.mainLocation = location;
 			}
-		}
+		});
 
 		angular.forEach(event.admins, function(admin, idx) {
-			if (angular.isObject(admin)) {
-				storeUser(that, admin, loopIndex);
-			} else {
-				event.admins[idx] = that.userIndexed[admin];
-			}
+			storeUser(admin, loopIndex);
 			event.x.own = authorizer.getUser() != null && (event.x.own || admin.id == authorizer.getUser().id);
 		});
 
-		if (angular.isObject(event.localOrganizer)) {
-			storeContact(that, event.localOrganizer, loopIndex);
-		} else {
-			event.localOrganizer = that.contactIndexed[event.localOrganizer];
-		}
-
-		var todayDateString = $filter('date')(new Date(), 'yyyy-MM-dd');
-
-		event.tournamentEdition.registrationIsOpen = !isEmpty(event.tournamentEdition.registrationStart) && event.tournamentEdition.registrationStart.string <= todayDateString && event.tournamentEdition.registrationEnd.string >= todayDateString;
-		event.tournamentEdition.registrationTime = isEmpty(event.tournamentEdition.registrationStart) ? 'never' : (event.tournamentEdition.registrationStart.string > todayDateString ? 'future' : 'past');
+		event.x.own = authorizer.getUser() != null && (event.x.own ||  event.tournamentEdition.tournamentFormat.x.own);
 
 		event.x.isSingleEvent = event.tournamentEdition.isSingleEdition;
 		event.x.hasLocalOrganizer = !isEmpty(event.localOrganizer) && !isEmpty(event.localOrganizer.name) && event.tournamentEdition.organizer.id != event.localOrganizer.id;
 		event.x.hasFees = event.tournamentEdition.fees.length > 0 || event.fees.length > 0;
 
+		var today = moment();
+		if (moment(event.startDate).isAfter(today)) {
+			event.x.timing = 'future';
+		} else if (moment(event.endDate).isBefore(today)) {
+			event.x.timing = 'past';
+		} else {
+			event.x.timing = 'running';
+		}
+
+		// assign the divisions (and maybe teams) that play this event
+		event.x.divisions = [];
+
+		if ('divisionConfirmations' in event && !isEmpty(event.divisionConfirmations)) {
+			angular.forEach(event.divisionConfirmations, function(divisionConfirmation) {
+				var division = angular.copy(divisionConfirmation.divisionRegistration);
+
+				// if individual assignment is set to false, all teams/players of the registration will play
+				if (divisionConfirmation.individualAssignment) {
+					division.playingTeams = divisionConfirmation.teams;
+				} else {
+					// we take all teams of the divisionRegistration
+					division.playingTeams = division.registeredTeams;
+				}
+				event.x.divisions.push(angular.copy(division));
+			});
+		} else {
+			// this event gets all divisions and teams from the edition
+			if (isEmpty(event.tournamentEdition.divisionRegistrations)) {
+				event.x.divisions = [];
+			} else {
+				event.x.divisions = angular.copy(event.tournamentEdition.divisionRegistrations);
+				angular.forEach(event.x.divisions, function(division) {
+					division.playingTeams = division.registeredTeams;
+				});
+
+			}
+		}
 	}
 
-	function storeTournamentEdition(that, edition, loopIndex) {
-		if (!storeWithoutLoops(edition, that.editionIndexed, loopIndex)) {
+	function storeTournamentEdition(edition, loopIndex) {
+		if (!storeWithoutLoops(edition, loopIndex)) {
 			return;
 		}
 
 		angular.forEach(edition.events, function(event, idx) {
-			if (angular.isObject(event)) {
-				event.tournamentEdition = edition;
-				storeEvent(that, event, loopIndex);
-			} else {
-				edition.events[idx] = event;
-			}
+			event.tournamentEdition = edition;
+			storeEvent(event, loopIndex);
 		});
 
-		if (angular.isObject(edition.tournamentFormat)) {
-			storeTournamentFormat(that, edition.tournamentFormat, loopIndex);
-		} else {
-			if (edition.tournamentFormat in that.formatIndexed) {
-				edition.tournamentFormat = that.formatIndexed[edition.tournamentFormat];
-			} else {
-				alert("Missing a format: " + edition.tournamentFormat);
-			}
-		}
+		storeTournamentFormat(edition.tournamentFormat, loopIndex);
 
-		if (angular.isObject(edition.organizer)) {
-			storeContact(that, edition.organizer, loopIndex);
-		} else {
-			edition.organizer = that.contactIndexed[edition.organizer];
-		}
+		storeContact(edition.organizer, loopIndex);
 
-		edition.x.isSingleEdition = edition.events != null && edition.events.length == 1;		
+		angular.forEach(edition.divisionRegistrations, function(divReg, idx) {
+			storeDivReg(divReg, loopIndex);
+		});
+
+		edition.x.isSingleEdition = edition.events != null && edition.events.length == 1;
+
+		var todayDateString = moment().format('YYYY-MM-DD');
+
+		edition.x.registrationIsOpen = !isEmpty(edition.registrationStart) && edition.registrationStart  <= todayDateString && edition.registrationEnd >= todayDateString;
+		edition.x.registrationTime = isEmpty(edition.registrationStart) ? 'never' : (edition.registrationStart > todayDateString ? 'future' : 'past');
 	}
 
-	function storeTournamentFormat(that, format, loopIndex) {
-		if (!storeWithoutLoops(format, that.formatIndexed, loopIndex)) {
+	function storeDivReg(divReg, loopIndex) {
+		// divRegs are unique to editions
+
+		angular.forEach(divReg.registeredTeams, function(teamReg, idx) {
+			storeTeamRegistration(teamReg, loopIndex);
+		});
+	}
+
+	function storeTeamRegistration(teamReg, loopIndex) {
+		storeTeam(teamReg.team, loopIndex);
+	}
+
+	function storeTournamentFormat(format, loopIndex) {
+		if (!storeWithoutLoops(format, loopIndex)) {
 			return;
 		}
 
-		angular.forEach(format.editions, function(edition, idx) {
-			if (angular.isObject(edition)) {
-				edition.tournamentFormat = format;
-				storeTournamentEdition(that, edition, loopIndex);
-			} else {
-				format.editions[idx] = that.editionIndexed[edition];
-			}
-		});
-
 		angular.forEach(format.admins, function(admin, idx) {
-			if (angular.isObject(admin)) {
-				storeUser(that, admin, loopIndex);
-			} else {
-				format.admins[idx] = that.userIndexed[admin];
-			}
+			storeUser(admin, loopIndex);
 			format.x.own = authorizer.getUser() != null && (format.x.own || admin.id == authorizer.getUser().id);
 		});
 
-		if (angular.isObject(format.association)) {
-			storeAssociation(that, format.association, loopIndex);
-		} else {
-			format.association = that.associationIndexed[format.association];
-		}
+		angular.forEach(format.editions, function(edition, idx) {
+			edition.tournamentFormat = format;
+			storeTournamentEdition(edition, loopIndex);
+		});
+
+		storeAssociation(format.association, loopIndex);
 	}
 
 	function createEmptyEvent() {
@@ -497,7 +498,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer',
 			organizerEmail: '',
 			organizerPhone: '',
 			alternativeMatchdayName: '',
-			divisionRegistrations: {},
+			divisionRegistrations: [],
 			events: [],
 			tournamentFormat: {},
 		};

@@ -8,53 +8,48 @@
 
 	<div class="row margin-top event-list">
 		<div class="col-md-9">
-			<table>
 
-				<tr ng-if="0" class="row" ng-repeat-start="event in (orderedEvents = (events | orderBy : sortKey : sortOrderDesc))">
-				</tr>
+			<div ng-if="0" class="row" ng-repeat-start="event in (orderedEvents = (events | orderBy : sortKey : sortOrderDesc))"></div>
 
-				<!-- year -->
-				<tr ng-if="(sortKey == 'startDate') && ($index == 0 || (((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')) && (event.startDate | amDateFormat : 'M') == '1' ))">
-					<td colspan="4">
-						<h4>{{ event.startDate | amDateFormat : 'YYYY' }}</h4>
-					</td>
-				</tr>
+			<!-- year -->
+			<div class="row" ng-if="(sortKey == 'startDate') && ($index == 0 || (((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')) && (event.startDate | amDateFormat : 'M') == '1' ))">
+				<div class="col-md-9">
+					<h4>{{ event.startDate | amDateFormat : 'YYYY' }}</h4>
+				</div>
+			</div>
 
-				<!-- month -->
-				<tr ng-if="sortKey == 'startDate' && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')))">
-					<td colspan="4">
-						<h5>{{ event.startDate | amDateFormat : 'MMMM' }}</h5>
-					</td>
-				</tr>
+			<!-- month -->
+			<div class="row" ng-if="sortKey == 'startDate' && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')))">
+				<div class="col-md-9">
+					<h5>{{ event.startDate | amDateFormat : 'MMMM' }}</h5>
+				</div>
+			</div>
 
-				<!-- event -->
-				<tr ng-repeat-end class="event-list-row" ang-click="goToEvent(event)">
-					<td class="event-list-date event-list-date-left">
-						<span>{{ event.startDate | amDateFormat : 'D' }}</span>
-					</td>
-					<td class="event-list-date event-list-date-dash">
-						<span>-</span>
-					</td>
-					<td class="event-list-date event-list-date-right">
-						<span>{{ event.endDate | amDateFormat : 'D' }}</span>
+			<!-- event -->
+			<div ng-repeat-end class="row">
+					<a ng-href="{{ getEventUrl(event) }}">
+				<div class="col-md-7 event-list-row">
+						<div class="event-list-date event-list-date-left">{{ event.startDate | amDateFormat : 'D' }}</div>
+						<div class="event-list-date event-list-date-dash">-</div>
+						<div class="event-list-date event-list-date-right">{{ event.endDate | amDateFormat : 'D' }}</div>
 						<!-- <span ng-if="(event.startDate | amDateFormat : 'M') != (event.endDate | amDateFormat : 'M')">&nbsp;{{ event.endDate | amDateFormat : 'MMM' }}</span> -->
-					</td>
-					<td>
-						<div class="event-list-text-top">{{ event | eventname }}</div>
-						<div class="event-list-text-bottom">
-							<span class="margin-right-small" ng-if="event.tournamentEdition.divisionRegistrations | notEmpty">
-<!-- 								<i class="fa fa-venus-mars"></i> -->
-								<bas ng-repeat="divReg in event.tournamentEdition.divisionRegistrations">{{ divReg | division }}<bas ng-if="!$last">, </bas></bas>
-							</span>
 
-							<span class="margin-right" ng-if="false == (event.locations | emptyLocation)">
-								<i class="fa fa-map-marker"></i> {{ event.locations | location : 'city' }}
-							</span>
-							&nbsp;
+						<div class="event-list-text">
+							<div class="event-list-text-top">{{ event | eventname }}</div>
+							<div class="event-list-text-bottom">
+								<span class="margin-right-small" ng-if="event.x.divisions | notEmpty">
+									<!-- 								<i class="fa fa-venus-mars"></i> -->
+									<bas ng-repeat="division in event.x.divisions">{{ division | division }}<bas ng-if="!$last">, </bas></bas>
+								</span>
+								<span class="margin-right" ng-if="event.x.mainLocation | notEmpty">
+									<i class="fa fa-map-marker"></i> {{ event.x.mainLocation | location : 'city' }}
+								</span>
+								&nbsp;
+							</div>
 						</div>
-					</td>
-				</tr>
-			</table>
+				</div>
+					</a>
+			</div>
 
 		</div>
 	</div>

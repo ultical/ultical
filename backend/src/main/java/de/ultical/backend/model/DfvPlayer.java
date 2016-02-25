@@ -2,7 +2,12 @@ package de.ultical.backend.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import de.ultical.backend.api.transferClasses.DfvMvPlayer;
+import de.ultical.backend.app.LocalDateDeserializer;
+import de.ultical.backend.app.LocalDateSerializer;
 import de.ultical.backend.data.mapper.DfvPlayerMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -24,7 +29,11 @@ public class DfvPlayer extends Player {
     }
 
     private int dfvNumber;
+
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate birthDate;
+
     private Club club;
 
     @Override

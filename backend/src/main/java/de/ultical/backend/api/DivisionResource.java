@@ -66,7 +66,7 @@ public class DivisionResource {
             final DivisionRegistrationTeams divisionReg = new DivisionRegistrationTeams();
             divisionReg.setId(divisionId);
 
-            this.dStore.registerTeamForDivision(divisionReg, teamReg);
+            this.dStore.registerTeamForEdition(divisionReg.getId(), teamReg);
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing the database failed!", pe);
         } catch (Exception e) {

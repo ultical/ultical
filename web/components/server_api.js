@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter', 
+app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
                           function(CONFIG, $http, Base64, authorizer, $filter) {
 
 	function get(resource, successCallback, errorCallback, includeHeader) {
@@ -36,6 +36,18 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		if (CONFIG.debug) {
 			console.log("API Request", config.method, config.url, config.data);
 		}
+
+		var defaultTransform = angular.isArray($http.defaults.transformResponse) ? $http.defaults.transformResponse[0] : $http.defaults.transformResponse;
+
+		var jsogTransform = function(data) {
+			try {
+				return JSOG.parse(data);
+			} catch(e) {
+				return data;
+			}
+		}
+
+		config.transformResponse =  [jsogTransform, defaultTransform];
 
 		return $http(config).then(
 				function (response) {
@@ -112,6 +124,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		getOwnTeams: function(callback) {
 			get('teams/own', callback);
 		},
+
+    deleteTeam: function(teamId, callback, errCallback) {
+        del('teams/' + teamId, callback, errCallback);
+    },
 
 		getFormatByEvent: function(eventId, callback) {
 			get('format/event/' + eventId, callback);
@@ -205,6 +221,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		addPlayerToRoster: function(player, roster, callback, errorCallback) {
 			var requestPlayer = { lastName: player.lastName, firstName: player.firstName, dse: player.dse, dfvNumber: player.dfvNumber };
 			return post('roster/' + roster.id, requestPlayer, callback, errorCallback);
+		},
+
+		registerTeamForEdition: function(registration, divisionRegistration, callback) {
+			return post('tournaments/' + divisionRegistration.id + '/register/team', registration, callback);
 		},
 	};
 

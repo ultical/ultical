@@ -18,7 +18,7 @@ app.filter('url', [function() {
 			return '';
 		}
 		if (url.indexOf('http') != 0) {
-			url = 'http://' + url; 
+			url = 'http://' + url;
 		}
 		return url;
 	};
@@ -65,52 +65,34 @@ app.filter('numberFixedLen', function () {
 	};
 });
 
-app.filter('customDate', ['$filter', '$translate', function($filter, $translate) {
-	return function(input, type) {
-		if (isEmpty(input)) {
-			return null;
+app.filter('decimal', ['$translate', function($translate) {
+	return function(amount, numDecimals) {
+		if (isEmpty(amount)) {
+			return'';
 		}
-
-		if (angular.isObject(input)) {
-			input = input.string;
+		var parts = (''+amount).split('.');
+		if (parts.length == 1) {
+			parts[1] = '0';
 		}
-
-		switch(type) {
-		case 'datetime_medium':
-			return $filter('date')(input, $translate.instant('general.dateTimeFormat'));
-			break;
-		case 'date_medium':
-			return $filter('date')(input, $translate.instant('general.dateFormat'));
-			break;
-		case 'date_internal':
-			return $filter('date')(input, 'yyyy-MM-dd');
-			break;
-		}  
-
-		return input;
-	};
+		while (parts[1].length < numDecimals) {
+			parts[1] += '0';
+		}
+		if (parts[1].length > numDecimals) {
+			parts[1] = parts[1].substring(0, numDecimals);
+		}
+		return parts[0] + $translate.instant('general.decimalSeparator') + parts[1];
+	}
 }]);
 
-app.filter('currencySymbol', [function() {
-	return function(currencyString) {
-		if (isEmpty(currencyString)) {
+app.filter('money', ['$translate', 'decimalFilter', function($translate, decimalFilter) {
+	return function(currencyCode, amount) {
+		if (isEmpty(amount)) {
 			return '';
 		}
-
-		var output = '';
-
-		switch(currencyString) {
-		case 'EUR':
-			output = '€';
-			break;
-		default:
-			output = '$';
-		}
-
-		return output;
+		return $translate.instant('general.currencyFormat', {amount: decimalFilter(amount, 2), currencySymbol: $translate.instant('currencySymbol.' + currencyCode) });
 	};
 }]);
 
 app.filter('urlEncode', function($window) {
-	  return $window.encodeURIComponent;
-	});
+  return $window.encodeURIComponent;
+});

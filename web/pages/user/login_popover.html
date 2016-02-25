@@ -2,7 +2,7 @@
 	<div class="arrow"></div>
 	<div class="popover-content" id="login-popover-content">
 		<form>
-			<div class="row fade-ani" ng-if="loginFail != false">
+			<div class="row ani-fade ani-vslide ani-short" ng-if="loginFail != false">
 				<div class="col-sm-12">
 					<div class="alert alert-danger">
 						<button type="button" class="close" ng-click="hideLoginFail()">&times;</button>
@@ -14,7 +14,7 @@
 
 			<div class="row margin-top-small">
 				<div class="col-sm-12">
-					<input bas-enter="doLogin(login)" type="text" name="email" ng-model="login.email" placeholder="{{ 'general.email' | translate }}" />
+					<input type="text" name="email" ng-model="login.email" placeholder="{{ 'general.email' | translate }}" />
 				</div>
 			</div>
 			<div class="row margin-top-small margin-bottom">

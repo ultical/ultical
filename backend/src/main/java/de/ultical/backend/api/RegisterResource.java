@@ -37,7 +37,6 @@ public class RegisterResource {
         }
 
         try {
-
             final User user = this.regHandler.registerPlayer(registerRequest);
             final Player playerToRegister = user.getDfvPlayer();
 

@@ -13,11 +13,13 @@ import de.ultical.backend.model.Fee;
 
 public interface FeeMapper extends BaseMapper<Fee> {
 
-    final String SELECT_STMT = "SELECT id, version, fee_type, other_name, amount, currency FROM FEE";
+    final String SELECT_STMT = "SELECT id, version, fee_type, other_name, amount, currency, per_person, multiple FROM FEE";
 
     // INSERT
     @Override
-    @Insert("INSERT INTO FEE (fee_type, other_name, amount, currency, event, tournament_edition) VALUES (#{type},#{otherName},#{amount},#{currency},#{event.id, jdbcType=INTEGER},#{tournamentEdition.id, jdbcType=INTEGER})")
+    @Insert({
+            "INSERT INTO FEE (fee_type, other_name, amount, currency, event, tournament_edition, per_person, multiple)",
+            "VALUES (#{type},#{otherName},#{amount},#{currency},#{event.id, jdbcType=INTEGER},#{tournamentEdition.id, jdbcType=INTEGER}, #{perPerson}, #{multiple})" })
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Fee entity);
 
@@ -30,18 +32,21 @@ public interface FeeMapper extends BaseMapper<Fee> {
     @Override
     @Select({ SELECT_STMT, "WHERE id=#{id}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "per_person", property = "perPerson"), @Result(column = "several", property = "multiple"),
             @Result(column = "fee_type", property = "type"), @Result(column = "other_name", property = "otherName"),
             @Result(column = "amount", property = "amount"), @Result(column = "currency", property = "currency") })
     Fee get(int id);
 
     @Select({ SELECT_STMT, "WHERE event = #{eventId}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "per_person", property = "perPerson"), @Result(column = "several", property = "multiple"),
             @Result(column = "fee_type", property = "type"), @Result(column = "other_name", property = "otherName"),
             @Result(column = "amount", property = "amount"), @Result(column = "currency", property = "currency") })
     List<Fee> getForEvent(int eventId);
 
     @Select({ SELECT_STMT, "WHERE tournament_edition = #{editionId}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "per_person", property = "perPerson"), @Result(column = "several", property = "multiple"),
             @Result(column = "fee_type", property = "type"), @Result(column = "other_name", property = "otherName"),
             @Result(column = "amount", property = "amount"), @Result(column = "currency", property = "currency") })
     List<Fee> getForTournamentEdition(int editionId);
