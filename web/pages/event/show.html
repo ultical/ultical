@@ -24,6 +24,10 @@
 	</script>
 
 	<div ng-class="{'hidden-print': printing}" ng-show="event | notEmpty">
+
+		<div class="row">
+			<div class="col-md-7">
+
 		<div class="row">
 			<div class="col-md-12">
 				<h3 class="page-title">{{ event | eventname : 'full' }}</h3>
@@ -31,10 +35,10 @@
 		</div>
 
 		<div class="row">
-			<div class="col-md-5 page-sub-title">
+			<div class="col-md-8 page-sub-title">
 				{{ event.startDate | amDateFormat : ('general.amDateFromSameMonth' | translate) }} - {{ event.endDate | amDateFormat : ('general.amDateToFull' | translate) }}<br />
 			</div>
-			<div class="col-md-3 page-sub-title">{{ 'season.season' | translate }}: {{ event.tournamentEdition.season | season : true}}</div>
+			<div class="col-md-4 text-right page-sub-title">{{ 'season.season' | translate }}: {{ event.tournamentEdition.season | season : true}}</div>
 		</div>
 
 		<!-- LOCATION -->
@@ -80,8 +84,8 @@
 			</div>
 		</div>
 
-		<!-- TODO decide if it should be hidden in multi-event-editions -->
-		<div class="row margin-top" ng-if="event.tournamentEdition.tournamentFormat.description | notEmpty">
+		<!-- FORMAT DESCRIPTION-->
+		<div class="row margin-top" ng-if="(event.tournamentEdition.tournamentFormat.description | notEmpty) && event.x.isSingleEvent">
 			<div class="col-md-12">{{ event.tournamentEdition.tournamentFormat.description }}</div>
 		</div>
 
@@ -122,7 +126,9 @@
 
 		<!-- INFO -->
 		<div class="row margin-top" ng-if="event.info | notEmpty">
-			<div class="col-md-12 user-textarea">{{ event.info }}</div>
+			<div class="col-md-12">
+				<div class="info-text user-textarea">{{ event.info }}</div>
+			</div>
 		</div>
 
 		<!-- FEES -->
@@ -184,7 +190,7 @@
 
 		<!-- DIVISIONS -->
 		<div ng-if="event.x.divisions.length > 0" class="row margin-top">
-			<div class="col-md-7">
+			<div class="col-md-12">
 				<div class="strong">{{ 'event.teamList.title' | translate }}</div>
 
 				<div class="panel-group margin-top-small" ng-model="panels.divisionPanel" role="tablist" aria-multiselectable="true" bs-collapse>
@@ -193,7 +199,7 @@
 						<div class="panel-heading cursor-pointer" role="tab">
 							<h3 class="panel-title" bs-collapse-toggle>
 								<span>{{ division | division }}</span>
-								<span ng-if="!division.registrationComplete" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numberSpots }} {{ 'event.spotsAvailable' | translate }}</span><span class="panel-title-addon" ng-if="!division.registrationComplete && division.playingTeams.length > 0"> - {{ division.playingTeams.length }} {{ 'event.spotsApplied' | translate }}</span>
+								<span ng-if="!division.registrationComplete && division.numberSpots != 0" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numberSpots }} {{ 'event.spotsAvailable' | translate }}</span><span class="panel-title-addon" ng-if="!division.registrationComplete && division.playingTeams.length > 0"> - {{ division.playingTeams.length }} {{ 'event.spotsApplied' | translate }}</span>
 								<span ng-if="division.registrationComplete" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numTeamsConfirmed }} {{ 'general.teams' | translate }} &nbsp;</span>
 							</h3>
 						</div>
@@ -279,6 +285,8 @@
 		</div>
 
 	</div>
+</div>
+</div>
 
 	<!-- PRINTING TEMPLATE -->
 	<div class="print-size visible-print-block" ng-if="loggedIn() && event.x.own && printing">

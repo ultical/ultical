@@ -1,5 +1,14 @@
 'use strict';
 
+app.filter('orderLocaleBy',function() {
+    return function (items, property) {
+        items.sort(function (a, b) {
+            return a[property].localeCompare(b[property]);
+        });
+        return items;
+      };
+});
+
 app.filter('isEmpty', [function() {
 	return function(obj) {
 		return isEmpty(obj);

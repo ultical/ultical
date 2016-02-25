@@ -396,6 +396,11 @@ select:not([multiple]) {
 	animation-duration: 1s;
 }
 
+.info-text {
+	padding-left: 15px;
+	border-left: 2px solid #DDDDDD;
+}
+
 .print-heading {
 	font-size: 150%;
 }

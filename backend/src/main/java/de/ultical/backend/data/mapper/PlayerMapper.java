@@ -4,9 +4,10 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Case;
 import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
@@ -24,10 +25,10 @@ public interface PlayerMapper extends BaseMapper<Player> {
     public static final String SELECT_STMT = "SELECT id, version, first_name as firstName, last_name as lastName, email, gender, birth_date as birthDate, dfv_number as dfvNumber, is_registered, club FROM PLAYER p LEFT JOIN DFV_PLAYER ON p.id = DFV_PLAYER.player_id LEFT JOIN UNREGISTERED_PLAYER ON p.id = UNREGISTERED_PLAYER.player_id";
 
     // INSERT
-    @Override
-    @InsertProvider(type = PlayerInsertProvider.class, method = "getInsertSql")
-    @Options(keyProperty = "id", useGeneratedKeys = true)
-    Integer insert(Player entity);
+    @Insert({ "INSERT INTO PLAYER (first_name, last_name, gender, is_registered)",
+            "VALUES (#{player.firstName, jdbcType=VARCHAR}, #{player.lastName, jdbcType=VARCHAR}, #{player.gender, jdbcType=VARCHAR}, #{isRegistered, jdbcType=BOOLEAN})" })
+    @Options(keyProperty = "player.id", useGeneratedKeys = true)
+    Integer insertPlayer(@Param("player") Player entity, @Param("isRegistered") boolean isRegistered);
 
     // UPDATE
     @Override
