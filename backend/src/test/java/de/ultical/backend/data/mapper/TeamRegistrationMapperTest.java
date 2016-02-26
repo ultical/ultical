@@ -86,8 +86,8 @@ public class TeamRegistrationMapperTest {
 
     @Test
     public void test() {
-        this.divRegMapper.insert(this.divisionRegOpen, this.tes);
-        this.divRegMapper.insert(this.divisionRegMxd, this.tes);
+        this.divRegMapper.insert(this.divisionRegOpen, this.tes, false);
+        this.divRegMapper.insert(this.divisionRegMxd, this.tes, false);
 
         TournamentEdition foundEdition = RULE.getSession().getMapper(this.tes.getMapper()).get(this.tes.getId());
         assertNotNull(foundEdition);

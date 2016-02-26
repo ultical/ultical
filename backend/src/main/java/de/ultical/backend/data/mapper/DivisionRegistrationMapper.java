@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Case;
 import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
@@ -25,9 +25,12 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
     final String divisionSelect = "SELECT id, version, division_age, division_type, number_of_spots, is_player_registration, division_identifier FROM DIVISION_REGISTRATION";
 
     // INSERT
-    @InsertProvider(type = DivisionRegistrationInsertProvider.class, method = "getInsertSql")
-    @Options(keyProperty = "reg.id", useGeneratedKeys = true)
-    Integer insert(@Param("reg") DivisionRegistration entity, @Param("edition") TournamentEdition edition);
+    @Insert({ "INSERT INTO DIVISION_REGISTRATION",
+            "(tournament_edition, division_type, division_age, number_of_spots, is_player_registration, division_identifier)",
+            "VALUES (#{edition.id}, #{divReg.divisionType}, #{divReg.divisionAge}, #{divReg.numberSpots}, #{isPlayerRegistration}, #{divReg.divisionIdentifier, jdbcType=VARCHAR})" })
+    @Options(keyProperty = "divReg.id", useGeneratedKeys = true)
+    Integer insert(@Param("divReg") DivisionRegistration entity, @Param("edition") TournamentEdition edition,
+            @Param("isPlayerRegistration") boolean isPlayerRegistration);
 
     // UPDATE
     @Override

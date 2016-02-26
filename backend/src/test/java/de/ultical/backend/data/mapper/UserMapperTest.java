@@ -43,7 +43,7 @@ public class UserMapperTest {
 
         DfvPlayerMapper playerMapper = staticSession.getMapper(DfvPlayerMapper.class);
         PlayerMapper pMapper = staticSession.getMapper(PlayerMapper.class);
-        pMapper.insert(player);
+        pMapper.insertPlayer(player, player instanceof DfvPlayer);
         playerMapper.insert(player);
         staticSession.commit();
         DBRULE.closeSession();
