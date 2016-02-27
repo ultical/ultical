@@ -48,6 +48,21 @@ Inside the `web/`directory install dependencies with bower:
 
 Change the document root of your web server to the web directory
 
+### Update license information
+
+To check if the project license is compatible with the dependencies' licenses, the file `web/NOTICE` file was generated with the following commands and contains a list of all the used libraries and their licenses.
+
+```
+npm install -g bower-license
+bower-license -e json > NOTICE
+```
+
+[Grunt](http://gruntjs.com/) is used to generate header files for different file formats based on a template (see `config/header.*`) and to add the headers to the respective files.
+
+* To execute the template generation run `grunt` in the directory `ultical/web`.
+* Manually copy and paste the license header to the source files.
+
+FIXME: We should build a minified/uglified JavaScript file and add the source header automatically to that one.
 
 # License
 
