@@ -33,6 +33,10 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			teams: [],
 			seasons: [],
 
+			formatsByEventIndexed: {},
+			teamsIndexed: {},
+			playerIndexed: {},
+
 			getEmptyEvent: function() {
 				return createEmptyEvent();
 			},
@@ -58,6 +62,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				callback(that.teams);
 				serverApi.getAllTeams(function(teams) {
 					that.teams = teams;
+
 					var loopIndex = newLoopIndex();
 					angular.forEach(teams, function(team) {
 						storeTeam(team, loopIndex);
@@ -78,6 +83,33 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 					callback(that.own.teams);
 				});
 			},
+
+      deleteTeam: function(team, callback, errorCallback) {
+        var that = this;
+        serverApi.deleteTeam(team.id, function() {
+          delete that.teamsIndexed[team.id];
+
+          var teamIndexToDelete = -1;
+          angular.forEach(that.teams, function(oneTeam, idx) {
+            if (oneTeam.id == team.id) {
+              teamIndexToDelete = idx;
+            }
+          });
+          if (teamIndexToDelete >= 0) {
+            that.teams.splice(teamIndexToDelete, 1);
+          }
+          var ownTeamIndexToDelete = -1;
+          angular.forEach(that.own.teams, function(oneTeam, idx) {
+            if (oneTeam.id == team.id) {
+              ownTeamIndexToDelete = idx;
+            }
+          });
+          if (ownTeamIndexToDelete >= 0) {
+            that.own.teams.splice(ownTeamIndexToDelete, 1);
+          }
+          callback();
+        }, errorCallback);
+      },
 
 			saveRoster: function(roster, team, callback, errorCallback) {
 				serverApi.postRoster(roster, team.id, callback, errorCallback);
@@ -142,8 +174,12 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			getFormatForEvent: function(eventId, callback) {
 				var that = this;
 
+				if (eventId in this.formatsByEventIndexed) {
+					callback(this.formatsByEventIndexed[eventId]);
+				}
 				serverApi.getFormatByEvent(eventId, function(data) {
 					storeTournamentFormat(data, newLoopIndex());
+					that.formatsByEventIndexed[eventId] = data;
 					callback(data);
 				});
 			},
@@ -159,23 +195,21 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 			getEvents: function(callback) {
 				var that = this;
-				if (isEmpty(this.allEvents)) {
-					// make API call
-					serverApi.getEvents(function(data) {
-						that.events = data;
+				callback(this.events);
 
-						var loopIndex = newLoopIndex();
+				// make API call
+				serverApi.getEvents(function(data) {
+					that.events = data;
 
-						// add some fields
-						angular.forEach(data, function(event) {
-							storeEvent(event, loopIndex);
-						});
+					var loopIndex = newLoopIndex();
 
-						callback(that.events);
+					// add some fields
+					angular.forEach(data, function(event) {
+						storeEvent(event, loopIndex);
 					});
-				} else {
-					callback(this.events);
-				}
+
+					callback(that.events);
+				});
 			},
 
 			registerTeamForEdition: function(teamReg, divisionReg, callback) {
@@ -191,7 +225,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				if (team.id == -1) {
 					oldTeam = null;
 				} else {
-					oldTeam = this.teamsIndexed[team.id];
+					oldTeam = team;
 					if (!angular.isObject(team.location)) {
 						team.location = {
 								id: oldTeam.location.id,
@@ -335,9 +369,16 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 		storeContact(event.localOrganizer, loopIndex);
 
+		// get main location
+		event.x.mainLocation = {};
+		angular.forEach(event.locations, function(location) {
+			if (location.main || isEmpty(event.x.mainLocation)) {
+				event.x.mainLocation = location;
+			}
+		});
+
 		angular.forEach(event.admins, function(admin, idx) {
 			storeUser(admin, loopIndex);
-
 			event.x.own = authorizer.getUser() != null && (event.x.own || admin.id == authorizer.getUser().id);
 		});
 
@@ -404,7 +445,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			storeDivReg(divReg, loopIndex);
 		});
 
-		edition.x.isSingleEdition = edition.events != null && edition.events.length == 1;		
+		edition.x.isSingleEdition = edition.events != null && edition.events.length == 1;
 
 		var todayDateString = moment().format('YYYY-MM-DD');
 

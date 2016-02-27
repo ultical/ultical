@@ -41,8 +41,8 @@
 									<!-- 								<i class="fa fa-venus-mars"></i> -->
 									<bas ng-repeat="division in event.x.divisions">{{ division | division }}<bas ng-if="!$last">, </bas></bas>
 								</span>
-								<span class="margin-right" ng-if="event.location | notEmpty">
-									<i class="fa fa-map-marker"></i> {{ event.location | location : 'city' }}
+								<span class="margin-right" ng-if="event.x.mainLocation | notEmpty">
+									<i class="fa fa-map-marker"></i> {{ event.x.mainLocation | location : 'city' }}
 								</span>
 								&nbsp;
 							</div>

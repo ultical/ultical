@@ -9,6 +9,11 @@ html, body {
 	margin-bottom: 65px;
 	margin-top: -5px;
 }
+@media ( min-width: 768px) {
+	.view-container {
+		padding-bottom: 50px;
+	}
+}
 
 h1, h2, h3, h4, h5 {
 	font-weight: 400;
@@ -186,7 +191,7 @@ button, input, optgroup, select, textarea {
 }
 
 .panel-title-addon {
-	font-weight: 400;
+	font-weight: 300;
 }
 
 .input-group-colored .input-group-addon {
@@ -357,7 +362,7 @@ select:not([multiple]) {
 .event-list h5 {
  	font-weight: 500;
  }
- 
+
 .event-list h4 {
  	font-weight: 300;
  }
@@ -391,6 +396,11 @@ select:not([multiple]) {
 	animation-duration: 1s;
 }
 
+.info-text {
+	padding-left: 15px;
+	border-left: 2px solid #DDDDDD;
+}
+
 .print-heading {
 	font-size: 150%;
 }
@@ -416,4 +426,10 @@ select:not([multiple]) {
 
 .mega-wide {
 	width: 300px;
+}
+.hard-limit {
+	overflow: hidden;
+}
+.user-textarea {
+	white-space: pre-wrap;
 }

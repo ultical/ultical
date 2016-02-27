@@ -1,5 +1,33 @@
 <div id="start" ng-controller="EventShowCtrl">
-	<div ng-class="{'hidden-print': printing}">
+
+	<script type="application/ld+json">
+	{
+	  "@context": "http://schema.org",
+	  "@type": "SportsEvent",
+	  "name": "{{ event | eventname }}",
+	  "startDate" : "{{ event.startDate }}",
+		"endDate": "{{ event.endDate }}",
+	  "url" : "http://example.com/tourdates.html",
+	  "location" : {
+	    "@type": "PostalAddress",
+			"addressCountry": "{{ event.location.countryCode }}",
+	     "addressLocality": "{{ event.location.city }}",
+	     "postalCode": "{{ event.location.zipCode }}",
+	     "streetAddress": "{{ event.location.street }}",
+	  },
+		"description": "{{ event.tournamentEdition.tournamentFormat.description }}",
+		"organizer": {
+			"@type": "Organization",
+			"name": "{{ event.tournamentEdition.tournamentFormat.association.name }}"
+		}
+	}
+	</script>
+
+	<div ng-class="{'hidden-print': printing}" ng-show="event | notEmpty">
+
+		<div class="row">
+			<div class="col-md-7">
+
 		<div class="row">
 			<div class="col-md-12">
 				<h3 class="page-title">{{ event | eventname : 'full' }}</h3>
@@ -7,10 +35,10 @@
 		</div>
 
 		<div class="row">
-			<div class="col-md-5 page-sub-title">
+			<div class="col-md-8 page-sub-title">
 				{{ event.startDate | amDateFormat : ('general.amDateFromSameMonth' | translate) }} - {{ event.endDate | amDateFormat : ('general.amDateToFull' | translate) }}<br />
 			</div>
-			<div class="col-md-3 page-sub-title">{{ 'season.season' | translate }}: {{ event.tournamentEdition.season | season : true}}</div>
+			<div class="col-md-4 text-right page-sub-title">{{ 'season.season' | translate }}: {{ event.tournamentEdition.season | season : true}}</div>
 		</div>
 
 		<!-- LOCATION -->
@@ -56,8 +84,8 @@
 			</div>
 		</div>
 
-		<!-- TODO decide if it should be hidden in multi-event-editions -->
-		<div class="row margin-top" ng-if="event.tournamentEdition.tournamentFormat.description | notEmpty">
+		<!-- FORMAT DESCRIPTION-->
+		<div class="row margin-top" ng-if="(event.tournamentEdition.tournamentFormat.description | notEmpty) && event.x.isSingleEvent">
 			<div class="col-md-12">{{ event.tournamentEdition.tournamentFormat.description }}</div>
 		</div>
 
@@ -98,7 +126,9 @@
 
 		<!-- INFO -->
 		<div class="row margin-top" ng-if="event.info | notEmpty">
-			<div class="col-md-12">{{ event.info }}</div>
+			<div class="col-md-12">
+				<div class="info-text user-textarea">{{ event.info }}</div>
+			</div>
 		</div>
 
 		<!-- FEES -->
@@ -115,7 +145,7 @@
 							<td colspan="4" class="margin-top-small">{{ 'event.fee.matchdayLabel' | translate }}:</td>
 						</tr>
 						<tr>
-						<td ng-if="editionFeeEndIndex > 0" class="padding-right">&nbsp;</td>
+							<td ng-if="editionFeeEndIndex > 0" class="padding-right">&nbsp;</td>
 							<td class="padding-right">
 								<span ng-if="fee.multiple">{{ 'event.fee.perUnit' | translate }}</span>
 								<span ng-if="fee.type != 'OTHER'">{{ ('event.fee.' + (fee.type | lowercase)) | translate }}</span>
@@ -160,7 +190,7 @@
 
 		<!-- DIVISIONS -->
 		<div ng-if="event.x.divisions.length > 0" class="row margin-top">
-			<div class="col-md-7">
+			<div class="col-md-12">
 				<div class="strong">{{ 'event.teamList.title' | translate }}</div>
 
 				<div class="panel-group margin-top-small" ng-model="panels.divisionPanel" role="tablist" aria-multiselectable="true" bs-collapse>
@@ -169,7 +199,8 @@
 						<div class="panel-heading cursor-pointer" role="tab">
 							<h3 class="panel-title" bs-collapse-toggle>
 								<span>{{ division | division }}</span>
-								<span class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numberSpots }} {{ 'general.teams' | translate }} &nbsp;</span>
+								<span ng-if="!division.registrationComplete && division.numberSpots != 0" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numberSpots }} {{ 'event.spotsAvailable' | translate }}</span><span class="panel-title-addon" ng-if="!division.registrationComplete && division.playingTeams.length > 0"> - {{ division.playingTeams.length }} {{ 'event.spotsApplied' | translate }}</span>
+								<span ng-if="division.registrationComplete" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numTeamsConfirmed }} {{ 'general.teams' | translate }} &nbsp;</span>
 							</h3>
 						</div>
 
@@ -254,6 +285,8 @@
 		</div>
 
 	</div>
+</div>
+</div>
 
 	<!-- PRINTING TEMPLATE -->
 	<div class="print-size visible-print-block" ng-if="loggedIn() && event.x.own && printing">
@@ -284,10 +317,10 @@
 				</div>
 
 				<div class="row" ng-init="innerIndex = $index" ng-class="{'margin-top':!$first}" ng-repeat-start="regTeam in division.playingTeams | filter : {status: 'CONFIRMED'} | orderBy : teamOrder track by regTeam.id">
-					<div class="col-xs-5">
+					<div class="col-xs-4">
 						<span class="strong print-heading">{{ regTeam.team.name }}</span>
 					</div>
-					<div class="col-xs-4">
+					<div class="col-xs-5">
 						<span class="margin-top-small pull-left">{{ 'general.club' | translate }}</span>
 					</div>
 					<div class="col-xs-3">
@@ -297,9 +330,9 @@
 
 				<div class="row" ng-class="{'margin-bottom-huge': $last, highlight: $index % 2 == 1}" ng-repeat="rosterPlayer in getRelevantPlayers(regTeam, division, event.tournamentEdition.season, event) | orderBy : 'player.lastName'">
 					<div ng-if="$index % 5 == 0" class="col-xs-12 border-bottom-light"></div>
-					<div class="col-xs-5">{{ rosterPlayer.player | playername : true }}</div>
-					<div class="col-xs-4">{{ rosterPlayer.player.club.name }}</div>
-					<div class="col-xs-3">
+					<div class="col-xs-4 hard-limit">{{ rosterPlayer.player | playername : true }}</div>
+					<div class="col-xs-6 hard-limit">{{ rosterPlayer.player.club.name }}</div>
+					<div class="col-xs-2">
 						<span class="pull-right"> {{ rosterPlayer.dateAdded | amDateFormat : ('general.amDateFormat' | translate) }}</span>
 					</div>
 				</div>
@@ -311,4 +344,3 @@
 		</div>
 	</div>
 </div>
-

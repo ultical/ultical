@@ -70,6 +70,11 @@ public class DfvProfileLoader {
             List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {
             });
 
+            for (DfvMvName dfvMvName : response) {
+                dfvMvName.setFirstName(dfvMvName.getFirstName().trim());
+                dfvMvName.setLastName(dfvMvName.getLastName().trim());
+            }
+
             this.dataStore.refreshDfvNames(response);
 
             return true;

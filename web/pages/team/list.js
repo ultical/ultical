@@ -2,10 +2,10 @@
 
 angular.module('ultical.team', [])
 
-.controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService', 'alerter', '$timeout', 'moment',
-                             function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter, $timeout, moment) {
+.controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService', 'alerter', '$timeout', 'moment', 'headService',
+                             function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter, $timeout, moment, headService) {
 
-	$scope.currentLocale = $stateParams.locale;
+  $scope.currentLocale = $stateParams.locale;
 
 	$scope.loggedIn = function() {
 		return authorizer.loggedIn();
@@ -17,19 +17,25 @@ angular.module('ultical.team', [])
 
 	$scope.activeUserId = authorizer.getUser() != null ? authorizer.getUser().id : -1;
 
+	// make sure that we only watch 'own' teams if we are logged in
+	if ($stateParams.activeTab == 'own' && !authorizer.loggedIn()) {
+		$stateParams.activeTab = 'all';
+	}
+
 	// make sure we are directly at the right tab ('own' or 'all')
 	$scope.tabs = { activeTab: $stateParams.activeTab ? $stateParams.activeTab: 'all' };
 
+  headService.setTitle('team.list.' + $stateParams.activeTab, {});
+
 	$scope.newEmail = { text: ''};
 	$scope.newAdmin = { obj: {}};
+
 	$scope.teams = [];
+	getTeams();
 
 	$scope.$watch('tabs.activeTab', function() {
-		$scope.teamPanels.activePanel = -1;
-		$scope.editingRoster = -1;
-		$scope.editing = false;
-		$scope.teams = [];
-		getTeams();
+		var newState = 'app.teams' + ($scope.tabs.activeTab == 'all' ? 'List' : 'Own');
+		$state.go(newState);
 	});
 
 	$scope.teamOrder = 'name';
@@ -64,6 +70,20 @@ angular.module('ultical.team', [])
 		});
 	};
 
+  $scope.deleteTeam = function(team) {
+    alerter.confirm('team.edit.deletionConfirm', function(userResponse) {
+      if (userResponse == true) {
+        storage.deleteTeam(team, function() {
+          $scope.cancel();
+        }, function(response) {
+          if (response.message.indexOf('c17') == 0) {
+            alerter.error('', 'team.edit.deletionFailed', {container: '#team-edit-error' + team.id, duration: 10});
+          }
+        });
+      }
+    });
+  };
+
 	$scope.editTeam = function(team) {
 		serverApi.getAllClubs(function(clubs) {
 			$scope.allClubs = clubs;
@@ -83,6 +103,7 @@ angular.module('ultical.team', [])
 	$scope.saveTeam = function(team) {
 		if (!angular.isObject(team.location) || isEmpty(team.location.city)) {
 			$scope.locationIsMissing = true;
+      alerter.error('', 'team.edit.locationMissing', {container: '#team-edit-error' + team.id, duration: 10});
 			return;
 		}
 
@@ -225,15 +246,6 @@ angular.module('ultical.team', [])
 		});
 	};
 
-	$scope.deleteTeam = function(team) {
-		alerter.confirm('team.confirmDelete', function(userResponse) {
-			if (userResponse == true) {
-				// not yet implemented
-				// storage.deleteTeam(team);
-			}
-		});
-	}
-
 	$scope.oldLocations = [];
 
 	// return location-proposals from mapbox api
@@ -256,9 +268,11 @@ angular.module('ultical.team', [])
 		});
 	};
 
-	$scope.locationMatching = function() {
+	$scope.typeaheadPreMatching = function() {
 		return true;
 	};
+
+	$scope.editingRoster = -1;
 
 	$scope.createNewRoster = function(team) {
 		$scope.editingRoster = team.id;
@@ -409,7 +423,7 @@ angular.module('ultical.team', [])
 	};
 
 	$scope.removePlayerFromRoster = function(player, roster) {
-		storage.removePlayerFromRoster(player, roster, function() {}, 
+		storage.removePlayerFromRoster(player, roster, function() {},
 				function(errorResponse) {
 			if (errorResponse.status = 403) {
 				// this player was part of a roster during an official tournament

@@ -78,7 +78,7 @@ public class TournamentFormatTest {
         player.setGender(Gender.MALE);
         player.setDfvNumber(123456);
         player.setBirthDate(LocalDate.of(1979, 1, 25));
-        DBRULE.getSession().getMapper(PlayerMapper.class).insert(player);
+        DBRULE.getSession().getMapper(PlayerMapper.class).insertPlayer(player, player instanceof DfvPlayer);
         DBRULE.getSession().getMapper(player.getMapper()).insert(player);
 
         this.admin = new User();

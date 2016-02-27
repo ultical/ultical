@@ -77,7 +77,11 @@ public interface DfvMvNameMapper {
             @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
     List<DfvMvName> getByName(@Param("firstname") String firstname, @Param("lastname") String lastname);
 
-    @Select({ SELECT_STMT, "WHERE dse=1 AND CONCAT(first_name, ' ', last_name) LIKE #{namePart}" })
+    // this commented out version does not match aous to äöüß
+    // @Select({ SELECT_STMT, "WHERE dse=1 AND CONCAT(first_name, ' ',last_name)
+    // LIKE #{namePart}" })
+    @Select({ SELECT_STMT, "WHERE dse=1",
+            "AND (CONCAT(first_name, ' ', last_name) LIKE #{namePart} OR CONCAT(first_name, ' ', last_name) LIKE _utf8 #{namePart} COLLATE utf8_general_ci)" })
     @Results({ @Result(column = "dfv_number", property = "dfvNumber"),
             @Result(column = "first_name", property = "firstName"),
             @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),

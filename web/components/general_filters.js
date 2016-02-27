@@ -17,6 +17,15 @@
 
 'use strict';
 
+app.filter('orderLocaleBy',function() {
+    return function (items, property) {
+        items.sort(function (a, b) {
+            return a[property].localeCompare(b[property]);
+        });
+        return items;
+      };
+});
+
 app.filter('isEmpty', [function() {
 	return function(obj) {
 		return isEmpty(obj);
@@ -35,7 +44,7 @@ app.filter('url', [function() {
 			return '';
 		}
 		if (url.indexOf('http') != 0) {
-			url = 'http://' + url; 
+			url = 'http://' + url;
 		}
 		return url;
 	};
@@ -111,5 +120,5 @@ app.filter('money', ['$translate', 'decimalFilter', function($translate, decimal
 }]);
 
 app.filter('urlEncode', function($window) {
-	  return $window.encodeURIComponent;
-	});
+  return $window.encodeURIComponent;
+});

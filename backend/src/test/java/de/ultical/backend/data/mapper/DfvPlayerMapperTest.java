@@ -75,7 +75,7 @@ public class DfvPlayerMapperTest {
         PlayerMapper playerMapper = dbRule.getSession().getMapper(PlayerMapper.class);
         DfvPlayerMapper mapper = dbRule.getSession().getMapper(DfvPlayerMapper.class);
         this.dfvPlayer.getId();
-        playerMapper.insert(this.dfvPlayer);
+        playerMapper.insertPlayer(this.dfvPlayer, this.dfvPlayer instanceof DfvPlayer);
         final int insertedId = this.dfvPlayer.getId();
         mapper.insert(this.dfvPlayer);
         dbRule.getSession().commit();
