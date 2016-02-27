@@ -117,9 +117,18 @@ public class RosterResource {
             DfvPlayer player = this.dataStore.getPlayerByDfvNumber(dfvMvName.getDfvNumber());
 
             if (player != null) {
+                /*
+                 * check if found player is an active or passive player. If the
+                 * player is passive, an addition to an roster is not allowed.
+                 */
+                if (!player.isActive()) {
+                    throw new WebApplicationException(
+                            "e102 - Player is registered as a passive player. Passive players are not allowed to participate in tournaments.",
+                            Status.EXPECTATION_FAILED);
+                }
+
                 // check if player is already in a roster of this season and
                 // division
-
                 List<TeamRegistration> result = this.dataStore.getTeamRegistrationOfPlayerSeason(player.getId(),
                         roster.getSeason().getId(), roster.getDivisionAge().name(), roster.getDivisionType().name());
 
