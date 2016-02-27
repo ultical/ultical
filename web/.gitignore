@@ -5,3 +5,5 @@ config/config.js
 .htaccess
 /nbproject/
 /node_modules/
+dist/*
+npm-debug.log

@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('ultical.team', [])
+var angular = require('angular');
 
+angular.module('ultical.team', [])
 .controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService', 'alerter', '$timeout', 'moment', 'headService',
                              function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter, $timeout, moment, headService) {
 

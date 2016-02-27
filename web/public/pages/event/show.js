@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('ultical.events')
+var angular = require('angular');
 
-.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout', 'headService',
+angular.module('ultical.events').controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout', 'headService',
                               function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout, headService) {
 
 	$scope.event = {};

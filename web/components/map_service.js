@@ -1,21 +1,24 @@
-// ultical Copyright (C) 2016 ultical developers
-//
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published
-// the Free Software Foundation; either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-// 
+/*
+ * ultical Copyright (C) 2016 ultical developers
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ */
 
 'use strict';
+
+var app = angular.module('ultical');
 
 //map api service
 app.factory('mapService', ['CONFIG', 'mapBox',
@@ -37,7 +40,7 @@ app.factory('mapService', ['CONFIG', 'mapBox',
 			},
 
 			getLocations: function(locationName, type, callback) {
-				
+
 				var options = {};
 
 				// filter types
@@ -46,7 +49,7 @@ app.factory('mapService', ['CONFIG', 'mapBox',
 				} else {
 					options.types = 'address,place,country';
 				}
-				
+
 				// e.g.: center of germany 51.163375, 10.447683
 				options.proximity = CONFIG.mapBox.proximity;
 

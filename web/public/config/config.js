@@ -1,11 +1,11 @@
-//Do not change values in this file! Use config.js (config.js.dist).
+'use strict';
 
 var CONFIG_OBJECT = {
 		// put values that are to be used in the config (e.g. color definitions, ...)
 };
 
 angular.extend(CONFIG_OBJECT, {
-	
+
 	// put default values for the app
 	general: {
 		// list of two-letter country codes
@@ -44,7 +44,7 @@ angular.extend(CONFIG_OBJECT, {
 		ages: ['u14', 'u17', 'u20', 'u23', 'regular', 'masters', 'grandmasters'],
 		types: ['open', 'women', 'mixed'],
 	},
-	
+
 	brand: {
 		emailSupport: 'support@ultical.com',
 		emailContact: 'team@ultical.com',

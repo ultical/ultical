@@ -1,25 +1,26 @@
 'use strict';
 
-angular.module('ultical.user')
-.controller('MailsCtrl', ['$scope', 'serverApi', 'authorizer', '$state', 'alerter', '$stateParams',
+var angular = require('angular');
+
+angular.module('ultical.user').controller('MailsCtrl', ['$scope', 'serverApi', 'authorizer', '$state', 'alerter', '$stateParams',
                             function($scope, serverApi, authorizer, $state, alerter, $stateParams) {
 
 	$scope.promptFor = '';
 	$scope.validationError = false;
-	
+
 	$scope.doPasswordChange = function(passwords) {
 		if (passwords.one != passwords.two) {
 			$scope.validationError = true;
 		}
-		
+
 		$scope.mailCode.user.password = passwords.one;
-		
+
 		serverApi.changePasswordWithMailCode($scope.mailCode.code, $scope.mailCode.user, function(user) {
 			alerter.success('emailCode.successPasswordChangedTitle', 'emailCode.successPasswordChangedText');
 			$state.go('app.start');
 		});
 	};
-	
+
 	serverApi.redeemMailCode($stateParams.code, function(mailCode) {
 		// success callback
 		if ($stateParams.emailCodeType == 'password' && mailCode.type == 'FORGOT_PASSWORD') {
@@ -39,7 +40,7 @@ angular.module('ultical.user')
 			alerter.success('emailCode.successTitle', successText);
 			$state.go('app.start');
 		}
-	}, 
+	},
 	function() {
 		// error callback
 		if ($stateParams.emailCodeType == 'password') {
@@ -50,6 +51,6 @@ angular.module('ultical.user')
 		$state.go('app.start');
 	});
 
-	
-	
+
+
 }]);

@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('ultical.events', [])
+var angular = require('angular');
 
-.controller('EventListCtrl', ['$scope', 'storage', '$state', '$filter', 'Slug', 'headService',
+angular.module('ultical.events', []).controller('EventListCtrl', ['$scope', 'storage', '$state', '$filter', 'Slug', 'headService',
                               function($scope, storage, $state, $filter, slug, headService) {
 
   headService.setTitle('event.list.title', {});

@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('ultical.user')
+var angular = require('angular');
 
-.controller('RegistrationCtrl', ['$scope', 'serverApi', 'CONFIG', '$translate', 'alerter',
+angular.module('ultical.user').controller('RegistrationCtrl', ['$scope', 'serverApi', 'CONFIG', '$translate', 'alerter',
                                  function($scope, serverApi, CONFIG, $translate, alerter) {
 
 	$scope.minPasswordLength = CONFIG.registration.minPasswordLength;

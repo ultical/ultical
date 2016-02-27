@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('ultical.user', [])
-.controller('LoginCtrl', ['$scope', 'serverApi', 'authorizer', '$state', 'alerter',
+var angular = require('angular');
+
+angular.module('ultical.user', []).controller('LoginCtrl', ['$scope', 'serverApi', 'authorizer', '$state', 'alerter',
                           function($scope, serverApi, authorizer, $state, alerter) {
 
 	$scope.loginFail = false;

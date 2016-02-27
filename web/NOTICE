@@ -1,95 +1,48 @@
-{
-  "angular-translate@2.9.0": {
-    "licenses": [
-      "MIT"
-    ]
-  },
-  "angular-ui-router@0.2.18": {
-    "licenses": [
-      "MIT"
-    ]
-  },
-  "font-awesome@undefined": {
-    "licenses": [
-      "OFL-1.1",
-      "MIT",
-      "CC-BY-3.0"
-    ],
-    "homepage": "http://fontawesome.io"
-  },
-  "jquery@undefined": {
-    "licenses": [
-      "MIT"
-    ]
-  },
-  "moment@undefined": {
-    "licenses": [
-      "MIT*"
-    ]
-  },
-  "angular-animate@1.5.0": {
-    "licenses": [
-      "MIT"
-    ],
-    "repository": "git+https://github.com/angular/angular.js"
-  },
-  "angular@1.5.0": {
-    "licenses": [
-      "MIT"
-    ],
-    "repository": "git+https://github.com/angular/angular.js"
-  },
-  "angular-moment@0.10.3": {
-    "licenses": [
-      "MIT"
-    ],
-    "repository": "git+ssh://git@github.com/urish/angular-moment",
-    "homepage": "http://github.com/urish/angular-moment"
-  },
-  "angular-motion@0.4.3": {
-    "licenses": [
-      "MIT"
-    ],
-    "repository": "git+https://github.com/mgcrea/angular-motion",
-    "homepage": "https://github.com/mgcrea/angular-motion"
-  },
-  "angular-sanitize@1.5.0": {
-    "licenses": [
-      "MIT"
-    ],
-    "repository": "git+https://github.com/angular/angular.js"
-  },
-  "angular-slugify@1.0.1": {
-    "licenses": [
-      "MIT"
-    ],
-    "repository": "git+https://github.com/paulsmith/angular-slugify"
-  },
-  "angular-strap@2.3.7": {
-    "licenses": [
-      "MIT"
-    ],
-    "repository": "git+https://github.com/mgcrea/angular-strap",
-    "homepage": "http://mgcrea.github.io/angular-strap"
-  },
-  "bootstrap@3.3.6": {
-    "licenses": [
-      "MIT"
-    ],
-    "homepage": "http://getbootstrap.com",
-    "repository": "git+https://github.com/twbs/bootstrap"
-  },
-  "jsog@1.0.7": {
-    "licenses": [
-      "MIT"
-    ],
-    "homepage": "https://github.com/jsog/jsog",
-    "repository": "git+https://github.com/jsog/jsog"
-  },
-  "respond@1.4.2": {
-    "licenses": [
-      "MIT"
-    ],
-    "repository": "git+https://github.com/scottjehl/Respond"
-  }
-}
+├─ angular-animate@1.5.0
+│  ├─ licenses: MIT
+│  └─ repository: git+https://github.com/angular/angular.js
+├─ angular-moment@0.10.3
+│  ├─ licenses: MIT*
+│  └─ repository: git+ssh://git@github.com/urish/angular-moment
+├─ angular-motion@0.4.3
+│  ├─ licenses
+│  │  └─ 0: MIT
+│  └─ repository: git+https://github.com/mgcrea/angular-motion
+├─ angular-sanitize@1.5.0
+│  ├─ licenses: MIT
+│  └─ repository: git+https://github.com/angular/angular.js
+├─ angular-slugify@1.0.3
+│  ├─ licenses: MIT
+│  └─ repository: git+https://github.com/paulsmith/angular-slugify
+├─ angular-strap@2.3.7
+│  ├─ licenses: MIT
+│  └─ repository: git+https://github.com/mgcrea/angular-strap
+├─ angular-translate@2.9.2
+│  ├─ licenses: MIT
+│  └─ repository: git+ssh://git@github.com/angular-translate/angular-translate
+├─ angular-ui-router@0.2.18
+│  ├─ licenses: MIT
+│  └─ repository: git+https://github.com/angular-ui/ui-router
+├─ angular@1.5.0
+│  ├─ licenses: MIT
+│  └─ repository: git+https://github.com/angular/angular.js
+├─ bootstrap@3.3.6
+│  ├─ licenses: MIT
+│  └─ repository: git+https://github.com/twbs/bootstrap
+├─ font-awesome@4.5.0
+│  ├─ licenses: (OFL-1.1 AND MIT)
+│  └─ repository: git+https://github.com/FortAwesome/Font-Awesome
+├─ jsog@1.0.7
+│  ├─ licenses
+│  │  └─ 0: MIT
+│  └─ repository: git+https://github.com/jsog/jsog
+├─ moment@2.10.6
+│  ├─ licenses: MIT
+│  └─ repository: git+https://github.com/moment/moment
+├─ respond@0.9.0
+│  ├─ licenses: MIT
+│  └─ repository: git+https://github.com/schme16/node-respond
+└─ ultical@0.1.0
+   ├─ licenses: GPL-3.0
+   └─ repository: https://github.com/bastrapp/ultical
+

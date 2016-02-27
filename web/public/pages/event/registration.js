@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('ultical.events')
+var angular = require('angular');
 
-.controller('EventRegistrationCtrl', ['$scope', 'storage', '$filter', '$rootScope',
+angular.module('ultical.events').controller('EventRegistrationCtrl', ['$scope', 'storage', '$filter', '$rootScope',
                                       function($scope, storage, $filter, $rootScope) {
 
 	$scope.ownTeams = [];
@@ -26,7 +26,7 @@ angular.module('ultical.events')
 		if ($scope.teamRegistrationPending) {
 			return false;
 		}
-		
+
 		var result = false;
 		angular.forEach($scope.event.x.divisions, function(division) {
 			if (division.id == divisionId) {
@@ -69,4 +69,3 @@ angular.module('ultical.events')
 	};
 
 }]);
-
