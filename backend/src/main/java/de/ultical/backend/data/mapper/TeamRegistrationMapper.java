@@ -19,11 +19,6 @@ import de.ultical.backend.model.TeamRegistration;
 public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
 
     // INSERT
-    // @InsertProvider(type = TeamRegistrationInsertProvider.class, method =
-    // "getInsertSql")
-    // Integer insertAtEnd(@Param("div") DivisionRegistrationTeams div,
-    // @Param("team") TeamRegistration reg);
-
     @Insert({ "INSERT INTO TEAM_REGISTRATION",
             "(division_registration, team, sequence, comment, standing, spirit_score, paid, status, not_qualified)",
             "VALUES (#{divisionRegistrationId}, #{teamReg.team.id}, #{teamReg.sequence, jdbcType=INTEGER}, #{teamReg.comment, jdbcType=VARCHAR}, #{teamReg.standing, jdbcType=INTEGER}, #{teamReg.spiritScore, jdbcType=REAL}, #{teamReg.paid}, #{teamReg.status, jdbcType=VARCHAR}, #{teamReg.notQualified})" })
