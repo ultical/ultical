@@ -5,11 +5,48 @@
 	<artifactId>backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>UltiCal Backend</name>
+        <inceptionYear>2015</inceptionYear>
+        
+        <licenses>
+            <license>
+                <name>GNU Affero General Public License, version 3</name>
+                <url>http://www.gnu.org/licenses/agpl-3.0.html</url>
+            </license>
+        </licenses>
+        
+        <developers>
+            <developer>
+                <id>bastrapp</id>
+                <name>Sebastian Trapp</name>
+                <roles>
+                    <role>developer</role>
+                </roles>
+            </developer>
+            <developer>
+                <id>kaffetrinkr</id>
+                <name>Basil</name>
+                <roles>
+                    <role>developer</role>
+                </roles>
+            </developer>
+            <developer>
+                <id>nuest</id>
+                <name>Daniel Nüst</name>
+                <roles>
+                    <role>contributor</role>
+                </roles>
+            </developer>
+        </developers>
+        
 	<properties>
 		<dw.version>0.9.1</dw.version>
 		<liquibase.version>3.4.1</liquibase.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                <inceptionYear>${project.inceptionYear}</inceptionYear>
+                <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+                <currentYear>${maven.build.timestamp}</currentYear>
 	</properties>
+        
 	<dependencies>
 		<dependency>
 			<groupId>org.mybatis</groupId>
@@ -215,6 +252,57 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+                        <plugin>
+                            <groupId>org.jasig.maven</groupId>
+                            <artifactId>maven-notice-plugin</artifactId>
+                            <version>1.0.6.1</version>
+                            <configuration>
+                                <noticeTemplate>etc/NOTICE.template</noticeTemplate>
+                                <generateChildNotices>false</generateChildNotices>
+                                <licenseMapping>
+                                    <param>etc/license-mappings.xml</param>
+                                </licenseMapping>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>check-license</id>
+                                    <phase>initialize</phase>
+                                    <goals>
+                                        <goal>check</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
+                            <groupId>com.mycila</groupId>
+                            <artifactId>license-maven-plugin</artifactId>
+                            <version>2.11</version>
+                            <configuration>
+                                <header>etc/license-header.txt</header>
+                                <properties>
+                                    <inceptionYear>${project.inceptionYear}</inceptionYear>
+                                    <latestYearOfContribution>${currentYear}</latestYearOfContribution>
+                                </properties>
+                                <includes>
+                                    <include>src/**/*.java</include>
+                                    <include>src/**/*.xml</include>
+                                </includes>
+                                <excludes>
+                                    <exclude>**/*changelog*.xml</exclude>
+                                    <exclude>**/*.dist</exclude>
+                                    <exclude>**/*.yaml</exclude>
+                                </excludes>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>check-license</id>
+                                    <phase>initialize</phase>
+                                    <goals>
+                                        <goal>check</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
 		</plugins>
 	</build>
 </project>

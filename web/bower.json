@@ -5,13 +5,15 @@
     "bas <sebastian.trapp@gmail.com>"
   ],
   "description": "Ultimate Tournament Management",
-  "main": "index.html",
+  "main": [
+    "index.html"
+  ],
   "moduleType": [
     "amd",
     "globals"
   ],
-  "license": "MIT",
-  "homepage": "",
+  "license": "GPLv3",
+  "homepage": "https://www.dfv-turniere.de",
   "private": true,
   "ignore": [
     "**/.*",
