@@ -34,6 +34,7 @@ import de.ultical.backend.model.Association;
 import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionRegistration;
+import de.ultical.backend.model.DivisionRegistrationPlayers;
 import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.Identifiable;
@@ -224,7 +225,7 @@ public class DataStore {
         Objects.requireNonNull(edition);
         try {
             DivisionRegistrationMapper drm = this.sqlSession.getMapper(DivisionRegistrationMapper.class);
-            drm.insert(division, edition);
+            drm.insert(division, edition, division instanceof DivisionRegistrationPlayers);
             return division;
         } finally {
             if (this.autoCloseSession) {
