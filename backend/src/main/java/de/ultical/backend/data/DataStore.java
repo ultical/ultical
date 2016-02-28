@@ -402,7 +402,48 @@ public class DataStore {
         }
     }
 
-    final static private class PlayerMvNamePair {
+    static class PlayerNeedsUpdatePredicate implements Predicate<PlayerMvNamePair> {
+        /**
+         * return <code>true</code> if the <code>DfvPlayer</code> and the
+         * <code>DfvMvName</code> contained in the pair differ in either:
+         * <ul>
+         * <li><code>firstName</code></li>
+         * <li><code>lastName</code></li>
+         * <li><code>active</code></li>
+         * <li><code>dfvNumber</code></li>
+         * </ul>
+         * property
+         * 
+         * @param pair
+         *            the pair to check
+         */
+        public static boolean needsUpdate(PlayerMvNamePair pair) {
+            DfvPlayer player = pair.player;
+            DfvMvName name = pair.name;
+            if (player.getDfvNumber() != name.getDfvNumber()) {
+                return true;
+            }
+            if ((player.getFirstName() == null || !player.getFirstName().equals(name.getFirstName()))
+                    && (player.getFirstName() != name.getFirstName())) {
+                return true;
+            }
+            if ((player.getLastName() == null || !player.getLastName().equals(name.getLastName()))
+                    && (player.getLastName() != name.getLastName())) {
+                return true;
+            }
+            if (player.isActive() != name.isActive()) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean test(PlayerMvNamePair pair) {
+            return needsUpdate(pair);
+        }
+    }
+
+    final static class PlayerMvNamePair {
         private final DfvPlayer player;
         private final DfvMvName name;
 
@@ -431,46 +472,9 @@ public class DataStore {
             final DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
 
             List<DfvPlayer> allPlayers = playerMapper.getAll();
-            final Predicate<PlayerMvNamePair> playerMvEqualityPredicate = new Predicate<PlayerMvNamePair>() {
-                /**
-                 * return <code>true</code> if the <code>DfvPlayer</code> and
-                 * the <code>DfvMvName</code> contained in the pair differ in
-                 * either:
-                 * <ul>
-                 * <li><code>firstName</code></li>
-                 * <li><code>lastName</code></li>
-                 * <li><code>active</code></li>
-                 * <li><code>dfvNumber</code></li>
-                 * </ul>
-                 * property
-                 * 
-                 * @param pair
-                 *            the pair to check
-                 */
-                @Override
-                public boolean test(PlayerMvNamePair pair) {
-                    DfvPlayer player = pair.player;
-                    DfvMvName name = pair.name;
-                    if (player.getDfvNumber() != name.getDfvNumber()) {
-                        return true;
-                    }
-                    if ((player.getFirstName() == null || !player.getFirstName().equals(name.getFirstName()))
-                            && (player.getFirstName() != name.getFirstName())) {
-                        return true;
-                    }
-                    if ((player.getLastName() == null || !player.getLastName().equals(name.getLastName()))
-                            && (player.getLastName() != name.getLastName())) {
-                        return true;
-                    }
-                    if (player.isActive() != name.isActive()) {
-                        return true;
-                    }
-                    return false;
-                }
-            };
 
             allPlayers.stream().map(player -> new PlayerMvNamePair(player, nameMapper.get(player.getDfvNumber())))
-                    .filter(playerMvEqualityPredicate).forEach(pair -> pair.updatePlayer(playerMapper));
+                    .filter(PlayerNeedsUpdatePredicate::needsUpdate).forEach(pair -> pair.updatePlayer(playerMapper));
 
         } finally {
 
