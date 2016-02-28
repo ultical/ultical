@@ -16,13 +16,13 @@ import de.ultical.backend.data.DataStore;
 public class DfvProfileLoader {
 
     @Inject
-    private Client client;
+    Client client;
 
     @Inject
-    private UltiCalConfig config;
+    UltiCalConfig config;
 
     @Inject
-    private DataStore dataStore;
+    DataStore dataStore;
 
     public boolean getDfvMvNames() throws Exception {
 
@@ -41,12 +41,14 @@ public class DfvProfileLoader {
             List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {
             });
 
-            for (DfvMvName dfvMvName : response) {
-                dfvMvName.setFirstName(dfvMvName.getFirstName().trim());
-                dfvMvName.setLastName(dfvMvName.getLastName().trim());
+            if (response != null) {
+                response.forEach(dfvMvName -> {
+                    dfvMvName.setFirstName(dfvMvName.getFirstName().trim());
+                    dfvMvName.setLastName(dfvMvName.getLastName().trim());
+                });
+                this.dataStore.refreshDfvNames(response);
+                this.dataStore.syncPlayersAndDfvNames();
             }
-
-            this.dataStore.refreshDfvNames(response);
 
             return true;
         }

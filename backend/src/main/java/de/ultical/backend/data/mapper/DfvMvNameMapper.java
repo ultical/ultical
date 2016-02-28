@@ -16,10 +16,10 @@ import de.ultical.backend.model.Club;
 
 public interface DfvMvNameMapper {
 
-    final String SELECT_STMT = "SELECT dfv_number as dfvNumber, first_name as firstName, last_name as lastName, dse, club from DFV_MV_NAME";
+    final String SELECT_STMT = "SELECT dfv_number as dfvNumber, first_name as firstName, last_name as lastName, dse, club, active from DFV_MV_NAME";
 
     // INSERT
-    @Insert("INSERT INTO DFV_MV_NAME (dfv_number, first_name, last_name, dse, club) VALUES (#{dfvNumber, jdbcType=INTEGER},#{firstName, jdbcType=VARCHAR},#{lastName, jdbcType=VARCHAR},#{dse},#{club.id, jdbcType=INTEGER})")
+    @Insert("INSERT INTO DFV_MV_NAME (dfv_number, first_name, last_name, dse, club, active) VALUES (#{dfvNumber, jdbcType=INTEGER},#{firstName, jdbcType=VARCHAR},#{lastName, jdbcType=VARCHAR},#{dse},#{club.id, jdbcType=INTEGER},#{active})")
     Integer insert(DfvMvName entity);
 
     // DELETE
@@ -31,21 +31,24 @@ public interface DfvMvNameMapper {
     @Results({ @Result(column = "dfv_number", property = "dfvNumber"),
             @Result(column = "first_name", property = "firstName"),
             @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),
-            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
+            @Result(column = "active", property = "active") })
     DfvMvName get(int pk);
 
     @Select(SELECT_STMT)
     @Results({ @Result(column = "dfv_number", property = "dfvNumber"),
             @Result(column = "first_name", property = "firstName"),
             @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),
-            @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
+            @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
+            @Result(column = "active", property = "active") })
     List<DfvMvName> getAll();
 
     @Select({ SELECT_STMT, "WHERE first_name = #{firstname} AND last_name = #{lastname}" })
     @Results({ @Result(column = "dfv_number", property = "dfvNumber"),
             @Result(column = "first_name", property = "firstName"),
             @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),
-            @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
+            @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
+            @Result(column = "active", property = "active") })
     List<DfvMvName> getByName(@Param("firstname") String firstname, @Param("lastname") String lastname);
 
     // this commented out version does not match aous to äöüß
@@ -56,7 +59,8 @@ public interface DfvMvNameMapper {
     @Results({ @Result(column = "dfv_number", property = "dfvNumber"),
             @Result(column = "first_name", property = "firstName"),
             @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),
-            @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
+            @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
+            @Result(column = "active", property = "active") })
     List<DfvMvName> find(final String namePart);
 
 }

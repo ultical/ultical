@@ -852,18 +852,30 @@
 	<changeSet author="bas" id="bas67">
 		<tagDatabase tag="bas_v1.11" />
 	</changeSet>
-	<changeLog author="bb" id="bb68">
+	<changeSet author="bb" id="bb68">
 	  <addColumn tableName="DFV_PLAYER">
 	    <column name="active" type="BOOLEAN" defaultValueBoolean="true"></column>
 	  </addColumn>
-	</changeLog>
-	<changeLog author="bb" id="bb69">
+	</changeSet>
+	<changeSet author="bb" id="bb69">
 	  <addNotNullConstraint tableName="DFV_PLAYER"
 				columnName="active"
 				columnDataType="BOOLEAN"
 				defaultNullValue="true" />
-	</changeLog>
-	<changeLog author="bb" id="bb70">
+	</changeSet>
+	<changeSet author="bb" id="bb70">
+	  <addColumn tableName="DFV_MV_NAME">
+	    <column name="active" type="BOOLEAN"
+		    defaultValueBoolean="true" />
+	  </addColumn>
+	</changeSet>
+	<changeSet author="bb" id="bb71">
+	  <addNotNullConstraint tableName="DFV_MV_NAME"
+				columnName="active"
+				columnDataType="BOOLEAN"
+				defaultNullValue="true" />
+	</changeSet>
+	<changeSet author="bb" id="bb72">
 	  <tagDatabase tag="ultical_v1.12" />
-	</changeLog>
+	</changeSet>
 </databaseChangeLog>

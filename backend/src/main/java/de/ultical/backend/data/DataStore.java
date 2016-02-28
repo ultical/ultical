@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -398,6 +399,81 @@ public class DataStore {
             if (this.sqlSession != null && this.autoCloseSession) {
                 this.sqlSession.close();
             }
+        }
+    }
+
+    final static private class PlayerMvNamePair {
+        private final DfvPlayer player;
+        private final DfvMvName name;
+
+        PlayerMvNamePair(final DfvPlayer player, final DfvMvName name) {
+            this.player = player;
+            this.name = name;
+        }
+
+        public void updatePlayer(final DfvPlayerMapper mapper) {
+            this.player.setFirstName(this.name.getFirstName());
+            this.player.setLastName(this.name.getLastName());
+            this.player.setActive(this.name.isActive());
+            this.player.setClub(this.name.getClub());
+            mapper.update(this.player);
+
+        }
+    }
+
+    /**
+     * Performs a sync between the information in DfvMvName table and the
+     * DfvPlayer table.
+     */
+    public void syncPlayersAndDfvNames() {
+        try {
+            final DfvPlayerMapper playerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
+            final DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
+
+            List<DfvPlayer> allPlayers = playerMapper.getAll();
+            final Predicate<PlayerMvNamePair> playerMvEqualityPredicate = new Predicate<PlayerMvNamePair>() {
+                /**
+                 * return <code>true</code> if the <code>DfvPlayer</code> and
+                 * the <code>DfvMvName</code> contained in the pair differ in
+                 * either:
+                 * <ul>
+                 * <li><code>firstName</code></li>
+                 * <li><code>lastName</code></li>
+                 * <li><code>active</code></li>
+                 * <li><code>dfvNumber</code></li>
+                 * </ul>
+                 * property
+                 * 
+                 * @param pair
+                 *            the pair to check
+                 */
+                @Override
+                public boolean test(PlayerMvNamePair pair) {
+                    DfvPlayer player = pair.player;
+                    DfvMvName name = pair.name;
+                    if (player.getDfvNumber() != name.getDfvNumber()) {
+                        return true;
+                    }
+                    if ((player.getFirstName() == null || !player.getFirstName().equals(name.getFirstName()))
+                            && (player.getFirstName() != name.getFirstName())) {
+                        return true;
+                    }
+                    if ((player.getLastName() == null || !player.getLastName().equals(name.getLastName()))
+                            && (player.getLastName() != name.getLastName())) {
+                        return true;
+                    }
+                    if (player.isActive() != name.isActive()) {
+                        return true;
+                    }
+                    return false;
+                }
+            };
+
+            allPlayers.stream().map(player -> new PlayerMvNamePair(player, nameMapper.get(player.getDfvNumber())))
+                    .filter(playerMvEqualityPredicate).forEach(pair -> pair.updatePlayer(playerMapper));
+
+        } finally {
+
         }
     }
 

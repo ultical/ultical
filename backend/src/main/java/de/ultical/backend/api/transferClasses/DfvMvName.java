@@ -10,6 +10,7 @@ public class DfvMvName {
     private boolean dse;
     private int dfvNumber;
     private Club club;
+    private boolean active;
 
     public void setVnr(int clubNumber) {
         this.club = new Club();

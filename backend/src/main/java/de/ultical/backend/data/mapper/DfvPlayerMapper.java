@@ -14,16 +14,16 @@ import de.ultical.backend.model.DfvPlayer;
 
 public interface DfvPlayerMapper extends BaseMapper<DfvPlayer> {
 
-    final String SELECT_STMT = "SELECT id, version, dfv_number as dfvNumber, first_name as firstName, last_name as lastName, gender, birth_date as birthDate, club FROM PLAYER INNER JOIN DFV_PLAYER ON PLAYER.id = DFV_PLAYER.player_id";
+    final String SELECT_STMT = "SELECT id, version, dfv_number as dfvNumber, first_name as firstName, last_name as lastName, gender, birth_date as birthDate, club, active FROM PLAYER INNER JOIN DFV_PLAYER ON PLAYER.id = DFV_PLAYER.player_id";
 
     // INSERT
     @Override
-    @Insert("INSERT INTO DFV_PLAYER (player_id, dfv_number, birth_date, club) VALUES (#{id},#{dfvNumber, jdbcType=VARCHAR},#{birthDate},#{club.id, jdbcType=INTEGER})")
+    @Insert("INSERT INTO DFV_PLAYER (player_id, dfv_number, birth_date, club, active) VALUES (#{id},#{dfvNumber, jdbcType=VARCHAR},#{birthDate},#{club.id, jdbcType=INTEGER}, #{active, jdbcType=BOOLEAN})")
     Integer insert(DfvPlayer entity);
 
     // UPDATE
     @Override
-    @Update("UPDATE DFV_PLAYER SET dfv_number = #{dfvNumber}, birth_date = #{birthDate}, club = #{club.id, jdbcType=INTEGER} WHERE player_id = #{id}")
+    @Update("UPDATE DFV_PLAYER SET dfv_number = #{dfvNumber}, birth_date = #{birthDate}, club = #{club.id, jdbcType=INTEGER}, active = #{active, jdbcType=BOOLEAN} WHERE player_id = #{id}")
     Integer update(DfvPlayer entity);
 
     // SELECT
