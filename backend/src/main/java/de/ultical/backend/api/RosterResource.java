@@ -313,34 +313,16 @@ public class RosterResource {
 
             Authenticator.assureTeamAdmin(this.dataStore, rosterToDelete.getTeam().getId(), currentUser);
 
-            try {
-                boolean rosterBlocked = false;
-
-                // roster cannot be blocked if empty
-                if (rosterToDelete.getPlayers().size() > 0) {
-                    // get list of start-dates of official tournaments of this
-                    // division and season that the team of the roster attends
-                    List<LocalDate> blockingDates = this.dataStore.getRosterBlockingDates(rosterId);
-
-                    LocalDate today = LocalDate.now();
-
-                    for (LocalDate blockingDate : blockingDates) {
-                        if (!blockingDate.isAfter(today)) {
-                            rosterBlocked = true;
-                        }
-                    }
-                }
-
-                if (rosterBlocked) {
-                    throw new WebApplicationException(
-                            "Roster cannot be deleted, because an official tournament has taken place in this division and season with this team attending",
-                            Status.FORBIDDEN);
-                }
-
-                this.dataStore.remove(rosterId, Roster.class);
-            } catch (PersistenceException pe) {
-                throw new WebApplicationException("Accessing the database failes!");
+            // roster cannot be deleted if registered for an event
+            if (this.dataStore.getTeamRegistrationIdsByRoster(rosterToDelete).size() > 0) {
+                throw new WebApplicationException("Roster cannot be deleted because it is registered for a tournament.",
+                        Status.FORBIDDEN);
             }
+
+            this.dataStore.remove(rosterId, Roster.class);
+
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Accessing the database failes!" + pe.getMessage());
         }
     }
 

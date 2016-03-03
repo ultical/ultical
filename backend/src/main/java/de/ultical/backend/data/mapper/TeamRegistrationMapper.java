@@ -19,6 +19,8 @@ import de.ultical.backend.model.TeamRegistration;
 
 public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
 
+    final String SELECT_STMT = "SELECT id, version, team, time_registered, comment, sequence, standing, spirit_score, paid, status, not_qualified,roster";
+
     // INSERT
     @Insert({ "INSERT INTO TEAM_REGISTRATION",
             "(division_registration, team, sequence, comment, standing, spirit_score, paid, status, not_qualified, roster)",
@@ -42,7 +44,8 @@ public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
     void deleteAll(DivisionRegistrationTeams div);
 
     // SELECT
-    @Select("SELECT id, version, team, time_registered, comment, sequence, standing, spirit_score, paid, status, not_qualified,roster FROM TEAM_REGISTRATION WHERE division_registration=#{divId} ORDER BY sequence ASC, time_registered ASC")
+    @Select({ SELECT_STMT,
+            "FROM TEAM_REGISTRATION WHERE division_registration=#{divId} ORDER BY sequence ASC, time_registered ASC" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "time_registered", property = "timeRegistered"),
             @Result(column = "team", property = "team", one = @One(select = "de.ultical.backend.data.mapper.TeamMapper.getForTeamRegistration") , javaType = Team.class),
@@ -54,7 +57,9 @@ public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
             @Result(column = "comment", property = "comment") })
     List<TeamRegistration> getRegistrationsForDivision(int divId);
 
-    @Select("SELECT id, version, team, time_registered, comment, sequence, standing, spirit_score, paid, status, not_qualified FROM DIVISION_CONFIRMATION_TEAMS dct INNER JOIN TEAM_REGISTRATION tr ON dct.team_registration = tr.id WHERE dct.division_confirmation=#{divId} ORDER BY sequence ASC, time_registered ASC")
+    @Select({ SELECT_STMT, "FROM DIVISION_CONFIRMATION_TEAMS dct",
+            "INNER JOIN TEAM_REGISTRATION tr ON dct.team_registration = tr.id",
+            "WHERE dct.division_confirmation=#{divId} ORDER BY sequence ASC, time_registered ASC" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "time_registered", property = "timeRegistered"),
             @Result(column = "team", property = "team", one = @One(select = "de.ultical.backend.data.mapper.TeamMapper.getForTeamRegistration") , javaType = Team.class),
@@ -65,4 +70,8 @@ public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
             @Result(column = "roster", property = "roster", one = @One(select = "de.ultical.backend.data.mapper.RosterMapper.get") , javaType = Roster.class),
             @Result(column = "comment", property = "comment") })
     List<TeamRegistration> getRegistrationsForConfirmation(int divId);
+
+    @Select({ "SELECT id FROM TEAM_REGISTRATION", "WHERE roster=#{roster.id}" })
+    @Results({ @Result(column = "id", property = "id") })
+    List<Integer> getByRoster(@Param("roster") Roster roster);
 }

@@ -238,7 +238,7 @@ TRANSLATIONS['de'] = {
 				playerWrongGender: 'Dieser Spieler ist aufgrund des angegebenen Geschlechts in dieser Division nicht startberechtigt. Ist diese Information fehlerhaft, wende dich an euren Vereinsadmin, um die Angabe beim DFV zu korrigieren.',
 				playerWrongAge: 'Dieser Spieler ist aufgrund seines Alters in dieser Division in diesem Jahr nicht spielberechtigt. Ist diese Information fehlerhaft, wende dich an euren Vereinsadmin, um die Angabe beim DFV zu korrigieren.',
 				playerBlocked: 'Dieser Spieler war Teil dieses Rosters während eines offiziellen Turniers. Er ist für diese Saison festgespielt und kann nicht entfernt werden.',
-				rosterBlocked: 'Dieses Roster war während eines vergangenen, offiziellen Turniers im Einsatz. Aus Dokumentationszwecken kann es nicht gelöscht werden.',
+				rosterBlocked: 'Das Team ist über dieses Roster bei einem oder mehreren Turnieren gemeldet, daher kann es nicht gelöscht werden.',
 				rosterDuplicated: 'Es existiert bereits ein Roster für die gleiche Saison und Division mit der gleichen Ergänzung zum Teamnamen und mit überlappenden Gültigkeitsbereichen.',
 				removePlayerTooltip: 'Spieler aus Roster entfernen',
 				player: 'Spieler',

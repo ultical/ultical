@@ -243,6 +243,17 @@ public class DataStore {
         }
     }
 
+    public List<Integer> getTeamRegistrationIdsByRoster(Roster roster) {
+        try {
+            TeamRegistrationMapper trMapper = this.sqlSession.getMapper(TeamRegistrationMapper.class);
+            return trMapper.getByRoster(roster);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public List<TeamRegistration> getTeamRegistrationOfPlayerSeason(int playerId, Roster roster) {
         try {
             RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
