@@ -99,9 +99,30 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
         if (roster.id != -1) {
           var rosterToSend = angular.copy(roster);
           rosterToSend.players = [];
-          serverApi.putRoster(rosterToSend, team, callback, errorCallback);
+          serverApi.putRoster(rosterToSend, team, function(updatedRoster) {
+            updatedRoster.players = roster.players;
+            updatedRoster.x = {};
+
+            var indexToReplace = -1;
+            angular.forEach(team.rosters, function(roster, idx) {
+              if (roster.id == updatedRoster.id) {
+                indexToReplace = idx;
+              }
+            });
+            if (indexToReplace >= 0) {
+              team.rosters.splice(indexToReplace, 1);
+              team.rosters.push(updatedRoster);
+            }
+
+            callback(updatedRoster);
+          }, errorCallback);
         } else {
-				  serverApi.postRoster(roster, team.id, callback, errorCallback);
+				  serverApi.postRoster(roster, team.id, function(updatedRoster) {
+            updatedRoster.x = {};
+            updatedRoster.players = [];
+            team.rosters.push(updatedRoster);
+            callback(updatedRoster);
+          }, errorCallback);
         }
 			},
 
@@ -167,10 +188,10 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				if (isEmpty(this.contexts)) {
 					serverApi.getContexts(function(contexts) {
 						that.contexts = contexts;
-            callback(contexts);
+            callback(angular.copy(contexts));
 					});
 				} else {
-					callback(this.contexts);
+					callback(angular.copy(this.contexts));
 				}
 			},
 
@@ -215,11 +236,11 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				});
 			},
 
-			registerTeamForEdition: function(teamReg, divisionReg, callback) {
+			registerTeamForEdition: function(teamReg, divisionReg, callback, errorCallback) {
 				serverApi.registerTeamForEdition(teamReg, divisionReg, function(newTeamReg) {
 					divisionReg.registeredTeams.push(newTeamReg);
 					callback(newTeamReg);
-				});
+				}, errorCallback);
 			},
 
 			saveTeam: function(team, callback, errorCallback, activeList) {

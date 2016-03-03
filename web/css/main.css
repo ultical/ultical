@@ -258,28 +258,21 @@ button, input, optgroup, select, textarea {
 	opacity: 1;
 }
 
-.new-roster-form .roster-input {
-	width: 150px;
-}
-
-.new-roster-form button {
-	width: 100%;
-}
-
-.new-roster-form .btn .caret {
+.select-btn .caret {
 	float: right;
 	top: 8px;
 	position: relative;
 }
 
 @-moz-document url-prefix() {
-    .new-roster-form .btn .caret {
+	.select-btn .caret {
 		top: -11px;
 	}
 }
 
-.new-roster-form .btn {
+.select-btn {
 	text-align: left;
+	width: 100%;
 }
 
 .roster-listing .panel-group {
@@ -289,10 +282,6 @@ button, input, optgroup, select, textarea {
 .panel-ultical .fa-fw {
 	margin-right: 4px;
 	font-size: 14px;
-}
-
-.alternative-button-link {
-	cursor: pointer;
 }
 
 .btn-primary.btn-ultical {
@@ -376,7 +365,7 @@ select:not([multiple]) {
 }
 
 .event-list-row:hover {
-    background-color: #C2DAF3;
+  background-color: #C2DAF3;
 	cursor: pointer;
 }
 
@@ -436,4 +425,24 @@ select:not([multiple]) {
 }
 .user-textarea {
 	white-space: pre-wrap;
+}
+
+.input-prefix {
+	font-size: 14px;
+	top: 3px;
+	position: relative;
+}
+
+#new-roster-creation-cancel {
+	position: absolute;
+	right: 15px;
+	top: 8px;
+}
+
+.form-control.new-roster-creation-input {
+	width: 120px;
+}
+
+a {
+	cursor: pointer;
 }

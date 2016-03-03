@@ -6,6 +6,11 @@ angular.module('ultical.team', [])
   function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter, $timeout, moment, headService, $modal) {
 
     $scope.currentLocale = $stateParams.locale;
+    $scope.showContexts = false;
+
+    storage.getContexts(function(contexts) {
+        $scope.showContexts = contexts.length > 1;
+    });
 
     $scope.loggedIn = function() {
       return authorizer.loggedIn();
@@ -52,7 +57,7 @@ angular.module('ultical.team', [])
       var myModal = $modal({
         scope: $scope,
         animation: "am-fade-and-slide-top",
-        templateUrl: "pages/team/roster_modal.html?v=7",
+        templateUrl: "pages/team/roster_modal.html?v=15",
         show: true
       });
     }
@@ -63,7 +68,7 @@ angular.module('ultical.team', [])
       var myModal = $modal({
         scope: $scope,
         animation: "am-fade-and-slide-top",
-        templateUrl: "pages/team/roster_modal.html?v=7",
+        templateUrl: "pages/team/roster_modal.html?v=15",
         show: true
       });
     };
@@ -433,7 +438,6 @@ angular.module('ultical.team', [])
           }
         });
     };
-
 
   }
 ]);

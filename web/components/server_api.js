@@ -236,8 +236,8 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			return post('roster/' + roster.id, requestPlayer, callback, errorCallback);
 		},
 
-		registerTeamForEdition: function(registration, divisionRegistration, callback) {
-			return post('tournaments/' + divisionRegistration.id + '/register/team', registration, callback);
+		registerTeamForEdition: function(registration, divisionRegistration, callback, errorCallback) {
+			return post('tournaments/' + divisionRegistration.id + '/register/team', registration, callback, errorCallback);
 		},
 	};
 

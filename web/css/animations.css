@@ -27,7 +27,9 @@
 }
 
 /* base animation */
-.ani-fade, .ani-vslide {
+.ani-fade, .ani-vslide,
+.ani-fade-in.ng-enter,
+.ani-fade-in.ng-hide-remove {
 	overflow: hidden;
 	transition-property: opacity, max-height, padding-top, margin-top;
 	transition-duration: 400ms, 700ms, 200ms, 200ms;
@@ -38,15 +40,9 @@
 	-webkit-transition-timing-function: linear, ease-out, linear, linear;
 	-webkit-transition-delay: 0s, 0s, 400ms, 400ms;
 }
-/* .ANI-FADE */
-.ani-fade.ng-enter, .ani-fade.ng-leave.ng-leave-active {
-	opacity: 0;
-}
 
-.ani-fade.ng-enter.ng-enter-active, .ani-fade.ng-leave {
-	opacity: 1;
-}
-/* .ANI-VSLIDE */
+/* we have ani-fade, ani-fade-in, ani-fade-out, ani-vslide */
+
 .ani-vslide.ng-enter {
 	max-height: 0px;
 }
@@ -88,6 +84,25 @@
 .ani-vslide.ani-large.ng-enter.ng-enter-active, .ani-vslide.ani-large.ng-leave {
 	max-height: 900px;
 }
+
+.ani-fade.ng-enter,
+.ani-fade.ng-leave.ng-leave-active,
+.ani-fade-in.ng-enter,
+.ani-fade-in.ng-hide-remove,
+.ani-fade-out.ng-leave.ng-leave-active,
+.ani-fade-out.ng-hide-add.ng-hide-add-active {
+		opacity: 0;
+}
+
+.ani-fade.ng-enter.ng-enter-active,
+.ani-fade.ng-leave,
+.ani-fade-in.ng-enter.ng-enter-active,
+.ani-fade-in.ng-hide-remove.ng-hide-remove-active,
+.ani-fade-out.ng-leave,
+.ani-fade-out.ng-hide-add {
+	opacity: 1;
+}
+
 
 .fade-ani {
 	-webkit-transition: opacity 500ms linear;
