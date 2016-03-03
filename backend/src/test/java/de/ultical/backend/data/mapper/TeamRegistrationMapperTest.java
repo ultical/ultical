@@ -69,13 +69,13 @@ public class TeamRegistrationMapperTest {
         this.divisionRegOpen.setDivisionAge(DivisionAge.REGULAR);
         this.divisionRegOpen.setDivisionType(DivisionType.OPEN);
         this.divisionRegOpen.setNumberSpots(12);
-        this.divisionRegOpen.setDivisionIdentifier("");
+        this.divisionRegOpen.setDivisionIdentifier("Open");
 
         this.divisionRegMxd = new DivisionRegistrationTeams();
         this.divisionRegMxd.setDivisionAge(DivisionAge.REGULAR);
         this.divisionRegMxd.setDivisionType(DivisionType.MIXED);
         this.divisionRegMxd.setNumberSpots(12);
-        this.divisionRegMxd.setDivisionIdentifier("2");
+        this.divisionRegMxd.setDivisionIdentifier("Mixed");
 
         this.divRegMapper = RULE.getSession().getMapper(DivisionRegistrationMapper.class);
 
