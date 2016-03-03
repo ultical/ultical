@@ -169,9 +169,8 @@ public class RosterResourceTest {
     public void testAddPlayerToTwoRosters() throws Exception {
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG_A, this.dfvNameMaster);
         verify(this.dataStore).addPlayerToRoster(this.rosterOpenRegularA, this.playerMasters);
-        when(this.dataStore.getTeamRegistrationOfPlayerSeason(this.playerMasters.getId(), this.season.getId(),
-                DivisionAge.REGULAR.name(), DivisionType.OPEN.name()))
-                        .thenReturn(Collections.singletonList(this.teamRegA));
+        when(this.dataStore.getTeamRegistrationOfPlayerSeason(this.playerMasters.getId(), this.rosterOpenRegularB))
+                .thenReturn(Collections.singletonList(this.teamRegA));
         this.expected.expect(WebApplicationException.class);
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG_B, this.dfvNameMaster);
         verify(this.dataStore, times(1)).addPlayerToRoster(any(), any());

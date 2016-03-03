@@ -25,7 +25,6 @@ import de.ultical.backend.data.mapper.MailCodeMapper;
 import de.ultical.backend.data.mapper.PlayerMapper;
 import de.ultical.backend.data.mapper.RosterMapper;
 import de.ultical.backend.data.mapper.RosterPlayerMapper;
-import de.ultical.backend.data.mapper.SeasonMapper;
 import de.ultical.backend.data.mapper.TeamMapper;
 import de.ultical.backend.data.mapper.TeamRegistrationMapper;
 import de.ultical.backend.data.mapper.TournamentFormatMapper;
@@ -41,7 +40,6 @@ import de.ultical.backend.model.Identifiable;
 import de.ultical.backend.model.MailCode;
 import de.ultical.backend.model.Player;
 import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.TournamentEdition;
@@ -245,11 +243,10 @@ public class DataStore {
         }
     }
 
-    public List<TeamRegistration> getTeamRegistrationOfPlayerSeason(int playerId, int seasonId, String divisionAge,
-            String divisionType) {
+    public List<TeamRegistration> getTeamRegistrationOfPlayerSeason(int playerId, Roster roster) {
         try {
             RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
-            return rosterMapper.getTrByPlayerSeasonDivisionQualified(playerId, seasonId, divisionAge, divisionType);
+            return rosterMapper.getTrByPlayerSeasonDivisionQualified(playerId, roster);
         } finally {
             if (this.sqlSession != null && this.autoCloseSession) {
                 this.sqlSession.close();
@@ -257,10 +254,10 @@ public class DataStore {
         }
     }
 
-    public Roster getRosterOfTeamSeason(int teamId, int seasonId, String divisionAge, String divisionType) {
+    public Roster getRosterOfTeamSeason(Roster roster) {
         try {
             RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
-            return rosterMapper.getByTeamSeasonDivision(teamId, seasonId, divisionAge, divisionType);
+            return rosterMapper.getByTeamSeasonDivision(roster);
         } finally {
             if (this.sqlSession != null && this.autoCloseSession) {
                 this.sqlSession.close();
@@ -410,65 +407,6 @@ public class DataStore {
                 this.sqlSession.close();
             }
         }
-    }
-
-    public List<Season> getAllSeasons() {
-        try {
-            SeasonMapper sm = this.sqlSession.getMapper(SeasonMapper.class);
-            return sm.getAll();
-        } finally {
-            if (this.sqlSession != null && this.autoCloseSession) {
-                this.sqlSession.close();
-            }
-        }
-    }
-
-    public Season getSeason(final int id) {
-        try {
-            SeasonMapper sm = this.sqlSession.getMapper(SeasonMapper.class);
-            return sm.get(id);
-        } finally {
-            if (this.sqlSession != null && this.autoCloseSession) {
-                this.sqlSession.close();
-            }
-        }
-    }
-
-    public Season addSeason(final Season newSeason) {
-        Season checkedSeason = Objects.requireNonNull(newSeason);
-        try {
-            SeasonMapper mapper = this.sqlSession.getMapper(checkedSeason.getMapper());
-            mapper.insert(checkedSeason);
-            this.sqlSession.commit();
-            return checkedSeason;
-        } catch (PersistenceException pe) {
-            this.sqlSession.rollback();
-            throw pe;
-        } finally {
-            if (this.sqlSession != null && this.autoCloseSession) {
-                this.sqlSession.close();
-            }
-        }
-    }
-
-    public boolean updateSeason(final Season updSeason) {
-        boolean result = false;
-        Objects.requireNonNull(updSeason);
-        int updateCount = 0;
-        try {
-            SeasonMapper mapper = this.sqlSession.getMapper(updSeason.getMapper());
-            updateCount = mapper.update(updSeason);
-            this.sqlSession.commit();
-        } catch (PersistenceException pe) {
-            this.sqlSession.rollback();
-            throw pe;
-        } finally {
-            if (this.sqlSession != null && this.autoCloseSession) {
-                this.sqlSession.close();
-            }
-        }
-        result = updateCount == 1;
-        return result;
     }
 
     public List<Team> getTeamsByUser(int userId) {

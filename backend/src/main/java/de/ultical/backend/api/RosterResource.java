@@ -9,6 +9,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -65,26 +66,58 @@ public class RosterResource {
 
         try (AutoCloseable c = this.dataStore.getClosable()) {
 
-            Authenticator.assureTeamAdmin(this.dataStore, newRoster.getTeam().getId(), currentUser);
-
-            // check if roster for this season already exists for this team
-            Roster result = this.dataStore.getRosterOfTeamSeason(newRoster.getTeam().getId(),
-                    newRoster.getSeason().getId(), newRoster.getDivisionAge().name(),
-                    newRoster.getDivisionType().name());
-
-            if (result != null) {
-                // this roster is already present for this team
-                throw new WebApplicationException("e101 - Roster already exists for team", Status.CONFLICT);
-            }
+            this.validateRoster(newRoster, currentUser);
 
             try {
-                this.dataStore.addNew(newRoster);
+                newRoster = this.dataStore.addNew(newRoster);
             } catch (PersistenceException pe) {
                 LOGGER.error("Database access failed!", pe);
                 throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
             }
 
+            newRoster.setVersion(1);
+
             return newRoster;
+        }
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Roster updateRoster(@Auth User currentUser, @NotNull Roster updatedRoster) throws Exception {
+        if (this.dataStore == null) {
+            throw new WebApplicationException("Dependency Injection for data store failed!",
+                    Status.INTERNAL_SERVER_ERROR);
+        }
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+
+            this.validateRoster(updatedRoster, currentUser);
+
+            try {
+                this.dataStore.update(updatedRoster);
+            } catch (PersistenceException pe) {
+                LOGGER.error("Database access failed!", pe);
+                throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
+            }
+
+            updatedRoster.setVersion(updatedRoster.getVersion() + 1);
+
+            return updatedRoster;
+        }
+    }
+
+    private void validateRoster(Roster roster, User currentUser) {
+        Authenticator.assureTeamAdmin(this.dataStore, roster.getTeam().getId(), currentUser);
+
+        // check if roster for this season already exists for this team
+        Roster result = this.dataStore.getRosterOfTeamSeason(roster);
+
+        // check if the found entry is the one updated (or newly created which
+        // always results in 'true' of the expression
+        if (result != null && result.getId() != roster.getId()) {
+            // this roster is already present for this team
+            throw new WebApplicationException("e101 - Roster already exists for team", Status.CONFLICT);
         }
     }
 
@@ -121,7 +154,7 @@ public class RosterResource {
                 // division
 
                 List<TeamRegistration> result = this.dataStore.getTeamRegistrationOfPlayerSeason(player.getId(),
-                        roster.getSeason().getId(), roster.getDivisionAge().name(), roster.getDivisionType().name());
+                        roster);
 
                 if (result.size() > 0) {
                     // this player is already in a different roster of this

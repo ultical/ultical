@@ -40,7 +40,7 @@ public class SeasonResource {
         }
         Season result = null;
         try (AutoCloseable c = this.dataStore.getClosable()) {
-            result = this.dataStore.getSeason(id);
+            result = this.dataStore.get(id, Season.class);
         } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
@@ -58,14 +58,12 @@ public class SeasonResource {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
-        List<Season> result = null;
         try (AutoCloseable c = this.dataStore.getClosable()) {
-            result = this.dataStore.getAllSeasons();
+            return this.dataStore.getAll(Season.class);
         } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
         }
-        return result;
     }
 
     @POST
@@ -76,14 +74,12 @@ public class SeasonResource {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
-        Season result = null;
         try (AutoCloseable c = this.dataStore.getClosable()) {
-            result = this.dataStore.addSeason(newSeason);
+            return this.dataStore.addNew(newSeason);
         } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
         }
-        return result;
     }
 
     @PUT
@@ -102,7 +98,7 @@ public class SeasonResource {
         }
         boolean success = false;
         try (AutoCloseable c = this.dataStore.getClosable()) {
-            success = this.dataStore.updateSeason(updSeason);
+            success = this.dataStore.update(updSeason);
         } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);

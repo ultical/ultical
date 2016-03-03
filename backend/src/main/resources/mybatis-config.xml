@@ -65,5 +65,6 @@
 		<mapper class="de.ultical.backend.data.mapper.RosterPlayerMapper" />
 		<mapper class="de.ultical.backend.data.mapper.AssociationMapper" />
 		<mapper class="de.ultical.backend.data.mapper.DivisionConfirmationMapper" />
+		<mapper class="de.ultical.backend.data.mapper.ContextMapper" />
 	</mappers>
 </configuration>

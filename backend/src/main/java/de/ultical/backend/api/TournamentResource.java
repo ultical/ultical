@@ -108,7 +108,7 @@ public class TournamentResource {
 
             return this.dStore.registerTeamForEdition(divisionRegistrationId, teamRegistration);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Probably duplicate entry", Status.CONFLICT);
+            throw new WebApplicationException("Probably duplicate entry" + pe.getMessage(), Status.CONFLICT);
         }
     }
 

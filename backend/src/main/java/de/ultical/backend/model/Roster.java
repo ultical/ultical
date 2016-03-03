@@ -18,6 +18,11 @@ public class Roster extends Identifiable {
     private Season season;
     private DivisionAge divisionAge;
     private DivisionType divisionType;
+
+    private String nameAddition;
+
+    private Context context;
+
     private List<RosterPlayer> players;
 
     @Override

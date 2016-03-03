@@ -48,23 +48,6 @@ public interface ContextMapper extends BaseMapper<Context> {
             @Result(column = "name", property = "name", jdbcType = JdbcType.VARCHAR, javaType = String.class) })
     Context get(@Param("id") int id);
 
-    @Select({ "SELECT c.id, c.version, c.name, c.acronym FROM CONTEXT c",
-            "LEFT JOIN CONTEXT_ROSTER cr ON cr.context = c.id", "WHERE cr.roster=#{rosterId}" })
-    @Results({ @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, javaType = Integer.class),
-            @Result(column = "version", property = "version", jdbcType = JdbcType.BIGINT, javaType = Integer.class),
-            @Result(column = "acronym", property = "acronym", jdbcType = JdbcType.VARCHAR, javaType = String.class),
-            @Result(column = "name", property = "name", jdbcType = JdbcType.VARCHAR, javaType = String.class) })
-    Context getByRoster(@Param("rosterId") int rosterId);
-
-    @Select({ "SELECT c.id, c.version, c.name, c.acronym FROM CONTEXT c",
-            "LEFT JOIN CONTEXT_TOURNAMENT_EDITION cte ON cte.context = c.id",
-            "WHERE rc.tournament_edition=#{editionId}" })
-    @Results({ @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, javaType = Integer.class),
-            @Result(column = "version", property = "version", jdbcType = JdbcType.BIGINT, javaType = Integer.class),
-            @Result(column = "acronym", property = "acronym", jdbcType = JdbcType.VARCHAR, javaType = String.class),
-            @Result(column = "name", property = "name", jdbcType = JdbcType.VARCHAR, javaType = String.class) })
-    Context getByEdition(@Param("editionId") int editionId);
-
     @Override
     @Select("SELECT id, name, acronym FROM CONTEXT")
     @Results({ @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, javaType = Integer.class),

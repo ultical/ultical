@@ -19,6 +19,7 @@ public class TeamRegistration extends Identifiable {
     private DivisionRegistrationStatus status;
     private boolean notQualified;
     private int sequence;
+    private Roster roster;
 
     @Override
     public Class<TeamRegistrationMapper> getMapper() {
