@@ -26,8 +26,8 @@ app.factory('alerter', ['$translate', '$alert', function($translate, $alert) {
 		if (!('duration' in options)) {
 			options.duration = false;
 		}
-		options.title = $translate.instant(title);
-		options.content = $translate.instant(content);
+		options.title = $translate.instant(title, options);
+		options.content = $translate.instant(content, options);
 		options.placement = 'top';
 		options.show = true;
 		options.type = type;
