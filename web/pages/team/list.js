@@ -2,8 +2,8 @@
 
 angular.module('ultical.team', [])
 
-.controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', '$http', 'mapService', 'alerter', '$timeout', 'moment', 'headService', '$modal',
-  function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, $http, mapService, alerter, $timeout, moment, headService, $modal) {
+.controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', '$filter', 'authorizer', 'serverApi', 'mapService', 'alerter', '$timeout', 'moment', 'headService', '$modal',
+  function(CONFIG, $scope, $stateParams, storage, $state, $filter, authorizer, serverApi, mapService, alerter, $timeout, moment, headService, $modal) {
 
     $scope.currentLocale = $stateParams.locale;
     $scope.showContexts = false;
@@ -339,12 +339,14 @@ angular.module('ultical.team', [])
         $scope.editRosterBlock = false;
       }, function(errorResponse) {
         if (errorResponse.status = 409) {
-          switch (errorResponse.message.substring(0, 4)) {
+          var errorParts = errorResponse.message.split('-');
+          switch (errorParts[0]) {
             case 'e101':
               // this player is already part of another roster in this season and division
               alerter.error('', 'team.roster.playerAlreadyInRoster', {
                 container: '#add-player-error',
-                duration: 10
+                duration: 10,
+                teamName: errorParts[1],
               });
               break;
             case 'e102':
@@ -417,7 +419,7 @@ angular.module('ultical.team', [])
         if ($scope.actualRosterEditedPanelIdx != $scope.teamPanels.activePanel) {
           $scope.rosterEditEnd();
         }
-      }, 200);
+      }, 100);
     });
 
     $scope.rosterEditEnd = function() {

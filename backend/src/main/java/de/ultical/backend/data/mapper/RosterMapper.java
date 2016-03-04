@@ -16,7 +16,6 @@ import org.apache.ibatis.annotations.Update;
 
 import de.ultical.backend.model.Player;
 import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.TeamRegistration;
 
 public interface RosterMapper extends BaseMapper<Roster> {
 
@@ -88,20 +87,20 @@ public interface RosterMapper extends BaseMapper<Roster> {
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version") })
     Roster getByTeamSeasonDivision(@Param("roster") Roster roster);
 
-    // combine getBlockingDate and getByPlayerSeasonDivision and check if a
-    // player is eligable to be added to a roster - either because she is not
-    // yet on a roster for this season, divisionage/-type or because her team
-    // failed to qualify on their first attempt
-    @Select({ "<script>", "SELECT tr.id FROM TEAM_REGISTRATION tr JOIN ROSTER r ON r.id = tr.roster",
-            "WHERE tr.status = 'CONFIRMED' AND tr.not_qualified = false AND r.id", "IN (SELECT ROSTER.id FROM ROSTER",
-            "LEFT JOIN ROSTER_PLAYERS rp ON ROSTER.id = rp.roster",
-            "WHERE rp.player = #{playerId} AND ROSTER.season = #{roster.season.id} AND division_age = #{roster.divisionAge} AND division_type = #{roster.divisionType}",
-            "AND name_addition = #{roster.nameAddition}", "AND <choose><when test='roster.context == null'>",
-            "context IS NULL", "</when>", "<otherwise>", "context = #{roster.context.id}", "</otherwise>", "</choose>",
-            ")", "</script>" })
-    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version") })
-    List<TeamRegistration> getTrByPlayerSeasonDivisionQualified(@Param("playerId") Integer playerId,
-            @Param("roster") Roster roster);
+    // get roster that contains specific player in one season/division/context
+    @Select({ "<script>", SELECT_STMT, "r LEFT JOIN ROSTER_PLAYERS rp ON r.id = rp.roster",
+            "WHERE rp.player = #{playerId} AND r.season = #{roster.season.id} AND r.division_age = #{roster.divisionAge} AND r.division_type = #{roster.divisionType} AND ",
+            "<choose><when test='roster.context == null'>", "context IS NULL", "</when>", "<otherwise>",
+            "context = #{roster.context.id}", "</otherwise>", "</choose>", "</script>" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "division_age"),
+            @Result(column = "division_type", property = "division_type"),
+            @Result(column = "name_addition", property = "nameAddition"),
+            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get") ),
+            @Result(column = "team", property = "team", one = @One(select = "de.ultical.backend.data.mapper.TeamMapper.getForRoster") ),
+            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
+    List<Roster> getByPlayerSeasonDivision(@Param("playerId") Integer playerId, @Param("roster") Roster roster);
 
     // get blocking date for roster
     @Select({ "SELECT e.start_date AS blockingDate FROM EVENT e",

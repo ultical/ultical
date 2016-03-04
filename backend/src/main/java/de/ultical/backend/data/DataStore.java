@@ -243,7 +243,29 @@ public class DataStore {
         }
     }
 
-    public List<Integer> getTeamRegistrationIdsByRoster(Roster roster) {
+    public List<Event> getEventByTeamRegistrations(List<TeamRegistration> teamRegistrations) {
+        try {
+            EventMapper eventMapper = this.sqlSession.getMapper(EventMapper.class);
+            return eventMapper.getByTeamRegistrations(teamRegistrations);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public List<TeamRegistration> getTeamRegistrationsByRosters(List<Roster> rosters) {
+        try {
+            TeamRegistrationMapper trMapper = this.sqlSession.getMapper(TeamRegistrationMapper.class);
+            return trMapper.getByRosters(rosters);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public List<TeamRegistration> getTeamRegistrationsByRoster(Roster roster) {
         try {
             TeamRegistrationMapper trMapper = this.sqlSession.getMapper(TeamRegistrationMapper.class);
             return trMapper.getByRoster(roster);
@@ -254,10 +276,10 @@ public class DataStore {
         }
     }
 
-    public List<TeamRegistration> getTeamRegistrationOfPlayerSeason(int playerId, Roster roster) {
+    public List<Roster> getRosterByPlayerSeasonDivision(int playerId, Roster roster) {
         try {
             RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
-            return rosterMapper.getTrByPlayerSeasonDivisionQualified(playerId, roster);
+            return rosterMapper.getByPlayerSeasonDivision(playerId, roster);
         } finally {
             if (this.sqlSession != null && this.autoCloseSession) {
                 this.sqlSession.close();

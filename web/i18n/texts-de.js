@@ -234,7 +234,7 @@ TRANSLATIONS['de'] = {
 				editPlayersTooltip: 'Spielerliste bearbeiten',
 				confirmDelete: 'Soll dieses Roster wirklich gelöscht werden?',
 				newPlayerPlaceholder: 'Name des Spielers',
-				playerAlreadyInRoster: 'Dieser Spieler ist bereits in einem Roster für diese Saison und Division gemeldet',
+				playerAlreadyInRoster: 'Dieser Spieler ist bereits für diese Saison und Division bei {{ teamName }} gemeldet',
 				playerWrongGender: 'Dieser Spieler ist aufgrund des angegebenen Geschlechts in dieser Division nicht startberechtigt. Ist diese Information fehlerhaft, wende dich an euren Vereinsadmin, um die Angabe beim DFV zu korrigieren.',
 				playerWrongAge: 'Dieser Spieler ist aufgrund seines Alters in dieser Division in diesem Jahr nicht spielberechtigt. Ist diese Information fehlerhaft, wende dich an euren Vereinsadmin, um die Angabe beim DFV zu korrigieren.',
 				playerBlocked: 'Dieser Spieler war Teil dieses Rosters während eines offiziellen Turniers. Er ist für diese Saison festgespielt und kann nicht entfernt werden.',

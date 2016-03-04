@@ -71,7 +71,7 @@
 
           <div class="form-group" ng-if="rosterToEdit.id != -1">
             <label for="rosDelete" class="col-sm-3 control-label">{{ 'team.roster.remove' | translate }}</label>
-            <div class="col-sm-3">
+            <div class="col-sm-9">
               <button href="#" ng-if="!rosterToEdit.x.blocked" ng-click="deleteRoster(rosterToEdit)" class="btn btn-danger">{{ 'team.roster.remove' | translate }}</button>
               <div ng-if="rosterToEdit.x.blocked" class="help-block">{{ 'team.roster.rosterBlocked' | translate }}</div>
             </div>

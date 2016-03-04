@@ -1,6 +1,7 @@
 package de.ultical.backend.api;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,6 +30,8 @@ import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.policies.DfvPolicy;
+import de.ultical.backend.data.policies.Policy;
 import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionAge;
@@ -37,7 +40,6 @@ import de.ultical.backend.model.Gender;
 import de.ultical.backend.model.Player;
 import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.RosterPlayer;
-import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
 
@@ -137,6 +139,7 @@ public class RosterResource {
             throw new WebApplicationException("User did not agree to publish his data on the web (no DSE present)",
                     Status.FORBIDDEN);
         }
+
         try (AutoCloseable c = this.dataStore.getClosable()) {
 
             Roster roster = this.dataStore.get(rosterId, Roster.class);
@@ -149,21 +152,7 @@ public class RosterResource {
             // get player if exists
             DfvPlayer player = this.dataStore.getPlayerByDfvNumber(dfvMvName.getDfvNumber());
 
-            if (player != null) {
-                // check if player is already in a roster of this season and
-                // division
-
-                List<TeamRegistration> result = this.dataStore.getTeamRegistrationOfPlayerSeason(player.getId(),
-                        roster);
-
-                if (result.size() > 0) {
-                    // this player is already in a different roster of this
-                    // season (in a qualified team)
-                    throw new WebApplicationException(
-                            "e101 - Player is already in a different roster of this season and division",
-                            Status.CONFLICT);
-                }
-            } else {
+            if (player == null) {
                 // a new player
 
                 // get full player data from dfv-mv
@@ -190,6 +179,29 @@ public class RosterResource {
             }
 
             this.checkPlayerEligibility(roster, player);
+
+            // do policy check
+            Policy policy;
+            if (roster.getContext() != null) {
+                switch (roster.getContext().getAcronym().toUpperCase()) {
+                case "DFV":
+                default:
+                    policy = new DfvPolicy(this.dataStore);
+                    break;
+                }
+
+                switch (policy.addPlayerToRoster(player, roster)) {
+                case Policy.ALREADY_IN_DIFFERENT_ROSTER:
+                    String differentTeamName = "";
+                    if (policy.getErrorParameters().containsKey("team_name")) {
+                        differentTeamName = policy.getErrorParameters().get("team_name");
+                    }
+                    throw new WebApplicationException(
+                            "e101-" + differentTeamName
+                                    + "- Player is already in a different roster of this season and division",
+                            Status.CONFLICT);
+                }
+            }
 
             // add player to roster
             this.dataStore.addPlayerToRoster(roster, player);
@@ -220,7 +232,7 @@ public class RosterResource {
             }
         }
         if (wrongGender) {
-            throw new WebApplicationException("e102 - Player has wrong gender for this Division", Status.CONFLICT);
+            throw new WebApplicationException("e102-Player has wrong gender for this Division", Status.CONFLICT);
         }
 
         // check player's age
@@ -242,7 +254,7 @@ public class RosterResource {
                     || (!roster.getDivisionAge().isHasToBeOlder() && age > roster.getDivisionAge().getAgeDifference());
         }
         if (wrongAge) {
-            throw new WebApplicationException("e103 - Player's age does not match division's regulations",
+            throw new WebApplicationException("e103-Player's age does not match division's regulations",
                     Status.CONFLICT);
         }
     }
@@ -314,7 +326,7 @@ public class RosterResource {
             Authenticator.assureTeamAdmin(this.dataStore, rosterToDelete.getTeam().getId(), currentUser);
 
             // roster cannot be deleted if registered for an event
-            if (this.dataStore.getTeamRegistrationIdsByRoster(rosterToDelete).size() > 0) {
+            if (this.dataStore.getTeamRegistrationsByRosters(Collections.singletonList(rosterToDelete)).size() > 0) {
                 throw new WebApplicationException("Roster cannot be deleted because it is registered for a tournament.",
                         Status.FORBIDDEN);
             }

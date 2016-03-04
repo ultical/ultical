@@ -19,7 +19,7 @@ import de.ultical.backend.model.TeamRegistration;
 
 public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
 
-    final String SELECT_STMT = "SELECT id, version, team, time_registered, comment, sequence, standing, spirit_score, paid, status, not_qualified,roster";
+    final String SELECT_STMT = "SELECT id, version, team, time_registered, comment, sequence, standing, spirit_score, paid, status, not_qualified, roster";
 
     // INSERT
     @Insert({ "INSERT INTO TEAM_REGISTRATION",
@@ -71,7 +71,25 @@ public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
             @Result(column = "comment", property = "comment") })
     List<TeamRegistration> getRegistrationsForConfirmation(int divId);
 
-    @Select({ "SELECT id FROM TEAM_REGISTRATION", "WHERE roster=#{roster.id}" })
-    @Results({ @Result(column = "id", property = "id") })
-    List<Integer> getByRoster(@Param("roster") Roster roster);
+    @Select({ "<script>", SELECT_STMT, "FROM TEAM_REGISTRATION", "WHERE roster IN ",
+            "<foreach item='roster' index='index' collection='rosters' open='(' separator=',' close=')'>",
+            "#{roster.id}", "</foreach>", "</script>" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "time_registered", property = "timeRegistered"),
+            @Result(column = "sequence", property = "sequence"), @Result(column = "standing", property = "standing"),
+            @Result(column = "spirit_score", property = "spiritScore"), @Result(column = "paid", property = "paid"),
+            @Result(column = "status", property = "status"),
+            @Result(column = "not_qualified", property = "notQualified"),
+            @Result(column = "comment", property = "comment") })
+    List<TeamRegistration> getByRosters(@Param("rosters") List<Roster> rosters);
+
+    @Select({ SELECT_STMT, "FROM TEAM_REGISTRATION", "WHERE roster= #{roster.id}" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "time_registered", property = "timeRegistered"),
+            @Result(column = "sequence", property = "sequence"), @Result(column = "standing", property = "standing"),
+            @Result(column = "spirit_score", property = "spiritScore"), @Result(column = "paid", property = "paid"),
+            @Result(column = "status", property = "status"),
+            @Result(column = "not_qualified", property = "notQualified"),
+            @Result(column = "comment", property = "comment") })
+    List<TeamRegistration> getByRoster(@Param("roster") Roster roster);
 }
