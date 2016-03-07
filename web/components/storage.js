@@ -486,7 +486,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 	}
 
 	function storeTeamRegistration(teamReg, loopIndex) {
-		storeTeam(teamReg.team, loopIndex);
+		storeRoster(teamReg.roster, loopIndex);
 	}
 
 	function storeTournamentFormat(format, loopIndex) {

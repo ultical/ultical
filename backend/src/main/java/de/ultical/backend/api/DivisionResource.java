@@ -13,9 +13,10 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
 
+import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.DivisionRegistrationTeams;
-import de.ultical.backend.model.Team;
+import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
@@ -27,10 +28,10 @@ public class DivisionResource {
     DataStore dStore;
 
     @POST
-    @Path("/{divisionId}/registerTeam/{teamId}")
+    @Path("/{divisionId}/registerTeam/{rosterId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public void registerTeam(@Auth @NotNull User currentUser, @PathParam("divisionId") Integer divisionId,
-            @PathParam("teamId") Integer teamId, TeamRegistration teamReg) {
+            @PathParam("rosterId") Integer rosterId, TeamRegistration teamReg) {
         if (this.dStore == null) {
             throw new WebApplicationException("Injection DataStore failed!");
         }
@@ -41,27 +42,22 @@ public class DivisionResource {
          * are equals. If no team is provided, we create a fake team object that
          * only serves as holder for the id.
          */
-        if (teamReg.getTeam() == null) {
-            final Team fakeTeam = new Team();
-            fakeTeam.setId(teamId);
-            teamReg.setTeam(fakeTeam);
+        if (teamReg.getRoster() == null) {
+            final Roster fakeRoster = new Roster();
+            fakeRoster.setId(rosterId);
+            teamReg.setRoster(fakeRoster);
         } else {
-            final Team receivedTeam = teamReg.getTeam();
-            if (!teamId.equals(receivedTeam.getId())) {
+            final Roster receivedRoster = teamReg.getRoster();
+            if (!rosterId.equals(receivedRoster.getId())) {
                 throw new WebApplicationException("Request URL and payload do not match! team-id differs!",
                         Status.NOT_ACCEPTABLE);
             }
         }
 
         try (AutoCloseable c = this.dStore.getClosable()) {
-            Team loadedTeam = this.dStore.get(teamId, Team.class);
-            if (loadedTeam == null) {
-                throw new WebApplicationException(String.format("A team with id %d does not exist", teamId),
-                        Status.NOT_FOUND);
-            } else if (!loadedTeam.getAdmins().contains(currentUser)) {
-                throw new WebApplicationException(
-                        String.format("You are not an admin for team %s", loadedTeam.getName()), Status.FORBIDDEN);
-            }
+            Roster loadedRoster = this.dStore.get(rosterId, Roster.class);
+
+            Authenticator.assureTeamAdmin(this.dStore, loadedRoster.getTeam().getId(), currentUser);
 
             final DivisionRegistrationTeams divisionReg = new DivisionRegistrationTeams();
             divisionReg.setId(divisionId);
@@ -75,28 +71,23 @@ public class DivisionResource {
     }
 
     @DELETE
-    @Path("/{divisionId}/registerTeam/{teamId}")
+    @Path("/{divisionId}/registerTeam/{rosterId}")
     public void unregisterTeam(@Auth @NotNull User currentUser, @PathParam("divisionId") Integer divId,
-            @PathParam("teamId") Integer teamId) {
+            @PathParam("rosterId") Integer rosterId) {
         if (this.dStore == null) {
             throw new WebApplicationException("Injection DataStore failed!");
         }
         try (AutoCloseable c = this.dStore.getClosable()) {
-            Team teamInDB = this.dStore.get(teamId, Team.class);
-            if (teamInDB == null) {
-                throw new WebApplicationException(String.format("Team with id %d does not exist", teamId),
-                        Status.NOT_FOUND);
-            }
-            if (!teamInDB.getAdmins().contains(currentUser)) {
-                throw new WebApplicationException(String.format("You are not an admin for team %s", teamInDB.getName()),
-                        Status.FORBIDDEN);
-            }
+            Roster rosterInDB = this.dStore.get(rosterId, Roster.class);
+
+            Authenticator.assureTeamAdmin(this.dStore, rosterInDB.getTeam().getId(), currentUser);
+
             final DivisionRegistrationTeams fakeReg = new DivisionRegistrationTeams();
             fakeReg.setId(divId);
-            final Team fakeTeam = new Team();
-            fakeTeam.setId(teamId);
+            final Roster fakeRoster = new Roster();
+            fakeRoster.setId(rosterId);
 
-            this.dStore.unregisterTeamFromDivision(fakeReg, fakeTeam);
+            this.dStore.unregisterTeamFromDivision(fakeReg, fakeRoster);
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing database failed!", pe);
         } catch (Exception e) {

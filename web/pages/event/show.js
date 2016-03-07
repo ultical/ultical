@@ -175,7 +175,7 @@ angular.module('ultical.events')
 			orderString += '4';
 			break;
 		}
-		return orderString + regTeam.team.name;
+		return orderString + regTeam.roster.team.name;
 	};
 
 	$scope.divisionOrder = function(division) {

@@ -164,7 +164,7 @@ public class RosterResourceTest {
         when(this.playerWoman.getBirthDate()).thenReturn(LocalDate.of(1991, 3, 20));
 
         when(this.teamRegA.getId()).thenReturn(TEAM_REG_A);
-        when(this.teamRegA.getTeam()).thenReturn(this.teamA);
+        when(this.teamRegA.getRoster()).thenReturn(this.rosterOpenRegularA);
 
         this.resource = new RosterResource();
         this.resource.dataStore = this.dataStore;

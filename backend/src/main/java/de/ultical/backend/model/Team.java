@@ -2,8 +2,6 @@ package de.ultical.backend.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import de.ultical.backend.data.mapper.TeamMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +21,6 @@ public class Team extends Identifiable {
     private String facebookUrl;
     private Club club;
 
-    @JsonManagedReference
     private List<Roster> rosters;
 
     @Override

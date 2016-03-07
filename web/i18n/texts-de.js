@@ -160,6 +160,8 @@ TRANSLATIONS['de'] = {
 				title: 'Team anmelden',
 				description: 'Um dein Team anzumelden, fülle bitte die folgenden Felder aus. Mit Sternchen (*) gekennzeichnete Felder müssen ausgefüllt werden.',
 				teamAlreadyInDivision: 'Dieses Team ist bereits in dieser Division registriert.',
+				teamSuccessfullyRegisteredTitle: 'Registrierung erfolgreich!',
+				teamSuccessfullyRegistered: 'Dein Team {{ teamName }} wurde erfolgreich für dieses Turnier angemeldet.',
 				newSubTeam: 'Ein weiteres Team zu {{ teamName }} hinzufügen',
 				nameAdditionPlaceholder: '2 oder II',
 				nameAdditionHelpText: 'Gib eine Namenserweiterung für dein Team ein (z.B. 2 für ein zweites Team). Verschiedene Altersstufen und Divisionen werden automatisch benannt.',

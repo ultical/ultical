@@ -21,7 +21,7 @@ app.factory('alerter', ['$translate', '$alert', function($translate, $alert) {
 			options = {};
 		}
 		if (!('container' in options)) {
-			options.container = '#pageAlertSpace';
+			options.container = '#page-alert-space';
 		}
 		if (!('duration' in options)) {
 			options.duration = false;

@@ -703,10 +703,10 @@ public class DataStore {
         }
     }
 
-    public void unregisterTeamFromDivision(DivisionRegistrationTeams div, Team t) {
+    public void unregisterTeamFromDivision(DivisionRegistrationTeams div, Roster roster) {
         try {
             final TeamRegistrationMapper mapper = this.sqlSession.getMapper(TeamRegistrationMapper.class);
-            mapper.delete(div, t);
+            mapper.delete(div, roster);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

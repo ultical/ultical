@@ -781,6 +781,10 @@
 	<changeSet author="bas" id="bas59">
 		<tagDatabase tag="bas_v1.8" />
 	</changeSet>
+	<changeSet author="bas" id="bas60">
+		<addUniqueConstraint columnNames="division_registration, team"
+			tableName="TEAM_REGISTRATION" constraintName="uk_team_registration_division_registration_team" />
+	</changeSet>
 	<changeSet author="bas" id="bas61">
 		<addColumn tableName="ASSOCIATION">
 			<column name="version" type="BIGINT" defaultValueNumeric="1" />
@@ -913,7 +917,15 @@
 		<tagDatabase tag="bas_v1.12" />
 	</changeSet>
 	<changeSet author="bas" id="bas74">
-		<addUniqueConstraint columnNames="division_registration, roster" constraintName="uk_team_registration_division_registration_roster" tableName="TEAM_REGISTRATION"/>
+		<dropForeignKeyConstraint baseTableName="TEAM_REGISTRATION"
+			constraintName="fk_team_registration_team" />
+		<dropUniqueConstraint tableName="TEAM_REGISTRATION"
+			constraintName="uk_team_registration_division_registration_team" />
+		<dropNotNullConstraint tableName="TEAM_REGISTRATION"
+			columnDataType="BIGINT" columnName="team" />
+		<addUniqueConstraint columnNames="division_registration, roster"
+			constraintName="uk_team_registration_division_registration_roster"
+			tableName="TEAM_REGISTRATION" />
 	</changeSet>
 	<changeSet author="bas" id="bas75">
 		<tagDatabase tag="bas_v1.13" />

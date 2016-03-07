@@ -97,7 +97,7 @@ public class TournamentResource {
         this.checkDataStore();
 
         try (AutoCloseable c = this.dStore.getClosable()) {
-            Authenticator.assureTeamAdmin(this.dStore, teamRegistration.getTeam().getId(), currentUser);
+            Authenticator.assureRosterAdmin(this.dStore, teamRegistration.getRoster().getId(), currentUser);
 
             teamRegistration.setPaid(false);
             teamRegistration.setStatus(DivisionRegistrationStatus.PENDING);

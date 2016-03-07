@@ -9,10 +9,25 @@ import org.apache.ibatis.exceptions.PersistenceException;
 
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.Event;
+import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.User;
 
 public class Authenticator {
+
+    public static void assureRosterAdmin(DataStore dataStore, Integer rosterId, User currentUser) {
+        Roster storedRoster = null;
+        try {
+            storedRoster = dataStore.get(rosterId, Roster.class);
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Accessing the database failed!", Status.INTERNAL_SERVER_ERROR);
+        }
+        if (storedRoster == null) {
+            throw new WebApplicationException(String.format("Roster with id %d does not exist!", rosterId),
+                    Status.NOT_FOUND);
+        }
+        checkTeamAdmin(storedRoster.getTeam(), currentUser);
+    }
 
     public static void assureTeamAdmin(DataStore dataStore, Integer teamId, User currentUser) {
         Team storedTeam = null;
@@ -25,15 +40,19 @@ public class Authenticator {
             throw new WebApplicationException(String.format("Team with id %d does not exist!", teamId),
                     Status.NOT_FOUND);
         }
+        checkTeamAdmin(storedTeam, currentUser);
+    }
+
+    public static void checkTeamAdmin(Team team, User currentUser) {
         boolean isAdmin = false;
-        for (User admin : storedTeam.getAdmins()) {
+        for (User admin : team.getAdmins()) {
             if (admin.getId() == currentUser.getId()) {
                 isAdmin = true;
                 break;
             }
         }
         if (!isAdmin) {
-            throw new WebApplicationException(String.format("You are not an admin for team %s", storedTeam.getName()),
+            throw new WebApplicationException(String.format("You are not an admin for team %s", team.getName()),
                     Status.FORBIDDEN);
         }
     }

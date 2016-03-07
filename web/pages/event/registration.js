@@ -155,7 +155,6 @@ angular.module('ultical.events')
     function doRegister(roster) {
       var registration = {};
       registration.comment = $scope.register.comment ? $scope.register.comment : null;
-      registration.team = { id: $scope.getTeam($scope.chosenTeam).id};
       registration.roster = { id: roster.id};
 
       var division = {};
@@ -166,10 +165,23 @@ angular.module('ultical.events')
       });
 
       storage.registerTeamForEdition(registration, division, function(newTeamReg) {
-        newTeamReg.team = $scope.getTeam($scope.chosenTeam);
         newTeamReg.roster = roster;
+        var teamCopy = angular.copy($scope.getTeam($scope.chosenTeam));
+        teamCopy.rosters  = [];
+        newTeamReg.roster.team = teamCopy;
+        $scope.changeDivision();
         $scope.$hide();
+        $scope.teamRegistrationPending = false;
+        $rootScope.teamRegistrationDisabled = false;
+        alerter.success('event.register.teamSuccessfullyRegisteredTitle', 'event.register.teamSuccessfullyRegistered', {
+          duration: 10,
+        });
       }, function(errorResponse) {
+        alerter.error('', 'event.register.teamAlreadyInDivision', {
+          container: '#event-registration-error',
+          duration: 10,
+        });
+
         $scope.teamRegistrationPending = false;
         $rootScope.teamRegistrationDisabled = false;
       });

@@ -15,6 +15,7 @@ import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistration.DivisionRegistrationStatus;
 import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.DivisionType;
+import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Surface;
 import de.ultical.backend.model.Team;
@@ -29,10 +30,12 @@ public class TeamRegistrationMapperTest {
     public static PrepareDBRule RULE = new PrepareDBRule();
     private TournamentEdition tes;
     private TeamRegistrationMapper mapper;
-    private Team team;
     private DivisionRegistrationTeams divisionRegOpen;
     private DivisionRegistrationTeams divisionRegMxd;
     private DivisionRegistrationMapper divRegMapper;
+    private Team team;
+    private Roster roster;
+    private Season season;
 
     @Before
     public void setUp() throws Exception {
@@ -41,29 +44,37 @@ public class TeamRegistrationMapperTest {
         tf.setDescription("something");
         RULE.getSession().getMapper(tf.getMapper()).insert(tf);
 
-        Season season = new Season();
-        season.setYear(2015);
-        season.setSurface(Surface.TURF);
-        RULE.getSession().getMapper(season.getMapper()).insert(season);
+        this.season = new Season();
+        this.season.setYear(2015);
+        this.season.setSurface(Surface.TURF);
+        RULE.getSession().getMapper(this.season.getMapper()).insert(this.season);
 
         this.tes = new TournamentEdition();
         this.tes.setAlternativeName("alter");
+
+        this.team = new Team();
+        this.team.setName("Goldfingers");
+        RULE.getSession().getMapper(this.team.getMapper()).insert(this.team);
+
+        this.roster = new Roster();
+        this.roster.setDivisionAge(DivisionAge.REGULAR);
+        this.roster.setDivisionType(DivisionType.OPEN);
+        this.roster.setTeam(this.team);
+        this.roster.setSeason(this.season);
+        this.roster.setNameAddition("");
+        RULE.getSession().getMapper(this.roster.getMapper()).insert(this.roster);
 
         Contact contact = new Contact();
         contact.setEmail("abc@asd.de");
         contact.setName("Hans");
         this.tes.setOrganizer(contact);
         this.tes.setTournamentFormat(tf);
-        this.tes.setSeason(season);
+        this.tes.setSeason(this.season);
         this.tes.setRegistrationEnd(LocalDate.of(2015, 12, 6));
         this.tes.setRegistrationStart(LocalDate.of(2015, 12, 23));
         RULE.getSession().getMapper(ContactMapper.class).insert(contact);
 
         RULE.getSession().getMapper(this.tes.getMapper()).insert(this.tes);
-
-        this.team = new Team();
-        this.team.setName("Goldfingers");
-        RULE.getSession().getMapper(this.team.getMapper()).insert(this.team);
 
         this.divisionRegOpen = new DivisionRegistrationTeams();
         this.divisionRegOpen.setDivisionAge(DivisionAge.REGULAR);
@@ -97,26 +108,46 @@ public class TeamRegistrationMapperTest {
         assertEquals(2, foundEdition.getDivisionRegistrations().size());
 
         TeamRegistration goldfingersRegistration = new TeamRegistration();
-        goldfingersRegistration.setTeam(this.team);
+        goldfingersRegistration.setRoster(this.roster);
         goldfingersRegistration.setComment("the GUC is coming!");
         goldfingersRegistration.setStatus(DivisionRegistrationStatus.WAITING_LIST);
         this.mapper.insert(this.divisionRegOpen.getId(), goldfingersRegistration);
 
         Team gucMixed = new Team();
         gucMixed.setName("Goldfingers");
+
+        Roster rosterMixed = new Roster();
+        rosterMixed.setDivisionAge(DivisionAge.REGULAR);
+        rosterMixed.setDivisionType(DivisionType.MIXED);
+        rosterMixed.setTeam(gucMixed);
+        rosterMixed.setSeason(this.season);
+        rosterMixed.setNameAddition("");
+
         TeamRegistration gucMixedReg = new TeamRegistration();
-        gucMixedReg.setTeam(gucMixed);
+        gucMixedReg.setRoster(rosterMixed);
         gucMixedReg.setStatus(DivisionRegistrationStatus.PENDING);
+
         RULE.getSession().getMapper(gucMixed.getMapper()).insert(gucMixed);
+        RULE.getSession().getMapper(rosterMixed.getMapper()).insert(rosterMixed);
+
         this.mapper.insert(this.divisionRegMxd.getId(), gucMixedReg);
 
         Team wallCity = new Team();
         wallCity.setName("WallCity");
+        RULE.getSession().getMapper(wallCity.getMapper()).insert(wallCity);
+
+        Roster rosterWallCity = new Roster();
+        rosterWallCity.setDivisionAge(DivisionAge.REGULAR);
+        rosterWallCity.setDivisionType(DivisionType.OPEN);
+        rosterWallCity.setTeam(wallCity);
+        rosterWallCity.setNameAddition("");
+        rosterWallCity.setSeason(this.season);
+        RULE.getSession().getMapper(rosterWallCity.getMapper()).insert(rosterWallCity);
+
         TeamRegistration wallCityReg = new TeamRegistration();
         wallCityReg.setComment("Down comes the hammer!");
-        wallCityReg.setTeam(wallCity);
+        wallCityReg.setRoster(rosterWallCity);
         wallCityReg.setStatus(DivisionRegistrationStatus.CONFIRMED);
-        RULE.getSession().getMapper(wallCity.getMapper()).insert(wallCity);
         this.mapper.insert(this.divisionRegOpen.getId(), wallCityReg);
 
         foundEdition = RULE.getSession().getMapper(this.tes.getMapper()).get(this.tes.getId());
@@ -132,10 +163,10 @@ public class TeamRegistrationMapperTest {
                  * registrations.
                  */
                 DivisionRegistrationTeams openDivisionReg = (DivisionRegistrationTeams) divReg;
-                Team guc = openDivisionReg.getRegisteredTeams().get(0).getTeam();
-                Team wc = openDivisionReg.getRegisteredTeams().get(1).getTeam();
-                assertEquals("Goldfingers", guc.getName());
-                assertEquals("WallCity", wc.getName());
+                Roster guc = openDivisionReg.getRegisteredTeams().get(0).getRoster();
+                Roster wc = openDivisionReg.getRegisteredTeams().get(1).getRoster();
+                assertEquals("Goldfingers", guc.getTeam().getName());
+                assertEquals("WallCity", wc.getTeam().getName());
             }
         }
     }

@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TeamRegistration extends Identifiable {
-    private Team team;
+
     private LocalDateTime timeRegistered;
     private String comment;
     private int standing;

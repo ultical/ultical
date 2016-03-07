@@ -28,7 +28,7 @@ button, input, optgroup, select, textarea {
 }
 
 @media ( min-width : 768px) {
-	#pageAlertSpace {
+	#page-alert-space {
 		margin-top: 60px;
 	}
 
