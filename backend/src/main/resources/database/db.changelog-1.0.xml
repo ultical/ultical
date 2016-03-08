@@ -930,4 +930,27 @@
 	<changeSet author="bas" id="bas75">
 		<tagDatabase tag="bas_v1.13" />
 	</changeSet>
+	<changeSet author="bas" id="bas76">
+		<sql dbms="mysql" endDelimiter=";
+		">UPDATE TEAM_REGISTRATION tr2 SET
+			roster = (
+			SELECT r.id
+			FROM ROSTER r
+			LEFT JOIN TEAM t ON r.team = t.id
+			LEFT JOIN (SELECT * FROM TEAM_REGISTRATION) tr ON tr.team = t.id
+			LEFT
+			JOIN DIVISION_REGISTRATION dr ON tr.division_registration = dr.id
+			LEFT JOIN TOURNAMENT_EDITION te ON dr.tournament_edition = te.id
+			WHERE dr.division_type = r.division_type
+			AND dr.division_age =
+			r.division_age
+			AND te.season = r.season
+			AND r.name_addition = ''
+			AND
+			tr.id = tr2.id)
+		</sql>
+	</changeSet>
+	<changeSet author="bas" id="bas77">
+		<tagDatabase tag="bas_v1.14" />
+	</changeSet>
 </databaseChangeLog>
