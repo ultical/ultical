@@ -37,9 +37,7 @@ angular.module('ultical.team', [])
     $scope.newEmail = {
       text: ''
     };
-    $scope.newAdmin = {
-      obj: {}
-    };
+    $scope.newAdmin = {obj:null};
 
     $scope.teams = [];
     getTeams();
@@ -93,7 +91,7 @@ angular.module('ultical.team', [])
         description: '',
         admins: [authorizer.getUser()],
         emails: [],
-        location: {},
+        location: null,
         foundingDate: '',
         rosters: [],
         url: '',
@@ -146,7 +144,6 @@ angular.module('ultical.team', [])
         return;
       }
 
-      $scope.addAdmin($scope.newAdmin.obj);
       $scope.addEmail($scope.newEmail);
 
       storage.saveTeam(team, function(ownTeams) {
@@ -171,27 +168,27 @@ angular.module('ultical.team', [])
     }
 
     $scope.addAdmin = function(newAdmin) {
-      if (isEmpty(newAdmin) || isEmpty(newAdmin.obj)) {
+      if (isEmpty(newAdmin)) {
         return;
       }
 
-      if (!angular.isObject(newAdmin.obj)) {
+      if (!angular.isObject(newAdmin)) {
         return;
       }
 
       // check if admin is already in the list
       var alreadyAdmin = false;
       angular.forEach($scope.teamToEdit.admins, function(admin) {
-        if (admin.id == newAdmin.obj.id) {
+        if (admin.id == newAdmin.id) {
           alreadyAdmin = true;
         }
       });
 
       if (!alreadyAdmin) {
-        $scope.teamToEdit.admins.push(newAdmin.obj);
+        $scope.teamToEdit.admins.push(newAdmin);
       }
 
-      $scope.newAdmin = {};
+      $scope.newAdmin.obj = null;
     }
 
     $scope.removeAdmin = function(adminId) {
@@ -276,9 +273,6 @@ angular.module('ultical.team', [])
       return serverApi.getPlayerProposals(playerName, function(result) {
         angular.forEach(result, function(player) {
           player.fullName = player.firstName + ' ' + player.lastName;
-          if (player.club != null) {
-            player.fullName += ' <i><small>(' + player.club.name + ')</small></i>';
-          }
         });
         $scope.oldPlayerNames = result;
         return result;
@@ -299,8 +293,13 @@ angular.module('ultical.team', [])
       return mapService.getLocations(locationName, 'city', function(locations) {
         angular.forEach(locations, function(location) {
           location.mapBoxId = location.id;
+          if ($scope.locationToEdit) {
           location.id = $scope.locationToEdit.id;
           location.version = $scope.locationToEdit.version;
+        } else {
+          location.id = 0;
+          location.version = 0;
+        }
         });
         $scope.oldLocations = locations;
         return locations;
@@ -313,7 +312,7 @@ angular.module('ultical.team', [])
 
 
     $scope.addPlayerToRoster = function(newPlayer, roster) {
-      if (!angular.isObject(newPlayer.obj)) {
+      if (!angular.isObject(newPlayer)) {
         return;
       }
       if ($scope.editRosterBlock) {
@@ -324,7 +323,7 @@ angular.module('ultical.team', [])
 
       var alreadyInRoster = false;
       angular.forEach(roster.players, function(rosterPlayer) {
-        if (newPlayer.obj.dfvNumber == rosterPlayer.player.dfvNumber) {
+        if (newPlayer.dfvNumber == rosterPlayer.player.dfvNumber) {
           alreadyInRoster = true;
         }
       });
@@ -334,7 +333,7 @@ angular.module('ultical.team', [])
         return;
       }
 
-      storage.addPlayerToRoster(newPlayer.obj, roster, function() {
+      storage.addPlayerToRoster(newPlayer, roster, function() {
         $scope.newPlayer = {};
         $scope.editRosterBlock = false;
       }, function(errorResponse) {
