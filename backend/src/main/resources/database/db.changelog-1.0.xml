@@ -958,7 +958,14 @@
 	<changeSet author="bas" id="bas77">
 		<tagDatabase tag="bas_v1.14" />
 	</changeSet>
-	<changeSet author="bas" id="bas78">
+	<changeSet dbms="derby" author="bas" id="bas78">
+		<insert tableName="CONTEXT">
+			<column name="id" valueNumeric="1" />
+			<column name="name" value="Deutscher Frisbeesport-Verband" />
+			<column name="acronym" value="DFV" />
+		</insert>
+	</changeSet>
+	<changeSet dbms="mysql" author="bas" id="bas78">
 		<insert tableName="CONTEXT">
 			<column name="id" value="1" />
 			<column name="name" value="Deutscher Frisbeesport-Verband" />
@@ -973,5 +980,8 @@
 	</changeSet>
 	<changeSet author="bas" id="bas80">
 		<tagDatabase tag="bas_v1.15" />
+	</changeSet>
+	<changeSet author="bas" id="bas81">
+		<dropColumn tableName="TEAM_REGISTRATION" columnName="team"/>
 	</changeSet>
 </databaseChangeLog>
