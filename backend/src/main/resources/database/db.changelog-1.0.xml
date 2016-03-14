@@ -918,11 +918,16 @@
 	</changeSet>
 	<changeSet author="bas" id="bas74">
 		<dropForeignKeyConstraint baseTableName="TEAM_REGISTRATION"
+			constraintName="fk_team_registration_division_registration" />
+		<dropForeignKeyConstraint baseTableName="TEAM_REGISTRATION"
 			constraintName="fk_team_registration_team" />
 		<dropUniqueConstraint tableName="TEAM_REGISTRATION"
 			constraintName="uk_team_registration_division_registration_team" />
 		<dropNotNullConstraint tableName="TEAM_REGISTRATION"
 			columnDataType="BIGINT" columnName="team" />
+		<addForeignKeyConstraint constraintName="fk_team_registration_division_registration"
+			referencedTableName="DIVISION_REGISTRATION" baseColumnNames="division_registration"
+			baseTableName="TEAM_REGISTRATION" referencedColumnNames="id" />
 		<addUniqueConstraint columnNames="division_registration, roster"
 			constraintName="uk_team_registration_division_registration_roster"
 			tableName="TEAM_REGISTRATION" />
