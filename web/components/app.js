@@ -3,6 +3,7 @@
 //Declare app level module which depends on views, and components
 var app = angular.module('ultical',
 		['ui.router',
+		 'ui.bootstrap',
 		 'mgcrea.ngStrap',
 		 'ngAnimate',
 		 'pascalprecht.translate',

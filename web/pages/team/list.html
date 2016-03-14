@@ -31,7 +31,7 @@
 							<div class="col-md-6">
 								<div class="form-group" ng-class="{'has-error': inputForm.name.$touched && inputForm.name.$invalid}">
 									<label class="" for="tteName">{{ 'team.edit.nameLabel' | translate }}</label>
-									<input min-length="2" name="name" required type="text" ng-model="teamToEdit.name" class="form-control" id="tteName" size="30" placeholder="{{ 'team.edit.namePlaceholder' | translate }}">
+									<input ng-minlength="2" name="name" required type="text" ng-model="teamToEdit.name" class="form-control" id="tteName" size="30" placeholder="{{ 'team.edit.namePlaceholder' | translate }}">
 								</div>
 							</div>
 							<div class="col-md-4 col-md-offset-2">
@@ -55,9 +55,8 @@
 							<div class="col-md-12">
 								<div class="form-group has-feedback" ng-class="{'has-error': (inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing}">
 									<label for="tteCity">{{ 'team.edit.locationCityLabel' | translate }}</label>
-									<input name="location" required bas-object-typeahead="location" type="text" id="ttyCity" container="body" class="form-control" ng-model="teamToEdit.location" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" data-comparator="typeaheadPreMatching"
-									bs-options="location | locationObject as location | location for location in getLocations($viewValue)" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" bs-typeahead
-									/>
+									<input typeahead-min-length="3" typeahead-wait-ms="400" name="location" required="required" type="text" id="tteCity" class="form-control" ng-model="teamToEdit.location" typeahead-select-on-blur="true" typeahead-select-on-exact="true"
+									uib-typeahead="location | locationObject as location | location for location in getLocations($viewValue)" typeahead-wait-ms="300" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" />
 									<span ng-show="teamToEdit.location.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
 									<span ng-if="(inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'team.edit.locationMissing' | translate }}</span>
 								</div>
@@ -68,9 +67,8 @@
 							<div class="col-md-12">
 								<div class="form-group has-feedback">
 									<label for="tteClub">{{ 'team.edit.clubLabel' | translate }}</label>
-									<input bas-object-typeahead="club" data-min-length="3" id="tteClub" type="text" container="body" class="form-control" ng-model="teamToEdit.club" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" bs-options="club as club.name for club in allClubs"
-									placeholder="{{ 'team.edit.clubPlaceholder' | translate }}" bs-typeahead
-									>
+									<input typeahead-min-length="3" id="tteClub" type="text" class="form-control" ng-model="teamToEdit.club" uib-typeahead="club as club.name for club in allClubs | filter: { name:$viewValue} | limitTo:8"
+									placeholder="{{ 'team.edit.clubPlaceholder' | translate }}" typeahead-show="true" typeahead-select-on-blur="true" typeahead-select-on-exact="true" />
 									<span ng-show="teamToEdit.club.id != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
 								</div>
 							</div>
@@ -134,9 +132,8 @@
 									<span ng-click="addAdmin(newAdmin)" class="cursor-pointer input-group-addon">
 										<span class="glyphicon glyphicon-plus"></span>
 									</span>
-									<input bas-object-typeahead="admins" type="text" data-container="body" class="form-control" id="tteAdmins" bas-enter="addAdmin(newAdmin)" ng-blur="addAdmin(newAdmin)" ng-model="newAdmin.obj" data-animation="am-flip-x" data-auto-select="0" data-trim-value="0"
-									bs-options="user as user.fullName for user in getUsers($viewValue)" placeholder="{{ 'team.edit.adminsPlaceholder' | translate }}" bs-typeahead
-									>
+									<input typeahead-min-length="3" type="text" id="tteAdmins" class="form-control" ng-model="newAdmin.obj" typeahead-select-on-blur="true"
+									typeahead-wait-ms="400" uib-typeahead="user as user.fullName for user in getUsers($viewValue)" placeholder="{{ 'team.edit.adminsPlaceholder' | translate }}" typeahead-on-select="addAdmin($item)" />
 								</div>
 								<span class="help-block">{{ 'team.edit.adminsHelp' | translate }}</span>
 							</div>
@@ -327,6 +324,14 @@
 											<div class="panel-collapse" role="tabpanel" bs-collapse-target>
 												<div class="panel-body">
 
+													<!-- Template for typeahead dropdown -->
+													<script type="text/ng-template" id="addPlayerTpl.html">
+												        <a tabindex="-1">
+																	<span ng-bind-html="match.model.fullName | uibTypeaheadHighlight:query"></span>
+																	<span  ng-if="match.model.club | notEmpty"><i><small>({{ match.model.club.name }})</small></i></span>
+												        </a>
+												  </script>
+
 													<!-- adding player to roster - input -->
 													<div class="row" ng-if="team.x.own && editingRosterPlayers == roster.id">
 														<div class="col-md-12">
@@ -341,9 +346,8 @@
 																		<span ng-click="addPlayerToRoster(newPlayer, roster)" class="cursor-pointer input-group-addon">
 																			<span class="glyphicon glyphicon-plus"></span>
 																		</span>
-																		<input ng-change="addPlayerToRoster(newPlayer, roster)" ng-disabled="editRosterBlock" type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj" data-comparator="typeaheadPreMatching"
-																		data-animation="am-flip-x" data-auto-select="0" data-trim-value="0" data-html="1" bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
-																		>
+																		<input typeahead-min-length="3" typeahead-wait-ms="400" typeahead-on-select="addPlayerToRoster($item, roster)" typeahead-append-to-body="true" ng-disabled="editRosterBlock" type="text" class="form-control" ng-model="newPlayer.obj"
+																		uib-typeahead="player as player.fullName for player in getPlayers($viewValue) | limitTo: 8" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" typeahead-template-url="addPlayerTpl.html" typeahead-select-on-blur="true" />
 																	</div>
 																</div>
 																<div class="col-md-2 col-md-offset-3">
