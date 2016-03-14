@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TeamRegistration extends Identifiable {
-    private Team team;
+
     private LocalDateTime timeRegistered;
     private String comment;
     private int standing;
@@ -19,6 +19,7 @@ public class TeamRegistration extends Identifiable {
     private DivisionRegistrationStatus status;
     private boolean notQualified;
     private int sequence;
+    private Roster roster;
 
     @Override
     public Class<TeamRegistrationMapper> getMapper() {

@@ -12,7 +12,11 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 	}
 
 	function put(resource, data, successCallback, errorCallback, includeHeader) {
-		doHttp(resource, 'PUT', data, successCallback, errorCallback, includeHeader);
+    var dataToSend = angular.copy(data);
+    if ('x' in dataToSend) {
+      delete dataToSend.x;
+    }
+		doHttp(resource, 'PUT', dataToSend, successCallback, errorCallback, includeHeader);
 	}
 
 	function del(resource, successCallback, errorCallback, includeHeader) {
@@ -96,9 +100,18 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			get('season', callback);
 		},
 
+    getContexts: function(callback) {
+      get('context', callback);
+    },
+
 		postRoster: function(roster, teamId, callback, errorCallback) {
 			roster.team = { id: teamId };
 			post('roster', roster, callback, errorCallback);
+		},
+
+    putRoster: function(roster, team, callback, errorCallback) {
+      roster.team = { id: team.id };
+			put('roster', roster, callback, errorCallback);
 		},
 
 		deleteRoster: function(roster, callback, errorCallback) {
@@ -223,8 +236,8 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			return post('roster/' + roster.id, requestPlayer, callback, errorCallback);
 		},
 
-		registerTeamForEdition: function(registration, divisionRegistration, callback) {
-			return post('tournaments/' + divisionRegistration.id + '/register/team', registration, callback);
+		registerTeamForEdition: function(registration, divisionRegistration, callback, errorCallback) {
+			return post('tournaments/' + divisionRegistration.id + '/register/team', registration, callback, errorCallback);
 		},
 	};
 

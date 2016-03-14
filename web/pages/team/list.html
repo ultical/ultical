@@ -197,7 +197,7 @@
 				<span class="glyphicon glyphicon-plus-sign glyphicon-big" aria-hidden="true"></span>
 				{{ 'team.list.newTeam' | translate }}
 			</button>
-			<a class="alternative-button-link" ng-if="!bigButtons" ng-click="createNewTeam()">{{ 'team.list.newTeam' | translate }}</a>
+			<a ng-if="!bigButtons" ng-click="createNewTeam()">{{ 'team.list.newTeam' | translate }}</a>
 		</div>
 	</div>
 
@@ -286,67 +286,21 @@
 							<div class="row" ng-if="team.rosters.length > 0 || (team.x.own && !bigButtons)">
 								<div class="col-md-12">
 									<i class="fa fa-list fa-fw"></i>
-									<span ng-hide="team.rosters.length == 0 && editingRoster == -1">{{ 'team.roster.label' | translate }}</span>
+									<span ng-hide="team.rosters.length == 0">{{ 'team.roster.label' | translate }}</span>
 
-									<span ng-show="!bigButtons && team.x.own && !editing && editingRoster == -1 && team.rosters.length != 0"> &nbsp;(</span>
-									<a class="alternative-button-link" ng-click="createNewRoster(team)" ng-show="!bigButtons && team.x.own && !editing && editingRoster == -1">{{ 'team.roster.newRoster' | translate }}</a>
-									<span ng-show="!bigButtons && team.x.own && !editing && editingRoster == -1 && team.rosters.length != 0">)</span>
+									<span ng-show="!bigButtons && team.x.own && !editing && team.rosters.length != 0"> &nbsp;(</span>
+									<a ng-click="createNewRoster(team)" ng-show="!bigButtons && team.x.own && !editing">{{ 'team.roster.newRoster' | translate }}</a>
+
+									<span ng-show="!bigButtons && team.x.own && !editing && team.rosters.length != 0">)</span>
 								</div>
 							</div>
 
-							<div class="row">
+							<div class="row margin-top ffade-in animation-delay" ng-show="bigButtons && team.x.own && !editing">
 								<div class="col-md-12">
-									<div class="margin-top-small" id="roster-error{{ team.id }}"></div>
-								</div>
-							</div>
-
-							<div class="row margin-top ffade-in animation-delay" ng-show="bigButtons && team.x.own && !editing && editingRoster == -1">
-								<div class="col-md-12">
-									<button ng-click="createNewRoster(team)" type="button" class="btn btn-primary">
-										<span class="glyphicon glyphicon-plus-sign glyphicon-big" aria-hidden="true"></span>
+                  <button class="btn btn-primary btn-ultical" ng-click="createNewRoster(team)">
+                		<span class="glyphicon glyphicon-plus-sign glyphicon-big" aria-hidden="true"></span>
 										{{ 'team.roster.newRoster' | translate }}
 									</button>
-								</div>
-							</div>
-
-							<div class="row padding-top ani-fade ani-vslide ani-short" ng-if="editingRoster == team.id">
-								<div class="col-md-9">
-									<div class="row" id="new-roster-form">
-										<div class="col-md-7">
-											<label class="" for="rosDivAge">{{ 'team.roster.divisionAgeLabel' | translate }}</label>
-											<div class="form-group">
-												<div class="row">
-													<div class="col-md-7">
-														<button id="rosDivAge" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.divisionAge" bs-options="divisionAge as 'division.' + divisionAge | translate for divisionAge in selects.divisionAges" bs-select>
-															<span class="caret"></span>
-														</button>
-													</div>
-													<div class="col-md-5">
-														<button id="rosDivType" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.divisionType" bs-options="divisionType as 'division.' + divisionType | translate for divisionType in selects.divisionTypes" bs-select>
-															<span class="caret"></span>
-														</button>
-													</div>
-												</div>
-											</div>
-										</div>
-
-										<div class="col-md-5">
-											<div class="form-group">
-												<label class="" for="rosSeason">{{ 'season.season' | translate }}</label>
-												<button id="rosSeason" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.season" bs-options="season as season | season : 'fullName' for season in selects.seasons | orderBy : ['-year', '-plusOneYear']" bs-select>
-													<span class="caret"></span>
-												</button>
-											</div>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-md-7">
-											<button type="click" ng-click="saveRoster(newRoster, team)" class="btn btn-primary">{{ 'general.create' | translate }}</button>
-											<button type="click" ng-click="cancelRosterEdit()" class="btn btn-default">{{ 'general.cancel' | translate }}</button>
-										</div>
-									</div>
-
 								</div>
 							</div>
 
@@ -355,13 +309,17 @@
 
 									<div class="panel-group" ng-model="teamPanels.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
 
-										<div class="panel panel-ultical2" ng-repeat="roster in team.rosters | orderBy : ['-season.year', '-season.plusOneYear'] track by roster.id">
+										<div class="panel panel-ultical2" ng-repeat="roster in team.rosters | orderBy : ['-season.year', '-season.plusOneYear', 'divisionType', 'divisionAge', 'nameAddition'] track by roster.id">
+
 											<div class="panel-heading cursor-pointer" role="tab">
 												<h3 class="panel-title" bs-collapse-toggle>
-													<span>{{ roster.season | season : true }} - {{ roster | division }}</span>
+													<span>{{ roster.season | season : true }}&nbsp;-&nbsp;{{ roster | division }}</span><span ng-if="roster.nameAddition | notEmpty">&nbsp;{{ roster.nameAddition }}</span><span class="panel-title-addon" ng-if="(roster.context | notEmpty) && showContexts">&nbsp;&nbsp;&nbsp;{{ roster.context.acronym }}</span>
 													<span ng-if="loggedIn()" class="panel-title-addon">&nbsp;&nbsp;(&nbsp;{{ roster.players.length }}&nbsp;)</span>
-													<div ng-if="team.x.own" ng-click="editRoster(roster, team, $index)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip>
+													<div ng-if="team.x.own" ng-click="editRoster(roster, team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip>
 														<i class="fa fa-pencil"></i>
+													</div>
+													<div ng-if="team.x.own" ng-click="editRosterPlayers(roster, team, $index)" class="ffade team-actions cursor-pointer margin-right-small" data-title="{{ 'team.roster.editPlayersTooltip' | translate }}" bs-tooltip>
+														<i class="fa fa-users"></i>
 													</div>
 												</h3>
 											</div>
@@ -388,12 +346,10 @@
 																		>
 																	</div>
 																</div>
-																<div class="col-md-2">
+																<div class="col-md-2 col-md-offset-3">
 																	<div class="btn btn-default" ng-click="rosterEditEnd(roster, team)">{{ 'general.done' | translate }}</div>
 																</div>
-																<div class="col-md-3 team-actions-link">
-																	<a href="#" ng-if="team.x.own && !roster.blocked" ng-click="deleteRoster(roster, team)" class="cursor-pointer">{{ 'team.roster.remove' | translate }}</a>
-																</div>
+
 															</div>
 														</div>
 													</div>

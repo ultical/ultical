@@ -16,6 +16,7 @@ import org.apache.ibatis.annotations.Update;
 import de.ultical.backend.model.Contact;
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.Team;
+import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.User;
 
 public interface EventMapper extends BaseMapper<Event> {
@@ -102,4 +103,10 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getByEvent") ),
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") , javaType = Contact.class) })
     Event getByDivisionRegistration(@Param("divisionId") int divisionId);
+
+    @Select({ "SELECT * FROM EVENT e JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = e.tournament_edition",
+            "JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id", "WHERE tr.id IN",
+            "<foreach item='teamReg' index='index' collection='teamRegistrations' open='(' separator=',' close=')'>",
+            "#{teamReg.id}", "</foreach>", "</script>" })
+    List<Event> getByTeamRegistrations(List<TeamRegistration> teamRegistrations);
 }

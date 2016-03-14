@@ -71,36 +71,37 @@ public class TeamResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Team add(Team t, @Auth @NotNull User currentUser) throws Exception {
+    public Team add(Team newTeam, @Auth @NotNull User currentUser) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
         try (AutoCloseable c = this.dataStore.getClosable()) {
 
-            t = this.prepareTeam(t);
+            newTeam = this.prepareTeam(newTeam);
 
-            if (t.getLocation() == null || t.getLocation().getCity() == null || t.getLocation().getCity().isEmpty()) {
+            if (newTeam.getLocation() == null || newTeam.getLocation().getCity() == null
+                    || newTeam.getLocation().getCity().isEmpty()) {
                 throw new WebApplicationException("Location must be specified", Status.EXPECTATION_FAILED);
                 // t.setLocation(new Location());
             }
 
-            this.dataStore.addNew(t.getLocation());
-
-            Team result = null;
+            this.dataStore.addNew(newTeam.getLocation());
 
             try {
-                result = this.dataStore.addNew(t);
+                newTeam = this.dataStore.addNew(newTeam);
             } catch (PersistenceException pe) {
                 throw new WebApplicationException(pe);
             }
 
             // add admins
-            for (User admin : t.getAdmins()) {
-                this.dataStore.addAdminToTeam(result, admin);
+            for (User admin : newTeam.getAdmins()) {
+                this.dataStore.addAdminToTeam(newTeam, admin);
             }
 
-            return result;
+            newTeam.setVersion(1);
+
+            return newTeam;
         }
     }
 

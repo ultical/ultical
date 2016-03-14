@@ -3,36 +3,63 @@
 	<form name="registrationForm" class="form-horizontal">
 		<fieldset ng-disabled="teamRegistrationPending">
 
-			<div class="form-group">
-				<label class="col-sm-3 control-label"></label>
-				<div class="col-sm-8">{{ 'event.register.description' | translate : { eventName: eventName} }}</div>
+			<div id="event-registration-error"></div>
+
+			<div class="row padding-bottom">
+				<div class="col-sm-12">
+					<span class="strong">{{ eventName }} - </span>
+					<span>{{ 'event.register.description' | translate }}<span>
+				</div>
 			</div>
 
 			<div class="row margin-top-big">
 				<div class="col-sm-12">
 
 					<div class="form-group">
-						<label for="team-reg-team" class="col-sm-3 control-label">{{ 'general.team' | translate }}*</label>
-						<div class="col-sm-8" ng-class="{'has-error': isAlreadyRegistered(register.team, register.division)}">
-							<select id="team-reg-team" class="form-control" ng-model="register.team">
-								<option ng-repeat="team in ownTeams | orderBy : 'name'" value="{{ team.id }}">{{ team.name }}</option>
-							</select>
-							<div class="help-block ani-vslide ani-short" ng-if="isAlreadyRegistered(register.team, register.division)">{{ 'event.register.teamAlreadyInDivision' | translate }}</div>
+						<label for="team-reg-div" class="col-sm-3 control-label">{{ 'event.register.division' | translate }}*</label>
+						<div class="col-sm-6">
+							<button type="button" ng-change="changeDivision()" class="btn btn-default form-control select-btn" ng-model="register.division" bs-options="division as (division | division) for division in event.x.divisions" bs-select>
+							 <span class="caret"></span>
+						 </button>
 						</div>
 					</div>
 
 					<div class="form-group">
-						<label for="team-reg-div" class="col-sm-3 control-label">{{ 'event.register.division' | translate }}*</label>
-						<div class="col-sm-8">
-							<select id="team-reg-div" class="form-control" ng-model="register.division">
-								<option ng-repeat="division in event.x.divisions" value="{{ division.id }}">{{ division | division }}</option>
-							</select>
+						<label for="team-reg-team" class="col-sm-3 control-label">{{ 'general.team' | translate }}*</label>
+						<div class="col-sm-6">
+
+							<div class="row ani-fade-in" ng-show="!newRosterCreation">
+								<div class="col-sm-12">
+									<button type="button" class="btn btn-default form-control select-btn" ng-model="chosenTeam" bs-options="team as team.name for team in getOwnTeams()" bs-select>
+										<span class="caret"></span>
+									</button>
+									<div class="form-control-static">
+										<a ng-if="!newRosterCreation" class="ng-binding" ng-click="startNewRosterCreation()">{{ 'event.register.newSubTeam' | translate : getTranslateParams(chosenTeam) }}</a>
+									</div>
+								</div>
+							</div>
+
+							<div ng-if="newRosterCreation" class="row ani-fade-in">
+								<div class="col-sm-12">
+									<span class="input-prefix">{{ getTeam(chosenTeam).name }}</span>
+									<span class="form-inline margin-left-small">
+										<input type="text" ng-model="newNameAddition.text" class="form-control new-roster-creation-input" placeholder="{{ 'event.register.nameAdditionPlaceholder' | translate }}" />
+									</span>
+									<span id="new-roster-creation-cancel">
+										<a ng-click="cancelNewRosterCreation()">
+											{{ 'general.cancel' | translate }}
+										</a>
+									</span>
+									<div class="help-block ani-vslide ani-short">{{ 'event.register.nameAdditionHelpText' | translate }}</div>
+								</div>
+							</div>
+
 						</div>
 					</div>
 
 					<div class="form-group">
 						<label for="team-reg-comment" class="col-sm-3 control-label">{{ 'event.register.comment' | translate }}</label>
-						<div class="col-sm-8">
+						<div class="col-sm-9">
 							<textarea ng-model="register.comment" class="form-control" rows="5" id="team-reg-comment" placeholder="{{ 'event.register.commentPlaceholder' | translate }}">
 						</div>
 					</div>

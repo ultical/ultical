@@ -1,6 +1,7 @@
 package de.ultical.backend.api;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -9,6 +10,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -28,6 +30,8 @@ import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.policies.DfvPolicy;
+import de.ultical.backend.data.policies.Policy;
 import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionAge;
@@ -36,7 +40,6 @@ import de.ultical.backend.model.Gender;
 import de.ultical.backend.model.Player;
 import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.RosterPlayer;
-import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
 
@@ -65,26 +68,58 @@ public class RosterResource {
 
         try (AutoCloseable c = this.dataStore.getClosable()) {
 
-            Authenticator.assureTeamAdmin(this.dataStore, newRoster.getTeam().getId(), currentUser);
-
-            // check if roster for this season already exists for this team
-            Roster result = this.dataStore.getRosterOfTeamSeason(newRoster.getTeam().getId(),
-                    newRoster.getSeason().getId(), newRoster.getDivisionAge().name(),
-                    newRoster.getDivisionType().name());
-
-            if (result != null) {
-                // this roster is already present for this team
-                throw new WebApplicationException("e101 - Roster already exists for team", Status.CONFLICT);
-            }
+            this.validateRoster(newRoster, currentUser);
 
             try {
-                this.dataStore.addNew(newRoster);
+                newRoster = this.dataStore.addNew(newRoster);
             } catch (PersistenceException pe) {
                 LOGGER.error("Database access failed!", pe);
                 throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
             }
 
+            newRoster.setVersion(1);
+
             return newRoster;
+        }
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Roster updateRoster(@Auth User currentUser, @NotNull Roster updatedRoster) throws Exception {
+        if (this.dataStore == null) {
+            throw new WebApplicationException("Dependency Injection for data store failed!",
+                    Status.INTERNAL_SERVER_ERROR);
+        }
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+
+            this.validateRoster(updatedRoster, currentUser);
+
+            try {
+                this.dataStore.update(updatedRoster);
+            } catch (PersistenceException pe) {
+                LOGGER.error("Database access failed!", pe);
+                throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
+            }
+
+            updatedRoster.setVersion(updatedRoster.getVersion() + 1);
+
+            return updatedRoster;
+        }
+    }
+
+    private void validateRoster(Roster roster, User currentUser) {
+        Authenticator.assureTeamAdmin(this.dataStore, roster.getTeam().getId(), currentUser);
+
+        // check if roster for this season already exists for this team
+        Roster result = this.dataStore.getRosterOfTeamSeason(roster);
+
+        // check if the found entry is the one updated (or newly created which
+        // always results in 'true' of the expression
+        if (result != null && result.getId() != roster.getId()) {
+            // this roster is already present for this team
+            throw new WebApplicationException("e101 - Roster already exists for team", Status.CONFLICT);
         }
     }
 
@@ -104,6 +139,7 @@ public class RosterResource {
             throw new WebApplicationException("User did not agree to publish his data on the web (no DSE present)",
                     Status.FORBIDDEN);
         }
+
         try (AutoCloseable c = this.dataStore.getClosable()) {
 
             Roster roster = this.dataStore.get(rosterId, Roster.class);
@@ -116,30 +152,7 @@ public class RosterResource {
             // get player if exists
             DfvPlayer player = this.dataStore.getPlayerByDfvNumber(dfvMvName.getDfvNumber());
 
-            if (player != null) {
-                /*
-                 * check if found player is an active or passive player. If the
-                 * player is passive, an addition to an roster is not allowed.
-                 */
-                if (!player.isActive()) {
-                    throw new WebApplicationException(
-                            "e102 - Player is registered as a passive player. Passive players are not allowed to participate in tournaments.",
-                            Status.EXPECTATION_FAILED);
-                }
-
-                // check if player is already in a roster of this season and
-                // division
-                List<TeamRegistration> result = this.dataStore.getTeamRegistrationOfPlayerSeason(player.getId(),
-                        roster.getSeason().getId(), roster.getDivisionAge().name(), roster.getDivisionType().name());
-
-                if (result.size() > 0) {
-                    // this player is already in a different roster of this
-                    // season (in a qualified team)
-                    throw new WebApplicationException(
-                            "e101 - Player is already in a different roster of this season and division",
-                            Status.CONFLICT);
-                }
-            } else {
+            if (player == null) {
                 // a new player
 
                 // get full player data from dfv-mv
@@ -165,7 +178,40 @@ public class RosterResource {
                 this.dataStore.storeDfvPlayer(dfvPlayer);
             }
 
+            /*
+             * check if found player is an active or passive player. If the
+             * player is passive, an addition to an roster is not allowed.
+             */
+            if (!player.isActive()) {
+                throw new WebApplicationException(
+                        "e102 - Player is registered as a passive player. Passive players are not allowed to participate in tournaments.",
+                        Status.EXPECTATION_FAILED);
+            }
+
             this.checkPlayerEligibility(roster, player);
+
+            // do policy check
+            Policy policy;
+            if (roster.getContext() != null) {
+                switch (roster.getContext().getAcronym().toUpperCase()) {
+                case "DFV":
+                default:
+                    policy = new DfvPolicy(this.dataStore);
+                    break;
+                }
+
+                switch (policy.addPlayerToRoster(player, roster)) {
+                case Policy.ALREADY_IN_DIFFERENT_ROSTER:
+                    String differentTeamName = "";
+                    if (policy.getErrorParameters().containsKey("team_name")) {
+                        differentTeamName = policy.getErrorParameters().get("team_name");
+                    }
+                    throw new WebApplicationException(
+                            "e101-" + differentTeamName
+                                    + "- Player is already in a different roster of this season and division",
+                            Status.CONFLICT);
+                }
+            }
 
             // add player to roster
             this.dataStore.addPlayerToRoster(roster, player);
@@ -196,7 +242,7 @@ public class RosterResource {
             }
         }
         if (wrongGender) {
-            throw new WebApplicationException("e102 - Player has wrong gender for this Division", Status.CONFLICT);
+            throw new WebApplicationException("e102-Player has wrong gender for this Division", Status.CONFLICT);
         }
 
         // check player's age
@@ -218,7 +264,7 @@ public class RosterResource {
                     || (!roster.getDivisionAge().isHasToBeOlder() && age > roster.getDivisionAge().getAgeDifference());
         }
         if (wrongAge) {
-            throw new WebApplicationException("e103 - Player's age does not match division's regulations",
+            throw new WebApplicationException("e103-Player's age does not match division's regulations",
                     Status.CONFLICT);
         }
     }
@@ -289,34 +335,16 @@ public class RosterResource {
 
             Authenticator.assureTeamAdmin(this.dataStore, rosterToDelete.getTeam().getId(), currentUser);
 
-            try {
-                boolean rosterBlocked = false;
-
-                // roster cannot be blocked if empty
-                if (rosterToDelete.getPlayers().size() > 0) {
-                    // get list of start-dates of official tournaments of this
-                    // division and season that the team of the roster attends
-                    List<LocalDate> blockingDates = this.dataStore.getRosterBlockingDates(rosterId);
-
-                    LocalDate today = LocalDate.now();
-
-                    for (LocalDate blockingDate : blockingDates) {
-                        if (!blockingDate.isAfter(today)) {
-                            rosterBlocked = true;
-                        }
-                    }
-                }
-
-                if (rosterBlocked) {
-                    throw new WebApplicationException(
-                            "Roster cannot be deleted, because an official tournament has taken place in this division and season with this team attending",
-                            Status.FORBIDDEN);
-                }
-
-                this.dataStore.remove(rosterId, Roster.class);
-            } catch (PersistenceException pe) {
-                throw new WebApplicationException("Accessing the database failes!");
+            // roster cannot be deleted if registered for an event
+            if (this.dataStore.getTeamRegistrationsByRosters(Collections.singletonList(rosterToDelete)).size() > 0) {
+                throw new WebApplicationException("Roster cannot be deleted because it is registered for a tournament.",
+                        Status.FORBIDDEN);
             }
+
+            this.dataStore.remove(rosterId, Roster.class);
+
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Accessing the database failes!" + pe.getMessage());
         }
     }
 

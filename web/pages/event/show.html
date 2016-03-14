@@ -2,19 +2,19 @@
 
 	<script type="application/ld+json">
 	{
-	  "@context": "http://schema.org",
-	  "@type": "SportsEvent",
-	  "name": "{{ event | eventname }}",
-	  "startDate" : "{{ event.startDate }}",
+		"@context": "http://schema.org",
+		"@type": "SportsEvent",
+		"name": "{{ event | eventname }}",
+		"startDate" : "{{ event.startDate }}",
 		"endDate": "{{ event.endDate }}",
-	  "url" : "http://example.com/tourdates.html",
-	  "location" : {
-	    "@type": "PostalAddress",
+		"url" : "http://example.com/tourdates.html",
+		"location" : {
+			"@type": "PostalAddress",
 			"addressCountry": "{{ event.location.countryCode }}",
-	     "addressLocality": "{{ event.location.city }}",
-	     "postalCode": "{{ event.location.zipCode }}",
-	     "streetAddress": "{{ event.location.street }}",
-	  },
+			"addressLocality": "{{ event.location.city }}",
+			"postalCode": "{{ event.location.zipCode }}",
+			"streetAddress": "{{ event.location.street }}",
+		},
 		"description": "{{ event.tournamentEdition.tournamentFormat.description }}",
 		"organizer": {
 			"@type": "Organization",
@@ -174,7 +174,7 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							<div ng-if="loggedIn()" class="btn btn-primary btn-ultical margin-top-small" data-animation="am-fade-and-slide-top" data-template-url="pages/event/registration_modal.html?v=3" bs-modal="modal">{{ 'event.register.title' | translate }}</div>
+							<div ng-if="loggedIn()" class="btn btn-primary btn-ultical margin-top-small" data-animation="am-fade-and-slide-top" data-template-url="pages/event/registration_modal.html?v=14" bs-modal="modal">{{ 'event.register.title' | translate }}</div>
 							<span ng-if="!loggedIn()">{{ 'event.register.notLoggedIn' | translate }}</span>
 						</div>
 					</div>
@@ -232,7 +232,7 @@
 
 												<div class="panel-heading cursor-pointer" role="tab">
 													<h3 class="panel-title" bs-collapse-toggle>
-														<span>{{ regTeam.team.name }}</span>
+														<span>{{ regTeam.roster.team.name }} {{ regTeam.roster.nameAddition }}</span>
 														<span ng-if="loggedIn()" class="panel-title-addon">&nbsp;&nbsp;(&nbsp;{{ rosterPlayers.length }}&nbsp;)</span>
 
 														<!-- 													<div ng-if="team.x.own" ng-click="editRoster(roster, team, $index)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip> -->
@@ -318,7 +318,7 @@
 
 				<div class="row" ng-init="innerIndex = $index" ng-class="{'margin-top':!$first}" ng-repeat-start="regTeam in division.playingTeams | filter : {status: 'CONFIRMED'} | orderBy : teamOrder track by regTeam.id">
 					<div class="col-xs-4">
-						<span class="strong print-heading">{{ regTeam.team.name }}</span>
+						<span class="strong print-heading">{{ regTeam.roster.team.name }}</span>
 					</div>
 					<div class="col-xs-5">
 						<span class="margin-top-small pull-left">{{ 'general.club' | translate }}</span>

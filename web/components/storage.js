@@ -15,6 +15,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			events: [],
 			teams: [],
 			seasons: [],
+      contexts: [],
 
 			formatsByEventIndexed: {},
 			teamsIndexed: {},
@@ -95,7 +96,34 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
       },
 
 			saveRoster: function(roster, team, callback, errorCallback) {
-				serverApi.postRoster(roster, team.id, callback, errorCallback);
+        if (roster.id != -1) {
+          var rosterToSend = angular.copy(roster);
+          rosterToSend.players = [];
+          serverApi.putRoster(rosterToSend, team, function(updatedRoster) {
+            updatedRoster.players = roster.players;
+            updatedRoster.x = {};
+
+            var indexToReplace = -1;
+            angular.forEach(team.rosters, function(roster, idx) {
+              if (roster.id == updatedRoster.id) {
+                indexToReplace = idx;
+              }
+            });
+            if (indexToReplace >= 0) {
+              team.rosters.splice(indexToReplace, 1);
+              team.rosters.push(updatedRoster);
+            }
+
+            callback(updatedRoster);
+          }, errorCallback);
+        } else {
+				  serverApi.postRoster(roster, team.id, function(updatedRoster) {
+            updatedRoster.x = {};
+            updatedRoster.players = [];
+            team.rosters.push(updatedRoster);
+            callback(updatedRoster);
+          }, errorCallback);
+        }
 			},
 
 			deleteRoster: function(roster, team, callback, errorCallback) {
@@ -148,9 +176,22 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				if (isEmpty(this.seasons)) {
 					serverApi.getSeasons(function(seasons) {
 						that.seasons = seasons;
+            callback(seasons);
 					});
 				} else {
 					callback(this.seasons);
+				}
+			},
+
+      getContexts: function(callback) {
+				var that = this;
+				if (isEmpty(this.contexts)) {
+					serverApi.getContexts(function(contexts) {
+						that.contexts = contexts;
+            callback(angular.copy(contexts));
+					});
+				} else {
+					callback(angular.copy(this.contexts));
 				}
 			},
 
@@ -195,11 +236,11 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				});
 			},
 
-			registerTeamForEdition: function(teamReg, divisionReg, callback) {
+			registerTeamForEdition: function(teamReg, divisionReg, callback, errorCallback) {
 				serverApi.registerTeamForEdition(teamReg, divisionReg, function(newTeamReg) {
 					divisionReg.registeredTeams.push(newTeamReg);
 					callback(newTeamReg);
-				});
+				}, errorCallback);
 			},
 
 			saveTeam: function(team, callback, errorCallback, activeList) {
@@ -445,7 +486,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 	}
 
 	function storeTeamRegistration(teamReg, loopIndex) {
-		storeTeam(teamReg.team, loopIndex);
+		storeRoster(teamReg.roster, loopIndex);
 	}
 
 	function storeTournamentFormat(format, loopIndex) {
