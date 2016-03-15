@@ -15,7 +15,6 @@ angular.module('ultical.events')
 		return authorizer.loggedIn();
 	}
 
-
 	storage.getFormatForEvent($stateParams.eventId, function(format) {
 		$scope.format = format;
 
@@ -28,7 +27,22 @@ angular.module('ultical.events')
 			});
 		});
 
+    // find out if this event is the last one of this edition (for this division)
+    $scope.latestEvents = $scope.event.tournamentEdition.x.lastestEventPerDivision;
+
+    // if this event is not in the future any more the team lists are different
+    $scope.teamOrderReverse = false;
+    if ($scope.event.x.timing == 'future') {
+      $scope.teamFilter = function() { return true; }
+    } else {
+      $scope.teamFilter = {status: 'CONFIRMED'};
+      $scope.teamListOrder = {text:'standing'};
+    }
+
     headService.setTitle($filter('eventname')($scope.event), {});
+
+    $scope.hasStandings = {};
+    $scope.hasSpiritScores = {};
 
     angular.forEach($scope.event.x.divisions, function(division) {
       division.registrationComplete = false;
@@ -36,8 +50,21 @@ angular.module('ultical.events')
       // get number of confirmed teams
       division.numTeamsConfirmed = 0;
       angular.forEach(division.playingTeams, function(teamReg) {
-          if (teamReg.status == 'CONFIRMED') {
+        if (teamReg.status == 'CONFIRMED') {
           division.numTeamsConfirmed++;
+        }
+
+        // check if there are standings / spirit scores
+        if ($scope.event.x.timing == 'future') {
+          $scope.hasStandings[division.id] = false;
+          $scope.hasSpiritScores[division.id] = false;
+        } else {
+          angular.forEach(division.playingTeams, function(playingTeam) {
+            if (playingTeam.status == 'CONFIRMED') {
+              $scope.hasStandings[division.id] = playingTeam.standing != -1;
+              $scope.hasSpiritScores[division.id] = playingTeam.spiritScore != -1;
+            }
+          });
         }
       });
 
@@ -160,22 +187,43 @@ angular.module('ultical.events')
 	};
 
 	$scope.teamOrder = function(regTeam) {
-		var orderString = '';
-		switch (regTeam.status) {
-		case 'CONFIRMED':
-			orderString += '1';
-			break;
-		case 'PENDING':
-			orderString += '2';
-			break;
-		case 'WAITING_LIST':
-			orderString += '3';
-			break;
-		case 'DECLINED':
-			orderString += '4';
-			break;
-		}
-		return orderString + regTeam.roster.team.name;
+
+    if ($scope.event.x.timing == 'future') {
+      // the order for registration
+  		var orderString = '';
+  		switch (regTeam.status) {
+  		case 'CONFIRMED':
+  			orderString += '1';
+  			break;
+  		case 'PENDING':
+  			orderString += '2';
+  			break;
+  		case 'WAITING_LIST':
+  			orderString += '3';
+  			break;
+  		case 'DECLINED':
+  			orderString += '4';
+  			break;
+  		}
+      $scope.teamOrderReverse = false;
+  		return orderString + regTeam.roster.team.name;
+    } else {
+      // the order for the time after the tournament took playerBlocked
+      switch ($scope.teamListOrder.text) {
+      case 'name':
+        $scope.teamOrderReverse = false;
+        return regTeam.roster.team.name;
+        break;
+      case 'standing':
+        $scope.teamOrderReverse = false;
+        return regTeam['standing'];
+        break;
+      case 'spirit':
+        $scope.teamOrderReverse = true;
+        return regTeam['spiritScore'];
+        break;
+      }
+    }
 	};
 
 	$scope.divisionOrder = function(division) {

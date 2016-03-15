@@ -284,7 +284,7 @@ button, input, optgroup, select, textarea {
 	font-size: 14px;
 }
 
-.btn-primary.btn-ultical {
+.btn-primary.btn-ultical, .label-primary.label-ultical {
 	background-color: #20408E;
 }
 .btn-primary.btn-ultical:hover {
@@ -443,6 +443,25 @@ select:not([multiple]) {
 	width: 120px;
 }
 
-a {
-	cursor: pointer;
+.team-list-standing {
+	width: 30px;
+	text-align: center;
+}
+
+.label-as-badge {
+    border-radius: 1em;
+		font-size: 85%;
+}
+
+.spirit-score-label {
+    font-size: 80%;
+    line-height: 1.35em;
+		width: 35px;
+		text-align: center;
+}
+
+.btn .sort-icon {
+	margin-left: 6px;
+	margin-right: -3px;
+	font-size: 13px;
 }
