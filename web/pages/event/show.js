@@ -43,6 +43,7 @@ angular.module('ultical.events')
 
     $scope.hasStandings = {};
     $scope.hasSpiritScores = {};
+    $scope.hasOwnSpiritScores = {};
 
     angular.forEach($scope.event.x.divisions, function(division) {
       division.registrationComplete = false;
@@ -58,11 +59,13 @@ angular.module('ultical.events')
         if ($scope.event.x.timing == 'future') {
           $scope.hasStandings[division.id] = false;
           $scope.hasSpiritScores[division.id] = false;
+          $scope.hasOwnSpiritScores[division.id] = false;
         } else {
           angular.forEach(division.playingTeams, function(playingTeam) {
             if (playingTeam.status == 'CONFIRMED') {
-              $scope.hasStandings[division.id] = playingTeam.standing != -1;
-              $scope.hasSpiritScores[division.id] = playingTeam.spiritScore != -1;
+              $scope.hasStandings[division.id] = !isEmpty(playingTeam.standing) && playingTeam.standing != -1;
+              $scope.hasSpiritScores[division.id] = !isEmpty(playingTeam.spiritScore) && playingTeam.spiritScore != -1;
+              $scope.hasOwnSpiritScores[division.id] = !isEmpty(playingTeam.ownSpiritScore) && playingTeam.ownSpiritScore != -1;
             }
           });
         }

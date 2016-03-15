@@ -15,6 +15,7 @@ public class TeamRegistration extends Identifiable {
     private String comment;
     private int standing;
     private float spiritScore;
+    private float ownSpiritScore;
     private boolean paid;
     private DivisionRegistrationStatus status;
     private boolean notQualified;

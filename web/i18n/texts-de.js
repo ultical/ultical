@@ -214,6 +214,7 @@ TRANSLATIONS['de'] = {
 				sortBySpiritTooltip: 'Nach der Spirit-Wertung sortieren',
 				standing: 'Platzierung',
 				spiritScore: 'Spirit Bewertung',
+				ownSpiritScore: 'Eigene Spirit Bewertung',
 				standingExplanation: 'Stand nach dem letzten Turnier der Serie: {{ eventName }}',
 			},
 		},

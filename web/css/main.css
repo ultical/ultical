@@ -455,9 +455,18 @@ select:not([multiple]) {
 
 .spirit-score-label {
     font-size: 80%;
-    line-height: 1.35em;
+    line-height: 1.3em;
 		width: 35px;
 		text-align: center;
+		margin-left: 3px;
+}
+
+.spirit-score-label.has-own-spirit {
+	margin-top: -8px;
+}
+
+.own-spirit-score-label {
+	font-size: 90%;
 }
 
 .btn .sort-icon {

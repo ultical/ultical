@@ -982,6 +982,11 @@
 		<tagDatabase tag="bas_v1.15" />
 	</changeSet>
 	<changeSet author="bas" id="bas81">
-		<dropColumn tableName="TEAM_REGISTRATION" columnName="team"/>
+		<dropColumn tableName="TEAM_REGISTRATION" columnName="team" />
+	</changeSet>
+	<changeSet author="bas" id="bas82">
+		<addColumn tableName="TEAM_REGISTRATION">
+			<column name="own_spirit_score" type="FLOAT(4)" />
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>

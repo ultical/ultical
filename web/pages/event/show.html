@@ -228,10 +228,10 @@
 
 												<!-- Sort keys to choose from-->
 												<div class="btn-group margin-bottom-small">
-									        <label class="btn btn-default" data-title="{{ 'event.teamList.sortByNameTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'name'">{{ 'event.teamList.sortByName' | translate }}<i ng-class="{invisible: teamListOrder.text != 'name'}" class="fa fa-sort-alpha-asc sort-icon"></i></label>
 									        <label class="btn btn-default" data-title="{{ 'event.teamList.sortByResultTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'standing'">{{ 'event.teamList.sortByResult' | translate }}<i ng-class="{invisible: teamListOrder.text != 'standing'}" class="fa fa-sort-numeric-asc sort-icon"></i></label>
 									        <label class="btn btn-default" data-title="{{ 'event.teamList.sortBySpiritTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'spirit'">{{ 'event.teamList.sortBySpirit' | translate }}<i ng-class="{invisible: teamListOrder.text != 'spirit'}" class="fa fa-sort-numeric-desc sort-icon"></i></label>
-										    </div>
+													<label class="btn btn-default" data-title="{{ 'event.teamList.sortByNameTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'name'">{{ 'event.teamList.sortByName' | translate }}<i ng-class="{invisible: teamListOrder.text != 'name'}" class="fa fa-sort-alpha-asc sort-icon"></i></label>
+    										</div>
 											</div>
 
 											<div ng-init="rosterPlayers = getRelevantPlayers(regTeam, division, event.tournamentEdition.season, event)" ng-repeat-start="regTeam in division.playingTeams | filter : teamFilter | orderBy : teamOrder : teamOrderReverse track by regTeam.id">
@@ -252,7 +252,10 @@
 															<div class="team-list-standing pull-left">
 																<span class="label-as-badge label label-primary label-ultical" data-title="{{ 'event.teamList.standing' | translate }}" bs-tooltip>{{ regTeam.standing }}</span>
 															</div>
-															<div class="pull-right spirit-score-label" ng-if="hasSpiritScores[division.id]" data-title="{{ 'event.teamList.spiritScore' | translate }}" bs-tooltip>{{ regTeam.spiritScore | decimal : 1 | pad : 4 : '&nbsp;' }}</div>
+															<div class="pull-right spirit-score-label" ng-class="{'has-own-spirit': hasOwnSpiritScores[division.id]}" ng-if="hasSpiritScores[division.id]">
+																<span ng-class="{strong: hasOwnSpiritScores[division.id]}" data-title="{{ 'event.teamList.spiritScore' | translate }}" bs-tooltip>{{ regTeam.spiritScore | decimal : 1 | pad : 4 : '&nbsp;' }}</span>
+																<span ng-if="hasOwnSpiritScores[division.id]" data-placement="bottom" data-title="{{ 'event.teamList.ownSpiritScore' | translate }}" bs-tooltip><em class="own-spirit-score-label">{{ ('(' + (regTeam.ownSpiritScore | decimal : 1)  + ')') | pad : 6 : '&nbsp;' }}</em></span>
+															</div>
 														</div>
 														<span>{{ regTeam.roster.team.name }} {{ regTeam.roster.nameAddition }}</span>
 														<span ng-if="loggedIn()" class="panel-title-addon">&nbsp;&nbsp;({{ rosterPlayers.length }}&nbsp;{{ 'general.players' | translate }})</span>
