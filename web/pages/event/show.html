@@ -229,7 +229,7 @@
 												<!-- Sort keys to choose from-->
 												<div class="btn-group width100">
 									        <label class="btn btn-default sort-button" data-title="{{ 'event.teamList.sortByResultTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'standing'">{{ 'event.teamList.sortByResult' | translate }}<i ng-class="{invisible: teamListOrder.text != 'standing'}" class="fa fa-sort-desc sort-icon"></i></label>
-									        <label class="btn btn-default sort-button" data-title="{{ 'event.teamList.sortBySpiritTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'spirit'">{{ 'event.teamList.sortBySpirit' | translate }}<i ng-class="{invisible: teamListOrder.text != 'spirit'}" class="fa fa-sort-desc sort-icon"></i></label>
+									        <label ng-if="hasSpiritScores[division.id]" class="btn btn-default sort-button" data-title="{{ 'event.teamList.sortBySpiritTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'spirit'">{{ 'event.teamList.sortBySpirit' | translate }}<i ng-class="{invisible: teamListOrder.text != 'spirit'}" class="fa fa-sort-desc sort-icon"></i></label>
 													<label device-detector class="btn btn-default sort-button sort-button-last" data-title="{{ 'event.teamList.sortByNameTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'name'">{{ 'event.teamList.sortByName' | translate }}<i ng-class="{invisible: teamListOrder.text != 'name'}" class="fa fa-sort-desc sort-icon"></i></label>
     										</div>
 											</div>
