@@ -14,6 +14,7 @@ var app = angular.module('ultical',
 		 'ultical.user',
 		 'angularMoment',
 		 'slugifier',
+		 'ng.deviceDetector',
 		 ]);
 
 //router ui route
@@ -126,6 +127,16 @@ app.config(function($modalProvider) {
 		container: 'body',
 		keyboard: false,
 	});
+});
+
+app.config(function($tooltipProvider) {
+  angular.extend($tooltipProvider.defaults, {
+    animation: 'am-fade',
+    trigger: 'hover',
+		delay: {show: 500, hide: 100},
+		placement: 'top',
+		container: 'body',
+  });
 });
 
 app.run(['storage', '$translate', 'amMoment', function(storage, $translate, amMoment) {

@@ -1,5 +1,23 @@
 'use strict';
 
+app.filter('pad', ['$sce', function($sce) {
+  return function(text, length, padChar) {
+    if (undefined === padChar) {
+      padChar = '0';
+    }
+    if (undefined === text) {
+      text = '';
+    } else {
+      text = text + '';
+    }
+    if (length <= text.length) {
+      return text;
+    }
+    var padding = padChar.repeat(length - text.length);
+    return $sce.trustAsHtml(padding + text);
+  }
+}]);
+
 app.filter('arrayDiff', [function() {
   return function(arr1, arr2, propertyName) {
     var res = [];

@@ -306,11 +306,6 @@ angular.module('ultical.team', [])
       });
     };
 
-    $scope.typeaheadPreMatching = function() {
-      return true;
-    };
-
-
     $scope.addPlayerToRoster = function(newPlayer, roster) {
       if (!angular.isObject(newPlayer)) {
         return;
