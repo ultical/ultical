@@ -208,7 +208,7 @@ TRANSLATIONS['de'] = {
 				printAllPlayerLists: 'Spielerlisten aller Divisionen drucken',
 				sortByName: 'Name',
 				sortByNameTooltip: 'Nach Name sortieren',
-				sortByResult: 'Ergebnis',
+				sortByResult: 'Platzierung',
 				sortByResultTooltip: 'Nach Ergebnis sortieren',
 				sortBySpirit: 'Spirit',
 				sortBySpiritTooltip: 'Nach der Spirit-Wertung sortieren',

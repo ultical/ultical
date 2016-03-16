@@ -444,8 +444,9 @@ select:not([multiple]) {
 }
 
 .team-list-standing {
-	width: 30px;
+	width: 82px;
 	text-align: center;
+	padding-right: 10px;
 }
 
 .label-as-badge {
@@ -456,13 +457,13 @@ select:not([multiple]) {
 .spirit-score-label {
     font-size: 80%;
     line-height: 1.3em;
-		width: 35px;
+		width: 60px;
 		text-align: center;
 		margin-left: 3px;
 }
 
 .spirit-score-label.has-own-spirit {
-	margin-top: -8px;
+	margin-top: -7px;
 }
 
 .own-spirit-score-label {
@@ -470,7 +471,28 @@ select:not([multiple]) {
 }
 
 .btn .sort-icon {
-	margin-left: 6px;
-	margin-right: -3px;
+	margin-left: 5px;
+	margin-right: -5px;
 	font-size: 13px;
+}
+
+.btn.sort-button {
+	font-size: 13px;
+}
+
+.btn.sort-button-last {
+	float: none;
+	overflow: hidden;
+	width: auto;
+	display: block;
+	text-align: left;
+	border-left-width: 0px;
+}
+
+.btn.sort-button-last.browser-safari {
+	width:280px;
+	border-left-width: 1px;
+}
+.width100 {
+	width: 100%;
 }
