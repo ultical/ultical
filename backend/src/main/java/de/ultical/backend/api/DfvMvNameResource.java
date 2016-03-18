@@ -1,5 +1,6 @@
 package de.ultical.backend.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,15 +38,21 @@ public class DfvMvNameResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<DfvMvName> findDfvMvName(@QueryParam("search") String searchString, @Auth User user) {
+    public List<DfvMvName> findDfvMvName(@QueryParam("search") String searchStringRaw, @Auth User user) {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injection for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
         List<DfvMvName> result = null;
 
+        // split search string at the spaces and dashes
+        List<String> searchStrings = new ArrayList<String>();
+        for (String searchString : searchStringRaw.split("\\s|-")) {
+            searchStrings.add("%" + searchString + "%");
+        }
+
         try (AutoCloseable c = this.dataStore.getClosable()) {
-            result = this.dataStore.findDfvMvName("%" + searchString + "%");
+            result = this.dataStore.findDfvMvName(searchStrings);
         } catch (Exception pe) {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
