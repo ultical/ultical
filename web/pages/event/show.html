@@ -281,6 +281,7 @@
 																	<i class="fa fa-list fa-fw"></i>
 																	<span ng-if="event.x.timing != 'future'">{{ 'event.rosterFixed' | translate }}</span>
 																	<span ng-if="event.x.timing == 'future'">{{ 'event.rosterNotFixed' | translate }}</span>
+																	<span ng-if="event.x.timing == 'future' && event.x.own">({{ 'event.rosterEditOnTeamPage' | translate }})</span>
 																</div>
 																<div class="margin-left-small" ng-if="rosterPlayers.length > 0 && loggedIn()">
 																	<div ng-repeat="rosterPlayer in rosterPlayers | orderBy : 'player.lastName'">{{ rosterPlayer.player | playername : true }}</div>

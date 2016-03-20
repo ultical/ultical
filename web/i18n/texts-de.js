@@ -194,6 +194,7 @@ TRANSLATIONS['de'] = {
 			},
 			rosterNotFixed: 'Aktuelles Roster',
 			rosterFixed: 'Roster zum Zeitpunkt des Turniers',
+			rosterEditOnTeamPage: 'Das Roster kann auf der Teamseite bearbeitet werden',
 			printRosterNotFixed: 'Spielerlisten (offen) zum Zeitpunkt',
 			printRosterFixed: 'Spielerlisten (fest) zum Zeitpunkt des Turniers',
 			datePlayerAdded: 'Hinzugefügt am',
