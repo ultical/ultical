@@ -1,5 +1,9 @@
 package de.ultical.backend.api.transferClasses;
 
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import de.ultical.backend.model.Club;
 import lombok.Data;
 
@@ -10,6 +14,12 @@ public class DfvMvName {
     private boolean dse;
     private int dfvNumber;
     private Club club;
+    private Date lastModified;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ssXXX")
+    public void setMtime(Date lastModified) {
+        this.lastModified = lastModified;
+    }
 
     public void setVnr(int clubNumber) {
         this.club = new Club();
