@@ -51,16 +51,16 @@ public interface DfvMvNameMapper {
             @Result(column = "active", property = "active") })
     List<DfvMvName> getByName(@Param("firstname") String firstname, @Param("lastname") String lastname);
 
-    // this commented out version does not match aous to äöüß
-    // @Select({ SELECT_STMT, "WHERE dse=1 AND CONCAT(first_name, ' ',last_name)
-    // LIKE #{namePart}" })
-    @Select({ SELECT_STMT, "WHERE dse=1",
-            "AND (CONCAT(first_name, ' ', last_name) LIKE #{namePart} OR CONCAT(first_name, ' ', last_name) LIKE _utf8 #{namePart} COLLATE utf8_general_ci)" })
+    @Select({ "<script>", SELECT_STMT, "WHERE dse=1 AND",
+            "<foreach item='namePart' index='index' collection='nameParts' open='(' separator='AND' close=')'>", "(",
+            "first_name LIKE #{namePart}", "OR", "last_name LIKE #{namePart}", "OR",
+            "first_name LIKE _utf8 #{namePart} COLLATE utf8_general_ci", "OR",
+            "last_name LIKE _utf8 #{namePart} COLLATE utf8_general_ci", ")", "</foreach>", "</script>" })
     @Results({ @Result(column = "dfv_number", property = "dfvNumber"),
             @Result(column = "first_name", property = "firstName"),
             @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),
             @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
             @Result(column = "active", property = "active") })
-    List<DfvMvName> find(final String namePart);
+    List<DfvMvName> find(@Param("nameParts") final List<String> nameParts);
 
 }
