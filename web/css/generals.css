@@ -151,3 +151,7 @@ footer a {
 .border-top {
 	border-top: 1px solid #AAA;
 }
+
+.nav, .pagination, .carousel, .panel-title a {
+	cursor: pointer;
+}

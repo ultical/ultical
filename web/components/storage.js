@@ -425,6 +425,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 		event.x.divisions = [];
 
 		if ('divisionConfirmations' in event && !isEmpty(event.divisionConfirmations)) {
+      event.x.usesDivisionConfirmations = true;
 			angular.forEach(event.divisionConfirmations, function(divisionConfirmation) {
 				var division = angular.copy(divisionConfirmation.divisionRegistration);
 
@@ -439,6 +440,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			});
 		} else {
 			// this event gets all divisions and teams from the edition
+      event.x.usesDivisionConfirmations = false;
 			if (isEmpty(event.tournamentEdition.divisionRegistrations)) {
 				event.x.divisions = [];
 			} else {
@@ -465,8 +467,12 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 		storeContact(edition.organizer, loopIndex);
 
+    edition.x.latestEvent = {};
+    edition.x.eventsPerDivision = {};
 		angular.forEach(edition.divisionRegistrations, function(divReg, idx) {
 			storeDivReg(divReg, loopIndex);
+      edition.x.latestEvent[divReg.id] = {};
+      edition.x.eventsPerDivision[divReg.id] = [];
 		});
 
 		edition.x.isSingleEdition = edition.events != null && edition.events.length == 1;
@@ -475,7 +481,25 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 		edition.x.registrationIsOpen = !isEmpty(edition.registrationStart) && edition.registrationStart  <= todayDateString && edition.registrationEnd >= todayDateString;
 		edition.x.registrationTime = isEmpty(edition.registrationStart) ? 'never' : (edition.registrationStart > todayDateString ? 'future' : 'past');
-	}
+
+    // find and store all events for each division
+    angular.forEach(edition.events, function(event) {
+      angular.forEach(event.x.divisions, function(div) {
+        edition.x.eventsPerDivision[div.id].push(event);
+      });
+    });
+
+    // find the last event of each division
+    edition.x.lastestEventPerDivision = {};
+    angular.forEach(edition.x.eventsPerDivision, function(div, divId) {
+      edition.x.lastestEventPerDivision[divId] = {startDate: '1900-01-01'};
+      angular.forEach(div, function(event) {
+        if (event.startDate > edition.x.lastestEventPerDivision[divId].startDate) {
+          edition.x.lastestEventPerDivision[divId] = event;
+        }
+      });
+    });
+  }
 
 	function storeDivReg(divReg, loopIndex) {
 		// divRegs are unique to editions

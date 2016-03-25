@@ -28,11 +28,13 @@
     "angular-strap": "*",
     "angular-animate": "*",
     "angular-motion": "*",
+    "angular-bootstrap": "*",
     "bootstrap": "*",
     "respond": "*",
     "fontawesome": "*",
     "angular-moment": "*",
     "angular-slugify": "*",
-    "jsog": "*"
+    "jsog": "*",
+    "ng-device-detector": "*"
   }
 }

@@ -918,11 +918,16 @@
 	</changeSet>
 	<changeSet author="bas" id="bas74">
 		<dropForeignKeyConstraint baseTableName="TEAM_REGISTRATION"
+			constraintName="fk_team_registration_division_registration" />
+		<dropForeignKeyConstraint baseTableName="TEAM_REGISTRATION"
 			constraintName="fk_team_registration_team" />
 		<dropUniqueConstraint tableName="TEAM_REGISTRATION"
 			constraintName="uk_team_registration_division_registration_team" />
 		<dropNotNullConstraint tableName="TEAM_REGISTRATION"
 			columnDataType="BIGINT" columnName="team" />
+		<addForeignKeyConstraint constraintName="fk_team_registration_division_registration"
+			referencedTableName="DIVISION_REGISTRATION" baseColumnNames="division_registration"
+			baseTableName="TEAM_REGISTRATION" referencedColumnNames="id" />
 		<addUniqueConstraint columnNames="division_registration, roster"
 			constraintName="uk_team_registration_division_registration_roster"
 			tableName="TEAM_REGISTRATION" />
@@ -953,30 +958,61 @@
 	<changeSet author="bas" id="bas77">
 		<tagDatabase tag="bas_v1.14" />
 	</changeSet>
-<changeSet author="bb" id="bb68">
+	<changeSet dbms="derby" author="bas" id="bas78">
+		<insert tableName="CONTEXT">
+			<column name="id" valueNumeric="1" />
+			<column name="name" value="Deutscher Frisbeesport-Verband" />
+			<column name="acronym" value="DFV" />
+		</insert>
+	</changeSet>
+	<changeSet dbms="mysql" author="bas" id="bas78">
+		<insert tableName="CONTEXT">
+			<column name="id" value="1" />
+			<column name="name" value="Deutscher Frisbeesport-Verband" />
+			<column name="acronym" value="DFV" />
+		</insert>
+	</changeSet>
+	<changeSet author="bas" id="bas79">
+		<sql dbms="mysql" endDelimiter=";">
+			UPDATE ROSTER r SET context = 1
+			WHERE context IS NULL
+		</sql>
+	</changeSet>
+	<changeSet author="bas" id="bas80">
+		<tagDatabase tag="bas_v1.15" />
+	</changeSet>
+	<changeSet author="bas" id="bas81">
+		<dropColumn tableName="TEAM_REGISTRATION" columnName="team" />
+	</changeSet>
+	<changeSet author="bas" id="bas82">
+		<addColumn tableName="TEAM_REGISTRATION">
+			<column name="own_spirit_score" type="FLOAT(4)" />
+		</addColumn>
+	</changeSet>
+<changeSet author="bb" id="bb82">
 	  <addColumn tableName="DFV_PLAYER">
 	    <column name="active" type="BOOLEAN" defaultValueBoolean="true"></column>
 	  </addColumn>
 	</changeSet>
-	<changeSet author="bb" id="bb69">
+	<changeSet author="bb" id="bb83">
 	  <addNotNullConstraint tableName="DFV_PLAYER"
 				columnName="active"
 				columnDataType="BOOLEAN"
 				defaultNullValue="true" />
 	</changeSet>
-	<changeSet author="bb" id="bb70">
+	<changeSet author="bb" id="bb84">
 	  <addColumn tableName="DFV_MV_NAME">
 	    <column name="active" type="BOOLEAN"
 		    defaultValueBoolean="true" />
 	  </addColumn>
 	</changeSet>
-	<changeSet author="bb" id="bb71">
+	<changeSet author="bb" id="bb85">
 	  <addNotNullConstraint tableName="DFV_MV_NAME"
 				columnName="active"
 				columnDataType="BOOLEAN"
 				defaultNullValue="true" />
 	</changeSet>
-	<changeSet author="bb" id="bb72">
-	  <tagDatabase tag="ultical_v1.12" />
+	<changeSet author="bb" id="bb86">
+	  <tagDatabase tag="ultical_v1.15" />
 	</changeSet>
 </databaseChangeLog>
