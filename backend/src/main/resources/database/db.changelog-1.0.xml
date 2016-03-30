@@ -1002,17 +1002,21 @@
 	</changeSet>
 	<changeSet author="bb" id="bb84">
 	  <addColumn tableName="DFV_MV_NAME">
-	    <column name="active" type="BOOLEAN"
-		    defaultValueBoolean="true" />
+	    <column name="last_modified" type="TIMESTAMP"/>
 	  </addColumn>
 	</changeSet>
 	<changeSet author="bb" id="bb85">
-	  <addNotNullConstraint tableName="DFV_MV_NAME"
-				columnName="active"
-				columnDataType="BOOLEAN"
-				defaultNullValue="true" />
+	  <addNotNullConstraint tableName="DFV_MV_NAME" columnName="last_modified" columnDataType="TIMESTAMP" defaultNullValue="2016-01-01" />
 	</changeSet>
 	<changeSet author="bb" id="bb86">
+	  <addColumn tableName="DFV_PLAYER">
+	    <column name="last_modified" type="TIMESTAMP" />
+	  </addColumn>
+	</changeSet>
+	<changeSet author="bb" id="bb87">
+	  <addNotNullConstraint tableName="DFV_PLAYER" columnName="last_modified" columnDataType="TIMESTAMP" defaultNullValue="2016-01-01"/>
+	</changeSet>
+	<changeSet author="bb" id="bb88">
 	  <tagDatabase tag="ultical_v1.15" />
 	</changeSet>
 </databaseChangeLog>

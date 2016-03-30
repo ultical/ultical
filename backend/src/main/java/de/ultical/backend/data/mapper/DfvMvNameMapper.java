@@ -16,10 +16,10 @@ import de.ultical.backend.model.Club;
 
 public interface DfvMvNameMapper {
 
-    final String SELECT_STMT = "SELECT dfv_number as dfvNumber, first_name as firstName, last_name as lastName, dse, club, active from DFV_MV_NAME";
+    final String SELECT_STMT = "SELECT dfv_number as dfvNumber, first_name as firstName, last_name as lastName, dse, club, last_modified as lastModified from DFV_MV_NAME";
 
     // INSERT
-    @Insert("INSERT INTO DFV_MV_NAME (dfv_number, first_name, last_name, dse, club, active) VALUES (#{dfvNumber, jdbcType=INTEGER},#{firstName, jdbcType=VARCHAR},#{lastName, jdbcType=VARCHAR},#{dse},#{club.id, jdbcType=INTEGER},#{active})")
+    @Insert("INSERT INTO DFV_MV_NAME (dfv_number, first_name, last_name, dse, club, last_modified) VALUES (#{dfvNumber, jdbcType=INTEGER},#{firstName, jdbcType=VARCHAR},#{lastName, jdbcType=VARCHAR},#{dse},#{club.id, jdbcType=INTEGER},#{lastModified, jdbcType=DATE})")
     Integer insert(DfvMvName entity);
 
     // DELETE
@@ -32,7 +32,7 @@ public interface DfvMvNameMapper {
             @Result(column = "first_name", property = "firstName"),
             @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),
             @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
-            @Result(column = "active", property = "active") })
+            @Result(column = "last_modified", property = "lastModified") })
     DfvMvName get(int pk);
 
     @Select(SELECT_STMT)
@@ -40,7 +40,7 @@ public interface DfvMvNameMapper {
             @Result(column = "first_name", property = "firstName"),
             @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),
             @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
-            @Result(column = "active", property = "active") })
+            @Result(column = "last_modified", property = "lastModified") })
     List<DfvMvName> getAll();
 
     @Select({ SELECT_STMT, "WHERE first_name = #{firstname} AND last_name = #{lastname}" })
@@ -48,7 +48,7 @@ public interface DfvMvNameMapper {
             @Result(column = "first_name", property = "firstName"),
             @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),
             @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
-            @Result(column = "active", property = "active") })
+            @Result(column = "last_modified", property = "last_modified") })
     List<DfvMvName> getByName(@Param("firstname") String firstname, @Param("lastname") String lastname);
 
     @Select({ "<script>", SELECT_STMT, "WHERE dse=1 AND",
@@ -60,7 +60,7 @@ public interface DfvMvNameMapper {
             @Result(column = "first_name", property = "firstName"),
             @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),
             @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
-            @Result(column = "active", property = "active") })
+            @Result(column = "last_modified", property = "lastModified") })
     List<DfvMvName> find(@Param("nameParts") final List<String> nameParts);
 
 }

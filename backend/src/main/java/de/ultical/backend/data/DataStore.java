@@ -1,11 +1,14 @@
 package de.ultical.backend.data;
 
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -432,6 +435,18 @@ public class DataStore {
         }
     }
 
+    public DfvMvName getDfvMvName(final int dfvNumber) {
+        try {
+            DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
+            DfvMvName result = nameMapper.get(dfvNumber);
+            return result;
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     static class PlayerNeedsUpdatePredicate implements Predicate<PlayerMvNamePair> {
         /**
          * return <code>true</code> if the <code>DfvPlayer</code> and the
@@ -450,18 +465,12 @@ public class DataStore {
         public static boolean needsUpdate(PlayerMvNamePair pair) {
             DfvPlayer player = pair.player;
             DfvMvName name = pair.name;
-            if (player.getDfvNumber() != name.getDfvNumber()) {
-                return true;
-            }
-            if ((player.getFirstName() == null || !player.getFirstName().equals(name.getFirstName()))
-                    && (player.getFirstName() != name.getFirstName())) {
-                return true;
-            }
-            if ((player.getLastName() == null || !player.getLastName().equals(name.getLastName()))
-                    && (player.getLastName() != name.getLastName())) {
-                return true;
-            }
-            if (player.isActive() != name.isActive()) {
+
+            if (name.getLastModified() != null && name.getLastModified()
+                    .after(Date.from(player.getLastModified().atZone(ZoneId.systemDefault()).toInstant()))) {
+                // name has been modified after player has been modified. Thus,
+                // we have to update the information in player with the new
+                // information in the dfv-mv.de database.
                 return true;
             }
             return false;
@@ -482,32 +491,32 @@ public class DataStore {
             this.name = name;
         }
 
-        public void updatePlayer(final DfvPlayerMapper mapper) {
-            this.player.setFirstName(this.name.getFirstName());
-            this.player.setLastName(this.name.getLastName());
-            this.player.setActive(this.name.isActive());
-            this.player.setClub(this.name.getClub());
-            mapper.update(this.player);
-
-        }
     }
 
     /**
-     * Performs a sync between the information in DfvMvName table and the
-     * DfvPlayer table.
+     * Returns a list of players whose {@link DfvPlayer#getLastModified()
+     * lastModified} date is older then the correpsonding {@link DfvMvName}'s
+     * date.
+     * 
+     * @return a list of players, which need an update.
      */
-    public void syncPlayersAndDfvNames() {
+    public List<DfvPlayer> getPlayersToUpdate() {
+        // TODO this task could be solved completely by the database!
         try {
+            List<DfvPlayer> result = null;
             final DfvPlayerMapper playerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
             final DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
 
             List<DfvPlayer> allPlayers = playerMapper.getAll();
-
-            allPlayers.stream().map(player -> new PlayerMvNamePair(player, nameMapper.get(player.getDfvNumber())))
-                    .filter(PlayerNeedsUpdatePredicate::needsUpdate).forEach(pair -> pair.updatePlayer(playerMapper));
-
+            result = allPlayers.stream()
+                    .map(player -> new PlayerMvNamePair(player, nameMapper.get(player.getDfvNumber())))
+                    .filter(PlayerNeedsUpdatePredicate::needsUpdate).map(pair -> pair.player)
+                    .collect(Collectors.toList());
+            return result;
         } finally {
-
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
         }
     }
 

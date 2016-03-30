@@ -22,7 +22,7 @@ import de.ultical.backend.model.UnregisteredPlayer;
 
 public interface PlayerMapper extends BaseMapper<Player> {
 
-    public static final String SELECT_STMT = "SELECT id, version, first_name as firstName, last_name as lastName, email, gender, birth_date as birthDate, dfv_number as dfvNumber, is_registered, club FROM PLAYER p LEFT JOIN DFV_PLAYER ON p.id = DFV_PLAYER.player_id LEFT JOIN UNREGISTERED_PLAYER ON p.id = UNREGISTERED_PLAYER.player_id";
+    public static final String SELECT_STMT = "SELECT id, version, first_name as firstName, last_name as lastName, email, gender, birth_date as birthDate, dfv_number as dfvNumber, is_registered, club, active, last_modified as lastModified FROM PLAYER p LEFT JOIN DFV_PLAYER ON p.id = DFV_PLAYER.player_id LEFT JOIN UNREGISTERED_PLAYER ON p.id = UNREGISTERED_PLAYER.player_id";
 
     // INSERT
     @Insert({ "INSERT INTO PLAYER (first_name, last_name, gender, is_registered)",

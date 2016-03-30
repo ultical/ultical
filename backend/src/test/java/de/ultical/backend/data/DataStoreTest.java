@@ -1,16 +1,12 @@
 package de.ultical.backend.data;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
@@ -63,18 +59,6 @@ public class DataStoreTest {
         result.setDfvnr(dfvNr);
         result.setActive(active);
         return result;
-    }
-
-    @Test
-    public void testSyncPlayersAndDfvNames() {
-        this.dStore.syncPlayersAndDfvNames();
-        // we can only run an indirect test by checking whether the playerMapper
-        // has been called with the correct data of the updated players...
-        // Thus, we check that the playerMapper was called exactly two times and
-        // afterwards we ensure that it has been called using the correct data.
-        verify(this.playerMapper, times(2)).update(Mockito.any());
-        verify(this.playerMapper).update(Mockito.eq(this.buildPlayer("Foo", "Bàr", this.dfvNrTwo, true)));
-        verify(this.playerMapper).update(Mockito.eq(this.buildPlayer("Foo", "Bar", this.dfvNrThree, false)));
     }
 
 }

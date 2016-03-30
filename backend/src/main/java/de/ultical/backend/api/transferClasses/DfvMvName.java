@@ -15,6 +15,7 @@ public class DfvMvName {
     private int dfvNumber;
     private Club club;
     private boolean active;
+    // TODO change to LocalDateTime?
     private Date lastModified;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ssXXX")
