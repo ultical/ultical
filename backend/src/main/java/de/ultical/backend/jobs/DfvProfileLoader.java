@@ -61,9 +61,9 @@ public class DfvProfileLoader {
                 if (playersToUpdate != null) {
                     for (DfvPlayer player : playersToUpdate) {
                         DfvMvName mvName = this.dataStore.getDfvMvName(player.getDfvNumber());
-                        DfvMvPlayer mvPlayer = getMvPlayer(player);
+                        DfvMvPlayer mvPlayer = this.getMvPlayer(player);
                         if (mvPlayer != null) {
-                            updatePlayer(player, mvName, mvPlayer);
+                            this.updatePlayer(player, mvName, mvPlayer);
                             LOGGER.debug(
                                     "Updated player (id={}) to the following values: firstName={}, lastName={}, lastModified={}, active={}, gender={}, birthDate={}, email={}",
                                     player.getId(), player.getFirstName(), player.getLastName(),
@@ -91,10 +91,9 @@ public class DfvProfileLoader {
     private void updatePlayer(DfvPlayer player, DfvMvName mvName, DfvMvPlayer mvPlayer) {
         player.setFirstName(mvName.getFirstName());
         player.setLastName(mvName.getLastName());
-        player.setLastModified(LocalDateTime.ofInstant(mvName.getLastModified().toInstant(),
-                ZoneId.systemDefault()));
+        player.setLastModified(LocalDateTime.ofInstant(mvName.getLastModified().toInstant(), ZoneId.systemDefault()));
         player.setActive(mvName.isActive());
-        player.setGender(Gender.valueOf(mvPlayer.getGeschlecht()));
+        player.setGender(Gender.robustValueOf(mvPlayer.getGeschlecht()));
         player.setBirthDate(LocalDate.parse(mvPlayer.getGeburtsdatum()));
         player.setGender(Gender.robustValueOf(mvPlayer.getGeschlecht()));
         player.setEmail(mvPlayer.getEmail());
@@ -102,15 +101,12 @@ public class DfvProfileLoader {
 
     private DfvMvPlayer getMvPlayer(DfvPlayer player) {
         /*
-         * Would be great if the WebTarget could be saved as a
-         * template ...
+         * Would be great if the WebTarget could be saved as a template ...
          */
-        WebTarget playerProfilTarget = this.client.target(this.config.getDfvApi().getUrl())
-                .path("profil").path(String.valueOf(player.getDfvNumber()))
-                .queryParam("token", this.config.getDfvApi().getToken())
+        WebTarget playerProfilTarget = this.client.target(this.config.getDfvApi().getUrl()).path("profil")
+                .path(String.valueOf(player.getDfvNumber())).queryParam("token", this.config.getDfvApi().getToken())
                 .queryParam("secret", this.config.getDfvApi().getSecret());
-        Invocation.Builder playerInvocationBuilder = playerProfilTarget
-                .request(MediaType.APPLICATION_JSON);
+        Invocation.Builder playerInvocationBuilder = playerProfilTarget.request(MediaType.APPLICATION_JSON);
         DfvMvPlayer mvPlayer = playerInvocationBuilder.get(DfvMvPlayer.class);
         return mvPlayer;
     }
