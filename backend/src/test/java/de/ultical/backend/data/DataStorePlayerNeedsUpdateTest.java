@@ -4,6 +4,9 @@ import static de.ultical.backend.data.DataStore.PlayerNeedsUpdatePredicate.needs
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,83 +19,62 @@ public class DataStorePlayerNeedsUpdateTest {
     private static final int DFV_NUMMER = 1234567;
     private static final String BAR = "bar";
     private static final String FOO = "Foo";
-    private PlayerMvNamePair pair1, pair2, pair3, pair4, pair5, pair6, pair7, pair8;
+    private PlayerMvNamePair pair1, pair2, pair3, pair4;
 
     @Before
     public void setUp() throws Exception {
-        DfvMvName firstName = this.buildName(FOO, BAR, DFV_NUMMER, true);
-        DfvPlayer firstPlayer = this.buildPlayer(FOO, BAR, DFV_NUMMER, true);
+        DfvMvName firstName = this.buildName(FOO, BAR, DFV_NUMMER, true, new Date());
+        DfvPlayer firstPlayer = this.buildPlayer(FOO, BAR, DFV_NUMMER, true, LocalDateTime.of(2016, 4, 1, 23, 11));
         this.pair1 = new PlayerMvNamePair(firstPlayer, firstName);
 
-        DfvPlayer secondPlayer = this.buildPlayer(FOO, BAR, 1234567, false);
+        DfvPlayer secondPlayer = this.buildPlayer(FOO, BAR, 1234567, false, null);
         this.pair2 = new PlayerMvNamePair(secondPlayer, firstName);
 
-        this.pair3 = new PlayerMvNamePair(this.buildPlayer("Footur", BAR, DFV_NUMMER, true), firstName);
-        this.pair4 = new PlayerMvNamePair(this.buildPlayer(null, BAR, DFV_NUMMER, true), firstName);
+        this.pair3 = new PlayerMvNamePair(
+                this.buildPlayer("Footur", BAR, DFV_NUMMER, true, LocalDateTime.now().plusDays(5)), firstName);
 
-        this.pair5 = new PlayerMvNamePair(this.buildPlayer(null, BAR, DFV_NUMMER, true),
-                this.buildName(null, BAR, DFV_NUMMER, true));
-        this.pair6 = new PlayerMvNamePair(this.buildPlayer(FOO, "barbara", DFV_NUMMER, true), firstName);
-        this.pair7 = new PlayerMvNamePair(this.buildPlayer(FOO, null, DFV_NUMMER, true), firstName);
-        this.pair8 = new PlayerMvNamePair(this.buildPlayer(FOO, null, DFV_NUMMER, true),
-                this.buildName(FOO, null, DFV_NUMMER, true));
+        this.pair4 = new PlayerMvNamePair(this.buildPlayer(FOO, null, DFV_NUMMER, true, LocalDateTime.now()),
+                this.buildName(FOO, null, DFV_NUMMER, true, null));
     }
 
-    private DfvMvName buildName(String fn, String ln, int dfvNr, boolean act) {
+    private DfvMvName buildName(String fn, String ln, int dfvNr, boolean act, Date date) {
         DfvMvName firstName = new DfvMvName();
         firstName.setActive(act);
         firstName.setFirstName(fn);
         firstName.setLastName(ln);
         firstName.setDfvnr(dfvNr);
+        firstName.setMtime(date);
         return firstName;
     }
 
-    private DfvPlayer buildPlayer(String fn, String ln, int dfvNr, boolean active) {
+    private DfvPlayer buildPlayer(String fn, String ln, int dfvNr, boolean active, LocalDateTime mod) {
         DfvPlayer firstPlayer = new DfvPlayer();
         firstPlayer.setActive(active);
         firstPlayer.setFirstName(fn);
         firstPlayer.setLastName(ln);
         firstPlayer.setDfvNumber(dfvNr);
+        firstPlayer.setLastModified(mod);
         return firstPlayer;
     }
 
     @Test
-    public void testEverythingSameNonNull() {
-        assertFalse(needsUpdate(this.pair1));
+    public void testNeedsUpdateNonNull() {
+        assertTrue(needsUpdate(this.pair1));
     }
 
     @Test
-    public void testDifferenceActive() {
-        assertTrue(needsUpdate(this.pair2));
+    public void testNeedUpdateFalse() {
+        assertFalse(needsUpdate(this.pair3));
     }
 
     @Test
-    public void testFirstNameDiffer() {
-        assertTrue(needsUpdate(this.pair3));
+    public void testNeedUpdateNull() {
+        assertFalse(needsUpdate(this.pair4));
     }
 
-    @Test
-    public void testFirstNameDifferNull() {
-        assertTrue(needsUpdate(this.pair4));
+    @Test(expected = NullPointerException.class)
+    public void testNeedUpdatePlayerDateNull() {
+        needsUpdate(this.pair2);
     }
 
-    @Test
-    public void testFirstNameNull() {
-        assertFalse(needsUpdate(this.pair5));
-    }
-
-    @Test
-    public void testLastNameDifferNonNull() {
-        assertTrue(needsUpdate(this.pair6));
-    }
-
-    @Test
-    public void testLastNameDifferNull() {
-        assertTrue(needsUpdate(this.pair7));
-    }
-
-    @Test
-    public void testLastNameNull() {
-        assertFalse(needsUpdate(this.pair8));
-    }
 }
