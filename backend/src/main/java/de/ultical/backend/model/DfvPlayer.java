@@ -25,9 +25,9 @@ public class DfvPlayer extends Player {
 
     public DfvPlayer(DfvMvPlayer dfvPlayer) {
         super();
-        this.setBirthDate(LocalDate.parse(dfvPlayer.getGeburtsdatum()));
-        this.setDfvNumber(dfvPlayer.getDfvnr());
-        this.setGender(Gender.robustValueOf(dfvPlayer.getGeschlecht()));
+        this.setBirthDate(LocalDate.parse(dfvPlayer.getDobString()));
+        this.setDfvNumber(dfvPlayer.getDfvNumber());
+        this.setGender(Gender.robustValueOf(dfvPlayer.getGender()));
     }
 
     private int dfvNumber;

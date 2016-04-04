@@ -56,6 +56,7 @@ public class DfvProfileLoader {
                     dfvMvName.setFirstName(dfvMvName.getFirstName().trim());
                     dfvMvName.setLastName(dfvMvName.getLastName().trim());
                 });
+
                 this.dataStore.refreshDfvNames(response);
                 List<DfvPlayer> playersToUpdate = this.dataStore.getPlayersToUpdate();
                 if (playersToUpdate != null) {
@@ -104,12 +105,11 @@ public class DfvProfileLoader {
         player.setLastName(mvName.getLastName());
         player.setLastModified(LocalDateTime.ofInstant(mvName.getLastModified().toInstant(), ZoneId.systemDefault()));
 
-        // TODO: eligible should include active, dse and !ruht
-        player.setEligible(mvName.isActive() && mvName.isDse());
+        // TODO: eligible should include active, dse and !idle
+        player.setEligible(mvPlayer.isActive() && mvPlayer.hasDse() && !mvPlayer.isIdle());
 
-        player.setGender(Gender.robustValueOf(mvPlayer.getGeschlecht()));
-        player.setBirthDate(LocalDate.parse(mvPlayer.getGeburtsdatum()));
-        player.setGender(Gender.robustValueOf(mvPlayer.getGeschlecht()));
+        player.setGender(Gender.robustValueOf(mvPlayer.getGender()));
+        player.setBirthDate(LocalDate.parse(mvPlayer.getDobString()));
         player.setEmail(mvPlayer.getEmail());
     }
 
