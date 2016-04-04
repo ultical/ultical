@@ -60,26 +60,8 @@ public class DfvProfileLoader {
                 List<DfvPlayer> playersToUpdate = this.dataStore.getPlayersToUpdate();
                 if (playersToUpdate != null) {
                     for (DfvPlayer player : playersToUpdate) {
-                        DfvMvName mvName = this.dataStore.getDfvMvName(player.getDfvNumber());
-                        DfvMvPlayer mvPlayer = this.getMvPlayer(player);
-                        if (mvPlayer != null) {
-                            this.updatePlayer(player, mvName, mvPlayer);
-                            LOGGER.debug(
-                                    "Updated player (id={}) to the following values: firstName={}, lastName={}, lastModified={}, active={}, gender={}, birthDate={}, email={}",
-                                    player.getId(), player.getFirstName(), player.getLastName(),
-                                    player.getLastModified(), player.isActive(), player.getGender(),
-                                    player.getBirthDate(), player.getEmail());
-                        } else {
-                            // for some reason we did not find a matching
-                            // player, so we deactivate the player we have
-                            LOGGER.warn(
-                                    "We got a player in our DB with id={}, dfvnumber={} that could not be loaded from the dfv-mv database!",
-                                    player.getId(), player.getDfvNumber());
-                            player.setActive(false);
-                            player.setLastModified(LocalDateTime.now());
-                        }
-                        this.dataStore.update(player);
-                        LOGGER.debug("stored updated player in db");
+                        this.updatePlayerData(player);
+                        this.validateRosterParticipation(player);
                     }
                 }
             }
@@ -88,11 +70,43 @@ public class DfvProfileLoader {
         }
     }
 
+    private void validateRosterParticipation(DfvPlayer updatedPlayer) {
+        if (updatedPlayer.isEligible()) {
+
+        }
+    }
+
+    private void updatePlayerData(DfvPlayer updatedPlayer) {
+        DfvMvName mvName = this.dataStore.getDfvMvName(updatedPlayer.getDfvNumber());
+        DfvMvPlayer mvPlayer = this.getMvPlayer(updatedPlayer);
+        if (mvPlayer != null) {
+            this.updatePlayer(updatedPlayer, mvName, mvPlayer);
+            LOGGER.debug(
+                    "Updated player (id={}) to the following values: firstName={}, lastName={}, lastModified={}, eligible={}, gender={}, birthDate={}, email={}",
+                    updatedPlayer.getId(), updatedPlayer.getFirstName(), updatedPlayer.getLastName(),
+                    updatedPlayer.getLastModified(), updatedPlayer.isEligible(), updatedPlayer.getGender(),
+                    updatedPlayer.getBirthDate(), updatedPlayer.getEmail());
+        } else {
+            // for some reason we did not find a matching
+            // player, so we deactivate the player we have
+            LOGGER.warn(
+                    "We got a player in our DB with id={}, dfvnumber={} that could not be loaded from the dfv-mv database!",
+                    updatedPlayer.getId(), updatedPlayer.getDfvNumber());
+            updatedPlayer.setEligible(false);
+            updatedPlayer.setLastModified(LocalDateTime.now());
+        }
+        this.dataStore.update(updatedPlayer);
+        LOGGER.debug("stored updated player in db");
+    }
+
     private void updatePlayer(DfvPlayer player, DfvMvName mvName, DfvMvPlayer mvPlayer) {
         player.setFirstName(mvName.getFirstName());
         player.setLastName(mvName.getLastName());
         player.setLastModified(LocalDateTime.ofInstant(mvName.getLastModified().toInstant(), ZoneId.systemDefault()));
-        player.setActive(mvName.isActive());
+
+        // TODO: eligible should include active, dse and !ruht
+        player.setEligible(mvName.isActive() && mvName.isDse());
+
         player.setGender(Gender.robustValueOf(mvPlayer.getGeschlecht()));
         player.setBirthDate(LocalDate.parse(mvPlayer.getGeburtsdatum()));
         player.setGender(Gender.robustValueOf(mvPlayer.getGeschlecht()));

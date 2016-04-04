@@ -182,7 +182,7 @@ public class RosterResource {
              * check if found player is an active or passive player. If the
              * player is passive, an addition to an roster is not allowed.
              */
-            if (!player.isActive()) {
+            if (!player.isEligible()) {
                 throw new WebApplicationException(
                         "e102 - Player is registered as a passive player. Passive players are not allowed to participate in tournaments.",
                         Status.EXPECTATION_FAILED);

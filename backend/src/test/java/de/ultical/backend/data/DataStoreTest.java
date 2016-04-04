@@ -43,12 +43,12 @@ public class DataStoreTest {
         this.dStore.sqlSession = this.sqlSession;
     }
 
-    private DfvPlayer buildPlayer(String fn, String ln, int dfvNr, boolean active) {
+    private DfvPlayer buildPlayer(String fn, String ln, int dfvNr, boolean eligible) {
         DfvPlayer player = new DfvPlayer();
         player.setFirstName(fn);
         player.setLastName(ln);
         player.setDfvNumber(dfvNr);
-        player.setActive(active);
+        player.setEligible(eligible);
         return player;
     }
 

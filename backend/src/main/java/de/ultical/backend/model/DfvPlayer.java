@@ -31,7 +31,7 @@ public class DfvPlayer extends Player {
     }
 
     private int dfvNumber;
-    private boolean active;
+    private boolean eligible;
 
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)

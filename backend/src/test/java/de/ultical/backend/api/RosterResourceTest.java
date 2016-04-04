@@ -152,7 +152,7 @@ public class RosterResourceTest {
         when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_MASTER)).thenReturn(this.playerMasters);
         when(this.playerMasters.getBirthDate()).thenReturn(LocalDate.of(1983, 12, 31));
         when(this.playerMasters.getGender()).thenReturn(Gender.MALE);
-        when(this.playerMasters.isActive()).thenReturn(Boolean.TRUE);
+        when(this.playerMasters.isEligible()).thenReturn(Boolean.TRUE);
         when(this.teamA.getId()).thenReturn(Integer.valueOf(TEAM_42));
         when(this.teamA.getAdmins()).thenReturn(Collections.singletonList(this.currentUser));
         when(this.teamB.getId()).thenReturn(Integer.valueOf(TEAM_43));
@@ -163,14 +163,14 @@ public class RosterResourceTest {
         when(this.dfvNameJunior.isDse()).thenReturn(Boolean.TRUE);
         when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_JUNIOR)).thenReturn(this.playerJuniors);
         when(this.playerJuniors.getBirthDate()).thenReturn(LocalDate.of(1995, 5, 1));
-        when(this.playerJuniors.isActive()).thenReturn(Boolean.TRUE);
+        when(this.playerJuniors.isEligible()).thenReturn(Boolean.TRUE);
 
         when(this.dfvNameWoman.getDfvNumber()).thenReturn(Integer.valueOf(DFV_NUMBER_WOMAN));
         when(this.dfvNameWoman.isDse()).thenReturn(Boolean.TRUE);
         when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_WOMAN)).thenReturn(this.playerWoman);
         when(this.playerWoman.getGender()).thenReturn(Gender.FEMALE);
         when(this.playerWoman.getBirthDate()).thenReturn(LocalDate.of(1991, 3, 20));
-        when(this.playerWoman.isActive()).thenReturn(Boolean.TRUE);
+        when(this.playerWoman.isEligible()).thenReturn(Boolean.TRUE);
 
         when(this.teamRegA.getId()).thenReturn(TEAM_REG_A);
         when(this.teamRegA.getRoster()).thenReturn(this.rosterOpenRegularA);
