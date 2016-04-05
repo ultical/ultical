@@ -100,7 +100,7 @@ public class DfvProfileLoader {
             // conditions if it is re-activated right now
             updatedPlayer.setLastModified(LocalDateTime.now().minusHours(1));
         }
-        this.dataStore.update(updatedPlayer);
+        this.dataStore.updateDfvPlayer(updatedPlayer);
         LOGGER.debug("stored updated player in db");
     }
 
