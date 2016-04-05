@@ -19,7 +19,7 @@ public interface DfvMvNameMapper {
     final String SELECT_STMT = "SELECT dfv_number as dfvNumber, first_name as firstName, last_name as lastName, dse, club, last_modified as lastModified from DFV_MV_NAME";
 
     // INSERT
-    @Insert("INSERT INTO DFV_MV_NAME (dfv_number, first_name, last_name, dse, club, last_modified) VALUES (#{dfvNumber, jdbcType=INTEGER},#{firstName, jdbcType=VARCHAR},#{lastName, jdbcType=VARCHAR},#{dse},#{club.id, jdbcType=INTEGER},#{lastModified, jdbcType=DATE})")
+    @Insert("INSERT INTO DFV_MV_NAME (dfv_number, first_name, last_name, dse, club, last_modified) VALUES (#{dfvNumber, jdbcType=INTEGER},#{firstName, jdbcType=VARCHAR},#{lastName, jdbcType=VARCHAR},#{dse},#{club.id, jdbcType=INTEGER},#{lastModified, jdbcType=TIMESTAMP})")
     Integer insert(DfvMvName entity);
 
     // DELETE

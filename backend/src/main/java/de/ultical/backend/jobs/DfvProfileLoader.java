@@ -2,10 +2,10 @@ package de.ultical.backend.jobs;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
@@ -19,6 +19,7 @@ import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.Gender;
 
@@ -42,7 +43,7 @@ public class DfvProfileLoader {
 
         try (AutoCloseable c = this.dataStore.getClosable()) {
 
-            WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profile")
+            WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profile/sparte/ultimate")
                     .queryParam("token", this.config.getDfvApi().getToken())
                     .queryParam("secret", this.config.getDfvApi().getSecret());
 
@@ -72,15 +73,16 @@ public class DfvProfileLoader {
     }
 
     private void validateRosterParticipation(DfvPlayer updatedPlayer) {
-        if (updatedPlayer.isEligible()) {
-
+        if (!updatedPlayer.isEligible()) {
+            // TODO: add routine to check if player is in any future roster and
+            // remove him if so
         }
     }
 
     private void updatePlayerData(DfvPlayer updatedPlayer) {
         DfvMvName mvName = this.dataStore.getDfvMvName(updatedPlayer.getDfvNumber());
         DfvMvPlayer mvPlayer = this.getMvPlayer(updatedPlayer);
-        if (mvPlayer != null) {
+        if (mvName != null && mvPlayer != null) {
             this.updatePlayer(updatedPlayer, mvName, mvPlayer);
             LOGGER.debug(
                     "Updated player (id={}) to the following values: firstName={}, lastName={}, lastModified={}, eligible={}, gender={}, birthDate={}, email={}",
@@ -90,11 +92,13 @@ public class DfvProfileLoader {
         } else {
             // for some reason we did not find a matching
             // player, so we deactivate the player we have
-            LOGGER.warn(
-                    "We got a player in our DB with id={}, dfvnumber={} that could not be loaded from the dfv-mv database!",
+            LOGGER.debug(
+                    "Deactivated player in our DB with id={}, dfvnumber={} that could not be loaded from the dfv-mv database!",
                     updatedPlayer.getId(), updatedPlayer.getDfvNumber());
             updatedPlayer.setEligible(false);
-            updatedPlayer.setLastModified(LocalDateTime.now());
+            // set modified datetime to now - 1 hour to prevent racing
+            // conditions if it is re-activated right now
+            updatedPlayer.setLastModified(LocalDateTime.now().minusHours(1));
         }
         this.dataStore.update(updatedPlayer);
         LOGGER.debug("stored updated player in db");
@@ -103,14 +107,18 @@ public class DfvProfileLoader {
     private void updatePlayer(DfvPlayer player, DfvMvName mvName, DfvMvPlayer mvPlayer) {
         player.setFirstName(mvName.getFirstName());
         player.setLastName(mvName.getLastName());
-        player.setLastModified(LocalDateTime.ofInstant(mvName.getLastModified().toInstant(), ZoneId.systemDefault()));
+        player.setLastModified(mvName.getLastModified());
 
-        // TODO: eligible should include active, dse and !idle
+        // eligible should include active, dse and !idle
         player.setEligible(mvPlayer.isActive() && mvPlayer.hasDse() && !mvPlayer.isIdle());
 
         player.setGender(Gender.robustValueOf(mvPlayer.getGender()));
         player.setBirthDate(LocalDate.parse(mvPlayer.getDobString()));
         player.setEmail(mvPlayer.getEmail());
+
+        Club club = new Club();
+        club.setId(mvPlayer.getClub());
+        player.setClub(club);
     }
 
     private DfvMvPlayer getMvPlayer(DfvPlayer player) {
@@ -121,7 +129,15 @@ public class DfvProfileLoader {
                 .path(String.valueOf(player.getDfvNumber())).queryParam("token", this.config.getDfvApi().getToken())
                 .queryParam("secret", this.config.getDfvApi().getSecret());
         Invocation.Builder playerInvocationBuilder = playerProfilTarget.request(MediaType.APPLICATION_JSON);
-        DfvMvPlayer mvPlayer = playerInvocationBuilder.get(DfvMvPlayer.class);
+
+        DfvMvPlayer mvPlayer = null;
+
+        try {
+            mvPlayer = playerInvocationBuilder.get(DfvMvPlayer.class);
+        } catch (NotFoundException e) {
+            return null;
+        }
+
         return mvPlayer;
     }
 

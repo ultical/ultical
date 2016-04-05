@@ -111,7 +111,7 @@ public class DfvProfileLoaderTest {
         verify(this.client).target(eq(TARGET_URL));
         verify(this.target).queryParam(eq("secret"), eq(SECRET));
         verify(this.target).queryParam(eq("token"), eq(TOKEN));
-        verify(this.target).path("profile");
+        verify(this.target).path("profile/sparte/ultimate");
         verify(this.target).request(MediaType.APPLICATION_JSON);
         verify(this.builder).get(Mockito.any(GenericType.class));
         verify(this.dataStore).refreshDfvNames(this.responseList);

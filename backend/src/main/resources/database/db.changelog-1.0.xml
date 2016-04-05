@@ -1013,13 +1013,11 @@
 	</changeSet>
 	<changeSet author="bb" id="bb86">
 		<addColumn tableName="DFV_PLAYER">
-			<column name="last_modified" type="TIMESTAMP" />
+			<column name="last_modified" type="TIMESTAMP"
+				defaultValueDate="2016-01-01 00:00:00">
+				<constraints nullable="false" />
+			</column>
 		</addColumn>
-	</changeSet>
-	<changeSet author="bb" id="bb87">
-		<addNotNullConstraint tableName="DFV_PLAYER"
-			columnName="last_modified" columnDataType="TIMESTAMP"
-			defaultNullValue="2016-01-01" />
 	</changeSet>
 	<changeSet author="bb" id="bb88">
 		<tagDatabase tag="ultical_bb_v1.15" />

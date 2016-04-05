@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +22,7 @@ public class DataStorePlayerNeedsUpdateTest {
 
     @Before
     public void setUp() throws Exception {
-        DfvMvName firstName = this.buildName(FOO, BAR, DFV_NUMMER, true, new Date());
+        DfvMvName firstName = this.buildName(FOO, BAR, DFV_NUMMER, true, LocalDateTime.now());
         DfvPlayer firstPlayer = this.buildPlayer(FOO, BAR, DFV_NUMMER, true, LocalDateTime.of(2016, 4, 1, 23, 11));
         this.pair1 = new PlayerMvNamePair(firstPlayer, firstName);
 
@@ -37,13 +36,13 @@ public class DataStorePlayerNeedsUpdateTest {
                 this.buildName(FOO, null, DFV_NUMMER, true, null));
     }
 
-    private DfvMvName buildName(String fn, String ln, int dfvNr, boolean act, Date date) {
+    private DfvMvName buildName(String fn, String ln, int dfvNr, boolean act, LocalDateTime date) {
         DfvMvName firstName = new DfvMvName();
         firstName.setActive(act);
         firstName.setFirstName(fn);
         firstName.setLastName(ln);
         firstName.setDfvnr(dfvNr);
-        firstName.setMtime(date);
+        firstName.setLastModified(date);
         return firstName;
     }
 

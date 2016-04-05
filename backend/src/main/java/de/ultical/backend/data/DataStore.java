@@ -1,8 +1,6 @@
 package de.ultical.backend.data;
 
-import java.sql.Date;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -458,7 +456,7 @@ public class DataStore {
          * <li><code>dfvNumber</code></li>
          * </ul>
          * property
-         * 
+         *
          * @param pair
          *            the pair to check
          */
@@ -466,8 +464,13 @@ public class DataStore {
             DfvPlayer player = pair.player;
             DfvMvName name = pair.name;
 
-            if (name.getLastModified() != null && name.getLastModified()
-                    .after(Date.from(player.getLastModified().atZone(ZoneId.systemDefault()).toInstant()))) {
+            if (name == null && !player.isEligible()) {
+                // the player is 'deactivated' in our system AND in the DFV db
+                return false;
+            }
+
+            if (name == null
+                    || (name.getLastModified() != null && name.getLastModified().isAfter(player.getLastModified()))) {
                 // name has been modified after player has been modified. Thus,
                 // we have to update the information in player with the new
                 // information in the dfv-mv.de database.
@@ -497,7 +500,7 @@ public class DataStore {
      * Returns a list of players whose {@link DfvPlayer#getLastModified()
      * lastModified} date is older then the correpsonding {@link DfvMvName}'s
      * date.
-     * 
+     *
      * @return a list of players, which need an update.
      */
     public List<DfvPlayer> getPlayersToUpdate() {
