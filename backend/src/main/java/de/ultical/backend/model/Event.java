@@ -20,6 +20,7 @@ public class Event extends Identifiable {
     private int matchdayNumber = -1;
 
     private TournamentEdition tournamentEdition;
+    private String name;
 
     private List<Location> locations;
 

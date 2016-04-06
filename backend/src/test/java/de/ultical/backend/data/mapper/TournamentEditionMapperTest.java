@@ -23,8 +23,8 @@ public class TournamentEditionMapperTest {
 
     private static final LocalDate END_DATE = LocalDate.of(2015, 11, 1);
     private static final LocalDate START_DATE = LocalDate.of(2015, 10, 1);
-    private static final String ALTERNATIVE_NAME = "mein Test";
-    private static final String UPDATED_ALTERNATIVE_NAME = "different name";
+    private static final String NAME = "mein Test";
+    private static final String UPDATED_NAME = "different name";
     TournamentEdition edition;
     TournamentEditionMapper mapper;
 
@@ -50,7 +50,7 @@ public class TournamentEditionMapperTest {
         this.edition.setOrganizer(organizer);
 
         this.edition.setTournamentFormat(format);
-        this.edition.setAlternativeName(ALTERNATIVE_NAME);
+        this.edition.setName(NAME);
         this.edition.setSeason(season);
         this.edition.setRegistrationStart(START_DATE);
         this.edition.setRegistrationEnd(END_DATE);
@@ -74,13 +74,13 @@ public class TournamentEditionMapperTest {
         assertNotNull(readEdition.getTournamentFormat());
         assertNotNull(readEdition.getSeason());
         assertNotNull(readEdition.getOrganizer());
-        assertEquals(ALTERNATIVE_NAME, readEdition.getAlternativeName());
+        assertEquals(NAME, readEdition.getName());
         assertEquals(1, readEdition.getVersion());
 
         int updateCount = this.mapper.update(this.edition);
         assertEquals(0, updateCount);
 
-        readEdition.setAlternativeName(UPDATED_ALTERNATIVE_NAME);
+        readEdition.setName(UPDATED_NAME);
         updateCount = this.mapper.update(readEdition);
         assertEquals(1, updateCount);
         readEdition = this.mapper.get(editionId);
@@ -88,7 +88,7 @@ public class TournamentEditionMapperTest {
         assertTrue(readEdition instanceof TournamentEdition);
         assertNotNull(readEdition.getTournamentFormat());
         assertNotNull(readEdition.getSeason());
-        assertEquals(UPDATED_ALTERNATIVE_NAME, readEdition.getAlternativeName());
+        assertEquals(UPDATED_NAME, readEdition.getName());
         assertNotNull(readEdition.getOrganizer());
 
         this.mapper.insert(this.edition);

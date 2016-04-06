@@ -549,7 +549,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 	function createEmptyEdition() {
 		return {
-			alternativeName: '',
+			name: '',
 			season: {
 				year: 2016,
 				surface: 'TURF',

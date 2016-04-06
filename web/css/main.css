@@ -444,7 +444,7 @@ select:not([multiple]) {
 }
 
 .team-list-standing {
-	width: 82px;
+	width: 77px;
 	text-align: center;
 	padding-right: 10px;
 }
@@ -457,7 +457,7 @@ select:not([multiple]) {
 .spirit-score-label {
     font-size: 80%;
     line-height: 1.3em;
-		width: 60px;
+		width: 65px;
 		text-align: center;
 		margin-left: 3px;
 }
