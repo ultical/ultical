@@ -476,6 +476,9 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 		});
 
 		edition.x.isSingleEdition = edition.events != null && edition.events.length == 1;
+    angular.forEach(edition.events, function(event) {
+      event.x.isSingleEvent = edition.x.isSingleEdition;
+    });
 
 		var todayDateString = moment().format('YYYY-MM-DD');
 
