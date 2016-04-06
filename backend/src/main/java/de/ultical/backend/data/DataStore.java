@@ -645,10 +645,10 @@ public class DataStore {
         }
     }
 
-    public List<DfvMvName> findDfvMvName(String searchString) {
+    public List<DfvMvName> findDfvMvName(List<String> searchStrings) {
         try {
             DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
-            return nameMapper.find(searchString);
+            return nameMapper.find(searchStrings);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

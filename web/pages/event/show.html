@@ -219,8 +219,24 @@
 											</div>
 
 											<!-- team list -->
-											<div ng-init="rosterPlayers = getRelevantPlayers(regTeam, division, event.tournamentEdition.season, event)" ng-repeat-start="regTeam in division.playingTeams | orderBy : teamOrder track by regTeam.id">
-												<div class="row margin-bottom-small" ng-class="{'margin-top': !$first}" ng-if="needTeamHeading($index, division.id, regTeam.status)">
+											<!-- Controlts for sorting result listing -->
+											<div ng-if="event.x.timing != 'future' && hasStandings[division.id]" class="margin-bottom-small">
+
+												<div ng-if="latestEvents[division.id].id != event.id" class="margin-bottom-small">
+													{{ 'event.teamList.standingExplanation' | translate : { eventName : (latestEvents[division.id] | eventname) } }}
+												</div>
+
+												<!-- Sort keys to choose from-->
+												<div class="btn-group width100">
+									        <label class="btn btn-default sort-button" data-title="{{ 'event.teamList.sortByResultTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'standing'">{{ 'event.teamList.sortByResult' | translate }}<i ng-class="{invisible: teamListOrder.text != 'standing'}" class="fa fa-sort-desc sort-icon"></i></label>
+									        <label ng-if="hasSpiritScores[division.id]" class="btn btn-default sort-button" data-title="{{ 'event.teamList.sortBySpiritTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'spirit'">{{ 'event.teamList.sortBySpirit' | translate }}<i ng-class="{invisible: teamListOrder.text != 'spirit'}" class="fa fa-sort-desc sort-icon"></i></label>
+													<label device-detector class="btn btn-default sort-button sort-button-last" data-title="{{ 'event.teamList.sortByNameTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'name'">{{ 'event.teamList.sortByName' | translate }}<i ng-class="{invisible: teamListOrder.text != 'name'}" class="fa fa-sort-desc sort-icon"></i></label>
+    										</div>
+											</div>
+
+											<div ng-init="rosterPlayers = getRelevantPlayers(regTeam, division, event.tournamentEdition.season, event)" ng-repeat-start="regTeam in division.playingTeams | filter : teamFilter | orderBy : teamOrder : teamOrderReverse track by regTeam.id">
+
+												<div class="row margin-bottom-small" ng-class="{'margin-top': !$first}" ng-if="event.x.timing == 'future' && needTeamHeading($index, division.id, regTeam.status)">
 													<div class="col-md-6 strong">{{ ('event.teamList.' + (regTeam.status | lowercase)) | translate }}</div>
 													<div class="col-md-6" ng-if="regTeam.status == 'CONFIRMED' && event.x.own" ng-click="print()">
 														<a href="#" class="pull-right">{{ 'event.teamList.printPlayerList' | translate }}</a>
@@ -232,8 +248,17 @@
 
 												<div class="panel-heading cursor-pointer" role="tab">
 													<h3 class="panel-title" bs-collapse-toggle>
+														<div ng-if="hasStandings[division.id]" class="pull-left margin-right-small">
+															<div class="team-list-standing pull-left">
+																<span class="label-as-badge label label-primary label-ultical" data-title="{{ 'event.teamList.standing' | translate }}" bs-tooltip>{{ regTeam.standing }}</span>
+															</div>
+															<div class="pull-right spirit-score-label" ng-class="{'has-own-spirit': hasOwnSpiritScores[division.id]}" ng-if="hasSpiritScores[division.id]">
+																<div ng-class="{satrong: hasOwnSpiritScores[division.id]}" data-title="{{ 'event.teamList.spiritScore' | translate }}" bs-tooltip>{{ regTeam.spiritScore | decimal : 1 | pad : 4 : '&nbsp;' }}</div>
+																<div ng-if="hasOwnSpiritScores[division.id]" data-placement="bottom" data-title="{{ 'event.teamList.ownSpiritScore' | translate }}" bs-tooltip><em class="own-spirit-score-label">{{ ('(' + (regTeam.ownSpiritScore | decimal : 1)  + ')') | pad : 6 : '&nbsp;' }}</em></div>
+															</div>
+														</div>
 														<span>{{ regTeam.roster.team.name }} {{ regTeam.roster.nameAddition }}</span>
-														<span ng-if="loggedIn()" class="panel-title-addon">&nbsp;&nbsp;(&nbsp;{{ rosterPlayers.length }}&nbsp;)</span>
+														<span ng-if="loggedIn()" class="panel-title-addon">&nbsp;&nbsp;({{ rosterPlayers.length }}&nbsp;{{ 'general.players' | translate }})</span>
 
 														<!-- 													<div ng-if="team.x.own" ng-click="editRoster(roster, team, $index)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip> -->
 														<!-- 														<i class="fa fa-pencil"></i> -->
@@ -256,6 +281,7 @@
 																	<i class="fa fa-list fa-fw"></i>
 																	<span ng-if="event.x.timing != 'future'">{{ 'event.rosterFixed' | translate }}</span>
 																	<span ng-if="event.x.timing == 'future'">{{ 'event.rosterNotFixed' | translate }}</span>
+																	<span ng-if="event.x.timing == 'future' && event.x.own">({{ 'event.rosterEditOnTeamPage' | translate }})</span>
 																</div>
 																<div class="margin-left-small" ng-if="rosterPlayers.length > 0 && loggedIn()">
 																	<div ng-repeat="rosterPlayer in rosterPlayers | orderBy : 'player.lastName'">{{ rosterPlayer.player | playername : true }}</div>

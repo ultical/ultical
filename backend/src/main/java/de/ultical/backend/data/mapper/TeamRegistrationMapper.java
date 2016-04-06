@@ -18,12 +18,12 @@ import de.ultical.backend.model.TeamRegistration;
 
 public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
 
-    final String SELECT_STMT = "SELECT id, version, time_registered, comment, sequence, standing, spirit_score, paid, status, not_qualified, roster";
+    final String SELECT_STMT = "SELECT id, version, time_registered, comment, sequence, standing, spirit_score, own_spirit_score, paid, status, not_qualified, roster";
 
     // INSERT
     @Insert({ "INSERT INTO TEAM_REGISTRATION",
-            "(division_registration, sequence, comment, standing, spirit_score, paid, status, not_qualified, roster)",
-            "VALUES (#{divisionRegistrationId}, #{teamReg.sequence, jdbcType=INTEGER}, #{teamReg.comment, jdbcType=VARCHAR}, #{teamReg.standing, jdbcType=INTEGER}, #{teamReg.spiritScore, jdbcType=REAL}, #{teamReg.paid}, #{teamReg.status, jdbcType=VARCHAR}, #{teamReg.notQualified}, #{teamReg.roster.id})" })
+            "(division_registration, sequence, comment, standing, spirit_score, own_spirit_score, paid, status, not_qualified, roster)",
+            "VALUES (#{divisionRegistrationId}, #{teamReg.sequence, jdbcType=INTEGER}, #{teamReg.comment, jdbcType=VARCHAR}, #{teamReg.standing, jdbcType=INTEGER}, #{teamReg.spiritScore, jdbcType=REAL}, #{teamReg.ownSpiritScore, jdbcType=REAL}, #{teamReg.paid}, #{teamReg.status, jdbcType=VARCHAR}, #{teamReg.notQualified}, #{teamReg.roster.id})" })
     @Options(keyProperty = "teamReg.id", useGeneratedKeys = true)
     Integer insert(@Param("divisionRegistrationId") int divisionRegistrationId,
             @Param("teamReg") TeamRegistration teamReg);
@@ -31,7 +31,7 @@ public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
     // UPDATE
     @Override
     @Update({ "UPDATE TEAM_REGISTRATION",
-            "SET version=version+1, sequence=#{sequence, jdbcType=INTEGER}, comment=#{comment, jdbcType=VARCHAR}, standing=#{standing, jdbcType=INTEGER}, spirit_score=#{spiritScore, jdbcType=REAL}, paid=#{paid}, status=#{status, jdbcType=VARCHAR}, not_qualified=#{notQualified}",
+            "SET version=version+1, sequence=#{sequence, jdbcType=INTEGER}, comment=#{comment, jdbcType=VARCHAR}, standing=#{standing, jdbcType=INTEGER}, spirit_score=#{spiritScore, jdbcType=REAL}, own_spirit_score=#{ownSpiritScore, jdbcType=REAL}, paid=#{paid}, status=#{status, jdbcType=VARCHAR}, not_qualified=#{notQualified}",
             "WHERE version=#{version} AND id=#{id}" })
     Integer update(TeamRegistration entity);
 
@@ -48,8 +48,9 @@ public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "time_registered", property = "timeRegistered"),
             @Result(column = "sequence", property = "sequence"), @Result(column = "standing", property = "standing"),
-            @Result(column = "spirit_score", property = "spiritScore"), @Result(column = "paid", property = "paid"),
-            @Result(column = "status", property = "status"),
+            @Result(column = "spirit_score", property = "spiritScore"),
+            @Result(column = "own_spirit_score", property = "ownSpiritScore"),
+            @Result(column = "paid", property = "paid"), @Result(column = "status", property = "status"),
             @Result(column = "not_qualified", property = "notQualified"),
             @Result(column = "roster", property = "roster", one = @One(select = "de.ultical.backend.data.mapper.RosterMapper.get") , javaType = Roster.class),
             @Result(column = "comment", property = "comment") })
@@ -61,8 +62,9 @@ public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "time_registered", property = "timeRegistered"),
             @Result(column = "sequence", property = "sequence"), @Result(column = "standing", property = "standing"),
-            @Result(column = "spirit_score", property = "spiritScore"), @Result(column = "paid", property = "paid"),
-            @Result(column = "status", property = "status"),
+            @Result(column = "spirit_score", property = "spiritScore"),
+            @Result(column = "own_spirit_score", property = "ownSpiritScore"),
+            @Result(column = "paid", property = "paid"), @Result(column = "status", property = "status"),
             @Result(column = "not_qualified", property = "notQualified"),
             @Result(column = "roster", property = "roster", one = @One(select = "de.ultical.backend.data.mapper.RosterMapper.get") , javaType = Roster.class),
             @Result(column = "comment", property = "comment") })
@@ -74,8 +76,9 @@ public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "time_registered", property = "timeRegistered"),
             @Result(column = "sequence", property = "sequence"), @Result(column = "standing", property = "standing"),
-            @Result(column = "spirit_score", property = "spiritScore"), @Result(column = "paid", property = "paid"),
-            @Result(column = "status", property = "status"),
+            @Result(column = "spirit_score", property = "spiritScore"),
+            @Result(column = "own_spirit_score", property = "ownSpiritScore"),
+            @Result(column = "paid", property = "paid"), @Result(column = "status", property = "status"),
             @Result(column = "not_qualified", property = "notQualified"),
             @Result(column = "comment", property = "comment") })
     List<TeamRegistration> getByRosters(@Param("rosters") List<Roster> rosters);
@@ -84,8 +87,9 @@ public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "time_registered", property = "timeRegistered"),
             @Result(column = "sequence", property = "sequence"), @Result(column = "standing", property = "standing"),
-            @Result(column = "spirit_score", property = "spiritScore"), @Result(column = "paid", property = "paid"),
-            @Result(column = "status", property = "status"),
+            @Result(column = "spirit_score", property = "spiritScore"),
+            @Result(column = "own_spirit_score", property = "ownSpiritScore"),
+            @Result(column = "paid", property = "paid"), @Result(column = "status", property = "status"),
             @Result(column = "not_qualified", property = "notQualified"),
             @Result(column = "comment", property = "comment") })
     List<TeamRegistration> getByRoster(@Param("roster") Roster roster);
