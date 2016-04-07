@@ -83,6 +83,14 @@ angular.module('ultical.events')
         }
       }
     });
+
+    // define whether or not the info texts should be shown
+    $scope.info = {};
+    $scope.info.hasFormatInfo = !isEmpty($scope.event.tournamentEdition.tournamentFormat.description);
+    $scope.info.hasEventInfo = !isEmpty($scope.event.info);
+    $scope.info.showFormatInfo = $scope.info.hasFormatInfo;
+    $scope.info.showEventInfo = $scope.info.hasEventInfo;
+
 	});
 
 	// collapses

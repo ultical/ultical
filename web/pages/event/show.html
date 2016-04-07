@@ -120,23 +120,23 @@
 		</div>
 
 		<!-- FORMAT DESCRIPTION-->
-		<div class="row margin-top" ng-if="(event.tournamentEdition.tournamentFormat.description | notEmpty) && event.x.isSingleEvent">
+		<div class="row margin-top" ng-if="info.showFormatInfo">
 			<div class="col-md-12">
 				<div class="info-text user-textarea">{{ event.tournamentEdition.tournamentFormat.description }}</div>
 			</div>
 		</div>
 
 		<!-- INFO -->
-		<div class="row" ng-class="{'margin-top': (event.tournamentEdition.tournamentFormat.description | isEmpty) || !event.x.isSingleEvent}" ng-if="event.info | notEmpty">
+		<div class="row" ng-class="{'margin-top': !info.showFormatInfo}" ng-if="info.showEventInfo">
 			<div class="col-md-12">
-				<div class="info-text user-textarea" ng-class="{'padding-top': (event.tournamentEdition.tournamentFormat.description | notEmpty) && event.x.isSingleEvent}">{{ event.info }}</div>
+				<div class="info-text user-textarea" ng-class="{'padding-top': info.showFormatInfo">{{ event.info }}</div>
 			</div>
 		</div>
 
 		<!-- URL -->
-		<div class="row" ng-class="{'margin-top': (event.info | isEmpty) && (event.tournamentEdition.tournamentFormat.description | isEmpty) && !event.x.isSingleEvent}" ng-if="event.tournamentEdition.tournamentFormat.url | notEmpty">
+		<div class="row" ng-class="{'margin-top': !info.showFormatInfo && !info.showEventInfo }" ng-if="event.tournamentEdition.tournamentFormat.url | notEmpty">
 			<div class="col-md-12">
-				<div class="info-text" ng-class="{'padding-top': (event.info | notEmpty) || (event.tournamentEdition.tournamentFormat.description | notEmpty) && event.x.isSingleEvent}">
+				<div ng-class="{'padding-top info-text': info.showFormatInfo || info.showEventInfo }">
 					<i class="fa fa-link fa-fw"></i>
 					<a target="_blank" ng-href="{{ event.tournamentEdition.tournamentFormat.url | url }}">{{ event.tournamentEdition.tournamentFormat.url }}</a>
 				</div>
