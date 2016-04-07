@@ -88,8 +88,8 @@
 		<div class="row margin-top">
 			<div class="col-md-12">
 				<div class="strong">{{ 'event.organizer' | translate }}</div>
-				<div ng-if="event.tournamentEdition.tournamentFormat.association | notEmpty">{{ event.tournamentEdition.tournamentFormat.association.name }}</div>
-				<div>
+				<!-- if the edition's organizer equals the association's organizer, don't show the association (else there would be duplicates) -->
+				<div ng-if="(event.tournamentEdition.tournamentFormat.association | notEmpty) && (event.tournamentEdition.tournamentFormat.association.contact == null || (event.tournamentEdition.tournamentFormat.association.contact.id != event.tournamentEdition.organizer.id))">{{ event.tournamentEdition.tournamentFormat.association.name }}</div>				<div>
 					{{ event.tournamentEdition.organizer.name }}&nbsp;&nbsp;
 					<a ng-href="mailto:{{ event.tournamentEdition.organizer.email }}">
 						<span ng-if="event.tournamentEdition.organizer.email | notEmpty">
