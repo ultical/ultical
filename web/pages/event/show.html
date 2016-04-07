@@ -127,7 +127,7 @@
 		</div>
 
 		<!-- INFO -->
-		<div class="row" ng-class="{'margin-top': (event.tournamentEdition.tournamentFormat.description | isEmpty) && !event.x.isSingleEvent}" ng-if="event.info | notEmpty">
+		<div class="row" ng-class="{'margin-top': (event.tournamentEdition.tournamentFormat.description | isEmpty) || !event.x.isSingleEvent}" ng-if="event.info | notEmpty">
 			<div class="col-md-12">
 				<div class="info-text user-textarea" ng-class="{'padding-top': (event.tournamentEdition.tournamentFormat.description | notEmpty) && event.x.isSingleEvent}">{{ event.info }}</div>
 			</div>
