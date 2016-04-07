@@ -38,7 +38,7 @@
 			<div class="col-md-8 page-sub-title">
 				{{ event.startDate | amDateFormat : ('general.amDateFromSameMonth' | translate) }} - {{ event.endDate | amDateFormat : ('general.amDateToFull' | translate) }}<br />
 			</div>
-			<div class="col-md-4 text-right page-sub-title">{{ 'season.season' | translate }}: {{ event.tournamentEdition.season | season : true}}</div>
+			<div class="col-md-4 text-right page-sub-title">{{ event.tournamentEdition.season | season : true}}</div>
 		</div>
 
 		<!-- LOCATION -->
