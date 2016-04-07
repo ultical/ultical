@@ -177,7 +177,7 @@ TRANSLATIONS['de'] = {
 			localOrganizer: 'Veranstalter vor Ort',
 			linkToMaps: 'Google Maps Link',
 			spotsAvailable: 'Plätze',
-			spotsApplied: 'Anmeldungen',
+			spotsApplied: '{numApplications, plural, =0{Keine Anmeldungen} 	one{Eine Anmeldung} other{# Anmeldungen}}',
 			fee: {
 				label: 'Kosten',
 				team: 'Teamfee',
