@@ -2,8 +2,8 @@
 
 angular.module('ultical.events')
 
-.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout', 'headService',
-                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout, headService) {
+.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout', 'headService', 'Slug',
+                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout, headService, slug) {
 
 	$scope.event = {};
   $scope.edition = {};
@@ -15,20 +15,72 @@ angular.module('ultical.events')
 		return authorizer.loggedIn();
 	}
 
-	storage.getFormatForEvent($stateParams.eventId, function(format) {
+  // check if we show an event or an edition
+  if ($stateParams.eventId !== undefined) {
+    $scope.show = {
+      event: true,
+      date: true,
+      location: true,
+      organizer: true,
+      localOrganizer: true,
+      formatInfo: true,
+      eventInfo: true,
+      url: true,
+      editionFees: true,
+      eventFees: true,
+      feesLabel: true,
+      registration: true,
+      divisions: true,
+    };
+    storage.getFormatForEvent($stateParams.eventId, init);
+  } else if ($stateParams.editionId !== undefined) {
+    $scope.show = {
+      edition: true,
+      organizer: true,
+      formatInfo: true,
+      url: true,
+      editionFees: true,
+      registration: true,
+      divisions: true,
+    };
+    storage.getFormatForEdition($stateParams.editionId, init);
+  }
+
+  // init function
+  function init(format) {
 		$scope.format = format;
 
 		angular.forEach(format.editions, function(edition) {
-			angular.forEach(edition.events, function(event) {
-				if (event.id == $stateParams.eventId) {
-					// this is the right event
-					$scope.event = event;
-				}
-			});
+      if ($scope.show.edition) {
+        if (edition.id == $stateParams.editionId) {
+          $scope.edition = edition;
+        }
+      } else {
+  			angular.forEach(edition.events, function(event) {
+  				if (event.id == $stateParams.eventId) {
+  					// this is the right event
+  					$scope.event = event;
+            $scope.edition = edition;
+  				}
+  			});
+      }
 		});
 
     // find out if this event is the last one of this edition (for this division)
-    $scope.latestEvents = $scope.event.tournamentEdition.x.lastestEventPerDivision;
+    $scope.latestEvents = $scope.edition.x.lastestEventPerDivision;
+
+    // find latest event and set it to use in calculations
+    if ($scope.show.edition) {
+      console.log("scope event", $scope.event);
+      $scope.event = { endDate: '1900-01-01'};
+      angular.forEach($scope.latestEvents, function(latestEvent) {
+        console.log("late event", latestEvent);
+        if (latestEvent.endDate > $scope.event.endDate) {
+          $scope.event = latestEvent;
+        }
+      });
+      console.log("scope event", $scope.event);
+    }
 
     // if this event is not in the future any more the team lists are different
     $scope.teamOrderReverse = false;
@@ -88,10 +140,17 @@ angular.module('ultical.events')
     $scope.info = {};
     $scope.info.hasFormatInfo = !isEmpty($scope.event.tournamentEdition.tournamentFormat.description);
     $scope.info.hasEventInfo = !isEmpty($scope.event.info);
-    $scope.info.showFormatInfo = $scope.info.hasFormatInfo;
-    $scope.info.showEventInfo = $scope.info.hasEventInfo;
+    $scope.info.showFormatInfo = $scope.show.formatInfo && $scope.info.hasFormatInfo;
+    $scope.info.showEventInfo = $scope.show.eventInfo && $scope.info.hasEventInfo;
 
-	});
+	};
+
+  $scope.getEditionUrl = function(edition) {
+    if (isEmpty(edition)) {
+      return '';
+    }
+    return $state.href('app.editionShow', {editionId: edition.id, editionSlug: slug.slugify($filter('editionname')(edition)) });
+  }
 
 	// collapses
 	$scope.panels = {
