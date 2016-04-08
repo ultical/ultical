@@ -7,7 +7,7 @@
 	</div>
 
 	<div class="row margin-top event-list">
-		<div class="col-md-9">
+		<div class="col-md-8">
 
 			<div ng-if="0" class="row" ng-repeat-start="event in (orderedEvents = (events | orderBy : sortKey : sortOrderDesc))"></div>
 
@@ -28,7 +28,7 @@
 			<!-- event -->
 			<div ng-repeat-end class="row">
 					<a ng-href="{{ getEventUrl(event) }}">
-				<div class="col-md-7 event-list-row">
+				<div class="col-md-9 event-list-row">
 						<div class="event-list-date event-list-date-left">{{ event.startDate | amDateFormat : 'D' }}</div>
 						<div class="event-list-date event-list-date-dash">-</div>
 						<div class="event-list-date event-list-date-right">{{ event.endDate | amDateFormat : 'D' }}</div>
