@@ -316,14 +316,18 @@ app.filter('season', ['$translate', function($translate) {
 }]);
 
 app.filter('division', ['$translate', function($translate) {
-	return function(obj) {
+	return function(obj, type) {
 		if (isEmpty(obj) || isEmpty(obj.divisionAge) || isEmpty(obj.divisionType)) {
 			return '';
 		}
 
+		if (isEmpty(type)) {
+			type = 'full';
+		}
+
 		var divisionString = '';
 
-		if (!isEmpty(obj.divisionIdentifier)) {
+		if (!isEmpty(obj.divisionIdentifier) && type == 'full') {
 			divisionString += obj.divisionIdentifier + ' ';
 		}
 
@@ -336,4 +340,31 @@ app.filter('division', ['$translate', function($translate) {
 
 		return divisionString;
 	}
+}]);
+
+app.filter('divisions', ['divisionFilter', function(divisionFilter) {
+	return function(divisionArray, type) {
+		if (isEmpty(divisionArray)) {
+			return '';
+		}
+
+		if (isEmpty(type)) {
+			type = 'full';
+		}
+
+		var divisionStrings = {};
+
+		angular.forEach(divisionArray, function(division) {
+			divisionStrings[divisionFilter(division, type)] = true;
+		});
+
+		var resultString = '';
+		angular.forEach(divisionStrings, function(val, divisionString) {
+			resultString += divisionString + ', ';
+		});
+
+		return resultString.substring(0, resultString.length - 2);
+	}
+
+
 }]);
