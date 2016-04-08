@@ -989,4 +989,32 @@
 			<column name="own_spirit_score" type="FLOAT(4)" />
 		</addColumn>
 	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-1">
+		<addColumn tableName="TOURNAMENT_EDITION">
+			<column name="name" type="VARCHAR(200)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-2">
+		<sql dbms="mysql" endDelimiter=";">
+			UPDATE TOURNAMENT_EDITION SET name
+			= alternative_name
+		</sql>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-3">
+		<dropColumn tableName="TOURNAMENT_EDITION" columnName="alternative_name" />
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-4">
+		<addColumn tableName="EVENT">
+			<column name="name" type="VARCHAR(200)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-5">
+		<sql dbms="mysql" endDelimiter=";">
+			UPDATE EVENT SET name = (SELECT
+			name FROM TOURNAMENT_EDITION WHERE id = EVENT.tournament_edition)
+		</sql>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-6">
+		<tagDatabase tag="bas_editionshow_v.1.16" />
+	</changeSet>
 </databaseChangeLog>

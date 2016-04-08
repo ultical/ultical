@@ -19,15 +19,15 @@ import de.ultical.backend.model.TournamentFormat;
 
 public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
 
-    final String editionSelectBase = "SELECT id, version, tournament_format, alternative_name, season, "
+    final String editionSelectBase = "SELECT id, version, tournament_format, name, season, "
             + "registration_start, registration_end, hashtag, organizer, alternative_matchday_name, context "
             + "FROM TOURNAMENT_EDITION";
 
     // INSERT
     @Override
     @Insert({ "INSERT INTO TOURNAMENT_EDITION",
-            "(tournament_format, alternative_name, season, registration_start, registration_end, organizer, hashtag, alternative_matchday_name, context)",
-            "VALUES (#{tournamentFormat.id, jdbcType=INTEGER},#{alternativeName, jdbcType=VARCHAR},#{season.id, jdbcType=INTEGER},",
+            "(tournament_format, name, season, registration_start, registration_end, organizer, hashtag, alternative_matchday_name, context)",
+            "VALUES (#{tournamentFormat.id, jdbcType=INTEGER},#{name, jdbcType=VARCHAR},#{season.id, jdbcType=INTEGER},",
             "#{registrationStart, jdbcType=DATE},#{registrationEnd, jdbcType=DATE},",
             "#{organizer.id, jdbcType=INTEGER}, #{hashtag, jdbcType=VARCHAR}, #{alternativeMatchdayName, jdbcType=VARCHAR},",
             "#{context.id, jdbcType=INTEGER})" })
@@ -37,7 +37,7 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
     // UPDATE
     @Override
     @Update({ "UPDATE TOURNAMENT_EDITION SET version=version+1, hashtag=#{hashtag, jdbcType=VARCHAR},",
-            "tournament_format=#{tournamentFormat.id, jdbcType=INTEGER}, alternative_name=#{alternativeName, jdbcType=VARCHAR},",
+            "tournament_format=#{tournamentFormat.id, jdbcType=INTEGER}, name=#{name, jdbcType=VARCHAR},",
             "season=#{season.id, jdbcType=INTEGER}, registration_start=#{registrationStart, jdbcType=DATE},",
             "registration_end=#{registrationEnd, jdbcType=DATE}, organizer=#{organizer.id, jdbcType=INTEGER},",
             "alternative_matchday_name=#{alternativeMatchdayName, jdbcType=VARCHAR}, context = #{context.id, jdbcType=INTEGER}",
@@ -56,7 +56,7 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
             @Result(column = "id", property = "events", many = @Many(select = "de.ultical.backend.data.mapper.EventMapper.getEventsForEdition", fetchType = FetchType.EAGER) ),
             @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "tournament_format", property = "tournamentFormat", javaType = TournamentFormat.class, one = @One(select = "de.ultical.backend.data.mapper.TournamentFormatMapper.get") ),
-            @Result(column = "alternative_name", property = "alternativeName"),
+            @Result(column = "name", property = "name"),
             @Result(column = "season", property = "season", javaType = Season.class, one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
             @Result(column = "registration_start", property = "registrationStart"),
             @Result(column = "registration_end", property = "registrationEnd"),
@@ -73,7 +73,7 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
     @Results({ @Result(column = "alternative_matchday_name", property = "alternativeMatchdayName"),
             @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "tournament_format", property = "tournamentFormat", javaType = TournamentFormat.class, one = @One(select = "de.ultical.backend.data.mapper.TournamentFormatMapper.getForEdition") ),
-            @Result(column = "alternative_name", property = "alternativeName"),
+            @Result(column = "name", property = "name"),
             @Result(column = "season", property = "season", javaType = Season.class, one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
             @Result(column = "registration_start", property = "registrationStart"),
             @Result(column = "registration_end", property = "registrationEnd"),
@@ -88,7 +88,7 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
     @Results({ @Result(column = "alternative_matchday_name", property = "alternativeMatchdayName"),
             @Result(column = "id", property = "events", many = @Many(select = "de.ultical.backend.data.mapper.EventMapper.getEventsForEdition", fetchType = FetchType.EAGER) ),
             @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
-            @Result(column = "alternative_name", property = "alternativeName"),
+            @Result(column = "name", property = "name"),
             @Result(column = "season", property = "season", javaType = Season.class, one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
             @Result(column = "registration_start", property = "registrationStart"),
             @Result(column = "registration_end", property = "registrationEnd"),
@@ -105,7 +105,7 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
             @Result(column = "id", property = "events", many = @Many(select = "de.ultical.backend.data.mapper.EventMapper.getEventsForEdition", fetchType = FetchType.EAGER) ),
             @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "tournament_format", property = "tournamentFormat", javaType = TournamentFormat.class, one = @One(select = "de.ultical.backend.data.mapper.TournamentFormatMapper.getForEdition") ),
-            @Result(column = "alternative_name", property = "alternativeName"),
+            @Result(column = "name", property = "name"),
             @Result(column = "season", property = "season", javaType = Season.class, one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
             @Result(column = "registration_start", property = "registrationStart"),
             @Result(column = "registration_end", property = "registrationEnd"),

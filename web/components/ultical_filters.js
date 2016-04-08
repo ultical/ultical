@@ -228,17 +228,17 @@ app.filter('playername', [function () {
 	};
 }]);
 
-app.filter('editionname', ['$translate', 'matchdaynameFilter', function ($translate, matchdaynameFilter) {
+app.filter('editionname', [function () {
 	return function(edition) {
 		var editionName = '';
-		if (isEmptyString(edition.alternativeName)) {
+		if (isEmptyString(edition.name)) {
 			// use tournament format name
 			editionName = edition.tournamentFormat.name;
 			// add year
 			editionName += ' ' + edition.season.year;
 		} else {
 			// this tournament edition uses a different name than the tournament format
-			editionName = edition.alternativeName;
+			editionName = edition.name;
 		}
 		return editionName;
 	}
@@ -250,7 +250,13 @@ app.filter('eventname', ['$translate', 'matchdaynameFilter', 'editionnameFilter'
 			return '';
 		}
 
-		var eventName = editionnameFilter(event.tournamentEdition);
+		var eventName = '';
+
+		if (isEmptyString(event.name)) {
+			eventName = editionnameFilter(event.tournamentEdition);
+		} else {
+			eventName = event.name;
+		}
 
 		// this is a multi-matchday-tournament
 		if (event.matchdayNumber != -1) {
@@ -310,14 +316,18 @@ app.filter('season', ['$translate', function($translate) {
 }]);
 
 app.filter('division', ['$translate', function($translate) {
-	return function(obj) {
+	return function(obj, type) {
 		if (isEmpty(obj) || isEmpty(obj.divisionAge) || isEmpty(obj.divisionType)) {
 			return '';
 		}
 
+		if (isEmpty(type)) {
+			type = 'full';
+		}
+
 		var divisionString = '';
 
-		if (!isEmpty(obj.divisionIdentifier)) {
+		if (!isEmpty(obj.divisionIdentifier) && type == 'full') {
 			divisionString += obj.divisionIdentifier + ' ';
 		}
 
@@ -330,4 +340,31 @@ app.filter('division', ['$translate', function($translate) {
 
 		return divisionString;
 	}
+}]);
+
+app.filter('divisions', ['divisionFilter', function(divisionFilter) {
+	return function(divisionArray, type) {
+		if (isEmpty(divisionArray)) {
+			return '';
+		}
+
+		if (isEmpty(type)) {
+			type = 'full';
+		}
+
+		var divisionStrings = {};
+
+		angular.forEach(divisionArray, function(division) {
+			divisionStrings[divisionFilter(division, type)] = true;
+		});
+
+		var resultString = '';
+		angular.forEach(divisionStrings, function(val, divisionString) {
+			resultString += divisionString + ', ';
+		});
+
+		return resultString.substring(0, resultString.length - 2);
+	}
+
+
 }]);

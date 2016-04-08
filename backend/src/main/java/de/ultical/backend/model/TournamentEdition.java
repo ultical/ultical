@@ -18,7 +18,7 @@ public class TournamentEdition extends Identifiable {
 
     private TournamentFormat tournamentFormat;
 
-    private String alternativeName;
+    private String name;
     private Season season;
 
     @JsonSerialize(using = LocalDateSerializer.class)
