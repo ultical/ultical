@@ -45,10 +45,11 @@
 		<div class="row">
 			<div class="col-md-12 page-sub-title">
 				<div ng-if="false == (event.locations | emptyLocation)">
-					<span>{{ event.locations | location : 'city' }}</span>
-					<span class="margin-left-small cursor-pointer" ng-click="toggleLocationPanel()">
-						<i ng-if="panels.activeLocationPanel != 0" class="fa fa-caret-down"></i><i ng-if="panels.activeLocationPanel == 0" class="fa fa-caret-up"></i>
+					<span class="dropdown-caret-fixed-width cursor-pointer" ng-click="toggleLocationPanel()">
+						<i ng-if="panels.activeLocationPanel != 0" class="fa fa-caret-right dropdown-caret-padding"></i><i ng-if="panels.activeLocationPanel == 0" class="fa fa-caret-down"></i>
 					</span>
+					<span>{{ event.locations | location : 'city' }}</span>
+
 				</div>
 				<!-- TODO add options to look for an organizer -->
 			</div>

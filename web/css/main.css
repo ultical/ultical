@@ -496,3 +496,12 @@ select:not([multiple]) {
 .width100 {
 	width: 100%;
 }
+
+.dropdown-caret-fixed-width {
+	width: 0.5em;
+	display: inline-block;
+}
+
+.dropdown-caret-padding {
+	padding-left: 2px;
+}
