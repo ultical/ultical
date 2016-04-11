@@ -94,6 +94,7 @@ angular.module('ultical.events')
 	});
 
   // get own teams to determine if this user may register a team
+  $scope.ownTeams = null;
   if (authorizer.loggedIn()) {
     storage.getOwnTeamsCache(function(cachedOwnTeams) {
       $scope.ownTeams = cachedOwnTeams;

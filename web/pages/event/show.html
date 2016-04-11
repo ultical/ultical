@@ -189,7 +189,7 @@
 						<div class="col-md-12">
 							<div ng-if="loggedIn() && ownTeams.length > 0" class="btn btn-primary btn-ultical margin-top-small" data-animation="am-fade-and-slide-top" data-template-url="pages/event/registration_modal.html?v=14" bs-modal="modal">{{ 'event.register.title' | translate }}</div>
 							<span ng-if="!loggedIn()">{{ 'event.register.notLoggedIn' | translate }}</span>
-							<span ng-if="loggedIn() && ownTeams.length == 0">{{ 'event.register.noOwnTeam' | translate }}</span>
+							<span ng-if="loggedIn() && ownTeams != null &&  ownTeams.length == 0">{{ 'event.register.noOwnTeam' | translate }}</span>
 						</div>
 					</div>
 				</div>

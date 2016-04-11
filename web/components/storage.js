@@ -25,6 +25,11 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
           own: {},
       },
 
+      resetUserSpecifics: function() {
+          this.own.teams = [];
+          this.requested.own = {};
+      },
+
 			getEmptyEvent: function() {
 				return createEmptyEvent();
 			},
@@ -61,16 +66,19 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
       getOwnTeamsCache: function(callback) {
         var that = this;
-        callback(that.own.teams);
         if (!that.requested.own.teams) {
           that.getOwnTeams(callback);
+        } else {
+          callback(that.own.teams);
         }
       },
 
 			getOwnTeams: function(callback) {
 				var that = this;
-				callback(that.own.teams);
-				serverApi.getOwnTeams(function(teams) {
+				if (that.requested.own.teams) {
+          callback(that.own.teams);
+				}
+        serverApi.getOwnTeams(function(teams) {
 					that.own.teams = teams;
           that.requested.own.teams = true;
 					var loopIndex = newLoopIndex();
