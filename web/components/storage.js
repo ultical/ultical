@@ -21,6 +21,10 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			teamsIndexed: {},
 			playerIndexed: {},
 
+      requested: {
+          own: {},
+      },
+
 			getEmptyEvent: function() {
 				return createEmptyEvent();
 			},
@@ -55,11 +59,20 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				});
 			},
 
+      getOwnTeamsCache: function(callback) {
+        var that = this;
+        callback(that.own.teams);
+        if (!that.requested.own.teams) {
+          that.getOwnTeams(callback);
+        }
+      },
+
 			getOwnTeams: function(callback) {
 				var that = this;
 				callback(that.own.teams);
 				serverApi.getOwnTeams(function(teams) {
 					that.own.teams = teams;
+          that.requested.own.teams = true;
 					var loopIndex = newLoopIndex();
 					angular.forEach(teams, function(team) {
 						storeTeam(team, loopIndex);

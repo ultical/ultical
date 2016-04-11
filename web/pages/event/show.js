@@ -93,6 +93,13 @@ angular.module('ultical.events')
 
 	});
 
+  // get own teams to determine if this user may register a team
+  if (authorizer.loggedIn()) {
+    storage.getOwnTeamsCache(function(cachedOwnTeams) {
+      $scope.ownTeams = cachedOwnTeams;
+    });
+  }
+
 	// collapses
 	$scope.panels = {
 			activeLocationPanel: 1,
