@@ -44,14 +44,9 @@
 						<div class="event-list-text">
 							<div class="event-list-text-top">{{ event | eventname }}</div>
 							<div class="event-list-text-bottom">
-								<span class="margin-right-small" ng-if="event.x.divisions | notEmpty">
+								<span class="margin-right-small" ng-if="event.x.divisions | notEmpty">{{ event.x.divisions | divisions : 'basic' }}</span>
 									<!-- 								<i class="fa fa-venus-mars"></i> -->
-									{{ event.x.divisions | divisions : 'basic' }}
-								</span>
-								<span class="margin-right" ng-if="event.x.mainLocation | notEmpty">
-									<i class="fa fa-map-marker"></i> {{ event.x.mainLocation | location : 'city' }}
-								</span>
-								&nbsp;
+								<span class="margin-right" ng-if="event.x.mainLocation | notEmpty"><i class="fa fa-map-marker"></i> {{ event.x.mainLocation | location : 'city' }}</span>
 							</div>
 						</div>
 				</div>

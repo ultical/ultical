@@ -63,6 +63,10 @@ button, input, optgroup, select, textarea {
 	.navbar-header {
 		padding-left: 10px;
 	}
+
+	td.mega-wide {
+		width: 50%;
+	}
 }
 
 #nav-logo img {
