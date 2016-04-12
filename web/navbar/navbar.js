@@ -1,8 +1,8 @@
 'use strict';
 
 //nav bar controller
-app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer', 'amMoment', '$rootScope', '$stateParams', '$location',
-                              function($scope, CONFIG, $filter, $translate, $state, authorizer, amMoment, $rootScope, $stateParams, $location) {
+app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer', 'amMoment', '$rootScope', '$stateParams', '$location', 'storage',
+                              function($scope, CONFIG, $filter, $translate, $state, authorizer, amMoment, $rootScope, $stateParams, $location, storage) {
 
 	$scope.logoSide = "front";
 
@@ -10,7 +10,7 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 		console.log("go");
 		$state.go('app.eventsList');
 	}
-	
+
 	$scope.toggleLogoFlip = function(){
 		$scope.logoSide = toggle($scope.logoSide);
 	}
@@ -33,6 +33,7 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 
 	$scope.logOut = function() {
 		authorizer.logOut();
+    storage.resetUserSpecifics();
 		$state.reload();
 	};
 

@@ -92,6 +92,7 @@ app.config(function ($translateProvider) {
 	});
 
 	$translateProvider
+	.addInterpolation('$translateMessageFormatInterpolation')
 	.fallbackLanguage('de')
 	.useSanitizeValueStrategy('escaped');
 

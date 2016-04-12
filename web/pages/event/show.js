@@ -152,6 +152,14 @@ angular.module('ultical.events')
     return $state.href('app.editionShow', {editionId: edition.id, editionSlug: slug.slugify($filter('editionname')(edition)) });
   }
 
+  // get own teams to determine if this user may register a team
+  $scope.ownTeams = null;
+  if (authorizer.loggedIn()) {
+    storage.getOwnTeamsCache(function(cachedOwnTeams) {
+      $scope.ownTeams = cachedOwnTeams;
+    });
+  }
+
 	// collapses
 	$scope.panels = {
 			activeLocationPanel: 1,

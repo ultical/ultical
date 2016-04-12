@@ -26,7 +26,7 @@
 	<div ng-class="{'hidden-print': printing}" ng-show="event | notEmpty">
 
 		<div class="row">
-			<div class="col-md-7">
+			<div class="col-md-8">
 
 		<div class="row">
 			<div class="col-md-12">
@@ -130,7 +130,7 @@
 		<!-- INFO -->
 		<div class="row" ng-class="{'margin-top': !info.showFormatInfo}" ng-if="info.showEventInfo">
 			<div class="col-md-12">
-				<div class="info-text user-textarea" ng-class="{'padding-top': info.showFormatInfo">{{ event.info }}</div>
+				<div class="info-text user-textarea" ng-class="{'padding-top': info.showFormatInfo }">{{ event.info }}</div>
 			</div>
 		</div>
 
@@ -187,15 +187,16 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							<div ng-if="loggedIn()" class="btn btn-primary btn-ultical margin-top-small" data-animation="am-fade-and-slide-top" data-template-url="pages/event/registration_modal.html?v=14" bs-modal="modal">{{ 'event.register.title' | translate }}</div>
+							<div ng-if="loggedIn() && ownTeams.length > 0" class="btn btn-primary btn-ultical margin-top-small" data-animation="am-fade-and-slide-top" data-template-url="pages/event/registration_modal.html?v=14" bs-modal="modal">{{ 'event.register.title' | translate }}</div>
 							<span ng-if="!loggedIn()">{{ 'event.register.notLoggedIn' | translate }}</span>
+							<span ng-if="loggedIn() && ownTeams != null &&  ownTeams.length == 0">{{ 'event.register.noOwnTeam' | translate }}</span>
 						</div>
 					</div>
 				</div>
 				<div ng-if="!event.tournamentEdition.x.registrationIsOpen">
 					<!-- Registration is not open - why? -->
-					<div ng-if="event.tournamentEdition.x.registrationTime == 'future'">{{ 'event.registration' | translate }} {{ 'event.registrationStartsAt' | translate }} {{ event.tournamentEdition.registrationStart | amDateFormat : ('general.amDateFormat' | translate) }}</div>
-					<div ng-if="event.tournamentEdition.x.registrationTime == 'past'">{{ 'event.registration' | translate }} {{ 'event.registrationIsOverSince' | translate }} {{ event.tournamentEdition.registrationEnd | amDateFormat : ('general.amDateFormat' | translate) }}</div>
+					<div ng-if="event.tournamentEdition.x.registrationTime == 'future'">{{ 'event.registrationStartsAt' | translate }} {{ event.tournamentEdition.registrationStart | amDateFormat : ('general.amDateFormat' | translate) }}</div>
+					<div ng-if="event.tournamentEdition.x.registrationTime == 'past'">{{ 'event.registrationIsOverSince' | translate }} {{ event.tournamentEdition.registrationEnd | amDateFormat : ('general.amDateFormat' | translate) }}</div>
 					<div ng-if="event.tournamentEdition.x.registrationTime == 'never' && event.x.timing == 'future'">{{ 'event.registrationUndefined' | translate }}</div>
 				</div>
 			</div>
@@ -212,7 +213,7 @@
 						<div class="panel-heading cursor-pointer" role="tab">
 							<h3 class="panel-title" bs-collapse-toggle>
 								<span>{{ division | division }}</span>
-								<span ng-if="!division.registrationComplete && division.numberSpots != 0" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numberSpots }} {{ 'event.spotsAvailable' | translate }}</span><span class="panel-title-addon" ng-if="!division.registrationComplete && division.playingTeams.length > 0"> - {{ division.playingTeams.length }} {{ 'event.spotsApplied' | translate }}</span>
+								<span ng-if="!division.registrationComplete && division.numberSpots != 0" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numberSpots }} {{ 'event.spotsAvailable' | translate }}</span><span class="panel-title-addon" ng-if="!division.registrationComplete && division.playingTeams.length > 0"> - {{ 'event.spotsApplied' | translate : {numApplications: division.playingTeams.length }: 'messageformat' }}</span>
 								<span ng-if="division.registrationComplete" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numTeamsConfirmed }} {{ 'general.teams' | translate }} &nbsp;</span>
 							</h3>
 						</div>

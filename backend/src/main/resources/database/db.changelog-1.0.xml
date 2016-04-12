@@ -989,6 +989,9 @@
 			<column name="own_spirit_score" type="FLOAT(4)" />
 		</addColumn>
 	</changeSet>
+	<changeSet author="bas" id="bas83">
+		<tagDatabase tag="ultical_bas_v.1.16" />
+	</changeSet>
 	<changeSet author="bas" id="bas-editionshow-1">
 		<addColumn tableName="TOURNAMENT_EDITION">
 			<column name="name" type="VARCHAR(200)" />
@@ -1016,5 +1019,12 @@
 	</changeSet>
 	<changeSet author="bas" id="bas-editionshow-6">
 		<tagDatabase tag="bas_editionshow_v.1.16" />
+	</changeSet>
+	<changeSet author="bas" id="bas84">
+		<addPrimaryKey tableName="EVENT_LOCATION" columnNames="event, location" />
+	</changeSet>
+	<changeSet author="bas" id="bas85">
+		<addDefaultValue columnName="version" tableName="DIVISION_CONFIRMATION"
+			defaultValueNumeric="1" />
 	</changeSet>
 </databaseChangeLog>

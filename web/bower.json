@@ -24,6 +24,7 @@
     "angular": "*",
     "angular-ui-router": "*",
     "angular-translate": "*",
+    "angular-translate-interpolation-messageformat": "*",
     "angular-sanitize": "*",
     "angular-strap": "*",
     "angular-animate": "*",
