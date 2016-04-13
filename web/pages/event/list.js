@@ -2,13 +2,17 @@
 
 angular.module('ultical.events', [])
 
-.controller('EventListCtrl', ['$scope', 'storage', '$state', '$filter', 'headService', 'moment',
-                              function($scope, storage, $state, $filter, headService, moment) {
+.controller('EventListCtrl', ['$scope', 'storage', '$state', '$filter', 'headService', 'moment', '$stateParams',
+                              function($scope, storage, $state, $filter, headService, moment, $stateParams) {
 
   headService.setTitle('event.list.title', {});
 
 	$scope.sortKey = 'startDate';
 	$scope.sortOrderDesc = false;
+
+  if ('year' in $stateParams) {
+    // TODO: start with this year
+  }
 
 	storage.getEvents(function(data) {
 		$scope.events = data;
