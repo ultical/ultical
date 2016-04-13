@@ -2,8 +2,8 @@
 
 angular.module('ultical.events')
 
-.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout', 'headService', 'Slug',
-                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout, headService, slug) {
+.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout', 'headService',
+                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout, headService) {
 
 	$scope.event = {};
   $scope.edition = {};
