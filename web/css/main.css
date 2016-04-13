@@ -509,3 +509,29 @@ select:not([multiple]) {
 .dropdown-caret-padding {
 	padding-left: 2px;
 }
+
+#eventpage-title h3 {
+	margin-top: 12px;
+	margin-bottom: 2px;
+}
+
+/* breadcrumbs */
+.nav-breadcrumb {
+	padding-left: 0px;
+	color: grey;
+	list-style: none;
+}
+
+.nav-breadcrumb a {
+	color: grey;
+}
+
+.nav-breadcrumb>li {
+	display: inline-block;
+}
+
+.nav-breadcrumb>li+li:before {
+    padding: 0 5px;
+    color: #ccc;
+    content: ">";
+}

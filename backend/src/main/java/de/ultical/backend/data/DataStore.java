@@ -667,6 +667,17 @@ public class DataStore {
         }
     }
 
+    public TournamentFormat getFormatByEdition(int editionId) {
+        try {
+            TournamentFormatMapper tfMapper = this.sqlSession.getMapper(TournamentFormatMapper.class);
+            return tfMapper.getByEdition(editionId);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public TournamentFormat getFormatByEvent(int eventId) {
         try {
             TournamentFormatMapper tfMapper = this.sqlSession.getMapper(TournamentFormatMapper.class);

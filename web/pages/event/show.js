@@ -50,7 +50,7 @@ angular.module('ultical.events')
   function init(format) {
 		$scope.format = format;
 
-		angular.forEach(format.editions, function(edition) {
+    angular.forEach(format.editions, function(edition) {
       if ($scope.show.edition) {
         if (edition.id == $stateParams.editionId) {
           $scope.edition = edition;
@@ -66,7 +66,11 @@ angular.module('ultical.events')
       }
 		});
 
-    // find out if this event is the last one of this edition (for this division)
+    if ($scope.show.event) {
+      $scope.show.linkToEdition = true; //!$scope.event.x.isSingleEvent;
+    }
+
+		// find out if this event is the last one of this edition (for this division)
     $scope.latestEvents = $scope.edition.x.lastestEventPerDivision;
 
     // find latest event and set it to use in calculations
@@ -145,12 +149,6 @@ angular.module('ultical.events')
 
 	};
 
-  $scope.getEditionUrl = function(edition) {
-    if (isEmpty(edition)) {
-      return '';
-    }
-    return $state.href('app.editionShow', {editionId: edition.id, editionSlug: slug.slugify($filter('editionname')(edition)) });
-  }
 
   // get own teams to determine if this user may register a team
   $scope.ownTeams = null;
