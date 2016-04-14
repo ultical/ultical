@@ -67,7 +67,7 @@
 				<span class="dropdown-caret-fixed-width cursor-pointer" ng-click="toggleLocationPanel()">
 					<i ng-if="panels.activeLocationPanel != 0" class="fa fa-caret-right dropdown-caret-padding"></i><i ng-if="panels.activeLocationPanel == 0" class="fa fa-caret-down"></i>
 				</span>
-				<span>{{ event.locations | location : 'city' }}</span>
+				<span class="cursor-pointer" ng-click="toggleLocationPanel()">{{ event.locations | location : 'city' }}</span>
 
 				<!-- TODO add options to look for an organizer -->
 			</div>
