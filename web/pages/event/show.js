@@ -15,6 +15,10 @@ angular.module('ultical.events')
 		return authorizer.loggedIn();
 	}
 
+  $scope.tabs = {
+    activeTab: 'events',
+  };
+
   // check if we show an event or an edition
   if ($stateParams.eventId !== undefined) {
     $scope.show = {
@@ -67,7 +71,7 @@ angular.module('ultical.events')
 		});
 
     if ($scope.show.event) {
-      $scope.show.linkToEdition = true; //!$scope.event.x.isSingleEvent;
+      $scope.show.linkToEdition = !$scope.event.x.isSingleEvent;
     }
 
 		// find out if this event is the last one of this edition (for this division)
@@ -75,15 +79,12 @@ angular.module('ultical.events')
 
     // find latest event and set it to use in calculations
     if ($scope.show.edition) {
-      console.log("scope event", $scope.event);
       $scope.event = { endDate: '1900-01-01'};
       angular.forEach($scope.latestEvents, function(latestEvent) {
-        console.log("late event", latestEvent);
         if (latestEvent.endDate > $scope.event.endDate) {
           $scope.event = latestEvent;
         }
       });
-      console.log("scope event", $scope.event);
     }
 
     // if this event is not in the future any more the team lists are different

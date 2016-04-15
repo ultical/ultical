@@ -174,6 +174,8 @@ TRANSLATIONS['de'] = {
 				comment: 'Nachricht',
 				commentPlaceholder: 'Hinterlasse eine Nachricht an die Organisatoren, wenn du willst...',
 			},
+			editionViewDivisions: 'Divisionen',
+			editionViewEvents: 'Termine',
 			organizer: 'Ausrichter',
 			localOrganizer: 'Veranstalter vor Ort',
 			linkToMaps: 'Google Maps Link',

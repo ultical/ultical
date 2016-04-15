@@ -335,6 +335,10 @@ select:not([multiple]) {
 	width: 33px;
 }
 
+#edition-view-events .event-list-date-right {
+	width: 80px;
+}
+
 .event-list-text {
 	display: table-cell;
 }

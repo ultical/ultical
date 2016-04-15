@@ -220,10 +220,21 @@
 			</div>
 		</div>
 
-		<!-- DIVISIONS -->
-		<div ng-if="show.divisions && event.x.divisions.length > 0" class="row margin-top">
+		<!-- EDITION EVENTS/DIVISION TAB-CHOOSER -->
+		<div class="row margin-top" ng-if="show.edition">
 			<div class="col-md-12">
-				<div class="strong">{{ 'event.teamList.title' | translate }}</div>
+				<div class="margin-top" bs-active-pane="tabs.activeTab" bs-tabs>
+					<div bs-pane title="{{ 'event.editionViewEvents' | translate }}" name="events"></div>
+					<div bs-pane title="{{ 'event.editionViewDivisions' | translate }}" name="divisions"></div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- DIVISIONS -->
+		<div ng-if="show.divisions && event.x.divisions.length > 0 && (!show.edition || tabs.activeTab == 'divisions')" class="row margin-top">
+			<div class="col-md-12">
+				<div ng-if="!show.edition" class="strong">{{ 'event.teamList.title' | translate }}</div>
 
 				<div class="panel-group margin-top-small" ng-model="panels.divisionPanel" role="tablist" aria-multiselectable="true" bs-collapse>
 
@@ -342,12 +353,40 @@
 			</div>
 		</div>
 
+		<!-- EVENTS -->
+		<div ng-if="show.edition && edition.events.length > 0 && tabs.activeTab == 'events'" class="row margin-top">
+			<div class="col-md-12" id="edition-view-events">
+
+				<div class="row" ng-repeat="event in edition.events">
+					<div class="col-md-12">
+						<a ui-sref="app.eventShow({eventId: event.id, eventSlug: (( event | eventname) | slugify ) })">
+							<div class="col-md-9 event-list-row">
+
+								<div class="event-list-date event-list-date-left">{{ event.startDate | amDateFormat : 'D' }}</div>
+								<div class="event-list-date event-list-date-dash">-</div>
+								<div class="event-list-date event-list-date-right">{{ event.endDate | amDateFormat : 'DD.MM.YY' }}</div>
+
+								<div class="event-list-text">
+									<div class="event-list-text-top">{{ event | eventname }}</div>
+									<div class="event-list-text-bottom">
+										<span class="margin-right-small" ng-if="event.x.divisions | notEmpty">{{ event.x.divisions | divisions : 'basic' }}</span>
+										<span class="margin-right" ng-if="event.x.mainLocation | notEmpty"><i class="fa fa-map-marker"></i> {{ event.x.mainLocation | location : 'city' }}</span>
+									</div>
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
 	</div>
 </div>
 </div>
 
 	<!-- PRINTING TEMPLATE -->
-	<div class="print-size visible-print-block" ng-if="loggedIn() && event.x.own && printing">
+	<div class="print-size visible-print-block" ng-if="loggedIn() && event.x.own && printing && show.event">
 		<div class="row padding-bottom" ng-class="{'hidden-print': !printAll && panels.divisionPanel != $index, 'border-bottom': printAll}" ng-repeat="division in event.x.divisions | orderBy : divisionOrder">
 
 			<div class="col-xs-12">
