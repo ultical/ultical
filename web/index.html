@@ -57,15 +57,28 @@
 <body>
 
 	<div id="wrapper">
+
 		<div ng-include="'navbar/nav.html'" ng-controller="NavBarCtrl"></div>
 
 		<div class="container">
-			<div id="page-alert-space"></div>
-			<div class="view-container" ng-cloak ui-view></div>
+
+			<div id="page-alert-space">
+
+				<!-- you need JS enabled message -->
+				<noscript>
+					<div class="alert alert-danger">
+						UltiCal needs JavaScript in order to work. Please enable it in your browser's settings...
+					</div>
+				</noscript>
+			</div>
+
+			<div class="view-container" ui-view></div>
 		</div>
 
 		<footer ng-include="'footer/footer.html'"></footer>
 	</div>
+
+
 
 	<!-- bower:js -->
 	<script src="bower_components/angular/angular.min.js"></script>
