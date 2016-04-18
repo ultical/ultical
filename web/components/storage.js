@@ -228,18 +228,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
         });
 
 				serverApi.getFormatByEdition(editionId, function(data) {
-					storeTournamentFormat(data, newLoopIndex());
-          var formatToReplace = -1;
-          angular.forEach(that.formats, function(format, idx) {
-            if (format.id == data.id) {
-              formatToReplace = idx;
-            }
-          });
-          if (formatToReplace != -1) {
-            that.formats.splice(formatToReplace, 1);
-          }
-          that.formats.push(data);
-					callback(data);
+          that.addFormat(that, data, callback);
 				});
       },
 
@@ -257,20 +246,31 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
         });
 
 				serverApi.getFormatByEvent(eventId, function(data) {
-					storeTournamentFormat(data, newLoopIndex());
-          var formatToReplace = -1;
-          angular.forEach(that.formats, function(format, idx) {
-            if (format.id == data.id) {
-              formatToReplace = idx;
-            }
-          });
-          if (formatToReplace != -1) {
-            that.formats.splice(formatToReplace, 1);
-          }
-          that.formats.push(data);
-					callback(data);
+					that.addFormat(that, data, callback);
 				});
 			},
+
+      getFormat: function(formatId, callback) {
+        var that = this;
+          serverApi.getFormat(formatId, function(data) {
+            that.addFormat(that, data, callback);
+          });
+      },
+
+      addFormat: function(that, data, callback) {
+        storeTournamentFormat(data, newLoopIndex());
+        var formatToReplace = -1;
+        angular.forEach(that.formats, function(format, idx) {
+          if (format.id == data.id) {
+            formatToReplace = idx;
+          }
+        });
+        if (formatToReplace != -1) {
+          that.formats.splice(formatToReplace, 1);
+        }
+        that.formats.push(data);
+        callback(data);
+      },
 
 			getEvent: function(eventId, callback) {
 				var that = this;

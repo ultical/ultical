@@ -15,26 +15,24 @@
 			"postalCode": "{{ event.location.zipCode }}",
 			"streetAddress": "{{ event.location.street }}",
 		},
-		"description": "{{ edition.tournamentFormat.description }}",
+		"description": "{{ format.description }}",
 		"organizer": {
 			"@type": "Organization",
-			"name": "{{ edition.tournamentFormat.association.name }}"
+			"name": "{{ format.association.name }}"
 		}
 	}
 	</script>
 
-	<div ng-class="{'hidden-print': printing}" ng-show="event | notEmpty">
+	<div class="row" ng-class="{'hidden-print': printing}">
+		<div class="col-md-8">
 
-		<div class="row">
-			<div class="col-md-8">
-
-			<!-- BREADCRUMBS -->
-		<div class="row">
+		<!-- BREADCRUMBS -->
+		<div class="row" ng-if="!show.format">
 			<div class="col-md-12">
 				<ol class="nav-breadcrumb">
 					<li><a ui-sref="app.eventsListYear({year: edition.season.year})">{{ edition.season.year }}</a></li>
-					<li>{{ event.tournamentEdition.tournamentFormat.name }}</li>
-					<li ng-if="show.linkToEdition"><a ui-sref="app.editionShow({editionId: event.tournamentEdition.id, editionSlug: ((edition | editionname) | slugify) })">{{ edition | editionname }}</a></li>
+					<li><a ui-sref="app.formatShow({formatId: format.id, formatSlug: (format.name | slugify) })">{{ format.name }}</a></li>
+					<li ng-if="show.linkToEdition"><a ui-sref="app.editionShow({editionId: edition.id, editionSlug: ((edition | editionname) | slugify) })">{{ edition | editionname }}</a></li>
 				</ol>
 			</div>
 		</div>
@@ -44,6 +42,7 @@
 			<div class="col-md-12" id="eventpage-title">
 				<h3 ng-if="show.event" class="page-title">{{ event | eventname : 'full' }}</h3>
 				<h3 ng-if="show.edition" class="page-title">{{ edition | editionname }}</h3>
+				<h3 ng-if="show.format" class="page-title">{{ format.name }}</h3>
 			</div>
 		</div>
 
@@ -108,7 +107,8 @@
 			<div class="col-md-12">
 				<div class="strong">{{ 'event.organizer' | translate }}</div>
 				<!-- if the edition's organizer equals the association's organizer, don't show the association (else there would be duplicates) -->
-				<div ng-if="(edition.tournamentFormat.association | notEmpty) && (edition.tournamentFormat.association.contact == null || (edition.tournamentFormat.association.contact.id != edition.organizer.id))">{{ edition.tournamentFormat.association.name }}</div>				<div>
+				<div ng-if="show.format || ((format.association | notEmpty) && (format.association.contact == null || (format.association.contact.id != edition.organizer.id)))">{{ format.association.name }}</div>
+				<div ng-if="!show.format">
 					{{ edition.organizer.name }}&nbsp;&nbsp;
 					<a ng-href="mailto:{{ edition.organizer.email }}">
 						<span ng-if="edition.organizer.email | notEmpty">
@@ -141,7 +141,7 @@
 		<!-- FORMAT DESCRIPTION-->
 		<div class="row margin-top" ng-if="info.showFormatInfo">
 			<div class="col-md-12">
-				<div class="info-text user-textarea">{{ edition.tournamentFormat.description }}</div>
+				<div class="info-text user-textarea">{{ format.description }}</div>
 			</div>
 		</div>
 
@@ -153,11 +153,11 @@
 		</div>
 
 		<!-- URL -->
-		<div class="row" ng-class="{'margin-top': !info.showFormatInfo && !info.showEventInfo }" ng-if="show.url && edition.tournamentFormat.url | notEmpty">
+		<div class="row" ng-class="{'margin-top': !info.showFormatInfo && !info.showEventInfo }" ng-if="show.formatUrl && format.url | notEmpty">
 			<div class="col-md-12">
 				<div ng-class="{'padding-top info-text': (info.showFormatInfo || info.showEventInfo) }">
 					<i class="fa fa-link fa-fw"></i>
-					<a target="_blank" ng-href="{{ edition.tournamentFormat.url | url }}">{{ edition.tournamentFormat.url }}</a>
+					<a target="_blank" ng-href="{{ format.url | url }}">{{ format.url }}</a>
 				</div>
 			</div>
 		</div>
@@ -229,7 +229,6 @@
 				</div>
 			</div>
 		</div>
-
 
 		<!-- DIVISIONS -->
 		<div ng-if="show.divisions && event.x.divisions.length > 0 && (!show.edition || tabs.activeTab == 'divisions')" class="row margin-top">
@@ -381,9 +380,34 @@
 			</div>
 		</div>
 
-	</div>
-</div>
-</div>
+		<!-- EDITIONS LISTING -->
+		<div ng-if="show.format" class="row margin-top-big" id="edition-listing">
+			<div class="col-md-12">
+				<div class="strong margin-bottom-small">
+						Veranstaltungen
+				</div>
+
+				<div class="row" ng-repeat="edition in format.editions | orderBy : 'season.year'">
+					<div class="col-md-12">
+						<a ui-sref="app.editionShow({editionId: edition.id, editionSlug: (( edition | editionname) | slugify ) })">
+							<div class="col-md-9 event-list-row">
+								<div class="event-list-date">
+									{{ edition.season.year }}
+								</div>
+								<div class="event-list-text">
+									{{ edition | editionname }}
+								</div>
+							</div>
+						</a>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		</div> <!-- col-md-8 -->
+	</div> <!-- hiding-print -->
 
 	<!-- PRINTING TEMPLATE -->
 	<div class="print-size visible-print-block" ng-if="loggedIn() && event.x.own && printing && show.event">

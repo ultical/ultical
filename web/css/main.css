@@ -377,6 +377,19 @@ select:not([multiple]) {
 	cursor: pointer;
 }
 
+#edition-listing .event-list-row {
+	padding-top: 4px;
+	padding-bottom: 6px;
+}
+
+#edition-listing .event-list-date {
+	display: block;
+}
+
+#edition-listing .event-list-text {
+	font-weight: 500;
+}
+
 .page-sub-title {
 	font-size: 124%;
 }

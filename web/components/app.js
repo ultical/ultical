@@ -56,6 +56,10 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		url: "/{editionSlug}--e{editionId:int}",
 		templateUrl: "pages/event/show.html?v="+version,
 	})
+	.state('app.formatShow', {
+		url: "/{formatSlug}--f{formatId:int}",
+		templateUrl: "pages/event/show.html?v="+version,
+	})
 	.state('app.teamsList', {
 		url: "/teams",
 		templateUrl: "pages/team/list.html?v="+version,

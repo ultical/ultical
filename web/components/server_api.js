@@ -142,6 +142,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
         del('teams/' + teamId, callback, errCallback);
     },
 
+    getFormat: function(formatId, callback) {
+        get('format/' + formatId, callback);
+    },
+
     getFormatByEdition: function(editionId, callback) {
       get('format/edition/' + editionId, callback);
     },
