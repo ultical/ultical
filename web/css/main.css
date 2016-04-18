@@ -383,11 +383,12 @@ select:not([multiple]) {
 }
 
 #edition-listing .event-list-date {
-	display: block;
+	width: 52px;
 }
 
 #edition-listing .event-list-text {
 	font-weight: 500;
+	padding-top: 2px;
 }
 
 .page-sub-title {

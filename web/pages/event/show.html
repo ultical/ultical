@@ -356,14 +356,14 @@
 		<div ng-if="show.edition && edition.events.length > 0 && tabs.activeTab == 'events'" class="row margin-top">
 			<div class="col-md-12" id="edition-view-events">
 
-				<div class="row" ng-repeat="event in edition.events">
+				<div class="row" ng-repeat="event in (orderedEvents = edition.events)">
 					<div class="col-md-12">
 						<a ui-sref="app.eventShow({eventId: event.id, eventSlug: (( event | eventname) | slugify ) })">
-							<div class="col-md-9 event-list-row">
+							<div class="col-md-9 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != event.startDate || orderedEvents[$index - 1].endDate != event.endDate">
 
-								<div class="event-list-date event-list-date-left">{{ event.startDate | amDateFormat : 'D' }}</div>
-								<div class="event-list-date event-list-date-dash">-</div>
-								<div class="event-list-date event-list-date-right">{{ event.endDate | amDateFormat : 'DD.MM.YY' }}</div>
+								<div class="event-list-date event-list-date-left">{{ showDate ? (event.startDate | amDateFormat : 'D') : '' }}</div>
+								<div class="event-list-date event-list-date-dash">{{ showDate ? '-' : '' }}</div>
+								<div class="event-list-date event-list-date-right">{{ showDate ? (event.endDate | amDateFormat : 'DD.MM.YY') : '' }}</div>
 
 								<div class="event-list-text">
 									<div class="event-list-text-top">{{ event | eventname }}</div>
@@ -387,12 +387,12 @@
 						Veranstaltungen
 				</div>
 
-				<div class="row" ng-repeat="edition in format.editions | orderBy : 'season.year'">
+				<div class="row" ng-repeat="edition in (orderedEditions = format.editions | orderBy : 'season.year')">
 					<div class="col-md-12">
 						<a ui-sref="app.editionShow({editionId: edition.id, editionSlug: (( edition | editionname) | slugify ) })">
 							<div class="col-md-9 event-list-row">
 								<div class="event-list-date">
-									{{ edition.season.year }}
+									{{ orderedEditions[$index - 1].season.year != edition.season.year ? edition.season.year : '' }}
 								</div>
 								<div class="event-list-text">
 									{{ edition | editionname }}
