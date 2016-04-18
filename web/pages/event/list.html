@@ -34,24 +34,19 @@
 
 			<!-- event -->
 			<div ng-repeat-end class="row">
-					<a ng-href="{{ getEventUrl(event) }}">
-				<div class="col-md-9 event-list-row">
-						<div class="event-list-date event-list-date-left">{{ event.startDate | amDateFormat : 'D' }}</div>
-						<div class="event-list-date event-list-date-dash">-</div>
-						<div class="event-list-date event-list-date-right">{{ event.endDate | amDateFormat : 'D' }}</div>
+					<a ui-sref="app.eventShow({eventId: event.id, eventSlug: ((event | eventname) | slugify) })">
+				<div class="col-md-9 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != event.startDate || orderedEvents[$index - 1].endDate != event.endDate">
+						<div class="event-list-date event-list-date-left">{{ showDate ? (event.startDate | amDateFormat : 'D') : '' }}</div>
+						<div class="event-list-date event-list-date-dash">{{ showDate ? '-' : '' }}</div>
+						<div class="event-list-date event-list-date-right">{{ showDate ? (event.endDate | amDateFormat : 'D') :'' }}</div>
 						<!-- <span ng-if="(event.startDate | amDateFormat : 'M') != (event.endDate | amDateFormat : 'M')">&nbsp;{{ event.endDate | amDateFormat : 'MMM' }}</span> -->
 
 						<div class="event-list-text">
 							<div class="event-list-text-top">{{ event | eventname }}</div>
 							<div class="event-list-text-bottom">
-								<span class="margin-right-small" ng-if="event.x.divisions | notEmpty">
+								<span class="margin-right-small" ng-if="event.x.divisions | notEmpty">{{ event.x.divisions | divisions : 'basic' }}</span>
 									<!-- 								<i class="fa fa-venus-mars"></i> -->
-									{{ event.x.divisions | divisions : 'basic' }}
-								</span>
-								<span class="margin-right" ng-if="event.x.mainLocation | notEmpty">
-									<i class="fa fa-map-marker"></i> {{ event.x.mainLocation | location : 'city' }}
-								</span>
-								&nbsp;
+								<span class="margin-right" ng-if="event.x.mainLocation | notEmpty"><i class="fa fa-map-marker"></i> {{ event.x.mainLocation | location : 'city' }}</span>
 							</div>
 						</div>
 				</div>

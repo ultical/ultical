@@ -16,9 +16,9 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			teams: [],
 			seasons: [],
       contexts: [],
+      formats: [],
 
-			formatsByEventIndexed: {},
-			teamsIndexed: {},
+      teamsIndexed: {},
 			playerIndexed: {},
 
       requested: {
@@ -216,18 +216,61 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				}
 			},
 
+      getFormatForEdition: function(editionId, callback) {
+        var that = this;
+
+        angular.forEach(this.formats, function(format) {
+          angular.forEach(format.editions, function(edition) {
+            if (edition.id == editionId) {
+              callback(format);
+            }
+          });
+        });
+
+				serverApi.getFormatByEdition(editionId, function(data) {
+          that.addFormat(that, data, callback);
+				});
+      },
+
 			getFormatForEvent: function(eventId, callback) {
 				var that = this;
 
-				if (eventId in this.formatsByEventIndexed) {
-					callback(this.formatsByEventIndexed[eventId]);
-				}
+        angular.forEach(this.formats, function(format) {
+          angular.forEach(format.editions, function(edition) {
+            angular.forEach(edition.events, function(event) {
+              if (event.id == eventId) {
+                callback(format);
+              }
+            });
+          });
+        });
+
 				serverApi.getFormatByEvent(eventId, function(data) {
-					storeTournamentFormat(data, newLoopIndex());
-					that.formatsByEventIndexed[eventId] = data;
-					callback(data);
+					that.addFormat(that, data, callback);
 				});
 			},
+
+      getFormat: function(formatId, callback) {
+        var that = this;
+          serverApi.getFormat(formatId, function(data) {
+            that.addFormat(that, data, callback);
+          });
+      },
+
+      addFormat: function(that, data, callback) {
+        storeTournamentFormat(data, newLoopIndex());
+        var formatToReplace = -1;
+        angular.forEach(that.formats, function(format, idx) {
+          if (format.id == data.id) {
+            formatToReplace = idx;
+          }
+        });
+        if (formatToReplace != -1) {
+          that.formats.splice(formatToReplace, 1);
+        }
+        that.formats.push(data);
+        callback(data);
+      },
 
 			getEvent: function(eventId, callback) {
 				var that = this;
@@ -553,6 +596,8 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 		});
 
 		storeAssociation(format.association, loopIndex);
+
+
 	}
 
 	function createEmptyEvent() {

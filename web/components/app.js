@@ -40,12 +40,24 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		url: "/calendar",
 		templateUrl: "pages/event/list.html?v="+version,
 	})
+	.state('app.eventsListYear', {
+		url: "/calendar/{year:int}",
+		templateUrl: "pages/event/list.html?v="+version,
+	})
 	.state('app.editionEdit', {
 		url: "/tournaments/edit/{editionId}/{eventId}",
 		templateUrl: "pages/event/edit.html?v="+version,
 	})
 	.state('app.eventShow', {
-		url: "/{eventSlug}-t{eventId:int}",
+		url: "/{eventSlug}--t{eventId:int}",
+		templateUrl: "pages/event/show.html?v="+version,
+	})
+	.state('app.editionShow', {
+		url: "/{editionSlug}--e{editionId:int}",
+		templateUrl: "pages/event/show.html?v="+version,
+	})
+	.state('app.formatShow', {
+		url: "/{formatSlug}--f{formatId:int}",
 		templateUrl: "pages/event/show.html?v="+version,
 	})
 	.state('app.teamsList', {

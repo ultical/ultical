@@ -63,6 +63,10 @@ button, input, optgroup, select, textarea {
 	.navbar-header {
 		padding-left: 10px;
 	}
+
+	td.mega-wide {
+		width: 50%;
+	}
 }
 
 #nav-logo img {
@@ -331,6 +335,10 @@ select:not([multiple]) {
 	width: 33px;
 }
 
+#edition-view-events .event-list-date-right {
+	width: 80px;
+}
+
 .event-list-text {
 	display: table-cell;
 }
@@ -367,6 +375,20 @@ select:not([multiple]) {
 .event-list-row:hover {
   background-color: #C2DAF3;
 	cursor: pointer;
+}
+
+#edition-listing .event-list-row {
+	padding-top: 4px;
+	padding-bottom: 6px;
+}
+
+#edition-listing .event-list-date {
+	width: 52px;
+}
+
+#edition-listing .event-list-text {
+	font-weight: 500;
+	padding-top: 2px;
 }
 
 .page-sub-title {
@@ -504,4 +526,30 @@ select:not([multiple]) {
 
 .dropdown-caret-padding {
 	padding-left: 2px;
+}
+
+#eventpage-title h3 {
+	margin-top: 12px;
+	margin-bottom: 2px;
+}
+
+/* breadcrumbs */
+.nav-breadcrumb {
+	padding-left: 0px;
+	color: grey;
+	list-style: none;
+}
+
+.nav-breadcrumb a {
+	color: grey;
+}
+
+.nav-breadcrumb>li {
+	display: inline-block;
+}
+
+.nav-breadcrumb>li+li:before {
+    padding: 0 5px;
+    color: #ccc;
+    content: ">";
 }

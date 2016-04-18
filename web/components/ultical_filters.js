@@ -1,5 +1,11 @@
 'use strict';
 
+app.filter('slugify', ['Slug', function(slug) {
+	return function(prettyString) {
+		return slug.slugify(prettyString);
+	};
+}]);
+
 app.filter('locationObject', ['$translate', function($translate) {
 	return function (location) {
 		if (isEmpty(location)) {
@@ -231,6 +237,9 @@ app.filter('playername', [function () {
 app.filter('editionname', [function () {
 	return function(edition) {
 		var editionName = '';
+		if (isEmpty(edition)) {
+			return '';
+		}
 		if (isEmptyString(edition.name)) {
 			// use tournament format name
 			editionName = edition.tournamentFormat.name;

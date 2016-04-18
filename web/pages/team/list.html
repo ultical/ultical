@@ -207,9 +207,6 @@
 					<div class="panel-heading cursor-pointer" role="tab">
 						<h4 class="panel-title" bs-collapse-toggle>
 							<span>{{ team.name }}</span>
-							<div ng-if="false && team.x.own" ng-click="deleteTeam(team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.remove.tooltip' | translate }}" bs-tooltip>
-								<i class="fa fa-remove"></i>
-							</div>
 							<div ng-if="team.x.own" ng-click="editTeam(team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.edit.tooltip' | translate }}" bs-tooltip>
 								<i class="fa fa-pencil"></i>
 							</div>
