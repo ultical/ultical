@@ -389,13 +389,25 @@
 
 				<div class="row" ng-repeat="edition in (orderedEditions = format.editions | orderBy : 'season.year')">
 					<div class="col-md-12">
-						<a ui-sref="app.editionShow({editionId: edition.id, editionSlug: (( edition | editionname) | slugify ) })">
+
+						<a ng-if="!edition.x.isSingleEdition" ui-sref="app.editionShow({editionId: edition.id, editionSlug: (( edition | editionname) | slugify ) })">
 							<div class="col-md-9 event-list-row">
 								<div class="event-list-date">
 									{{ orderedEditions[$index - 1].season.year != edition.season.year ? edition.season.year : '' }}
 								</div>
 								<div class="event-list-text">
 									{{ edition | editionname }}
+								</div>
+							</div>
+						</a>
+
+						<a ng-if="edition.x.isSingleEdition" ui-sref="app.eventShow({eventId: edition.events[0].id, eventSlug: (( edition.events[0] | eventname) | slugify ) })">
+							<div class="col-md-9 event-list-row">
+								<div class="event-list-date">
+									{{ orderedEditions[$index - 1].season.year != edition.season.year ? edition.season.year : '' }}
+								</div>
+								<div class="event-list-text">
+									{{ edition.events[0] | eventname }}
 								</div>
 							</div>
 						</a>
