@@ -261,10 +261,10 @@
 											</div>
 
 											<!-- team list -->
-											<!-- Controlts for sorting result listing -->
+											<!-- Controls for sorting result listing -->
 											<div ng-if="event.x.timing != 'future' && hasStandings[division.id]" class="margin-bottom-small">
 
-												<div ng-if="latestEvents[division.id].id != event.id" class="margin-bottom-small">
+												<div ng-if="show.event && latestEvents[division.id].id != event.id" class="margin-bottom-small">
 													{{ 'event.teamList.standingExplanation' | translate : { eventName : (latestEvents[division.id] | eventname) } }}
 												</div>
 

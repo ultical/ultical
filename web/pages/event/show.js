@@ -80,29 +80,27 @@ angular.module('ultical.events')
 
     if ($scope.show.event) {
       headService.setTitle($filter('eventname')($scope.event), {});
+      // define which divisions to show
+      $scope.divisionsToShow = $scope.event.x.divisions;
+      $scope.getPlayingTeams = function(division) {
+        return division.playingTeams;
+      }
+      $scope.showStandings = function(divisionId) {
+        $scope.event.x.timing != 'future' && hasStandings[divisionId]
+      }
     } else if ($scope.show.edition) {
       headService.setTitle($filter('editionname')($scope.edition), {});
+      $scope.divisionsToShow = $scope.edition.divisionRegistrations;
+      $scope.getPlayingTeams = function(division) {
+        return division.registeredTeams;
+      }
     } else if ($scope.show.format) {
       headService.setTitle($scope.format.name, {});
     }
 
     $scope.show.linkToEdition = $scope.show.event && !$scope.event.x.isSingleEvent;
 
-    // define which divisions to show
-    if ($scope.show.event) {
-      $scope.divisionsToShow = $scope.event.x.divisions;
-      $scope.getPlayingTeams = function(division) {
-        return division.playingTeams;
-      }
-    } else {
-      $scope.divisionsToShow = $scope.edition.divisionRegistrations;
-      $scope.getPlayingTeams = function(division) {
-        return division.registeredTeams;
-      }
-    }
-
     if (!$scope.show.format) {
-
       // find out if this event is the last one of this edition (for this division)
       $scope.latestEvents = $scope.edition.x.lastestEventPerDivision;
 
@@ -118,6 +116,14 @@ angular.module('ultical.events')
 
       // if this event is not in the future any more the team lists are different
       $scope.teamOrderReverse = false;
+      $scope.teamFilter = function() {
+        if ($scope.show.event && $scope.event.x.timing == 'future') {
+          return true;
+        } else {
+          // if ($scope.show.edition && )
+        }
+      }
+
       if ($scope.event.x.timing == 'future') {
         $scope.teamFilter = function() { return true; }
       } else {
@@ -129,7 +135,7 @@ angular.module('ultical.events')
       $scope.hasSpiritScores = {};
       $scope.hasOwnSpiritScores = {};
 
-      angular.forEach($scope.event.x.divisions, function(division) {
+      angular.forEach($scope.divisionsToShow, function(division) {
         division.registrationComplete = false;
 
         // get number of confirmed teams
@@ -170,13 +176,11 @@ angular.module('ultical.events')
     }
 
     // define whether or not the info texts should be shown
-    $scope.info = {};
-    $scope.info.hasFormatInfo = !isEmpty($scope.format.description);
-    $scope.info.hasEventInfo = !isEmpty($scope.event.info);
-    $scope.info.showFormatInfo = $scope.show.formatInfo && $scope.info.hasFormatInfo;
-    $scope.info.showEventInfo = $scope.show.eventInfo && $scope.info.hasEventInfo;
+    $scope.info = {
+      showFormatInfo: $scope.show.formatInfo && !isEmpty($scope.format.description),
+      showEventInfo: $scope.show.eventInfo && !isEmpty($scope.event.info),
+    };
   };
-
 
   // get own teams to determine if this user may register a team
   $scope.ownTeams = null;
