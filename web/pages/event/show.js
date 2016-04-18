@@ -88,6 +88,19 @@ angular.module('ultical.events')
 
     $scope.show.linkToEdition = $scope.show.event && !$scope.event.x.isSingleEvent;
 
+    // define which divisions to show
+    if ($scope.show.event) {
+      $scope.divisionsToShow = $scope.event.x.divisions;
+      $scope.getPlayingTeams = function(division) {
+        return division.playingTeams;
+      }
+    } else {
+      $scope.divisionsToShow = $scope.edition.divisionRegistrations;
+      $scope.getPlayingTeams = function(division) {
+        return division.registeredTeams;
+      }
+    }
+
     if (!$scope.show.format) {
 
       // find out if this event is the last one of this edition (for this division)
