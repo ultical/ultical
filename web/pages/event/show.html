@@ -359,7 +359,7 @@
 				<div class="row" ng-repeat="event in (orderedEvents = edition.events)">
 					<div class="col-md-12">
 						<a ui-sref="app.eventShow({eventId: event.id, eventSlug: (( event | eventname) | slugify ) })">
-							<div class="col-md-9 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != event.startDate || orderedEvents[$index - 1].endDate != event.endDate">
+							<div class="col-md-12 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != event.startDate || orderedEvents[$index - 1].endDate != event.endDate">
 
 								<div class="event-list-date event-list-date-left">{{ showDate ? (event.startDate | amDateFormat : 'D') : '' }}</div>
 								<div class="event-list-date event-list-date-dash">{{ showDate ? '-' : '' }}</div>
@@ -391,7 +391,7 @@
 					<div class="col-md-12">
 
 						<a ng-if="!edition.x.isSingleEdition" ui-sref="app.editionShow({editionId: edition.id, editionSlug: (( edition | editionname) | slugify ) })">
-							<div class="col-md-9 event-list-row">
+							<div class="col-md-12 event-list-row">
 								<div class="event-list-date">
 									{{ orderedEditions[$index - 1].season.year != edition.season.year ? edition.season.year : '' }}
 								</div>
@@ -402,7 +402,7 @@
 						</a>
 
 						<a ng-if="edition.x.isSingleEdition" ui-sref="app.eventShow({eventId: edition.events[0].id, eventSlug: (( edition.events[0] | eventname) | slugify ) })">
-							<div class="col-md-9 event-list-row">
+							<div class="col-md-12 event-list-row">
 								<div class="event-list-date">
 									{{ orderedEditions[$index - 1].season.year != edition.season.year ? edition.season.year : '' }}
 								</div>
