@@ -111,7 +111,7 @@ angular.module('ultical.events')
       if ($scope.show.edition) {
         lastEvent = { endDate: '1900-01-01'};
         angular.forEach($scope.latestEvents, function(latestEvent) {
-          if (latestEvent.endDate > $scope.event.endDate) {
+          if (latestEvent.endDate > lastEvent.endDate) {
             lastEvent = latestEvent;
           }
         });
