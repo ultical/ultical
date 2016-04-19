@@ -23,7 +23,7 @@
 	}
 	</script>
 
-	<div class="row" ng-class="{'hidden-print': printing}">
+	<div class="row" ng-class="{'hidden-print': printing}" ng-if="format | notEmpty">
 		<div class="col-md-8">
 
 		<!-- BREADCRUMBS -->
@@ -103,7 +103,7 @@
 		</div>
 
 		<!-- ORGANIZER -->
-		<div class="row margin-top" ng-if="show.organizer && format | notEmpty">
+		<div class="row margin-top" ng-if="show.organizer">
 			<div class="col-md-12">
 				<div class="strong">{{ 'event.organizer' | translate }}</div>
 				<!-- if the edition's organizer equals the association's organizer, don't show the association (else there would be duplicates) -->
@@ -394,7 +394,7 @@
 		</div>
 
 		<!-- EDITIONS LISTING -->
-		<div ng-if="show.format && format | notEmpty" class="row margin-top-big" id="edition-listing">
+		<div ng-if="show.format" class="row margin-top-big" id="edition-listing">
 			<div class="col-md-12">
 				<div class="strong margin-bottom-small">
 						Veranstaltungen
