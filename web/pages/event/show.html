@@ -255,7 +255,7 @@
 						<div class="panel-collapse" role="tabpanel" bs-collapse-target>
 							<div class="panel-body">
 
-								<!-- Team List -->
+								<!-- TEAM LIST -->
 								<div class="row">
 									<div class="col-md-12">
 
@@ -290,12 +290,15 @@
 														<a href="#" class="pull-right">{{ 'event.teamList.printPlayerList' | translate }}</a>
 													</div>
 												</div>
+
 											</div>
 
 											<div class="panel panel-ultical2" ng-class="{'panel-margin': !$first}" ng-repeat-end>
 
 												<div class="panel-heading cursor-pointer" role="tab">
 													<h3 class="panel-title" bs-collapse-toggle>
+
+														<!-- Standings -->
 														<div ng-if="hasStandings[division.id]" class="pull-left margin-right-small">
 															<div class="team-list-standing pull-left">
 																<span class="label-as-badge label label-primary label-ultical" data-title="{{ 'event.teamList.standing' | translate }}" bs-tooltip>{{ regTeam.standing }}</span>
@@ -305,9 +308,11 @@
 																<div ng-if="hasOwnSpiritScores[division.id]" data-placement="bottom" data-title="{{ 'event.teamList.ownSpiritScore' | translate }}" bs-tooltip><em class="own-spirit-score-label">{{ ('(' + (regTeam.ownSpiritScore | decimal : 1)  + ')') | pad : 6 : '&nbsp;' }}</em></div>
 															</div>
 														</div>
+
 														<span>{{ regTeam.roster.team.name }} {{ regTeam.roster.nameAddition }}</span>
 														<span ng-if="loggedIn()" class="panel-title-addon">&nbsp;&nbsp;({{ rosterPlayers.length }}&nbsp;{{ 'general.players' | translate }})</span>
 
+														<button ng-if="(edition.x.own || event.x.own) && regTeam.status == 'PENDING'" class="pull-right btn btn-primary btn-ultical btn-xs" ng-click="confirmTeam(regTeam); $event.stopPropagation();">{{ 'event.teamList.acceptTeam' | translate }}</button>
 														<!-- 													<div ng-if="team.x.own" ng-click="editRoster(roster, team, $index)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip> -->
 														<!-- 														<i class="fa fa-pencil"></i> -->
 														<!-- 													</div> -->

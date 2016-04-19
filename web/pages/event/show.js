@@ -134,11 +134,13 @@ angular.module('ultical.events')
 
       // if this event is not in the future any more the team lists are different
       $scope.teamOrderReverse = false;
+      $scope.teamListOrder = {text:'name'};
+
       if (eventIsFuture) {
         $scope.teamFilter = function() { return true; }
       } else {
         $scope.teamFilter = {status: 'CONFIRMED'};
-        $scope.teamListOrder = {text:'standing'};
+        $scope.teamListOrder.text = 'standing';
       }
 
       $scope.hasStandings = {};
@@ -191,6 +193,10 @@ angular.module('ultical.events')
       showEventInfo: $scope.show.eventInfo && !isEmpty($scope.event.info),
     };
   };
+
+  $scope.confirmTeam = function(teamRegistration) {
+    storage.confirmTeamForEdition(teamRegistration);
+  }
 
   // get own teams to determine if this user may register a team
   $scope.ownTeams = null;

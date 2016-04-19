@@ -29,10 +29,10 @@ import io.dropwizard.auth.Auth;
 public class TournamentResource {
 
     @Inject
-    DataStore dStore;
+    DataStore dataStore;
 
     private void checkDataStore() {
-        if (this.dStore == null) {
+        if (this.dataStore == null) {
             throw new WebApplicationException("Dependency injection for datastore failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
@@ -43,7 +43,7 @@ public class TournamentResource {
     public List<TournamentEdition> getAllTournaments() {
         this.checkDataStore();
         try {
-            List<TournamentEdition> result = this.dStore.getAll(TournamentEdition.class);
+            List<TournamentEdition> result = this.dataStore.getAll(TournamentEdition.class);
             return result;
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing database failed", pe, Status.INTERNAL_SERVER_ERROR);
@@ -57,7 +57,7 @@ public class TournamentResource {
     public TournamentEdition storeTournament(final TournamentEdition newEdition) {
         this.checkDataStore();
         try {
-            TournamentEdition result = this.dStore.addNew(newEdition);
+            TournamentEdition result = this.dataStore.addNew(newEdition);
             return result;
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing database failed", pe, Status.INTERNAL_SERVER_ERROR);
@@ -73,7 +73,7 @@ public class TournamentResource {
             if (editionId.equals(edition.getId()) == false) {
                 throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
             }
-            boolean updated = this.dStore.update(edition);
+            boolean updated = this.dataStore.update(edition);
             if (!updated) {
                 throw new WebApplicationException(
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
@@ -90,14 +90,14 @@ public class TournamentResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{divisionRegistrationId}/register/team")
+    @Path("/division/{divisionRegistrationId}/register/team")
     public TeamRegistration registerTeam(@PathParam("divisionRegistrationId") Integer divisionRegistrationId,
             TeamRegistration teamRegistration, @Auth @NotNull User currentUser) throws Exception {
 
         this.checkDataStore();
 
-        try (AutoCloseable c = this.dStore.getClosable()) {
-            Authenticator.assureRosterAdmin(this.dStore, teamRegistration.getRoster().getId(), currentUser);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            Authenticator.assureRosterAdmin(this.dataStore, teamRegistration.getRoster().getId(), currentUser);
 
             teamRegistration.setPaid(false);
             teamRegistration.setStatus(DivisionRegistrationStatus.PENDING);
@@ -106,10 +106,29 @@ public class TournamentResource {
             teamRegistration.setSequence(-1);
             teamRegistration.setStanding(-1);
 
-            return this.dStore.registerTeamForEdition(divisionRegistrationId, teamRegistration);
+            return this.dataStore.registerTeamForEdition(divisionRegistrationId, teamRegistration);
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Probably duplicate entry" + pe.getMessage(), Status.CONFLICT);
         }
     }
 
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/registration/{teamRegistrationId}")
+    public void updateTeamRegistration(@PathParam("teamRegistrationId") Integer teamRegistrationId,
+            TeamRegistration teamRegistration, @Auth @NotNull User currentUser) throws Exception {
+
+        this.checkDataStore();
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            TournamentEdition edition = this.dataStore.getEditionByTeamRegistration(teamRegistration.getId());
+            Authenticator.assureEditionAdmin(this.dataStore, edition.getId(), currentUser);
+
+            this.dataStore.update(teamRegistration);
+
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Probably duplicate entry" + pe.getMessage(), Status.CONFLICT);
+        }
+    }
 }

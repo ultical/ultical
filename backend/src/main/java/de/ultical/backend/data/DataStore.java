@@ -27,6 +27,7 @@ import de.ultical.backend.data.mapper.RosterMapper;
 import de.ultical.backend.data.mapper.RosterPlayerMapper;
 import de.ultical.backend.data.mapper.TeamMapper;
 import de.ultical.backend.data.mapper.TeamRegistrationMapper;
+import de.ultical.backend.data.mapper.TournamentEditionMapper;
 import de.ultical.backend.data.mapper.TournamentFormatMapper;
 import de.ultical.backend.data.mapper.UserMapper;
 import de.ultical.backend.model.Association;
@@ -706,7 +707,17 @@ public class DataStore {
             mapper.insert(divisionRegistrationId, teamReg);
             this.sqlSession.commit();
             return teamReg;
-            // mapper.insertAtEnd(div, teamReg);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public TournamentEdition getEditionByTeamRegistration(int teamRegistrationId) {
+        try {
+            final TournamentEditionMapper mapper = this.sqlSession.getMapper(TournamentEditionMapper.class);
+            return mapper.getByTeamRegistration(teamRegistrationId);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

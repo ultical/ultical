@@ -560,3 +560,8 @@ select:not([multiple]) {
     color: #ccc;
     content: ">";
 }
+
+.panel-title button {
+	margin-top: -4px;
+	margin-right: -5px;
+}

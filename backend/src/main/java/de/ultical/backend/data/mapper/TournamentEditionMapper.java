@@ -116,4 +116,9 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
             @Result(column = "id", property = "divisionRegistrations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.getRegistrationsForEdition") ) })
     List<TournamentEdition> getAll();
 
+    @Select({ "SELECT te.* FROM TOURNAMENT_EDITION te",
+            "LEFT JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = te.id",
+            "LEFT JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id",
+            "WHERE tr.id = #{teamRegistrationId}" })
+    TournamentEdition getByTeamRegistration(int teamRegistrationId);
 }

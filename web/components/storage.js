@@ -307,6 +307,17 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				}, errorCallback);
 			},
 
+      confirmTeamForEdition: function(teamReg, callback, errorCallback) {
+        var previousState = teamReg.status;
+        teamReg.status = 'CONFIRMED';
+        serverApi.confirmTeamForEdition(teamReg, callback, function() {
+            teamReg.status = previousState;
+            if (errorCallback) {
+              errorCallback();
+            }
+        });
+      },
+
 			saveTeam: function(team, callback, errorCallback, activeList) {
 				var that = this;
 				var oldTeam;
