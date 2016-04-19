@@ -197,7 +197,7 @@ TRANSLATIONS['de'] = {
 				editionLabel: 'Für alle Termine von',
 				matchdayLabel: 'Für diesen Termin',
 			},
-			rosterNotFixed: 'Aktuelles Roster',
+			rosterNotFixed: 'Roster der Saison',
 			rosterFixed: 'Roster zum Zeitpunkt des Turniers',
 			rosterEditOnTeamPage: 'Das Roster kann auf der Teamseite bearbeitet werden',
 			printRosterNotFixed: 'Spielerlisten (offen) zum Zeitpunkt',

@@ -58,6 +58,8 @@ angular.module('ultical.events')
     storage.getFormat($stateParams.formatId, init);
   }
 
+  var eventIsFuture = false;
+
   // init function
   function init(format) {
 		$scope.format = format;
@@ -105,31 +107,28 @@ angular.module('ultical.events')
       $scope.latestEvents = $scope.edition.x.lastestEventPerDivision;
 
       // find latest event and set it to use in calculations
+      var lastEvent = null;
       if ($scope.show.edition) {
-        $scope.event = { endDate: '1900-01-01'};
+        lastEvent = { endDate: '1900-01-01'};
         angular.forEach($scope.latestEvents, function(latestEvent) {
           if (latestEvent.endDate > $scope.event.endDate) {
-            $scope.event = latestEvent;
+            lastEvent = latestEvent;
           }
         });
-      }
 
-      if ($scope.event.endDate == '1900-01-01') {
-        $scope.event = null;
-        $scope.tabs.activeTab = 'divisions';
-      }
-
-      // if this event is not in the future any more the team lists are different
-      $scope.teamOrderReverse = false;
-      $scope.teamFilter = function() {
-        if ($scope.show.event && $scope.event.x.timing == 'future') {
-          return true;
-        } else {
-          // if ($scope.show.edition && )
+        if (lastEvent.endDate == '1900-01-01') {
+          lastEvent = null;
+          // directly show divisions tab if no event is present
+          $scope.tabs.activeTab = 'divisions';
         }
       }
 
-      if (isEmpty($scope.event) || $scope.event.x.timing == 'future') {
+      eventIsFuture = ($scope.show.event && $scope.event.x.timing == 'future')
+      || ($scope.show.edition && !isEmpty(lastEvent) && lastEvent.x.timing == 'future');
+
+      // if this event is not in the future any more the team lists are different
+      $scope.teamOrderReverse = false;
+      if (eventIsFuture) {
         $scope.teamFilter = function() { return true; }
       } else {
         $scope.teamFilter = {status: 'CONFIRMED'};
@@ -145,18 +144,18 @@ angular.module('ultical.events')
 
         // get number of confirmed teams
         division.numTeamsConfirmed = 0;
-        angular.forEach(division.playingTeams, function(teamReg) {
+        angular.forEach($scope.getPlayingTeams(division), function(teamReg) {
           if (teamReg.status == 'CONFIRMED') {
             division.numTeamsConfirmed++;
           }
 
           // check if there are standings / spirit scores
-          if (isEmpty($scope.event) || $scope.event.x.timing == 'future') {
+          if (eventIsFuture) {
             $scope.hasStandings[division.id] = false;
             $scope.hasSpiritScores[division.id] = false;
             $scope.hasOwnSpiritScores[division.id] = false;
           } else {
-            angular.forEach(division.playingTeams, function(playingTeam) {
+            angular.forEach($scope.getPlayingTeams(division), function(playingTeam) {
               if (playingTeam.status == 'CONFIRMED') {
                 $scope.hasStandings[division.id] = !isEmpty(playingTeam.standing) && playingTeam.standing != -1;
                 $scope.hasSpiritScores[division.id] = !isEmpty(playingTeam.spiritScore) && playingTeam.spiritScore != -1;
@@ -166,13 +165,13 @@ angular.module('ultical.events')
           }
         });
 
-        if ($scope.edition.x.registrationTime == 'never' || (!isEmpty($scope.event) && $scope.event.x.timing != 'future')) {
+        if ($scope.edition.x.registrationTime == 'never' || !eventIsFuture) {
           division.registrationComplete = true;
         } else {
           // if registration is yet to come or still open, it's obviously not complete
           if ($scope.edition.x.registrationTime == 'past' && !$scope.edition.x.registrationIsOpen) {
             // ...but if it's closed we have to check whether or not enough teams were selected
-            if (division.numTeamsConfirmed == division.numberSpots || division.numTeamsConfirmed == division.playingTeams.length) {
+            if (division.numTeamsConfirmed == division.numberSpots || division.numTeamsConfirmed == $scope.getPlayingTeams(division).length) {
               division.registrationComplete = true;
             }
           }
@@ -301,7 +300,7 @@ angular.module('ultical.events')
 
 	$scope.teamOrder = function(regTeam) {
 
-    if ($scope.event.x.timing == 'future') {
+    if (eventIsFuture) {
       // the order for registration
   		var orderString = '';
   		switch (regTeam.status) {

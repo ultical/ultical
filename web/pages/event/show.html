@@ -327,9 +327,9 @@
 															<div class="col-md-12">
 																<div class="margin-bottom-small">
 																	<i class="fa fa-list fa-fw"></i>
-																	<span ng-if="event.x.timing != 'future'">{{ 'event.rosterFixed' | translate }}</span>
-																	<span ng-if="event.x.timing == 'future'">{{ 'event.rosterNotFixed' | translate }}</span>
-																	<span ng-if="event.x.timing == 'future' && event.x.own">({{ 'event.rosterEditOnTeamPage' | translate }})</span>
+																	<span ng-if="(event | notEmpty) && event.x.timing != 'future'">{{ 'event.rosterFixed' | translate }}</span>
+																	<span ng-if="(event | isEmpty) || event.x.timing == 'future'">{{ 'event.rosterNotFixed' | translate }}</span>
+																	<span ng-if="((event | isEmpty) || event.x.timing == 'future') && event.x.own">({{ 'event.rosterEditOnTeamPage' | translate }})</span>
 																</div>
 																<div class="margin-left-small" ng-if="rosterPlayers.length > 0 && loggedIn()">
 																	<div ng-repeat="rosterPlayer in rosterPlayers | orderBy : 'player.lastName'">{{ rosterPlayer.player | playername : true }}</div>
@@ -368,7 +368,7 @@
 		<div ng-if="show.edition && edition.events.length > 0 && tabs.activeTab == 'events'" class="row margin-top">
 			<div class="col-md-12" id="edition-view-events">
 
-				<div class="row" ng-repeat="event in (orderedEvents = edition.events)">
+				<div class="row" ng-repeat="event in (orderedEvents = edition.events | orderBy : 'startDate')">
 					<div class="col-md-12">
 						<a ui-sref="app.eventShow({eventId: event.id, eventSlug: (( event | eventname) | slugify ) })">
 							<div class="col-md-12 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != event.startDate || orderedEvents[$index - 1].endDate != event.endDate">
