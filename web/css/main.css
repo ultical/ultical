@@ -336,9 +336,16 @@ select:not([multiple]) {
 }
 
 #edition-view-events .event-list-date-right {
-	width: 80px;
+	width: 25px;
 }
 
+#edition-view-events .event-list-date-right-month {
+	width: 79px;
+}
+
+#edition-view-events .event-list-date-right-month.event-list-date-right-monthyear {
+	width: 100px;
+}
 .event-list-text {
 	display: table-cell;
 }

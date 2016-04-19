@@ -96,6 +96,12 @@ angular.module('ultical.events')
       $scope.getPlayingTeams = function(division) {
         return division.registeredTeams;
       }
+      // calculate if edition has events in different years
+      var editionYears = {};
+      angular.forEach($scope.edition.events, function(event) {
+        editionYears[event.startDate.substring(0,4)] = true;
+      });
+      $scope.showYearSeparator = Object.keys(editionYears).length > 1;
     } else if ($scope.show.format) {
       headService.setTitle($scope.format.name, {});
     }

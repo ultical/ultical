@@ -375,7 +375,8 @@
 
 								<div class="event-list-date event-list-date-left">{{ showDate ? (event.startDate | amDateFormat : 'D') : '' }}</div>
 								<div class="event-list-date event-list-date-dash">{{ showDate ? '-' : '' }}</div>
-								<div class="event-list-date event-list-date-right">{{ showDate ? (event.endDate | amDateFormat : 'DD.MM.YY') : '' }}</div>
+								<div class="event-list-date event-list-date-right">{{ showDate ? (event.endDate | amDateFormat : 'D') : '' }}</div>
+								<div class="event-list-date event-list-date-right-month" ng-class="{'event-list-date-right-monthyear' : showYearSeparator }">{{ showDate ? (event.endDate | amDateFormat : 'MMMM') : '' }} {{ showYearSeparator ? (event.endDate | amDateFormat : 'YY') : '' }}</div>
 
 								<div class="event-list-text">
 									<div class="event-list-text-top">{{ event | eventname }}</div>
