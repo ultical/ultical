@@ -399,7 +399,7 @@
 						Veranstaltungen
 				</div>
 
-				<div class="row" ng-repeat="edition in (orderedEditions = format.editions | orderBy : 'season.year')">
+				<div class="row" ng-repeat="edition in (orderedEditions = (format.editions | orderBy : '-season.year'))">
 					<div class="col-md-12">
 
 						<a ng-if="!edition.x.isSingleEdition" ui-sref="app.editionShow({editionId: edition.id, editionSlug: (( edition | editionname) | slugify ) })">
