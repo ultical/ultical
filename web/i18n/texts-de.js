@@ -176,6 +176,8 @@ TRANSLATIONS['de'] = {
 			},
 			editionViewDivisions: 'Divisionen',
 			editionViewEvents: 'Termine',
+			noEvents: 'Es stehen noch keine Termine fest',
+			noDivisions: 'Es sind noch keine Divisionen festgelegt',
 			organizer: 'Ausrichter',
 			localOrganizer: 'Veranstalter vor Ort',
 			linkToMaps: 'Google Maps Link',

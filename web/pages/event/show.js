@@ -114,6 +114,11 @@ angular.module('ultical.events')
         });
       }
 
+      if ($scope.event.endDate == '1900-01-01') {
+        $scope.event = null;
+        $scope.tabs.activeTab = 'divisions';
+      }
+
       // if this event is not in the future any more the team lists are different
       $scope.teamOrderReverse = false;
       $scope.teamFilter = function() {
@@ -124,7 +129,7 @@ angular.module('ultical.events')
         }
       }
 
-      if ($scope.event.x.timing == 'future') {
+      if (isEmpty($scope.event) || $scope.event.x.timing == 'future') {
         $scope.teamFilter = function() { return true; }
       } else {
         $scope.teamFilter = {status: 'CONFIRMED'};
@@ -146,7 +151,7 @@ angular.module('ultical.events')
           }
 
           // check if there are standings / spirit scores
-          if ($scope.event.x.timing == 'future') {
+          if (isEmpty($scope.event) || $scope.event.x.timing == 'future') {
             $scope.hasStandings[division.id] = false;
             $scope.hasSpiritScores[division.id] = false;
             $scope.hasOwnSpiritScores[division.id] = false;
@@ -161,7 +166,7 @@ angular.module('ultical.events')
           }
         });
 
-        if ($scope.edition.x.registrationTime == 'never' || $scope.event.x.timing != 'future') {
+        if ($scope.edition.x.registrationTime == 'never' || (!isEmpty($scope.event) && $scope.event.x.timing != 'future')) {
           division.registrationComplete = true;
         } else {
           // if registration is yet to come or still open, it's obviously not complete

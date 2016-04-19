@@ -231,7 +231,13 @@
 		</div>
 
 		<!-- DIVISIONS -->
-		<div ng-if="show.divisions && event.x.divisions.length > 0 && (!show.edition || tabs.activeTab == 'divisions')" class="row margin-top">
+		<div class="row margin-top" ng-if="tabs.activeTab == 'divisions' && show.divisions && divisionsToShow.length == 0 && show.edition">
+			<div class="col-md-12">
+				{{ 'event.noDivisions' | translate }}
+			</div>
+		</div>
+
+		<div ng-if="show.divisions && divisionsToShow.length > 0 && (!show.edition || tabs.activeTab == 'divisions')" class="row margin-top">
 			<div class="col-md-12">
 				<div ng-if="!show.edition" class="strong">{{ 'event.teamList.title' | translate }}</div>
 
@@ -353,6 +359,12 @@
 		</div>
 
 		<!-- EVENTS -->
+		<div class="row margin-top" ng-if="edition.events.length == 0 && tabs.activeTab == 'events' && show.edition">
+			<div class="col-md-12">
+				{{ 'event.noEvents' | translate }}
+			</div>
+		</div>
+
 		<div ng-if="show.edition && edition.events.length > 0 && tabs.activeTab == 'events'" class="row margin-top">
 			<div class="col-md-12" id="edition-view-events">
 
