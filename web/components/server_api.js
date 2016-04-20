@@ -245,8 +245,15 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		},
 
 		registerTeamForEdition: function(registration, divisionRegistration, callback, errorCallback) {
-			return post('tournaments/' + divisionRegistration.id + '/register/team', registration, callback, errorCallback);
+			return post('tournaments/division/' + divisionRegistration.id + '/register/team', registration, callback, errorCallback);
 		},
+
+    confirmTeamForEdition: function(eventId, teamRegistration, callback, errorCallback) {
+      var teamRegToSend = angular.copy(teamRegistration);
+      teamRegToSend.roster = null;
+      teamRegToSend.timeRegistered = null;
+      return put('tournaments/registration/' + eventId + '/' + teamRegistration.id, teamRegToSend, callback, errorCallback);
+    },
 	};
 
 	function addAdminsToTeam(teamId, addList, callback) {

@@ -240,7 +240,7 @@ button, input, optgroup, select, textarea {
 	float: right;
 	color: #337AB7;
 	opacity: 0;
-	margin-left: 7px;
+	margin-left: 10px;
 }
 
 .team-actions-link {
@@ -250,6 +250,11 @@ button, input, optgroup, select, textarea {
 
 .panel-heading:hover .team-actions {
 	opacity: 1;
+}
+
+.team-actions-disabled {
+	color: #D6D6D6;
+	cursor: default;
 }
 
 .player-actions {
@@ -559,4 +564,9 @@ select:not([multiple]) {
     padding: 0 5px;
     color: #ccc;
     content: ">";
+}
+
+.panel-title button {
+	margin-top: -4px;
+	margin-right: -5px;
 }
