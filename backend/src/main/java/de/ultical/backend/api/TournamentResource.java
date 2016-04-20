@@ -115,20 +115,30 @@ public class TournamentResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/registration/{teamRegistrationId}")
+    @Path("/registration/{eventId}/{teamRegistrationId}")
     public void updateTeamRegistration(@PathParam("teamRegistrationId") Integer teamRegistrationId,
-            TeamRegistration teamRegistration, @Auth @NotNull User currentUser) throws Exception {
+            @PathParam("eventId") Integer eventId, TeamRegistration teamRegistration, @Auth @NotNull User currentUser)
+                    throws Exception {
 
         this.checkDataStore();
 
         try (AutoCloseable c = this.dataStore.getClosable()) {
+
             TournamentEdition edition = this.dataStore.getEditionByTeamRegistration(teamRegistration.getId());
-            Authenticator.assureEditionAdmin(this.dataStore, edition.getId(), currentUser);
+
+            if (eventId > 0) {
+                if (!edition.isAllowEventTeamRegManagement()) {
+                    throw new WebApplicationException("You are not allowed to make those changes", Status.FORBIDDEN);
+                }
+                Authenticator.assureEventAdmin(this.dataStore, eventId, currentUser);
+            } else {
+                Authenticator.assureEditionAdmin(this.dataStore, edition.getId(), currentUser);
+            }
 
             this.dataStore.update(teamRegistration);
 
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Probably duplicate entry" + pe.getMessage(), Status.CONFLICT);
+            throw new WebApplicationException("Error writing update" + pe.getMessage(), Status.CONFLICT);
         }
     }
 }

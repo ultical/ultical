@@ -40,6 +40,8 @@ public class TournamentEdition extends Identifiable {
     private List<Event> events;
     private String alternativeMatchdayName;
 
+    private boolean allowEventTeamRegManagement = true;
+
     @Override
     public Class<TournamentEditionMapper> getMapper() {
         return TournamentEditionMapper.class;

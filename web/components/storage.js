@@ -307,10 +307,14 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				}, errorCallback);
 			},
 
-      confirmTeamForEdition: function(teamReg, callback, errorCallback) {
+      updateTeamRegStatus: function(event, teamReg, newStatus, callback, errorCallback) {
+        var eventId = 0;
+        if (!isEmpty(event)) {
+          eventId = event.id;
+        }
         var previousState = teamReg.status;
-        teamReg.status = 'CONFIRMED';
-        serverApi.confirmTeamForEdition(teamReg, callback, function() {
+        teamReg.status = newStatus;
+        serverApi.confirmTeamForEdition(eventId, teamReg, callback, function() {
             teamReg.status = previousState;
             if (errorCallback) {
               errorCallback();

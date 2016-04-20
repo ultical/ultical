@@ -1027,4 +1027,12 @@
 		<addDefaultValue columnName="version" tableName="DIVISION_CONFIRMATION"
 			defaultValueNumeric="1" />
 	</changeSet>
+	<changeSet author="bas" id="bas-teamregistration-1">
+		<addColumn tableName="TOURNAMENT_EDITION">
+			<column name="allow_event_team_reg_management" type="BOOLEAN"
+				defaultValueBoolean="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

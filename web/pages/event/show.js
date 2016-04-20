@@ -58,7 +58,7 @@ angular.module('ultical.events')
     storage.getFormat($stateParams.formatId, init);
   }
 
-  var eventIsFuture = false;
+  $scope.eventIsFuture = false;
 
   // init function
   function init(format) {
@@ -106,6 +106,8 @@ angular.module('ultical.events')
       headService.setTitle($scope.format.name, {});
     }
 
+    $scope.isTeamRegistrationManager = $scope.format.x.own || ($scope.show.event && $scope.event.x.own && $scope.edition.allowEventTeamRegManagement);
+
     $scope.show.linkToEdition = $scope.show.event && !$scope.event.x.isSingleEvent;
 
     if (!$scope.show.format) {
@@ -129,14 +131,15 @@ angular.module('ultical.events')
         }
       }
 
-      eventIsFuture = ($scope.show.event && $scope.event.x.timing == 'future')
+      // determine if event (or the last event of the series in case of editions) is in the future
+      $scope.eventIsFuture = ($scope.show.event && $scope.event.x.timing == 'future')
       || ($scope.show.edition && !isEmpty(lastEvent) && lastEvent.x.timing == 'future');
 
       // if this event is not in the future any more the team lists are different
       $scope.teamOrderReverse = false;
       $scope.teamListOrder = {text:'name'};
 
-      if (eventIsFuture) {
+      if ($scope.eventIsFuture) {
         $scope.teamFilter = function() { return true; }
       } else {
         $scope.teamFilter = {status: 'CONFIRMED'};
@@ -158,7 +161,7 @@ angular.module('ultical.events')
           }
 
           // check if there are standings / spirit scores
-          if (eventIsFuture) {
+          if ($scope.eventIsFuture) {
             $scope.hasStandings[division.id] = false;
             $scope.hasSpiritScores[division.id] = false;
             $scope.hasOwnSpiritScores[division.id] = false;
@@ -173,7 +176,7 @@ angular.module('ultical.events')
           }
         });
 
-        if ($scope.edition.x.registrationTime == 'never' || !eventIsFuture) {
+        if ($scope.edition.x.registrationTime == 'never' || !$scope.eventIsFuture) {
           division.registrationComplete = true;
         } else {
           // if registration is yet to come or still open, it's obviously not complete
@@ -194,8 +197,23 @@ angular.module('ultical.events')
     };
   };
 
-  $scope.confirmTeam = function(teamRegistration) {
-    storage.confirmTeamForEdition(teamRegistration);
+  $scope.teamRegConfirm = function(teamRegistration) {
+    if (teamRegistration.status == 'CONFIRMED') {
+      return;
+    }
+    storage.updateTeamRegStatus($scope.event, teamRegistration, 'CONFIRMED');
+  }
+  $scope.teamRegToWaitingList = function(teamRegistration) {
+    if (teamRegistration.status == 'WAITING_LIST') {
+      return;
+    }
+    storage.updateTeamRegStatus($scope.event, teamRegistration, 'WAITING_LIST');
+  }
+  $scope.teamRegDecline = function(teamRegistration) {
+    if (teamRegistration.status == 'DECLINED') {
+      return;
+    }
+    storage.updateTeamRegStatus($scope.event, teamRegistration, 'DECLINED');
   }
 
   // get own teams to determine if this user may register a team
@@ -312,7 +330,7 @@ angular.module('ultical.events')
 
 	$scope.teamOrder = function(regTeam) {
 
-    if (eventIsFuture) {
+    if ($scope.eventIsFuture) {
       // the order for registration
   		var orderString = '';
   		switch (regTeam.status) {
