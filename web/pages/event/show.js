@@ -114,13 +114,19 @@ angular.module('ultical.events')
       // find out if this event is the last one of this edition (for this division)
       $scope.latestEvents = $scope.edition.x.lastestEventPerDivision;
 
-      // find latest event and set it to use in calculations
+      // find earliest and latest event and set it to use in calculations
       var lastEvent = null;
+      var firstEvent = null;
       if ($scope.show.edition) {
+        firstEvent = { startDate: '2900-01-01'};
         lastEvent = { endDate: '1900-01-01'};
-        angular.forEach($scope.latestEvents, function(latestEvent) {
-          if (latestEvent.endDate > lastEvent.endDate) {
-            lastEvent = latestEvent;
+
+        angular.forEach($scope.edition.events, function(event) {
+          if (event.endDate > lastEvent.endDate) {
+            lastEvent = event;
+          }
+          if (event.startDate < firstEvent.startDate) {
+            firstEvent = event;
           }
         });
 
@@ -129,11 +135,21 @@ angular.module('ultical.events')
           // directly show divisions tab if no event is present
           $scope.tabs.activeTab = 'divisions';
         }
+
+        if (firstEvent.startDate == '2900-01-01') {
+          firstEvent = null;
+          $scope.editionHasStarted = false;
+        } else {
+          $scope.editionHasStarted = moment().isSameOrAfter(firstEvent.startDate, 'day');
+        }
       }
 
       // determine if event (or the last event of the series in case of editions) is in the future
       $scope.eventIsFuture = ($scope.show.event && $scope.event.x.timing == 'future')
       || ($scope.show.edition && !isEmpty(lastEvent) && lastEvent.x.timing == 'future');
+
+      $scope.show.registration = $scope.show.registration && $scope.edition.x.registrationTime != 'never' &&
+      ((!isEmpty($scope.event) && $scope.event.x.timing == 'future') || !$scope.editionHasStarted);
 
       // if this event is not in the future any more the team lists are different
       $scope.teamOrderReverse = false;
