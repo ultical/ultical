@@ -314,7 +314,9 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
         }
         var previousState = teamReg.status;
         teamReg.status = newStatus;
-        serverApi.confirmTeamForEdition(eventId, teamReg, callback, function() {
+        serverApi.confirmTeamForEdition(eventId, teamReg, function() {
+          teamReg.version++;
+        }, function() {
             teamReg.status = previousState;
             if (errorCallback) {
               errorCallback();
