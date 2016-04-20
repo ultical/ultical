@@ -33,7 +33,7 @@
     "bootstrap": "*",
     "respond": "*",
     "fontawesome": "*",
-    "angular-moment": "*",
+    "angular-moment": ">=1.0.0-beta.1",
     "angular-slugify": "*",
     "jsog": "*",
     "ng-device-detector": "*"

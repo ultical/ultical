@@ -18,7 +18,7 @@
 					<div class="form-group">
 						<label for="team-reg-div" class="col-sm-3 control-label">{{ 'event.register.division' | translate }}*</label>
 						<div class="col-sm-6">
-							<button type="button" ng-change="changeDivision()" class="btn btn-default form-control select-btn" ng-model="register.division" bs-options="division as (division | division) for division in event.x.divisions" bs-select>
+							<button type="button" ng-change="changeDivision()" class="btn btn-default form-control select-btn" ng-model="register.division" bs-options="division as (division | division) for division in divisionsToShow" bs-select>
 							 <span class="caret"></span>
 						 </button>
 						</div>
@@ -57,12 +57,12 @@
 						</div>
 					</div>
 
-					<div class="form-group">
+					<!-- <div class="form-group">
 						<label for="team-reg-comment" class="col-sm-3 control-label">{{ 'event.register.comment' | translate }}</label>
 						<div class="col-sm-9">
 							<textarea ng-model="register.comment" class="form-control" rows="5" id="team-reg-comment" placeholder="{{ 'event.register.commentPlaceholder' | translate }}">
 						</div>
-					</div>
+					</div> -->
 
 					<div ng-if="!modal">
 						<div class="btn btn-ultical btn-primary">Do Registration</div>
