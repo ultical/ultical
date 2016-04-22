@@ -570,3 +570,13 @@ select:not([multiple]) {
 	margin-top: -4px;
 	margin-right: -5px;
 }
+
+.standings-edit input {
+	width: 50px;
+}
+
+.standings-edit span {
+	font-weight: 200;
+	margin-left: 20px;
+	font-size:12px;
+}

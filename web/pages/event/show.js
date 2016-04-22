@@ -11,6 +11,9 @@ angular.module('ultical.events')
 
 	$scope.now = new Date();
 
+  $scope.editStandings = false;
+  $scope.edit = {};
+
 	$scope.loggedIn = function() {
 		return authorizer.loggedIn();
 	}
@@ -106,8 +109,6 @@ angular.module('ultical.events')
       headService.setTitle($scope.format.name, {});
     }
 
-    $scope.isTeamRegistrationManager = $scope.format.x.own || ($scope.show.event && $scope.event.x.own && $scope.edition.allowEventTeamRegManagement);
-
     $scope.show.linkToEdition = $scope.show.event && !$scope.event.x.isSingleEvent;
 
     if (!$scope.show.format) {
@@ -147,6 +148,9 @@ angular.module('ultical.events')
       // determine if event (or the last event of the series in case of editions) is in the future
       $scope.eventIsFuture = ($scope.show.event && $scope.event.x.timing == 'future')
       || ($scope.show.edition && !isEmpty(lastEvent) && lastEvent.x.timing == 'future');
+
+      $scope.enableTeamRegistrationManagement = (($scope.show.event && $scope.eventIsFuture) || ($scope.show.edition && !$scope.editionHasStarted)) && ($scope.format.x.own || ($scope.show.event && $scope.event.x.own && $scope.edition.allowEventTeamRegManagement));
+      $scope.enableTeamStandingManagement = (($scope.show.event && !$scope.eventIsFuture) || ($scope.show.edition && $scope.editionHasStarted)) && ($scope.format.x.own || ($scope.show.event && $scope.event.x.own && $scope.edition.allowEventTeamRegManagement));
 
       $scope.show.registration = $scope.show.registration && $scope.edition.x.registrationTime != 'never' &&
       ((!isEmpty($scope.event) && $scope.event.x.timing == 'future') || !$scope.editionHasStarted);
@@ -366,6 +370,10 @@ angular.module('ultical.events')
       $scope.teamOrderReverse = false;
   		return orderString + regTeam.roster.team.name;
     } else {
+      if ($scope.editStandings) {
+        return regTeam.roster.team.name;
+      }
+
       // the order for the time after the tournament took playerBlocked
       switch ($scope.teamListOrder.text) {
       case 'name':
@@ -399,5 +407,41 @@ angular.module('ultical.events')
 		}
 		return false;
 	};
+
+  $scope.toggleEditStandings = function() {
+    $scope.editStandings = !$scope.editStandings;
+  }
+
+  $scope.saveStandings = function(division) {
+    angular.forEach($scope.getPlayingTeams(division), function(teamReg) {
+      if (teamReg.standing == null || isNaN(teamReg.standing) || teamReg.standing <= 0) {
+        teamReg.standing = null;
+      }
+
+      teamReg.spiritScore = readFloat(teamReg.spiritScore);
+      teamReg.ownSpiritScore = readFloat(teamReg.ownSpiritScore);
+    });
+
+    storage.updateStandings($scope.event, $scope.getPlayingTeams(division), function() {
+      $scope.editStandings = false;
+    }, function() {
+      // TODO: error
+    });
+
+  }
+
+  function readFloat(item) {
+    if (undefined === item || item == null) {
+      item = null;
+    } else {
+      if (isNaN(item)) {
+        item = parseFloat(item.replace(',', '.'));
+      }
+      if (isNaN(item) || item < 0) {
+        item = null;
+      }
+    }
+    return item;
+  }
 
 }]);

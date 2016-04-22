@@ -115,10 +115,9 @@ public class TournamentResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/registration/{eventId}/{teamRegistrationId}")
-    public void updateTeamRegistration(@PathParam("teamRegistrationId") Integer teamRegistrationId,
-            @PathParam("eventId") Integer eventId, TeamRegistration teamRegistration, @Auth @NotNull User currentUser)
-                    throws Exception {
+    @Path("/registration/{eventId}")
+    public boolean updateTeamRegistration(@PathParam("eventId") Integer eventId, TeamRegistration teamRegistration,
+            @Auth @NotNull User currentUser) throws Exception {
 
         this.checkDataStore();
 
@@ -140,5 +139,38 @@ public class TournamentResource {
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Error writing update" + pe.getMessage(), Status.CONFLICT);
         }
+
+        return true;
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/registrations/{eventId}")
+    public boolean updateTeamRegistrations(@PathParam("eventId") Integer eventId,
+            List<TeamRegistration> teamRegistrations, @Auth @NotNull User currentUser) throws Exception {
+
+        this.checkDataStore();
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+
+            TournamentEdition edition = this.dataStore.getEditionByTeamRegistration(teamRegistrations.get(0).getId());
+
+            if (eventId > 0) {
+                if (!edition.isAllowEventTeamRegManagement()) {
+                    throw new WebApplicationException("You are not allowed to make those changes", Status.FORBIDDEN);
+                }
+                Authenticator.assureEventAdmin(this.dataStore, eventId, currentUser);
+            } else {
+                Authenticator.assureEditionAdmin(this.dataStore, edition.getId(), currentUser);
+            }
+
+            this.dataStore.updateAll(teamRegistrations);
+
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Error writing update" + pe.getMessage(), Status.CONFLICT);
+        }
+
+        return true;
     }
 }

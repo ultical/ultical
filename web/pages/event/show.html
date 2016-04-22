@@ -268,7 +268,10 @@
 
 											<!-- team list -->
 											<!-- Controls for sorting result listing -->
-											<div ng-if="!eventIsFuture && hasStandings[division.id]" class="margin-bottom-small">
+											<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0" class="margin-bottom" ng-click="toggleEditStandings()"><a>{{ 'event.teamList.editStandings' | translate }}</a></div>
+											<div ng-if="editStandings" class="btn btn-primary btn-ultical margin-bottom" ng-click="saveStandings(division)">{{ 'event.teamList.doneEditStandings' | translate }}</div>
+
+											<div ng-if="!eventIsFuture && hasStandings[division.id] && !editStandings" class="margin-bottom-small">
 
 												<div ng-if="show.event && latestEvents[division.id].id != event.id" class="margin-bottom-small">
 													{{ 'event.teamList.standingExplanation' | translate : { eventName : (latestEvents[division.id] | eventname) } }}
@@ -297,7 +300,7 @@
 													<h3 class="panel-title" bs-collapse-toggle>
 
 														<!-- Standings -->
-														<div ng-if="hasStandings[division.id]" class="pull-left margin-right-small">
+														<div ng-if="hasStandings[division.id] && !editStandings" class="pull-left margin-right-small">
 															<div class="team-list-standing pull-left">
 																<span class="label-as-badge label label-primary label-ultical" data-title="{{ 'event.teamList.standing' | translate }}" bs-tooltip>{{ regTeam.standing }}</span>
 															</div>
@@ -308,17 +311,26 @@
 														</div>
 
 														<span>{{ regTeam.roster.team.name }} {{ regTeam.roster.nameAddition }}</span>
-														<span ng-if="loggedIn()" class="panel-title-addon">&nbsp;&nbsp;({{ rosterPlayers.length }}&nbsp;{{ 'general.players' | translate }})</span>
+														<span ng-if="loggedIn() && !editStandings" class="panel-title-addon">&nbsp;&nbsp;({{ rosterPlayers.length }}&nbsp;{{ 'general.players' | translate }})</span>
 
-														<div ng-if="isTeamRegistrationManager" ng-class="{'team-actions-link-disabled': regTeam.status == 'DECLINED' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.declineTeam' | translate }}" bs-tooltip ng-click="teamRegDecline(regTeam); $event.stopPropagation();">
+														<div ng-if="enableTeamRegistrationManagement" ng-class="{'team-actions-link-disabled': regTeam.status == 'DECLINED' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.declineTeam' | translate }}" bs-tooltip ng-click="teamRegDecline(regTeam); $event.stopPropagation();">
 															<i class="fa fa-remove"></i>
 														</div>
-														<div ng-if="isTeamRegistrationManager" ng-class="{'team-actions-disabled': regTeam.status == 'WAITING_LIST' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.waitlistTeam' | translate }}" bs-tooltip ng-click="teamRegToWaitingList(regTeam); $event.stopPropagation();">
+														<div ng-if="enableTeamRegistrationManagement" ng-class="{'team-actions-disabled': regTeam.status == 'WAITING_LIST' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.waitlistTeam' | translate }}" bs-tooltip ng-click="teamRegToWaitingList(regTeam); $event.stopPropagation();">
 															<i class="fa fa-list-ol"></i>
 														</div>
-														<div ng-if="isTeamRegistrationManager" ng-class="{'team-actions-disabled': regTeam.status == 'CONFIRMED' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.acceptTeam' | translate }}" bs-tooltip ng-click="teamRegConfirm(regTeam); $event.stopPropagation();">
+														<div ng-if="enableTeamRegistrationManagement" ng-class="{'team-actions-disabled': regTeam.status == 'CONFIRMED' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.acceptTeam' | translate }}" bs-tooltip ng-click="teamRegConfirm(regTeam); $event.stopPropagation();">
 															<i class="fa fa-check"></i>
 														</div>
+
+														<bas class="standings-edit" ng-if="editStandings" ng-click="$event.stopPropagation();">
+															<span>{{ 'event.teamList.standingsRank' | translate }}</span>
+															<input type="number" ng-model="regTeam.standing" />
+															<span>{{ 'event.teamList.standingsSpirit' | translate }}</span>
+															<input type="text" ng-model="regTeam.spiritScore" />/
+															<input type="text" ng-model="regTeam.ownSpiritScore" />
+
+														</bas>
 
 													</h3>
 												</div>

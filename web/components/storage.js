@@ -314,14 +314,30 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
         }
         var previousState = teamReg.status;
         teamReg.status = newStatus;
-        serverApi.confirmTeamForEdition(eventId, teamReg, function() {
+        serverApi.updateTeamRegistration(eventId, teamReg, function() {
           teamReg.version++;
+          if (callback) {
+            callback();
+          }
         }, function() {
             teamReg.status = previousState;
             if (errorCallback) {
               errorCallback();
             }
         });
+      },
+
+      updateStandings: function(event, teamRegs, callback, errorCallback) {
+        var eventId = 0;
+        if (!isEmpty(event)) {
+          eventId = event.id;
+        }
+        serverApi.updateTeamRegistrations(eventId, teamRegs, function() {
+          angular.forEach(teamRegs, function(teamReg) {
+            teamReg.version++;
+          });
+          callback();
+        }, errorCallback);
       },
 
 			saveTeam: function(team, callback, errorCallback, activeList) {

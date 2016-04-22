@@ -187,6 +187,19 @@ public class DataStore {
         }
     }
 
+    public <T extends Identifiable> boolean updateAll(List<T> updatedInstances) {
+        boolean autoClosePrevState = this.autoCloseSession;
+        this.setAutoCloseSession(false);
+        boolean result = true;
+        for (T updatedInstance : updatedInstances) {
+            result = result && this.update(updatedInstance);
+        }
+        if (autoClosePrevState) {
+            this.sqlSession.close();
+        }
+        return result;
+    }
+
     public <T extends Identifiable> T get(Integer id, Class<T> clazz) {
         try {
             T instance = clazz.newInstance();
