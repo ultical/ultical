@@ -24,6 +24,8 @@ angular.extend(CONFIG_OBJECT, {
 		html5Mode: false,
 		// if set to true a roster cannot be created without selecting (at least) one context
 		rosterNeedsContext: true,
+		// define the start state
+		startState: 'eventsList',
 	},
 
 	registration: {
