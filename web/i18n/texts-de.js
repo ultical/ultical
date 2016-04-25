@@ -149,6 +149,8 @@ TRANSLATIONS['de'] = {
 			list: {
 				title: 'Turniere',
 			},
+			youAreEventAdmin: 'Du bist Administrator dieses Turniers',
+			youAreFormatAdmin: 'Du bist Administrator dieses Turnierformats',
 			matchday: 'Spieltag',
 			registration: 'Anmeldung',
 			registrationIsOverSince: 'Die Anmeldung ist geschlossen seit dem',
@@ -156,7 +158,7 @@ TRANSLATIONS['de'] = {
 			registrationEndsAt: 'Die Anmeldung ist offen bis zum',
 			registrationUndefined: 'Es gibt keine Informationen zur Anmeldung',
 			register: {
-				notLoggedIn: 'Bitte einloggen, um ein Team anzumelden.',
+				notLoggedIn: 'Bitte anmelden, um ein Team zu registrieren.',
 				noOwnTeam: 'Zur Anmeldung bitte zuerst ein Team unter "Meine Teams" anlegen.',
 				title: 'Team anmelden',
 				description: 'Um dein Team anzumelden, fülle bitte die folgenden Felder aus. Mit Sternchen (*) gekennzeichnete Felder müssen ausgefüllt werden.',
@@ -315,6 +317,12 @@ TRANSLATIONS['de'] = {
 			gitHubText: 'Schau dir den Code an',
 		},
 
+		actionBar: {
+			head: {
+				loggedInAs: 'Angemeldet als {{ userName }}',
+				notLoggedIn: 'Du bist nicht angemeldet',
+			}
+		},
 		countries: {
 			de: 'Deutschland',
 			fr: 'Frankreich',

@@ -580,3 +580,15 @@ select:not([multiple]) {
 	margin-left: 20px;
 	font-size:12px;
 }
+
+.action-bar {
+	background-color: #FAFAFA;
+	margin-top: 15px;
+	padding: 10px;
+}
+
+.horizontal-separator {
+	margin-bottom: 12px;
+	margin-top: 12px;
+	border-top: solid 1px #DDDDDD;
+}

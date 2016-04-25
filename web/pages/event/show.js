@@ -2,8 +2,8 @@
 
 angular.module('ultical.events')
 
-.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout', 'headService',
-                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout, headService) {
+.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout', 'headService', 'actionBar', '$modal',
+                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout, headService, actionBar, $modal) {
 
 	$scope.event = {};
   $scope.edition = {};
@@ -12,7 +12,6 @@ angular.module('ultical.events')
 	$scope.now = new Date();
 
   $scope.editStandings = false;
-  $scope.edit = {};
 
 	$scope.loggedIn = function() {
 		return authorizer.loggedIn();
@@ -216,6 +215,64 @@ angular.module('ultical.events')
       showEventInfo: $scope.show.eventInfo && !isEmpty($scope.event.info),
     };
   };
+
+  // Action bar actions
+  if ($scope.show.registration) {
+    actionBar.addSeparator('event-registration');
+    actionBar.addAction({
+      group: 'event-registration',
+      show: function(isLoggedIn) {
+        return !isLoggedIn;
+      },
+      text: 'event.register.notLoggedIn',
+    });
+    actionBar.addAction({
+      group: 'event-registration',
+      show: function(isLoggedIn) {
+        return isLoggedIn && !isEmpty($scope.ownTeams);
+      },
+      button: {
+        text: 'event.register.title',
+        click: function() {
+          $scope.openRegistrationModal();
+        }
+      },
+    });
+    actionBar.addAction({
+      group: 'event-registration',
+      show: function(isLoggedIn) {
+        return isLoggedIn && $scope.ownTeams != null && $scope.ownTeams.length == 0;
+      },
+      text: 'event.register.noOwnTeam',
+    });
+  }
+
+  $scope.openRegistrationModal = function() {
+    var modal = $modal({
+      animation: 'am-fade-and-slide-top',
+      templateUrl: 'pages/event/registration_modal.html?v=15',
+      show: true,
+      scope: $scope,
+    });
+  };
+
+  actionBar.addAction({
+    group: 'event-admin',
+    show: function(isLoggedIn) {
+      return isLoggedIn && $scope.show.event && $scope.event.x.own && !$scope.format.x.own;
+    },
+    text: 'event.youAreEventAdmin',
+    separator: true,
+  });
+
+  actionBar.addAction({
+    group: 'event-admin',
+    show: function(isLoggedIn) {
+      return isLoggedIn && $scope.format.x.own;
+    },
+    text: 'event.youAreFormatAdmin',
+    separator: true,
+  });
 
   $scope.teamRegConfirm = function(teamRegistration) {
     if (teamRegistration.status == 'CONFIRMED') {

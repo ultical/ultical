@@ -15,6 +15,7 @@ var app = angular.module('ultical',
 		 'angularMoment',
 		 'slugifier',
 		 'ng.deviceDetector',
+		 'angular.filter',
 		 ]);
 
 //router ui route
