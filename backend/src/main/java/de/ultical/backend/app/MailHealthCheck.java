@@ -18,7 +18,7 @@ public class MailHealthCheck extends HealthCheck {
             }
 
             @Override
-            public String getRenderedMessage(String recipient) {
+            public String getRenderedMessage() {
                 StringBuilder sb = new StringBuilder();
                 sb.append("Hallo zusammen,").append('\n');
                 sb.append('\n');
@@ -33,12 +33,30 @@ public class MailHealthCheck extends HealthCheck {
             }
 
             @Override
-            public Set<String> getRecipients() {
-                return Collections.singleton("team@ultical.com");
+            public Set<Recipient> getRecipients() {
+                return Collections.singleton(new Recipient("test@abc.de"));
             }
 
             @Override
             public String getSenderName() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public Set<Recipient> getCCs() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public Set<Recipient> getBCCs() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public Set<Recipient> getReplyTos() {
                 // TODO Auto-generated method stub
                 return null;
             }

@@ -5,7 +5,7 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 
 import de.ultical.backend.app.mail.ConfirmEmailMessage;
-import de.ultical.backend.app.mail.DefaultMessage;
+import de.ultical.backend.app.mail.SystemMessage;
 import de.ultical.backend.app.mail.DfvOptInMessage;
 import de.ultical.backend.app.mail.ForgotPasswordMessage;
 import de.ultical.backend.data.DataStore;
@@ -32,7 +32,7 @@ public class EmailCodeService {
         if (this.dataStore.saveMailCode(mailCode)) {
             HashMap<String, String> values = new HashMap<String, String>();
             values.put("link", this.createForgotPasswordLink(mailCode));
-            DefaultMessage message = new ForgotPasswordMessage(values);
+            SystemMessage message = new ForgotPasswordMessage(values);
             message.addRecipient(user.getEmail(), user.getDfvPlayer().getFirstName(), user.getFullName());
 
             mailClient.sendMail(message);
@@ -46,7 +46,7 @@ public class EmailCodeService {
         MailCode mailCode = this.createMailCode(user, MailCodeType.CONFIRM_EMAIL);
 
         if (this.dataStore.saveMailCode(mailCode)) {
-            DefaultMessage message = new ConfirmEmailMessage();
+            SystemMessage message = new ConfirmEmailMessage();
             message.addRecipient(user.getEmail(), user.getDfvPlayer().getFirstName(), user.getFullName());
 
             HashMap<String, String> values = new HashMap<String, String>();
@@ -64,7 +64,7 @@ public class EmailCodeService {
         MailCode mailCode = this.createMailCode(user, MailCodeType.DFV_MAIL_OPT_IN);
 
         if (this.dataStore.saveMailCode(mailCode)) {
-            DefaultMessage optInMessage = new DfvOptInMessage();
+            SystemMessage optInMessage = new DfvOptInMessage();
             optInMessage.addRecipient(recipientEmail, user.getDfvPlayer().getFirstName(), user.getFullName());
 
             HashMap<String, String> optInValues = new HashMap<String, String>();
