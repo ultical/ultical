@@ -199,32 +199,32 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		},
 
 		registerUser: function(user, callback) {
-			post('register', user, callback);
+			post('command/register', user, callback);
 		},
 
 		changePasswordWithMailCode : function(code, user, callback) {
 			var basicUser = { id: user.id, password: user.password};
-			post('mail/' + code, basicUser, callback);
+			post('command/mail/code/' + code, basicUser, callback);
 		},
 
 		resendConfirmationEmail: function(loginData, callback) {
-			post('mail/resend/confirmation', loginData, callback);
+			post('command/mail/user/confirmation/resend', loginData, callback);
 		},
 
 		resendOptInEmail: function(loginData, callback) {
-			post('mail/resend/optin', loginData, callback);
+			post('command/mail/user/optin/resend', loginData, callback);
 		},
 
 		sendForgotPasswordEmail: function(loginData, callback) {
-			post('mail/resend/password', loginData, callback);
+			post('command/mail/user/password/resend', loginData, callback);
 		},
 
 		redeemMailCode: function(code, callback, errorCallback) {
-			get('mail/' + code, callback, errorCallback);
+			get('command/mail/code/' + code, callback, errorCallback);
 		},
 
 		login: function(user, callback) {
-			post('auth', user, callback);
+			post('command/auth', user, callback);
 		},
 
 		getUserProposals: function(userName, callback) {

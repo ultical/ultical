@@ -31,7 +31,7 @@ import de.ultical.backend.model.User;
  * @author bas
  *
  */
-@Path("/mail")
+@Path("/command/mail")
 public class MailResource {
 
     @Inject
@@ -47,7 +47,7 @@ public class MailResource {
     Client client;
 
     @GET
-    @Path("{code}")
+    @Path("code/{code}")
     @Produces(MediaType.APPLICATION_JSON)
     public MailCode getMailCode(@PathParam("code") String code) throws Exception {
 
@@ -81,7 +81,7 @@ public class MailResource {
     }
 
     @POST
-    @Path("{code}")
+    @Path("code/{code}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public User updatePassword(@PathParam("code") String code, @NotNull User user) throws Exception {
@@ -112,7 +112,7 @@ public class MailResource {
     }
 
     @POST
-    @Path("resend/confirmation")
+    @Path("user/confirmation/resend")
     @Consumes(MediaType.APPLICATION_JSON)
     public boolean resendConfirmation(@NotNull User loginData) throws Exception {
 
@@ -129,7 +129,7 @@ public class MailResource {
     }
 
     @POST
-    @Path("resend/optin")
+    @Path("user/optin/resend")
     @Consumes(MediaType.APPLICATION_JSON)
     public boolean resendOptIn(@NotNull User loginData) throws Exception {
 
@@ -156,7 +156,7 @@ public class MailResource {
     }
 
     @POST
-    @Path("resend/password")
+    @Path("user/password/resend")
     @Consumes(MediaType.APPLICATION_JSON)
     public boolean sendForgotPassword(@NotNull User loginData) throws Exception {
 
