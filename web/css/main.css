@@ -580,3 +580,13 @@ select:not([multiple]) {
 	margin-left: 20px;
 	font-size:12px;
 }
+
+footer {
+	line-height: 1.7em;
+}
+
+
+@media ( max-width : 991px) {
+	footer {
+		line-height: 2.5em;
+}

@@ -309,10 +309,10 @@ TRANSLATIONS['de'] = {
 
 		footer: {
 			mainText: 'Entwickelt vom ultiCal-Team',
-			emailContactText: 'Gib uns Feedback',
+			emailContactText: 'Gib uns Feedback oder stelle Fragen',
 			gitHubBugText: 'Berichte von Bugs',
-			emailSupportText: 'Stelle Fragen',
 			gitHubText: 'Schau dir den Code an',
+			faqText: 'Häufige Fragen und Antworten',
 		},
 
 		countries: {
