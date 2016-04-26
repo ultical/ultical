@@ -1,23 +1,26 @@
-<div class="hidden-print container" ng-controller="FooterCtrl">
+<div class="hidden-print container footer" ng-controller="FooterCtrl">
 	<div class="row text-muted">
-		<div class="col-md-6">
+
+		<div class="col-md-4">
 			<span>{{ 'footer.mainText' | translate }}</span>
-			<span class="visible-md-inline visible-lg-inline">&nbsp;-&nbsp;</span><br/ class="hidden-md hidden-lg">
+			<br />
 			<a href="mailto:{{ emailContact }}">
 				<i class="fa fa-envelope-o"></i> {{ 'footer.emailContactText' | translate }}
 			</a>
-			&nbsp;{{ 'general.or' | translate }} &nbsp;
+		</div>
 
-			<a href="mailto:{{ emailSupport }}">
-				<i class="fa fa-envelope-o"></i> {{ 'footer.emailSupportText' | translate }}
+		<div class="col-md-4 text-center">
+			<a target="_blank" href="{{ qaLink }}">
+				<i class="fa fa-question-circle"></i> {{ 'footer.faqText' | translate }}
 			</a>
 		</div>
-		<div class="col-md-6">
+
+		<div class="col-md-4">
 			<div class="pull-right">
 				<a href="{{ codeLink }}">
 					<i class="fa fa-github"></i> {{ 'footer.gitHubText' | translate }}
 				</a>
-				&nbsp; {{ 'general.or' | translate }} &nbsp;
+				<br/>
 				<a href="{{ bugLink }}">
 					<i class="fa fa-github"></i> {{ 'footer.gitHubBugText' | translate }}
 				</a>

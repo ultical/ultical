@@ -1,25 +1,25 @@
 'use strict';
 
 angular.module('ultical.user')
-.controller('MailsCtrl', ['$scope', 'serverApi', 'authorizer', '$state', 'alerter', '$stateParams',
-                            function($scope, serverApi, authorizer, $state, alerter, $stateParams) {
+.controller('MailsCtrl', ['$scope', 'serverApi', 'authorizer', '$state', 'alerter', '$stateParams', 'CONFIG',
+                            function($scope, serverApi, authorizer, $state, alerter, $stateParams, CONFIG) {
 
 	$scope.promptFor = '';
 	$scope.validationError = false;
-	
+
 	$scope.doPasswordChange = function(passwords) {
 		if (passwords.one != passwords.two) {
 			$scope.validationError = true;
 		}
-		
+
 		$scope.mailCode.user.password = passwords.one;
-		
+
 		serverApi.changePasswordWithMailCode($scope.mailCode.code, $scope.mailCode.user, function(user) {
 			alerter.success('emailCode.successPasswordChangedTitle', 'emailCode.successPasswordChangedText');
-			$state.go('app.start');
+			$state.go('app.' + CONFIG.general.startState);
 		});
 	};
-	
+
 	serverApi.redeemMailCode($stateParams.code, function(mailCode) {
 		// success callback
 		if ($stateParams.emailCodeType == 'password' && mailCode.type == 'FORGOT_PASSWORD') {
@@ -37,9 +37,9 @@ angular.module('ultical.user')
 				successText = 'emailCode.successText';
 			}
 			alerter.success('emailCode.successTitle', successText);
-			$state.go('app.start');
+      $state.go('app.' + CONFIG.general.startState);
 		}
-	}, 
+	},
 	function() {
 		// error callback
 		if ($stateParams.emailCodeType == 'password') {
@@ -47,9 +47,9 @@ angular.module('ultical.user')
 		} else {
 			alerter.error('emailCode.noCodeTitle', 'emailCode.noCodeConfirm');
 		}
-		$state.go('app.start');
+    $state.go('app.' + CONFIG.general.startState);
 	});
 
-	
-	
+
+
 }]);

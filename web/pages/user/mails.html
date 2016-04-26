@@ -3,9 +3,10 @@
 
 		<div class="row">
 			<div class="col-md-4 col-md-offset-4">
-				<div class="form-group col-md-9 col-md-offset-1" ng-class="{'has-error': pwForm.pwOne.$touched && newPw.one.length < 10}">
+				<div class="form-group col-md-9 col-md-offset-1" ng-class="{'has-error': (pwForm.pwOne.$touched && pwForm.pwOne.$invalid && pwForm.pwOne.$touched) }">
 					<label for="pw1">{{ 'user.password' | translate }}</label>
 					<input ng-required="1" ng-minlength="10" name="pwOne" type="password" class="form-control" id="pw1" ng-model="newPw.one" placeholder="{{ 'user.password' | translate }}" />
+					<div ng-if="pwForm.pwOne.$invalid && pwForm.pwOne.$touched" class="ani-fade ani-vslide ani-short help-block">{{ 'user.registration.error.validation_error' | translate }}</div>
 				</div>
 			</div>
 		</div>
@@ -14,6 +15,7 @@
 				<div class="form-group col-md-9 col-md-offset-1" ng-class="{'has-error': pwForm.pwTwo.$touched && newPw.one != newPw.two}">
 					<label for="pw2">{{ 'user.passwordCheck' | translate }}</label>
 					<input ng-required="1" ng-minlength="10" name="pwTwo" type="password" class="form-control" id="pw2" ng-model="newPw.two" placeholder="{{ 'user.passwordCheck' | translate }}" />
+					<div ng-if="pwForm.pwOne.$valid && pwForm.pwTwo.$touched && newPw.two != newPw.one" class="ani-fade ani-vslide ani-short help-block">{{ 'user.registration.error.passwordsNotEqual' | translate }}</div>
 				</div>
 			</div>
 		</div>
