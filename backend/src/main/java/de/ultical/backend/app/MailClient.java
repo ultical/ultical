@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.MailClient.UlticalMessage.Recipient;
+import de.ultical.backend.app.MailClient.UlticalMessage.UlticalRecipientType;
 import lombok.Data;
 
 public class MailClient {
@@ -31,6 +32,9 @@ public class MailClient {
     UltiCalConfig config;
 
     public static interface UlticalMessage {
+        public enum UlticalRecipientType {
+            TO, CC, BCC, REPLY_TO;
+        }
 
         @Data
         public class Recipient {
@@ -39,6 +43,11 @@ public class MailClient {
 
             public Recipient(String email) {
                 this.setEmail(email);
+            }
+
+            public Recipient(String email, String name) {
+                this.setEmail(email);
+                this.setName(name);
             }
 
             public String getNameAddress() {
@@ -50,13 +59,7 @@ public class MailClient {
             }
         }
 
-        Set<Recipient> getRecipients();
-
-        Set<Recipient> getCCs();
-
-        Set<Recipient> getBCCs();
-
-        Set<Recipient> getReplyTos();
+        Set<Recipient> getRecipients(UlticalRecipientType recipientType);
 
         String getRenderedMessage();
 
@@ -73,7 +76,7 @@ public class MailClient {
             MimeMessage message = new MimeMessage(this.mailSession);
 
             // TO
-            for (Recipient recipient : m.getRecipients()) {
+            for (Recipient recipient : m.getRecipients(UlticalRecipientType.TO)) {
                 if (this.config.getDebugMode().isEnabled() && !this.config.getDebugMode().getMailCatcher().isEmpty()) {
                     String detouredRecipient = recipient.getNameAddress().replace("<", "-").replace(">", "-") + " <"
                             + this.config.getDebugMode().getMailCatcher() + ">";
@@ -84,8 +87,8 @@ public class MailClient {
             }
 
             // CC
-            if (m.getCCs() != null) {
-                for (Recipient cc : m.getCCs()) {
+            if (m.getRecipients(UlticalRecipientType.CC) != null) {
+                for (Recipient cc : m.getRecipients(UlticalRecipientType.CC)) {
                     if (this.config.getDebugMode().isEnabled()
                             && !this.config.getDebugMode().getMailCatcher().isEmpty()) {
                         String detouredRecipient = cc.getNameAddress().replace("<", "-").replace(">", "-") + " <"
@@ -98,8 +101,8 @@ public class MailClient {
             }
 
             // BCC
-            if (m.getBCCs() != null) {
-                for (Recipient bcc : m.getBCCs()) {
+            if (m.getRecipients(UlticalRecipientType.BCC) != null) {
+                for (Recipient bcc : m.getRecipients(UlticalRecipientType.BCC)) {
                     if (!(this.config.getDebugMode().isEnabled()
                             && !this.config.getDebugMode().getMailCatcher().isEmpty())) {
                         message.addRecipients(RecipientType.BCC, bcc.getEmail());
@@ -108,10 +111,11 @@ public class MailClient {
             }
 
             // REPLY TO
-            if (m.getReplyTos() != null && !m.getReplyTos().isEmpty()) {
+            if (m.getRecipients(UlticalRecipientType.REPLY_TO) != null
+                    && !m.getRecipients(UlticalRecipientType.REPLY_TO).isEmpty()) {
                 List<InternetAddress> replyTos = new ArrayList<InternetAddress>();
 
-                for (Recipient replyTo : m.getReplyTos()) {
+                for (Recipient replyTo : m.getRecipients(UlticalRecipientType.REPLY_TO)) {
                     replyTos.add(new InternetAddress(replyTo.getNameAddress()));
                 }
                 message.setReplyTo(replyTos.toArray(new InternetAddress[replyTos.size()]));

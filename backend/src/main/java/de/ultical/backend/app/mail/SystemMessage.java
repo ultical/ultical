@@ -75,16 +75,16 @@ public class SystemMessage implements UlticalMessage {
     }
 
     @Override
-    public Set<Recipient> getRecipients() {
-        return this.recipients.keySet();
+    public Set<Recipient> getRecipients(UlticalRecipientType recipientType) {
+        if (recipientType == UlticalRecipientType.TO) {
+            return this.recipients.keySet();
+        } else {
+            return null;
+        }
     }
 
     public void addParagraph(String paragraph) {
         this.paragraphs.add(paragraph);
-    }
-
-    public boolean readyToSend() {
-        return !(this.getRecipients().isEmpty() || this.getParagraphs().isEmpty() || this.getSubject().isEmpty());
     }
 
     @Override
@@ -116,23 +116,4 @@ public class SystemMessage implements UlticalMessage {
 
         return sb.toString();
     }
-
-    @Override
-    public Set<Recipient> getCCs() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Set<Recipient> getBCCs() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Set<Recipient> getReplyTos() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }
