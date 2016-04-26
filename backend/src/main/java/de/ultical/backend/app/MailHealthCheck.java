@@ -33,7 +33,7 @@ public class MailHealthCheck extends HealthCheck {
             }
 
             @Override
-            public Set<Recipient> getRecipients() {
+            public Set<Recipient> getRecipients(UlticalRecipientType recipientType) {
                 return Collections.singleton(new Recipient("test@abc.de"));
             }
 
@@ -43,23 +43,6 @@ public class MailHealthCheck extends HealthCheck {
                 return null;
             }
 
-            @Override
-            public Set<Recipient> getCCs() {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public Set<Recipient> getBCCs() {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public Set<Recipient> getReplyTos() {
-                // TODO Auto-generated method stub
-                return null;
-            }
         };
         MailClient mailClient = ServiceLocatorProvider.INSTANCE.getServiceLocator()
                 .createAndInitialize(MailClient.class);

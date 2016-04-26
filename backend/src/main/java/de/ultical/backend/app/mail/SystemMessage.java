@@ -33,8 +33,6 @@ public class SystemMessage implements UlticalMessage {
 
     private String senderName;
 
-    private String footer;
-
     public SystemMessage() {
         this("de");
     }
@@ -52,8 +50,6 @@ public class SystemMessage implements UlticalMessage {
             this.setGreetings("Hallo");
             this.setGoodbye("Viele Grüße,");
             this.setGoodbyeName("DFV-Turniere");
-            this.setFooter(System.lineSeparator() + "-----" + System.lineSeparator() + "www.dfv-turniere.de"
-                    + System.lineSeparator() + "Der Turnierkalender des DFV");
         }
     }
 
@@ -111,8 +107,6 @@ public class SystemMessage implements UlticalMessage {
 
         sb.append(this.getGoodbye()).append(nl);
         sb.append(this.getGoodbyeName()).append(nl);
-
-        sb.append(this.getFooter());
 
         return sb.toString();
     }

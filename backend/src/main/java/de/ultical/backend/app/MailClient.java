@@ -31,6 +31,9 @@ public class MailClient {
     @Inject
     UltiCalConfig config;
 
+    private String footer = System.lineSeparator() + System.lineSeparator() + "-----" + System.lineSeparator()
+            + "www.dfv-turniere.de" + System.lineSeparator() + "Der Turnierkalender des DFV";
+
     public static interface UlticalMessage {
         public enum UlticalRecipientType {
             TO, CC, BCC, REPLY_TO;
@@ -131,7 +134,7 @@ public class MailClient {
             message.setSubject(m.getSubject());
 
             // BODY
-            message.setText(m.getRenderedMessage(), "UTF-8");
+            message.setText(m.getRenderedMessage() + this.footer, "UTF-8");
 
             // SEND
             Transport.send(message);
