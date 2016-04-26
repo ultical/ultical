@@ -24,16 +24,16 @@ angular.module('ultical.events', [])
   };
 
   $scope.current = {
-    january: moment().month(0),
+    january: moment().date(1).month(0),
     now: moment(),
     nextYear: moment().add(1, 'years').month(0).day(0),
-    lastMonth: moment().subtract(1, 'months'),
-    day: moment().subtract(3, 'days'),
+    lastMonth: moment().date(1).subtract(1, 'months'),
+    dayMinus3: moment().subtract(3, 'days'),
   };
 
   $scope.eventFilter = function(event, index, array) {
     var eventStartDate = moment(event.startDate);
-    if (eventStartDate.isAfter($scope.current.day) && eventStartDate.isBefore($scope.current.nextYear)) {
+    if (eventStartDate.isSameOrAfter($scope.current.dayMinus3, 'month') && eventStartDate.isBefore($scope.current.nextYear)) {
         return true;
     }
     if (eventStartDate.isSame($scope.current.now, 'year') && $scope.show.beginningOfYear) {
