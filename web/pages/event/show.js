@@ -274,6 +274,28 @@ angular.module('ultical.events')
     separator: true,
   });
 
+  actionBar.addAction({
+    group: 'event-admin',
+    show: function(isLoggedIn) {
+      return isLoggedIn && ($scope.format.x.own || $scope.show.event && $scope.event.x.own);
+    },
+    button: {
+      text: 'event.email.buttonLabel',
+      click: function() {
+        openEmailModal();
+      },
+    },
+  });
+
+  function openEmailModal() {
+    var modal = $modal({
+      animation: 'am-fade-and-slide-top',
+      templateUrl: 'pages/event/email_modal.html?v=3',
+      show: true,
+      scope: $scope,
+    });
+  };
+
   $scope.teamRegConfirm = function(teamRegistration) {
     if (teamRegistration.status == 'CONFIRMED') {
       return;

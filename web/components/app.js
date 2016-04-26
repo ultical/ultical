@@ -153,9 +153,13 @@ app.config(function($tooltipProvider) {
   });
 });
 
-app.run(['storage', '$translate', 'amMoment', function(storage, $translate, amMoment) {
+app.run(['storage', '$translate', 'amMoment', '$select', function(storage, $translate, amMoment, $select) {
 	storage.getSeasons(function() {});
 	amMoment.changeLocale($translate.use().toLowerCase());
+	angular.extend($select.defaults, {
+    maxLengthHtml: $translate.instant('general.selectOverflow'),
+		placeholder: $translate.instant('general.selectPlaceholder'),
+  });
 }]);
 
 // <head> controller

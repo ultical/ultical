@@ -223,6 +223,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			get('command/mail/code/' + code, callback, errorCallback);
 		},
 
+    sendEmailToTeams: function(mailInfo, callback, errorCallback) {
+      post('command/mail/teams', mailInfo, callback, errorCallback);
+    },
+
 		login: function(user, callback) {
 			post('command/auth', user, callback);
 		},

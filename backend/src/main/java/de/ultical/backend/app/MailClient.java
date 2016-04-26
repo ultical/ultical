@@ -31,8 +31,8 @@ public class MailClient {
     @Inject
     UltiCalConfig config;
 
-    private String footer = System.lineSeparator() + System.lineSeparator() + "-----" + System.lineSeparator()
-            + "www.dfv-turniere.de" + System.lineSeparator() + "Der Turnierkalender des DFV";
+    private String footer = System.lineSeparator() + "-----" + System.lineSeparator() + "www.dfv-turniere.de"
+            + System.lineSeparator() + "Der Turnierkalender des DFV" + System.lineSeparator();
 
     public static interface UlticalMessage {
         public enum UlticalRecipientType {
@@ -125,13 +125,13 @@ public class MailClient {
             }
 
             // FROM
-            message.setFrom(m.getSenderName() + " <"
-                    + this.mailSession.getProperty(SessionFactory.EMAIL_FROM_PROPERTY_KEY) + ">");
+            message.setFrom(new InternetAddress(m.getSenderName() + " <"
+                    + this.mailSession.getProperty(SessionFactory.EMAIL_FROM_PROPERTY_KEY) + ">"));
             message.setSender(
                     new InternetAddress(this.mailSession.getProperty(SessionFactory.EMAIL_FROM_PROPERTY_KEY)));
 
             // SUBJECT
-            message.setSubject(m.getSubject());
+            message.setSubject(m.getSubject(), "UTF-8");
 
             // BODY
             message.setText(m.getRenderedMessage() + this.footer, "UTF-8");

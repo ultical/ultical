@@ -176,6 +176,10 @@ button, input, optgroup, select, textarea {
 	color: white;
 }
 
+input, textarea {
+	width: 100%;
+}
+
 .panel.panel-ultical {
 	background-color: #FAFAFA;
 	/* 	border-color: #D9E9FF; */

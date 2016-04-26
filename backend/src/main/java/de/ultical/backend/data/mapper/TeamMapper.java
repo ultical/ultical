@@ -119,4 +119,21 @@ public interface TeamMapper extends BaseMapper<Team> {
     @Select("SELECT id FROM TEAM WHERE name = #{teamName}")
     @Results({ @Result(column = "id", property = "id") })
     Team getByName(String teamName);
+
+    // get all teams that participate in the specified division of the specified
+    // edition with the specified participation status
+    @Select({ "<script>", "SELECT * FROM TEAM t", "LEFT JOIN ROSTER r ON r.team = t.id",
+            "LEFT JOIN TEAM_REGISTRATION tr ON tr.roster = r.id",
+            "LEFT JOIN DIVISION_REGISTRATION dr ON tr.division_registration = dr.id",
+            "LEFT JOIN TOURNAMENT_EDITION te ON te.id = dr.tournament_edition", "WHERE tr.status IN ",
+            "<foreach item='status' collection='statusList' open='(' separator=',' close=')'>", "#{status}",
+            "</foreach>", "AND dr.id IN ",
+            "<foreach item='division' collection='divisionList' open='(' separator=',' close=')'>", "#{division.id}",
+            "</foreach>", "AND te.id = #{editionId}", "</script>" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "emails", property = "emails"), @Result(column = "url", property = "url"),
+            @Result(column = "contact_email", property = "contactEmail"),
+            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
+    List<Team> getByEditionDivisionStatus(@Param("editionId") Integer editionId,
+            @Param("divisionList") List<Integer> divisionList, @Param("statusList") List<String> statusList);
 }
