@@ -2,7 +2,7 @@ package de.ultical.backend.app.mail;
 
 import java.util.Map;
 
-public class ForgotPasswordMessage extends DefaultMessage {
+public class ForgotPasswordMessage extends SystemMessage {
 
     public ForgotPasswordMessage() {
         super();

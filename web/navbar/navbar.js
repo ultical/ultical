@@ -7,7 +7,6 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 	$scope.logoSide = "front";
 
 	$scope.goTo = function() {
-		console.log("go");
 		$state.go('app.eventsList');
 	}
 

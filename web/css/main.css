@@ -176,6 +176,10 @@ button, input, optgroup, select, textarea {
 	color: white;
 }
 
+input, textarea {
+	width: 100%;
+}
+
 .panel.panel-ultical {
 	background-color: #FAFAFA;
 	/* 	border-color: #D9E9FF; */
@@ -581,12 +585,24 @@ select:not([multiple]) {
 	font-size:12px;
 }
 
+.action-bar {
+	background-color: #FAFAFA;
+	margin-top: 15px;
+	padding: 10px;
+}
+
+.horizontal-separator {
+	margin-bottom: 12px;
+	margin-top: 12px;
+	border-top: solid 1px #DDDDDD;
+}
+
 footer {
 	line-height: 1.7em;
 }
 
-
 @media ( max-width : 991px) {
 	footer {
 		line-height: 2.5em;
+	}
 }

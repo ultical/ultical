@@ -30,6 +30,7 @@
     "angular-animate": "*",
     "angular-motion": "*",
     "angular-bootstrap": "*",
+    "angular-filter": "*",
     "bootstrap": "*",
     "respond": "*",
     "fontawesome": "*",

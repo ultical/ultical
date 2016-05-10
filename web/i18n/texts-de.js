@@ -36,6 +36,11 @@ TRANSLATIONS['de'] = {
 			currencyFormat: '{{ amount }} {{ currencySymbol }}',
 			decimalSeparator: ',',
 			club: 'Verein',
+			division: 'Division',
+			divisions: 'Divisionen',
+			selectOverflow: 'ausgewählt',
+			selectPlaceholder: 'Bitte auswählen',
+			error: 'Fehler',
 		},
 
 		nav: {
@@ -149,6 +154,29 @@ TRANSLATIONS['de'] = {
 			list: {
 				title: 'Turniere',
 			},
+			youAreEventAdmin: 'Du bist Administrator dieses Turniers',
+			youAreFormatAdmin: 'Du bist Administrator dieses Turnierformats',
+			email: {
+				title: 'Nachricht an die Teams',
+				buttonLabel: 'Email an die Teams',
+				sendButtonLabel: 'Email senden',
+				description: 'Wähle aus, welchen Gruppen von Teams deines Turniers {{ eventName }} du schreiben möchtest und verfasse die Nachricht.',
+				status: 'Anmeldestatus',
+				statusCONFIRMED: 'Bestätigt',
+				statusPENDING: 'Unbestätigt',
+				statusWAITING_LIST: 'Warteliste',
+				statusDECLINED: 'Abgelehnt',
+				statusCANCELLED: 'Abgesagt',
+				replyToDesc: 'Diese Emailadresse wird als Antwortadresse übermittelt. Sie ist für die Empfänger deiner Nachricht sichtbar.',
+				replyTo: 'Antwortadresse',
+				body: 'Nachrichtentext',
+				successTitle: 'Nachricht erfolgreich gesendet',
+				successText: 'Deine Email an die angegebenen Teams wurde versendet. Du erhälst eine Kopie an die angegebene Antwortadresse.',
+				failure: 'Es ist ein unbekannter Fehler aufgetreten. Bitte versuche es später erneut.',
+				authorDescriptionText: 'Diese Email wurde von {{ authorName }} über dfv-turniere.de versendet.',
+				subject: 'Nachricht von {{ tournamentName }}',
+				empty: 'Bitte gib einen Nachrichtentext ein!',
+			},
 			matchday: 'Spieltag',
 			registration: 'Anmeldung',
 			registrationIsOverSince: 'Die Anmeldung ist geschlossen seit dem',
@@ -156,7 +184,7 @@ TRANSLATIONS['de'] = {
 			registrationEndsAt: 'Die Anmeldung ist offen bis zum',
 			registrationUndefined: 'Es gibt keine Informationen zur Anmeldung',
 			register: {
-				notLoggedIn: 'Bitte einloggen, um ein Team anzumelden.',
+				notLoggedIn: 'Bitte anmelden, um ein Team zu registrieren.',
 				noOwnTeam: 'Zur Anmeldung bitte zuerst ein Team unter "Meine Teams" anlegen.',
 				title: 'Team anmelden',
 				description: 'Um dein Team anzumelden, fülle bitte die folgenden Felder aus. Mit Sternchen (*) gekennzeichnete Felder müssen ausgefüllt werden.',
@@ -315,6 +343,12 @@ TRANSLATIONS['de'] = {
 			faqText: 'Häufige Fragen und Antworten',
 		},
 
+		actionBar: {
+			head: {
+				loggedInAs: 'Angemeldet als {{ userName }}',
+				notLoggedIn: 'Du bist nicht angemeldet',
+			}
+		},
 		countries: {
 			de: 'Deutschland',
 			fr: 'Frankreich',

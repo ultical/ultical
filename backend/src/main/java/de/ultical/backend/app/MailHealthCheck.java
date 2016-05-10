@@ -18,7 +18,7 @@ public class MailHealthCheck extends HealthCheck {
             }
 
             @Override
-            public String getRenderedMessage(String recipient) {
+            public String getRenderedMessage() {
                 StringBuilder sb = new StringBuilder();
                 sb.append("Hallo zusammen,").append('\n');
                 sb.append('\n');
@@ -33,8 +33,8 @@ public class MailHealthCheck extends HealthCheck {
             }
 
             @Override
-            public Set<String> getRecipients() {
-                return Collections.singleton("team@ultical.com");
+            public Set<Recipient> getRecipients(UlticalRecipientType recipientType) {
+                return Collections.singleton(new Recipient("test@abc.de"));
             }
 
             @Override
@@ -42,6 +42,7 @@ public class MailHealthCheck extends HealthCheck {
                 // TODO Auto-generated method stub
                 return null;
             }
+
         };
         MailClient mailClient = ServiceLocatorProvider.INSTANCE.getServiceLocator()
                 .createAndInitialize(MailClient.class);

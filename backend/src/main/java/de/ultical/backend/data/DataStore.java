@@ -591,6 +591,19 @@ public class DataStore {
         }
     }
 
+    public List<Team> getTeamsByEditionDivisionsStatus(Integer editionId, List<Integer> divisionList,
+            List<String> statusList) {
+
+        try {
+            TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+            return teamMapper.getByEditionDivisionStatus(editionId, divisionList, statusList);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public MailCode getMailCode(String code) {
         try {
             MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);

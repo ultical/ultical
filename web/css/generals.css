@@ -2,6 +2,10 @@
 	outline: 0;
 }
 
+.margin-top-tiny {
+	margin-top: 0.25em;
+}
+
 .margin-top-small {
 	margin-top: 0.5em;
 }
@@ -40,6 +44,10 @@
 
 .margin-right-big {
 	margin-right: 1.5em;
+}
+
+.margin-bottom-tiny {
+	margin-bottom: 0.25em;
 }
 
 .margin-bottom-small {

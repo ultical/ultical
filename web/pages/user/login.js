@@ -28,7 +28,6 @@ angular.module('ultical.user', [])
 					$scope.loginFail.title = 'wrongCredentials';
 					$scope.loginFail.actionText = 'wrongCredentialsAction';
 					$scope.loginFail.action = function(loginData) {
-						console.log("Click");
 						if ($scope.freeze) {
 							return;
 						}

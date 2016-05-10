@@ -1,5 +1,9 @@
 package de.ultical.backend.api;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
@@ -18,12 +22,20 @@ import javax.ws.rs.core.Response.Status;
 import org.mindrot.jbcrypt.BCrypt;
 
 import de.ultical.backend.api.transferClasses.DfvMvPlayer;
+import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.app.EmailCodeService;
 import de.ultical.backend.app.MailClient;
+import de.ultical.backend.app.MailClient.UlticalMessage.Recipient;
+import de.ultical.backend.app.MailClient.UlticalMessage.UlticalRecipientType;
 import de.ultical.backend.app.UltiCalConfig;
+import de.ultical.backend.app.mail.UserMessage;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.model.Event;
 import de.ultical.backend.model.MailCode;
+import de.ultical.backend.model.Team;
+import de.ultical.backend.model.TournamentEdition;
 import de.ultical.backend.model.User;
+import io.dropwizard.auth.Auth;
 
 /**
  * Handle mail code link clicks (referred by the frontend)
@@ -31,7 +43,7 @@ import de.ultical.backend.model.User;
  * @author bas
  *
  */
-@Path("/mail")
+@Path("/command/mail")
 public class MailResource {
 
     @Inject
@@ -47,7 +59,7 @@ public class MailResource {
     Client client;
 
     @GET
-    @Path("{code}")
+    @Path("code/{code}")
     @Produces(MediaType.APPLICATION_JSON)
     public MailCode getMailCode(@PathParam("code") String code) throws Exception {
 
@@ -81,7 +93,7 @@ public class MailResource {
     }
 
     @POST
-    @Path("{code}")
+    @Path("code/{code}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public User updatePassword(@PathParam("code") String code, @NotNull User user) throws Exception {
@@ -112,7 +124,7 @@ public class MailResource {
     }
 
     @POST
-    @Path("resend/confirmation")
+    @Path("user/confirmation/resend")
     @Consumes(MediaType.APPLICATION_JSON)
     public boolean resendConfirmation(@NotNull User loginData) throws Exception {
 
@@ -129,7 +141,7 @@ public class MailResource {
     }
 
     @POST
-    @Path("resend/optin")
+    @Path("user/optin/resend")
     @Consumes(MediaType.APPLICATION_JSON)
     public boolean resendOptIn(@NotNull User loginData) throws Exception {
 
@@ -156,7 +168,7 @@ public class MailResource {
     }
 
     @POST
-    @Path("resend/password")
+    @Path("user/password/resend")
     @Consumes(MediaType.APPLICATION_JSON)
     public boolean sendForgotPassword(@NotNull User loginData) throws Exception {
 
@@ -173,5 +185,67 @@ public class MailResource {
             return new EmailCodeService(this.dataStore, this.config.getFrontendUrl())
                     .sendForgotPasswordMessage(this.mailClient, user);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @POST
+    @Path("teams")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public boolean sendEmailToTeamsOfEdition(Map<String, Object> emailInfo, @Auth @NotNull User currentUser)
+            throws Exception {
+
+        if (this.dataStore == null) {
+            throw new WebApplicationException(500);
+        }
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+
+            TournamentEdition edition;
+            if (emailInfo.containsKey("editionId")) {
+                Integer editionId = (Integer) emailInfo.get("editionId");
+                edition = this.dataStore.get(editionId, TournamentEdition.class);
+                Authenticator.assureFormatAdmin(edition.getTournamentFormat(), currentUser);
+            } else {
+                Integer eventId = (Integer) emailInfo.get("eventId");
+                Event event = this.dataStore.get(eventId, Event.class);
+                Authenticator.assureEventAdmin(event, currentUser);
+                edition = event.getTournamentEdition();
+            }
+
+            List<Team> teams = this.dataStore.getTeamsByEditionDivisionsStatus(edition.getId(),
+                    (List<Integer>) emailInfo.get("divisions"), (List<String>) emailInfo.get("status"));
+
+            // get all team admins and email addresses
+            List<Recipient> recipients = new ArrayList<Recipient>();
+            for (Team team : teams) {
+                if (!team.getContactEmail().isEmpty()) {
+                    recipients.add(new Recipient(team.getContactEmail()));
+                }
+                for (String email : team.getEmails().split(",")) {
+                    recipients.add(new Recipient(email));
+                }
+                for (User admin : team.getAdmins()) {
+                    recipients.add(new Recipient(admin.getEmail(), admin.getFullName()));
+                }
+            }
+
+            UserMessage message = new UserMessage();
+
+            message.setSubject((String) emailInfo.get("subject"));
+            message.setBody((String) emailInfo.get("body"));
+            message.setAuthorDescriptionText((String) emailInfo.get("authorDescriptionText"));
+
+            Recipient currentUserRecipient = new Recipient(currentUser.getEmail(), currentUser.getFullName());
+            message.setAuthor(currentUserRecipient);
+            message.addRecipient(UlticalRecipientType.TO, currentUserRecipient);
+
+            message.addRecipient(UlticalRecipientType.REPLY_TO, new Recipient((String) emailInfo.get("replyTo")));
+
+            message.addRecipients(UlticalRecipientType.BCC, recipients);
+
+            this.mailClient.sendMail(message);
+        }
+
+        return true;
     }
 }
