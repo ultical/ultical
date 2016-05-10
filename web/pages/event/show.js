@@ -82,6 +82,24 @@ angular.module('ultical.events')
       }
 		});
 
+    // check if url name is correct - else modify it
+    if ($scope.show.event) {
+      var shouldBeEventSlug = $filter('slugify')($filter('eventname')($scope.event));
+      if ($stateParams.eventSlug != shouldBeEventSlug) {
+        $state.go('app.eventShow', {eventSlug: shouldBeEventSlug, eventId: $scope.event.id }, {notify: false});
+      }
+    } else if ($scope.show.edition) {
+      var shouldBeEditionSlug = $filter('slugify')($filter('editionname')($scope.edition));
+      if ($stateParams.editionSlug != shouldBeEditionSlug) {
+        $state.go('app.editionShow', {editionSlug: shouldBeEditionSlug, editionId: $scope.edition.id }, {notify: false});
+      }
+    } else {
+      var shouldBeFormatSlug = $filter('slugify')($scope.format.name);
+      if ($stateParams.formatSlug != shouldBeFormatSlug) {
+        $state.go('app.formatShow', {formatSlug: shouldBeFormatSlug, formatId: $scope.format.id }, {notify: false});
+      }
+    }
+
     if ($scope.show.event) {
       headService.setTitle($filter('eventname')($scope.event), {});
       // define which divisions to show
