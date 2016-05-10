@@ -32,8 +32,8 @@ public class MailClient {
     @Inject
     UltiCalConfig config;
 
-    private String footer = System.lineSeparator() + "-----" + System.lineSeparator() + "www.dfv-turniere.de"
-            + System.lineSeparator() + "Der Turnierkalender des DFV" + System.lineSeparator();
+    private String footer = System.lineSeparator() + System.lineSeparator() + "-- " + System.lineSeparator()
+            + "www.dfv-turniere.de" + System.lineSeparator() + "Der Turnierkalender des DFV" + System.lineSeparator();
 
     public static interface UlticalMessage {
         public enum UlticalRecipientType {

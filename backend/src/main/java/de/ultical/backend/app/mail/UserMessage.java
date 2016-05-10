@@ -59,7 +59,7 @@ public class UserMessage implements UlticalMessage {
 
     @Override
     public String getSenderName() {
-        return this.getAuthor().getName() + " via DFV-Turniere";
+        return this.getAuthor().getName() + " über DFV-Turniere";
     }
 
 }
