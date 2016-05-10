@@ -14,6 +14,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,14 +53,6 @@ public class MailClient {
                 this.setEmail(email);
                 this.setName(name);
             }
-
-            public String getNameAddress() {
-                if (this.name != null && !this.name.isEmpty()) {
-                    return this.name + " <" + this.email + ">";
-                } else {
-                    return this.email;
-                }
-            }
         }
 
         Set<Recipient> getRecipients(UlticalRecipientType recipientType);
@@ -81,11 +74,11 @@ public class MailClient {
             // TO
             for (Recipient recipient : m.getRecipients(UlticalRecipientType.TO)) {
                 if (this.config.getDebugMode().isEnabled() && !this.config.getDebugMode().getMailCatcher().isEmpty()) {
-                    String detouredRecipient = recipient.getNameAddress().replace("<", "-").replace(">", "-") + " <"
-                            + this.config.getDebugMode().getMailCatcher() + ">";
+                    String detouredRecipient = this.getEncodedNameAddress(recipient).replace("<", "-").replace(">", "-")
+                            + " <" + this.config.getDebugMode().getMailCatcher() + ">";
                     message.setRecipient(RecipientType.TO, new InternetAddress(detouredRecipient));
                 } else {
-                    message.addRecipient(RecipientType.TO, new InternetAddress(recipient.getNameAddress()));
+                    message.addRecipient(RecipientType.TO, new InternetAddress(this.getEncodedNameAddress(recipient)));
                 }
             }
 
@@ -94,11 +87,11 @@ public class MailClient {
                 for (Recipient cc : m.getRecipients(UlticalRecipientType.CC)) {
                     if (this.config.getDebugMode().isEnabled()
                             && !this.config.getDebugMode().getMailCatcher().isEmpty()) {
-                        String detouredRecipient = cc.getNameAddress().replace("<", "-").replace(">", "-") + " <"
-                                + this.config.getDebugMode().getMailCatcher() + ">";
+                        String detouredRecipient = this.getEncodedNameAddress(cc).replace("<", "-").replace(">", "-")
+                                + " <" + this.config.getDebugMode().getMailCatcher() + ">";
                         message.setRecipient(RecipientType.CC, new InternetAddress(detouredRecipient));
                     } else {
-                        message.addRecipient(RecipientType.CC, new InternetAddress(cc.getNameAddress()));
+                        message.addRecipient(RecipientType.CC, new InternetAddress(this.getEncodedNameAddress(cc)));
                     }
                 }
             }
@@ -119,13 +112,13 @@ public class MailClient {
                 List<InternetAddress> replyTos = new ArrayList<InternetAddress>();
 
                 for (Recipient replyTo : m.getRecipients(UlticalRecipientType.REPLY_TO)) {
-                    replyTos.add(new InternetAddress(replyTo.getNameAddress()));
+                    replyTos.add(new InternetAddress(this.getEncodedNameAddress(replyTo)));
                 }
                 message.setReplyTo(replyTos.toArray(new InternetAddress[replyTos.size()]));
             }
 
             // FROM
-            message.setFrom(new InternetAddress(m.getSenderName() + " <"
+            message.setFrom(new InternetAddress(this.encodeHeader(m.getSenderName()) + " <"
                     + this.mailSession.getProperty(SessionFactory.EMAIL_FROM_PROPERTY_KEY) + ">"));
             message.setSender(
                     new InternetAddress(this.mailSession.getProperty(SessionFactory.EMAIL_FROM_PROPERTY_KEY)));
@@ -144,5 +137,17 @@ public class MailClient {
         } catch (MessagingException me) {
             LOGGER.error("Failed to build message", me);
         }
+    }
+
+    private String getEncodedNameAddress(Recipient recipient) {
+        if (recipient.name != null && !recipient.name.isEmpty()) {
+            return this.encodeHeader(recipient.name) + " <" + recipient.email + ">";
+        } else {
+            return recipient.email;
+        }
+    }
+
+    private String encodeHeader(String text) {
+        return "=?utf-8?B?" + new String(Base64.encodeBase64(text.getBytes())) + "?=";
     }
 }
