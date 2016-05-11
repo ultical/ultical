@@ -130,12 +130,20 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			get('teams/' + teamId, callback);
 		},
 
-		getAllTeams: function(callback) {
-			get('teams', callback);
+    getAllTeams: function(callback) {
+      get('teams', callback);
+    },
+
+		getAllTeamBasics: function(callback) {
+			get('teams/basics', callback);
 		},
 
 		getOwnTeams: function(callback) {
 			get('teams/own', callback);
+		},
+
+    getOwnTeamBasics: function(callback) {
+			get('teams/own/basics', callback);
 		},
 
     deleteTeam: function(teamId, callback, errCallback) {

@@ -456,6 +456,16 @@ public class DataStore {
         }
     }
 
+    public List<Team> getTeamBasics() {
+        TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+        return teamMapper.getBasics();
+    }
+
+    public List<Team> getTeamBasicsByUser(int userId) {
+        TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+        return teamMapper.getBasicsByUser(userId);
+    }
+
     public List<Team> getTeamsByUser(int userId) {
         TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
         return teamMapper.getByUser(userId);

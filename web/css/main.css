@@ -591,6 +591,26 @@ select:not([multiple]) {
 	padding: 10px;
 }
 
+.action-bar .btn {
+	display: table;
+	white-space: normal;
+	width: 140px;
+	height: 36px;
+	line-height: 16px;
+	padding-top: 0;
+	padding-bottom: 0;
+	font-weight: 300;
+}
+
+.action-bar .btn span {
+	display: table-cell;
+	vertical-align: middle;
+}
+.team-edit-sheet {
+	background-color: #FAFAFA;
+	padding: 15px;
+}
+
 .horizontal-separator {
 	margin-bottom: 12px;
 	margin-top: 12px;
