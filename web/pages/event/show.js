@@ -300,15 +300,24 @@ angular.module('ultical.events')
     button: {
       text: 'event.email.buttonLabel',
       click: function() {
-        openEmailModal();
+        openEmailToTeamsModal();
       },
     },
   });
 
-  function openEmailModal() {
+  function openEmailToTeamsModal() {
     var modal = $modal({
       animation: 'am-fade-and-slide-top',
-      templateUrl: 'pages/event/email_modal.html?v=3',
+      templateUrl: 'pages/event/email_teams_modal.html?v=4',
+      show: true,
+      scope: $scope,
+    });
+  };
+
+  function openEmailToEventModal() {
+    var modal = $modal({
+      animation: 'am-fade-and-slide-top',
+      templateUrl: 'pages/event/email_event_modal.html?v=3',
       show: true,
       scope: $scope,
     });
