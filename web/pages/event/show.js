@@ -265,14 +265,20 @@ angular.module('ultical.events')
     });
   }
 
-  $scope.openRegistrationModal = function() {
-    var modal = $modal({
-      animation: 'am-fade-and-slide-top',
-      templateUrl: 'pages/event/registration_modal.html?v=15',
-      show: true,
-      scope: $scope,
-    });
-  };
+
+  actionBar.addAction({
+    group: 'contact-event',
+    show: function(isLoggedIn) {
+      return isLoggedIn && $scope.show.event;
+    },
+    button: {
+      text: 'event.contactButton',
+      click: function() {
+        openEmailToEventModal();
+      },
+      //separator: true,
+    }
+  });
 
   actionBar.addAction({
     group: 'event-admin',
@@ -305,6 +311,15 @@ angular.module('ultical.events')
     },
   });
 
+  $scope.openRegistrationModal = function() {
+    var modal = $modal({
+      animation: 'am-fade-and-slide-top',
+      templateUrl: 'pages/event/registration_modal.html?v=15',
+      show: true,
+      scope: $scope,
+    });
+  };
+
   function openEmailToTeamsModal() {
     var modal = $modal({
       animation: 'am-fade-and-slide-top',
@@ -315,11 +330,15 @@ angular.module('ultical.events')
   };
 
   function openEmailToEventModal() {
+    var newScope = $scope.$new();
+    newScope.mailToEvent = true;
+    newScope.event = $scope.event;
+
     var modal = $modal({
       animation: 'am-fade-and-slide-top',
-      templateUrl: 'pages/event/email_event_modal.html?v=3',
+      templateUrl: 'components/email_service/email_modal.html?v=4',
       show: true,
-      scope: $scope,
+      scope: newScope,
     });
   };
 

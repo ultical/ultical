@@ -235,6 +235,14 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
       post('command/mail/teams', mailInfo, callback, errorCallback);
     },
 
+    sendEmail: function(mailInfo, callback, errorCallback) {
+      if ('eventId' in mailInfo) {
+        post('command/mail/event', mailInfo, callback, errorCallback);
+      } else if ('teamId' in mailInfo) {
+      post('command/mail/team', mailInfo, callback, errorCallback);
+      }
+    },
+
 		login: function(user, callback) {
 			post('command/auth', user, callback);
 		},

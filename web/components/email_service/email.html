@@ -1,0 +1,41 @@
+<div ng-controller="EmailServiceCtrl">
+	<div id="email-modal-error"></div>
+
+	<form name="emailForm" class="form-horizontal">
+		<fieldset ng-disabled="emailSendPending">
+
+			<div class="row">
+				<div class="col-sm-12">
+
+					<div class="row margin-bottom-big">
+						<div class="col-sm-8 col-sm-offset-3">
+							<span>{{ descriptionText }}<span>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="email-reply-to" class="col-sm-3 control-label">{{ 'email.replyTo' | translate }}</label>
+						<div class="col-sm-8">
+							<input class="form-control" name="email-reply-to" type="email" ng-model="email.replyTo" />
+							<div class="margin-top-tiny margin-bottom-small">
+								{{ 'email.replyToDesc' | translate }}
+							</div>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="email-body" class="col-sm-3 control-label">{{ 'email.body' | translate }}</label>
+						<div class="col-sm-8">
+							<textarea class="form-control" name="email-body" rows="9" required="true" ng-model="email.body" />
+						</div>
+					</div>
+
+					<div ng-if="!modal">
+						<button ng-disabled="emailSendDisabled" type="button" class="btn btn-primary btn-ultical" ng-click="sendEmail()">{{ 'email.sendButtonLabel' | translate }}</button>
+					</div>
+
+				</div>
+			</div>
+		</fieldset>
+	</form>
+</div>
