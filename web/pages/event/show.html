@@ -268,7 +268,8 @@
 
 											<!-- team list -->
 											<!-- Controls for sorting result listing -->
-											<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0" class="margin-bottom" ng-click="toggleEditStandings()"><a>{{ 'event.teamList.editStandings' | translate }}</a></div>
+											<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0 && hasStandings[division.id]" class="margin-bottom" ng-click="toggleEditStandings(division)"><a>{{ 'event.teamList.editStandings' | translate }}</a></div>
+											<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0 && !hasStandings[division.id]" class="margin-bottom btn btn-primary btn-ultical" ng-click="toggleEditStandings(division)">{{ 'event.teamList.createStandings' | translate }}</div>
 											<div ng-if="editStandings" class="btn btn-primary btn-ultical margin-bottom" ng-click="saveStandings(division)">{{ 'event.teamList.doneEditStandings' | translate }}</div>
 
 											<div ng-if="!eventIsFuture && hasStandings[division.id] && !editStandings" class="margin-bottom-small">

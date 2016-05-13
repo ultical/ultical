@@ -261,6 +261,7 @@ TRANSLATIONS['de'] = {
 				waitlistTeam: 'Anmeldung auf die Warteliste setzen',
 				declineTeam: 'Anmeldung ablehnen',
 				editStandings: 'Ergebnisse bearbeiten',
+				createStandings: 'Ergebnisse eintragen',
 				doneEditStandings: 'Ergebnisse speichern',
 				standingsRank: 'Platzierung',
 				standingsSpirit: 'Spirit (Fremd/Eigen)',

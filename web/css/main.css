@@ -490,6 +490,7 @@ select:not([multiple]) {
 .label-as-badge {
     border-radius: 1em;
 		font-size: 85%;
+		padding-top: 3px;
 }
 
 .spirit-score-label {

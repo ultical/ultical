@@ -533,7 +533,18 @@ angular.module('ultical.events')
 		return false;
 	};
 
-  $scope.toggleEditStandings = function() {
+  $scope.toggleEditStandings = function(division) {
+    angular.forEach($scope.getPlayingTeams(division), function(teamReg) {
+      if (teamReg.standing == -1) {
+        teamReg.standing = '';
+      }
+      if (teamReg.spiritScore == -1) {
+        teamReg.spiritScore = '';
+      }
+      if (teamReg.ownSpiritScore == -1) {
+        teamReg.ownSpiritScore = '';
+      }
+    });
     $scope.editStandings = !$scope.editStandings;
   }
 
