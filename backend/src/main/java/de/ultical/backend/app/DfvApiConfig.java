@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class DfvApiConfig {
-	private String token;
-	private String secret;
-	private String url;
+    private String token;
+    private String secret;
+    private String url;
+    private boolean dfvMvSyncEnabled = false;
 }
