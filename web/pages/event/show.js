@@ -174,9 +174,12 @@ angular.module('ultical.events')
 
         // get number of confirmed teams
         division.numTeamsConfirmed = 0;
+        division.numTeamsPending = 0;
         angular.forEach($scope.getPlayingTeams(division), function(teamReg) {
           if (teamReg.status == 'CONFIRMED') {
             division.numTeamsConfirmed++;
+          } else if (teamReg.status == 'PENDING') {
+            division.numTeamsPending++;
           }
 
           // check if there are standings / spirit scores
@@ -200,8 +203,8 @@ angular.module('ultical.events')
         } else {
           // if registration is yet to come or still open, it's obviously not complete
           if ($scope.edition.x.registrationTime == 'past' && !$scope.edition.x.registrationIsOpen) {
-            // ...but if it's closed we have to check whether or not enough teams were selected
-            if (division.numTeamsConfirmed == division.numberSpots || division.numTeamsConfirmed == $scope.getPlayingTeams(division).length) {
+            // ...but if it's closed we have to check whether or not teams are still pending
+            if (division.numTeamsPending == 0) {
               division.registrationComplete = true;
             }
           }
