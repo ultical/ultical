@@ -170,7 +170,7 @@ angular.module('ultical.events')
       $scope.enableTeamStandingManagement = (($scope.show.event && !$scope.eventIsFuture) || ($scope.show.edition && $scope.editionHasStarted)) && ($scope.format.x.own || ($scope.show.event && $scope.event.x.own && $scope.edition.allowEventTeamRegManagement));
 
       $scope.show.registration = $scope.show.registration && $scope.edition.x.registrationTime != 'never' &&
-      ((!isEmpty($scope.event) && $scope.event.x.timing == 'future') || !$scope.editionHasStarted);
+      ((!isEmpty($scope.event) && $scope.event.x.timing == 'future') || ($scope.show.edition && !$scope.editionHasStarted));
 
       // if this event is not in the future any more the team lists are different
       $scope.teamOrderReverse = false;
