@@ -192,25 +192,15 @@ angular.module('ultical.events')
 
         // get number of confirmed teams
         division.numTeamsConfirmed = 0;
+        division.numTeamsPending = 0;
         angular.forEach($scope.getPlayingTeams(division), function(teamReg) {
           if (teamReg.status == 'CONFIRMED') {
             division.numTeamsConfirmed++;
+          } else if (teamReg.status == 'PENDING') {
+            division.numTeamsPending++;
           }
 
-          // check if there are standings / spirit scores
-          if ($scope.eventIsFuture) {
-            $scope.hasStandings[division.id] = false;
-            $scope.hasSpiritScores[division.id] = false;
-            $scope.hasOwnSpiritScores[division.id] = false;
-          } else {
-            angular.forEach($scope.getPlayingTeams(division), function(playingTeam) {
-              if (playingTeam.status == 'CONFIRMED') {
-                $scope.hasStandings[division.id] = !isEmpty(playingTeam.standing) && playingTeam.standing != -1;
-                $scope.hasSpiritScores[division.id] = !isEmpty(playingTeam.spiritScore) && playingTeam.spiritScore != -1;
-                $scope.hasOwnSpiritScores[division.id] = !isEmpty(playingTeam.ownSpiritScore) && playingTeam.ownSpiritScore != -1;
-              }
-            });
-          }
+          checkForStandings(division);
         });
 
         if ($scope.edition.x.registrationTime == 'never' || !$scope.eventIsFuture) {
@@ -218,8 +208,8 @@ angular.module('ultical.events')
         } else {
           // if registration is yet to come or still open, it's obviously not complete
           if ($scope.edition.x.registrationTime == 'past' && !$scope.edition.x.registrationIsOpen) {
-            // ...but if it's closed we have to check whether or not enough teams were selected
-            if (division.numTeamsConfirmed == division.numberSpots || division.numTeamsConfirmed == $scope.getPlayingTeams(division).length) {
+            // ...but if it's closed we have to check whether or not teams are still pending
+            if (division.numTeamsPending == 0) {
               division.registrationComplete = true;
             }
           }
@@ -341,6 +331,23 @@ angular.module('ultical.events')
       scope: newScope,
     });
   };
+
+  function checkForStandings(division) {
+    // check if there are standings / spirit scores
+    if ($scope.eventIsFuture) {
+      $scope.hasStandings[division.id] = false;
+      $scope.hasSpiritScores[division.id] = false;
+      $scope.hasOwnSpiritScores[division.id] = false;
+    } else {
+      angular.forEach($scope.getPlayingTeams(division), function(playingTeam) {
+        if (playingTeam.status == 'CONFIRMED') {
+          $scope.hasStandings[division.id] = !isEmpty(playingTeam.standing) && playingTeam.standing != -1;
+          $scope.hasSpiritScores[division.id] = !isEmpty(playingTeam.spiritScore) && playingTeam.spiritScore != -1;
+          $scope.hasOwnSpiritScores[division.id] = !isEmpty(playingTeam.ownSpiritScore) && playingTeam.ownSpiritScore != -1;
+        }
+      });
+    }
+  }
 
   $scope.teamRegConfirm = function(teamRegistration) {
     if (teamRegistration.status == 'CONFIRMED') {
@@ -560,6 +567,7 @@ angular.module('ultical.events')
 
     storage.updateStandings($scope.event, $scope.getPlayingTeams(division), function() {
       $scope.editStandings = false;
+      checkForStandings(division);
     }, function() {
       // TODO: error
     });

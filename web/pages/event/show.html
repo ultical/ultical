@@ -243,6 +243,7 @@
 
 				<div class="panel-group margin-top-small" ng-model="panels.divisionPanel" role="tablist" aria-multiselectable="true" bs-collapse>
 
+					<!-- DIVISION HEADER -->
 					<div class="panel panel-ultical" ng-repeat="division in divisionsToShow | orderBy : divisionOrder">
 						<div class="panel-heading cursor-pointer" role="tab">
 							<h3 class="panel-title" bs-collapse-toggle>
@@ -287,6 +288,7 @@
 
 											</div>
 
+											<!-- ngRepeat TEAMS -->
 											<div ng-init="rosterPlayers = getRelevantPlayers(regTeam, division, edition.season, event)" ng-repeat-start="regTeam in (regTeamSorted = (getPlayingTeams(division) | filter : teamFilter | orderBy : teamOrder : teamOrderReverse)) track by regTeam.id">
 
 												<div class="row margin-bottom-small" ng-class="{'margin-top': !$first}" ng-if="eventIsFuture && regTeamSorted[$index-1].status != regTeam.status && (event.x.own || (regTeam.status != 'DECLINED' && regTeam.status != 'CANCELLED'))">
