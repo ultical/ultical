@@ -157,20 +157,27 @@ app.filter('numberFixedLen', function() {
 });
 
 app.filter('decimal', ['$translate', function($translate) {
-  return function(amount, numDecimals) {
-    if (isEmpty(amount)) {
+  return function(amountString, numDecimals) {
+    if (isEmpty(amountString)) {
       return '';
     }
-    var parts = ('' + amount).split('.');
+
+    var parts = ('' + amountString).split('.');
     if (parts.length == 1) {
-      parts[1] = '0';
+      parts[1] = '';
     }
     while (parts[1].length < numDecimals) {
       parts[1] += '0';
     }
     if (parts[1].length > numDecimals) {
-      parts[1] = parts[1].substring(0, numDecimals);
+      // we need to round - as toFixed rounds mathematically (e.g. 1.65 => 1.6, 1.75 => 1.8) we add another decimal
+      var roundedAmount = parseFloat(amountString + '9').toFixed(numDecimals);
+      if ('NaN' == roundedAmount) {
+        return '';
+      }
+      parts = ('' + roundedAmount).split('.');
     }
+
     return parts[0] + $translate.instant('general.decimalSeparator') + parts[1];
   }
 }]);
