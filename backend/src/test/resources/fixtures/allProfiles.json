@@ -1,0 +1,17 @@
+[
+{
+  "lastName": "Test",
+  "firstName": "Test",
+  "dse": true,
+  "dfvNumber":123456,
+  "club": 1,
+  "lastModified": "2016-06-06 12:13:14567"},
+{
+"lastName": "Testa",
+  "firstName": "Testa",
+  "dse": true,
+  "dfvNumber":234567,
+  "club": 1,
+  "lastModified": "2016-06-06 12:13:14567"
+}
+]
