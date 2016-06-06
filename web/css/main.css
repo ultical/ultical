@@ -595,7 +595,7 @@ select:not([multiple]) {
 .action-bar .btn {
 	display: table;
 	white-space: normal;
-	width: 140px;
+	width: 160px;
 	height: 36px;
 	line-height: 16px;
 	padding-top: 0;

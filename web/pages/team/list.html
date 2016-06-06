@@ -30,16 +30,6 @@
 		</div>
 	</div>
 
-	<div class="row margin-top-big ffade-in" ng-show="tabs.activeTab == 'own' && !editing">
-		<div class="col-md-12">
-			<button ng-if="bigButtons" ng-click="createNewTeam()" type="button" class="btn btn-primary">
-				<span class="glyphicon glyphicon-plus-sign glyphicon-big" aria-hidden="true"></span>
-				{{ 'team.list.newTeam' | translate }}
-			</button>
-			<a ng-if="!bigButtons" ng-click="createNewTeam()">{{ 'team.list.newTeam' | translate }}</a>
-		</div>
-	</div>
-
 	<!-- TEAM LIST -->
 	<div class="row margin-top fade">
 

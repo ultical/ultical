@@ -45,11 +45,9 @@ angular.module('ultical.team', [])
 
     actionBar.addAction({
       group: 'team-new',
-      show: function(loggedIn) {
-        return loggedIn && !$scope.editing;
-      },
+      needLogIn: true,
       button: {
-        text: 'team.action.createButton',
+        text: 'team.action.create',
         click: function() {
           $scope.createNewTeam();
         }

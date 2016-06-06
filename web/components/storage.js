@@ -76,8 +76,10 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
         var that = this;
         if (!that.requested.own.teams) {
           that.getOwnTeams(callback);
+          return null;
         } else {
-          callback(that.own.teams);
+          // don't callback if we have a direct result
+          return that.own.teams;
         }
       },
 

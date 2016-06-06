@@ -11,7 +11,7 @@
 
     <!-- actions  unique : 'id' | -->
     <div class="margin-bottom-small action-group" ng-repeat="actionGroup in actions | groupBy : 'group'">
-      <div ng-repeat="action in actionGroup" class="margin-top-small" ng-if="action.show(head.loggedIn())">
+      <div ng-repeat="action in actionGroup" class="margin-top-small" ng-if="showAction(action)">
         <div ng-if="action.separator" class="horizontal-separator"></div>
 
         <div ng-if="action.text">

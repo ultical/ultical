@@ -21,6 +21,17 @@ angular.module('ultical.events')
     activeTab: 'events',
   };
 
+  // get own teams to determine if this user may register a team
+  $scope.ownTeams = null;
+  if (authorizer.loggedIn()) {
+    $scope.ownTeams = storage.getOwnTeamsCache(function(cachedOwnTeams) {
+      // only called if own teams were not cached
+      $scope.ownTeams = cachedOwnTeams;
+      addActions();
+    });
+  }
+
+
   // check if we show an event or an edition
   if ($stateParams.eventId !== undefined) {
     $scope.show = {
@@ -61,6 +72,7 @@ angular.module('ultical.events')
   }
 
   $scope.eventIsFuture = false;
+
 
   // init function
   function init(format) {
@@ -222,84 +234,84 @@ angular.module('ultical.events')
       showFormatInfo: $scope.show.formatInfo && !isEmpty($scope.format.description),
       showEventInfo: $scope.show.eventInfo && !isEmpty($scope.event.info),
     };
+
+    addActions();
   };
 
-  // Action bar actions
-  if ($scope.show.registration) {
-    actionBar.addSeparator('event-registration');
-    actionBar.addAction({
-      group: 'event-registration',
-      show: function(isLoggedIn) {
-        return !isLoggedIn;
-      },
-      text: 'event.register.notLoggedIn',
-    });
-    actionBar.addAction({
-      group: 'event-registration',
-      show: function(isLoggedIn) {
-        return isLoggedIn && !isEmpty($scope.ownTeams);
-      },
-      button: {
-        text: 'event.register.title',
-        click: function() {
-          $scope.openRegistrationModal();
-        }
-      },
-    });
-    actionBar.addAction({
-      group: 'event-registration',
-      show: function(isLoggedIn) {
-        return isLoggedIn && $scope.ownTeams != null && $scope.ownTeams.length == 0;
-      },
-      text: 'event.register.noOwnTeam',
-    });
-  }
-
-
-  actionBar.addAction({
-    group: 'contact-event',
-    show: function(isLoggedIn) {
-      return isLoggedIn && $scope.show.event;
-    },
-    button: {
-      text: 'event.contactButton',
-      click: function() {
-        openEmailToEventModal();
-      },
-      //separator: true,
+  function addActions() {
+    actionBar.clearActions();
+    // Action bar actions
+    if ($scope.show.registration && !$scope.show.format && $scope.edition.x.registrationIsOpen) {
+      actionBar.addSeparator('event-registration');
+      actionBar.addAction({
+        group: 'event-registration',
+        needLogIn: false,
+        text: 'event.register.notLoggedIn',
+      });
+      if (!isEmpty($scope.ownTeams)) {
+        // has own teams
+        actionBar.addAction({
+          group: 'event-registration',
+          needLogIn: true,
+          button: {
+            text: 'event.register.title',
+            click: function() {
+              $scope.openRegistrationModal();
+            }
+          },
+        });
+      } else {
+        // has not yet own teams
+        actionBar.addAction({
+          group: 'event-registration',
+          needLogIn: true,
+          text: 'event.register.noOwnTeam',
+        });
+      }
     }
-  });
 
-  actionBar.addAction({
-    group: 'event-admin',
-    show: function(isLoggedIn) {
-      return isLoggedIn && $scope.show.event && $scope.event.x.own && !$scope.format.x.own;
-    },
-    text: 'event.youAreEventAdmin',
-    separator: true,
-  });
+    if ($scope.show.event) {
+      actionBar.addAction({
+        group: 'contact-event',
+        needLogIn: true,
+        button: {
+          text: 'event.contactButton',
+          click: function() {
+            openEmailToEventModal();
+          },
+        }
+      });
+    }
 
-  actionBar.addAction({
-    group: 'event-admin',
-    show: function(isLoggedIn) {
-      return isLoggedIn && $scope.format.x.own;
-    },
-    text: 'event.youAreFormatAdmin',
-    separator: true,
-  });
-
-  actionBar.addAction({
-    group: 'event-admin',
-    show: function(isLoggedIn) {
-      return isLoggedIn && ($scope.format.x.own || $scope.show.event && $scope.event.x.own);
-    },
-    button: {
-      text: 'event.email.buttonLabel',
-      click: function() {
-        openEmailToTeamsModal();
-      },
-    },
-  });
+    if ($scope.show.event && $scope.event.x.own && !$scope.format.x.own) {
+      actionBar.addAction({
+        group: 'event-admin',
+        needLogIn: true,
+        text: 'event.youAreEventAdmin',
+        separator: true,
+      });
+    }
+    if ($scope.format.x.own) {
+      actionBar.addAction({
+        group: 'event-admin',
+        needLogIn: true,
+        text: 'event.youAreFormatAdmin',
+        separator: true,
+      });
+    }
+    if ($scope.format.x.own || ($scope.show.event && $scope.event.x.own)) {
+      actionBar.addAction({
+        group: 'event-admin',
+        needLogIn: true,
+        button: {
+          text: 'event.email.buttonLabel',
+          click: function() {
+            openEmailToTeamsModal();
+          },
+        },
+      });
+    }
+  }
 
   $scope.openRegistrationModal = function() {
     var modal = $modal({
@@ -368,13 +380,6 @@ angular.module('ultical.events')
     storage.updateTeamRegStatus($scope.event, teamRegistration, 'DECLINED');
   }
 
-  // get own teams to determine if this user may register a team
-  $scope.ownTeams = null;
-  if (authorizer.loggedIn()) {
-    storage.getOwnTeamsCache(function(cachedOwnTeams) {
-      $scope.ownTeams = cachedOwnTeams;
-    });
-  }
 
 	// collapses
 	$scope.panels = {

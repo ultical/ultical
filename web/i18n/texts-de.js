@@ -273,7 +273,6 @@ TRANSLATIONS['de'] = {
 				title: 'Teams',
 				own: 'Meine Teams',
 				all: 'Alle Teams',
-				newTeam: 'Neues Team erstellen',
 				save: 'Team speichern',
 			},
 			foundingDate: 'Gegründet',
@@ -281,8 +280,7 @@ TRANSLATIONS['de'] = {
 			action: {
 				youAreTeamAdmin: 'Du bist Administrator dieses Teams',
 				edit: 'Team bearbeiten',
-				createButton: 'Neues Team',
-				createHeader: 'Neues Team erstellen',
+				create: 'Neues Team erstellen',
 			},
 			roster: {
 				label: 'Aktuelle Roster',

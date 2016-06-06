@@ -45,7 +45,7 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
         x: {},
       };
 
-      headService.setTitle('team.action.createHeader');
+      headService.setTitle('team.action.create');
       $scope.editTeam();
     } else {
       storage.getTeam($stateParams.teamId, init);
@@ -62,59 +62,55 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
     }
 
     headService.setTitle($scope.team.name);
+    updateActions();
   }
 
-  addActions();
+  function updateActions() {
+    actionBar.clearActions();
 
-  function addActions() {
-    actionBar.addAction({
-      group: 'team-new',
-      show: function(loggedIn) {
-        return loggedIn && !$scope.editing;
-      },
-      button: {
-        text: 'team.action.createButton',
-        click: function() {
-          $state.go('app.teamNew');
-        }
-      },
-      separator: true,
-    });
-
-    actionBar.addAction({
-      group: 'team-admin',
-      show: function() {
-        return $scope.team.x.own;
-      },
-      text: 'team.action.youAreTeamAdmin',
-      separator: true,
-    });
-    actionBar.addAction({
-      group: 'team-admin',
-      show: function() {
-        return $scope.team.x.own && !$scope.editing;
-      },
-      button: {
-        text: 'team.roster.newRoster',
-        click: function() {
-          $scope.createNewRoster();
-        }
-      },
-    });
-    actionBar.addAction({
-      group: 'team-admin',
-      show: function() {
-        return $scope.team.x.own && !$scope.editing;
-      },
-      button: {
-        text: 'team.action.edit',
-        click: function() {
-          $scope.editTeam();
-        }
-      },
-    });
-
+    if (!$scope.editing) {
+      actionBar.addAction({
+        group: 'team-new',
+        needLogIn: true,
+        button: {
+          text: 'team.action.create',
+          click: function() {
+            $state.go('app.teamNew');
+          }
+        },
+        separator: true,
+      });
+    }
+    if ($scope.team.x.own) {
+      actionBar.addAction({
+        group: 'team-admin',
+        text: 'team.action.youAreTeamAdmin',
+        separator: true,
+      });
+      if (!$scope.editing) {
+        actionBar.addAction({
+          group: 'team-admin',
+          button: {
+            text: 'team.roster.newRoster',
+            click: function() {
+              $scope.createNewRoster();
+            }
+          },
+        });
+        actionBar.addAction({
+          group: 'team-admin',
+          button: {
+            text: 'team.action.edit',
+            click: function() {
+              $scope.editTeam();
+            }
+          },
+        });
+      }
+    }
   }
+
+  $scope.$watch('editing', updateActions);
 
   // TEAM MANIPULATION
   $scope.editTeam = function() {

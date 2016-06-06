@@ -38,6 +38,17 @@ app.factory('actionBar', ['authorizer', '$rootScope', function(authorizer, $root
     addAction: function(action) {
       actions.push(action);
     },
+    removeActionGroup: function(groupId) {
+      var indicesToRemove = [];
+      angular.forEach(actions, function(action, idx) {
+        if (action.group == groupId) {
+          indicesToRemove.push(idx);
+        }
+      });
+      for (var i = indicesToRemove.length - 1; i >= 0; i--) {
+        actions.splice(indicesToRemove[i], 1);
+      }
+    },
     removeAction: function(actionId) {
       var indexToRemove = -1;
       angular.forEach(actions, function(action, idx) {
@@ -51,6 +62,13 @@ app.factory('actionBar', ['authorizer', '$rootScope', function(authorizer, $root
     },
     clearActions: function() {
       clearActions();
-    }
+    },
+    showAction: function(action) {
+      if (action.needLogIn === undefined || action.needLogIn == null) {
+        return true;
+      } else {
+        return (!action.needLogIn && !authorizer.loggedIn()) || (action.needLogIn && authorizer.loggedIn());
+      }
+    },
   }
 }]);
