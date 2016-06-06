@@ -627,3 +627,7 @@ footer {
 		line-height: 2.5em;
 	}
 }
+
+.team-list-location {
+	font-weight: 300;
+}

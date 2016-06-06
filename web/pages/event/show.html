@@ -317,7 +317,7 @@
 														<i ng-if="panels.teamPanel == $index" class="dropdown-caret-fixed-width fa fa-caret-down margin-right-small"></i>
 
 														<a ui-sref="app.teamShow({teamId: regTeam.roster.team.id, teamSlug: (regTeam.roster.team.name | slugify) })">
-															<span>{{ regTeam.roster.team.name }} {{ regTeam.roster.nameAddition }}</span>
+															<span>{{ regTeam.roster.team.name }}</span><span ng-if="regTeam.roster.nameAddition | notEmpty">{{ regTeam.roster.nameAddition }}</span><span ng-if="!(regTeam.roster.team.location | emptyLocation)" class="team-list-location">&nbsp;&nbsp;{{ regTeam.roster.team.location | location : 'city' }}</span>
 														</a>
 
 														<span ng-if="loggedIn() && !editStandings" class="panel-title-addon">&nbsp;&nbsp;({{ rosterPlayers.length }}&nbsp;{{ 'general.players' | translate }})</span>

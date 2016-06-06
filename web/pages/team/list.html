@@ -39,7 +39,7 @@
 					<div class="panel-heading cursor-pointer" role="tab">
 						<a ui-sref="app.teamShow({teamId: team.id, teamSlug: (team.name | slugify) })">
 							<h4 class="panel-title" abs-collapse-toggle>
-								<span>{{ team.name }}</span>
+								<span>{{ team.name }}</span><span ng-if="!(team.location | emptyLocation)" class="team-list-location">&nbsp;&nbsp;{{ team.location | location : 'city' }}</span>
 							</h4>
 						</a>
 					</div>
