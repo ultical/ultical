@@ -97,17 +97,17 @@ angular.module('ultical.events')
     // check if url name is correct - else modify it
     if ($scope.show.event) {
       var shouldBeEventSlug = $filter('slugify')($filter('eventname')($scope.event));
-      if ($stateParams.eventSlug != shouldBeEventSlug) {
+      if ($stateParams.eventSlug != shouldBeEventSlug || $state.current.name != 'app.eventShow') {
         $state.go('app.eventShow', {eventSlug: shouldBeEventSlug, eventId: $scope.event.id }, {notify: false});
       }
     } else if ($scope.show.edition) {
       var shouldBeEditionSlug = $filter('slugify')($filter('editionname')($scope.edition));
-      if ($stateParams.editionSlug != shouldBeEditionSlug) {
+      if ($stateParams.editionSlug != shouldBeEditionSlug || $state.current.name != 'app.editionShow') {
         $state.go('app.editionShow', {editionSlug: shouldBeEditionSlug, editionId: $scope.edition.id }, {notify: false});
       }
     } else {
       var shouldBeFormatSlug = $filter('slugify')($scope.format.name);
-      if ($stateParams.formatSlug != shouldBeFormatSlug) {
+      if ($stateParams.formatSlug != shouldBeFormatSlug || $state.current.name != 'app.formatShow') {
         $state.go('app.formatShow', {formatSlug: shouldBeFormatSlug, formatId: $scope.format.id }, {notify: false});
       }
     }
