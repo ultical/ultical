@@ -12,21 +12,21 @@
 			<div ng-if="0" class="row" ng-repeat-start="event in (orderedEvents = (events | filter : eventFilter | orderBy : sortKey : sortOrderDesc))"></div>
 
 			<!-- year -->
-			<div class="row" ng-if="(sortKey == 'startDate') && ($index == 0 || (((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')) && (event.startDate | amDateFormat : 'M') == '1' ))">
+			<div class="row" ng-if="true && ($index == 0 || (((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')) && (event.startDate | amDateFormat : 'M') == '1' ))">
 				<div class="col-md-9">
 					<h4>{{ event.startDate | amDateFormat : 'YYYY' }}</h4>
 				</div>
 			</div>
 
 			<!-- collapsed months -->
-			<div class="row" ng-if="!show.beginningOfYear && sortKey == 'startDate' && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY')))">
+			<div class="row" ng-if="!show.beginningOfYear && true && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY')))">
 				<div class="col-md-9">
 					<h5><a href="#" ng-click="show.beginningOfYear = true">{{ current.january | amDateFormat : 'MMMM' }}<span ng-if="(current.lastMonth | amDateFormat : 'M') != 1"> - {{ current.lastMonth | amDateFormat : 'MMMM' }}</span></a></h5>
 				</div>
 			</div>
 
 			<!-- month -->
-			<div class="row" ng-if="sortKey == 'startDate' && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')))">
+			<div class="row" ng-if="true && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')))">
 				<div class="col-md-9">
 					<h5>{{ event.startDate | amDateFormat : 'MMMM' }}</h5>
 				</div>
