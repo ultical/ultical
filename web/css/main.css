@@ -490,6 +490,7 @@ select:not([multiple]) {
 .label-as-badge {
     border-radius: 1em;
 		font-size: 85%;
+		padding-top: 3px;
 }
 
 .spirit-score-label {
@@ -591,6 +592,26 @@ select:not([multiple]) {
 	padding: 10px;
 }
 
+.action-bar .btn {
+	display: table;
+	white-space: normal;
+	width: 160px;
+	height: 36px;
+	line-height: 16px;
+	padding-top: 0;
+	padding-bottom: 0;
+	font-weight: 300;
+}
+
+.action-bar .btn span {
+	display: table-cell;
+	vertical-align: middle;
+}
+.team-edit-sheet {
+	background-color: #FAFAFA;
+	padding: 15px;
+}
+
 .horizontal-separator {
 	margin-bottom: 12px;
 	margin-top: 12px;
@@ -605,4 +626,8 @@ footer {
 	footer {
 		line-height: 2.5em;
 	}
+}
+
+.team-list-location {
+	font-weight: 300;
 }

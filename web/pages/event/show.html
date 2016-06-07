@@ -269,7 +269,8 @@
 
 											<!-- team list -->
 											<!-- Controls for sorting result listing -->
-											<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0" class="margin-bottom" ng-click="toggleEditStandings()"><a>{{ 'event.teamList.editStandings' | translate }}</a></div>
+											<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0 && hasStandings[division.id]" class="margin-bottom" ng-click="toggleEditStandings(division)"><a>{{ 'event.teamList.editStandings' | translate }}</a></div>
+											<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0 && !hasStandings[division.id]" class="margin-bottom btn btn-primary btn-ultical" ng-click="toggleEditStandings(division)">{{ 'event.teamList.createStandings' | translate }}</div>
 											<div ng-if="editStandings" class="btn btn-primary btn-ultical margin-bottom" ng-click="saveStandings(division)">{{ 'event.teamList.doneEditStandings' | translate }}</div>
 
 											<div ng-if="!eventIsFuture && hasStandings[division.id] && !editStandings" class="margin-bottom-small">
@@ -312,7 +313,13 @@
 															</div>
 														</div>
 
-														<span>{{ regTeam.roster.team.name }} {{ regTeam.roster.nameAddition }}</span>
+														<i ng-if="panels.teamPanel != $index" class="dropdown-caret-fixed-width fa fa-caret-right dropdown-caret-padding margin-right-small"></i>
+														<i ng-if="panels.teamPanel == $index" class="dropdown-caret-fixed-width fa fa-caret-down margin-right-small"></i>
+
+														<a ui-sref="app.teamShow({teamId: regTeam.roster.team.id, teamSlug: (regTeam.roster.team.name | slugify) })">
+															<span>{{ regTeam.roster.team.name }}</span><span ng-if="regTeam.roster.nameAddition | notEmpty">{{ regTeam.roster.nameAddition }}</span><span ng-if="!(regTeam.roster.team.location | emptyLocation)" class="team-list-location">&nbsp;&nbsp;{{ regTeam.roster.team.location | location : 'city' }}</span>
+														</a>
+
 														<span ng-if="loggedIn() && !editStandings" class="panel-title-addon">&nbsp;&nbsp;({{ rosterPlayers.length }}&nbsp;{{ 'general.players' | translate }})</span>
 
 														<div ng-if="enableTeamRegistrationManagement" ng-class="{'team-actions-link-disabled': regTeam.status == 'DECLINED' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.declineTeam' | translate }}" bs-tooltip ng-click="teamRegDecline(regTeam); $event.stopPropagation();">

@@ -130,12 +130,20 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			get('teams/' + teamId, callback);
 		},
 
-		getAllTeams: function(callback) {
-			get('teams', callback);
+    getAllTeams: function(callback) {
+      get('teams', callback);
+    },
+
+		getAllTeamBasics: function(callback) {
+			get('teams/basics', callback);
 		},
 
 		getOwnTeams: function(callback) {
 			get('teams/own', callback);
+		},
+
+    getOwnTeamBasics: function(callback) {
+			get('teams/own/basics', callback);
 		},
 
     deleteTeam: function(teamId, callback, errCallback) {
@@ -225,6 +233,14 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 
     sendEmailToTeams: function(mailInfo, callback, errorCallback) {
       post('command/mail/teams', mailInfo, callback, errorCallback);
+    },
+
+    sendEmail: function(mailInfo, callback, errorCallback) {
+      if ('eventId' in mailInfo) {
+        post('command/mail/event', mailInfo, callback, errorCallback);
+      } else if ('teamId' in mailInfo) {
+      post('command/mail/team', mailInfo, callback, errorCallback);
+      }
     },
 
 		login: function(user, callback) {

@@ -114,7 +114,7 @@ app.filter('emptyLocation', [function() {
 	};
 }]);
 
-app.filter('location', ['$translate', 'locationObjectFilter', 'countrynameFilter', function ($translate, locationObjectFilter, countrynameFilter) {
+app.filter('location', ['CONFIG', '$translate', 'locationObjectFilter', 'countrynameFilter', function (CONFIG, $translate, locationObjectFilter, countrynameFilter) {
 	return function (location, type) {
 		if (isEmpty(location)) {
 			return '';
@@ -160,18 +160,26 @@ app.filter('location', ['$translate', 'locationObjectFilter', 'countrynameFilter
 			}
 		}
 
-		if (!isEmpty(location.city)) {
-			if (!isEmptyString(locationString)) {
-				locationString += ', ';
+		if (type != 'country') {
+			if (!isEmpty(location.city)) {
+				if (!isEmptyString(locationString)) {
+					locationString += ', ';
+				}
+				locationString += location.city;
 			}
-			locationString += location.city;
 		}
 
-		if (!isEmpty(location.country)) {
-			if (!isEmpty(locationString)) {
-				locationString += ', ';
+		if (type != 'city' || CONFIG.general.showCountryCodeWithCity) {
+			if (!isEmpty(location.country)) {
+				if (!isEmpty(locationString)) {
+					locationString += ', ';
+				}
+				if (CONFIG.general.showCountryCodeWithCity) {
+					locationString += location.countryCode.toUpperCase();
+				} else {
+					locationString += countrynameFilter(location);
+				}
 			}
-			locationString += countrynameFilter(location);
 		}
 
 		if (type == 'googleMapsUrl') {

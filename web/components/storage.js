@@ -14,8 +14,6 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			},
 			events: [],
 			teams: [],
-			seasons: [],
-      contexts: [],
       formats: [],
 
       teamsIndexed: {},
@@ -24,6 +22,11 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
       requested: {
           own: {},
       },
+
+      // fetch only once:
+			seasons: [],
+      clubs: [],
+      contexts: [],
 
       resetUserSpecifics: function() {
           this.own.teams = [];
@@ -48,12 +51,17 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 					storeTeam(team, newLoopIndex());
 					callback(team);
 				});
+        angular.forEach(this.teams, function(team) {
+          if (team.id == teamId) {
+            callback(team);
+          }
+        });
 			},
 
-			getAllTeams: function(callback) {
+			getAllTeamBasics: function(callback) {
 				var that = this;
 				callback(that.teams);
-				serverApi.getAllTeams(function(teams) {
+				serverApi.getAllTeamBasics(function(teams) {
 					that.teams = teams;
 
 					var loopIndex = newLoopIndex();
@@ -68,9 +76,27 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
         var that = this;
         if (!that.requested.own.teams) {
           that.getOwnTeams(callback);
+          return null;
         } else {
+          // don't callback if we have a direct result
+          return that.own.teams;
+        }
+      },
+
+      getOwnTeamBasics: function(callback) {
+        var that = this;
+        if (that.requested.own.teams) {
           callback(that.own.teams);
         }
+        serverApi.getOwnTeamBasics(function(teams) {
+          that.own.teams = teams;
+          that.requested.own.teams = true;
+          var loopIndex = newLoopIndex();
+          angular.forEach(teams, function(team) {
+            storeTeam(team, loopIndex);
+          });
+          callback(that.own.teams);
+        });
       },
 
 			getOwnTeams: function(callback) {
@@ -192,9 +218,11 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				}, errorCallback);
 			},
 
+      // fetch only once
 			getSeasons: function(callback) {
 				var that = this;
-				if (isEmpty(this.seasons)) {
+				if (isEmpty(this.seasons) && !this.gettingSeasons) {
+          that.gettingSeasons = true;
 					serverApi.getSeasons(function(seasons) {
 						that.seasons = seasons;
             callback(seasons);
@@ -204,18 +232,33 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				}
 			},
 
+      // fetch only once
       getContexts: function(callback) {
 				var that = this;
-				if (isEmpty(this.contexts)) {
-					serverApi.getContexts(function(contexts) {
+				if (isEmpty(this.contexts) && !this.gettingContexts) {
+          that.gettingContexts = true;
+          serverApi.getContexts(function(contexts) {
 						that.contexts = contexts;
-            callback(angular.copy(contexts));
+            return callback(angular.copy(contexts));
 					});
 				} else {
-					callback(angular.copy(this.contexts));
+					return callback(angular.copy(this.contexts));
 				}
 			},
 
+      // fetch only once
+      getClubs: function(callback) {
+				var that = this;
+				if (isEmpty(this.clubs) && !this.gettingClubs) {
+          that.gettingClubs = true;
+					serverApi.getAllClubs(function(clubs) {
+						that.clubs = clubs;
+            return callback(clubs);
+					});
+				} else {
+					return callback(this.clubs);
+				}
+			},
       getFormatForEdition: function(editionId, callback) {
         var that = this;
 
@@ -340,7 +383,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
         }, errorCallback);
       },
 
-			saveTeam: function(team, callback, errorCallback, activeList) {
+			saveTeam: function(team, callback, errorCallback) {
 				var that = this;
 				var oldTeam;
 				if (team.id == -1) {
@@ -380,11 +423,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 					storeTeam(savedTeam, newLoopIndex());
 
-					if (activeList == 'own') {
-						callback(that.own.teams);
-					} else if (activeList == 'all') {
-						callback(that.teams);
-					}
+          callback(savedTeam);
 				}, errorCallback);
 			},
 	}

@@ -18,7 +18,7 @@ angular.module('ultical.events')
 
     $rootScope.sendEmail = function() {
       if (isEmpty($scope.email.body)) {
-        alerter.error('event.email.empty', '', {container: '#email-modal-error', duration: 5});
+        alerter.error('email.empty', '', {container: '#email-modal-error', duration: 5});
         return;
       }
 
@@ -37,14 +37,14 @@ angular.module('ultical.events')
         dataToSend.eventId = $scope.event.id;
         tournamentName = $filter('eventname')($scope.event);
       }
-      dataToSend.subject = $translate.instant('event.email.subject', { tournamentName: tournamentName });
-      dataToSend.authorDescriptionText = $translate.instant('event.email.authorDescriptionText', { authorName: authorizer.getUser().fullName });
+      dataToSend.subject = $translate.instant('email.subjectFrom', { senderName: tournamentName });
+      dataToSend.authorDescriptionText = $translate.instant('email.authorDescriptionText', { authorName: authorizer.getUser().fullName });
 
       serverApi.sendEmailToTeams(dataToSend, function() {
-        alerter.success('event.email.successTitle', 'event.email.successText', {duration: 10});
+        alerter.success('email.successTitle', 'email.successText', {duration: 10});
         $scope.$hide();
       }, function() {
-        alerter.error('general.error', 'event.email.failure', {container: '#email-modal-error'});
+        alerter.error('general.error', 'email.failure', {container: '#email-modal-error'});
       });
     }
   }

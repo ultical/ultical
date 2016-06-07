@@ -229,23 +229,98 @@ public class MailResource {
                 }
             }
 
-            UserMessage message = new UserMessage();
-
-            message.setSubject((String) emailInfo.get("subject"));
-            message.setBody((String) emailInfo.get("body"));
-            message.setAuthorDescriptionText((String) emailInfo.get("authorDescriptionText"));
-
-            Recipient currentUserRecipient = new Recipient(currentUser.getEmail(), currentUser.getFullName());
-            message.setAuthor(currentUserRecipient);
-            message.addRecipient(UlticalRecipientType.TO, currentUserRecipient);
-
-            message.addRecipient(UlticalRecipientType.REPLY_TO, new Recipient((String) emailInfo.get("replyTo")));
+            UserMessage message = this.prepareUserMessage(emailInfo, currentUser);
 
             message.addRecipients(UlticalRecipientType.BCC, recipients);
 
             this.mailClient.sendMail(message);
         }
 
+        return true;
+    }
+
+    /**
+     * Prepare the message with the standard parameters
+     *
+     * @param emailInfo
+     *            A map with stored parameters
+     * @param currentUser
+     *            The user currently logged in
+     * @return UserMessage object
+     */
+    private UserMessage prepareUserMessage(Map<String, Object> emailInfo, User currentUser) {
+        UserMessage message = new UserMessage();
+
+        message.setSubject((String) emailInfo.get("subject"));
+        message.setBody((String) emailInfo.get("body"));
+        message.setAuthorDescriptionText((String) emailInfo.get("authorDescriptionText"));
+
+        Recipient currentUserRecipient = new Recipient((String) emailInfo.get("replyTo"), currentUser.getFullName());
+        message.setAuthor(currentUserRecipient);
+        message.addRecipient(UlticalRecipientType.TO, currentUserRecipient);
+        message.addRecipient(UlticalRecipientType.REPLY_TO, currentUserRecipient);
+
+        return message;
+    }
+
+    @POST
+    @Path("team")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public boolean sendEmailToTeam(Map<String, Object> emailInfo, @Auth @NotNull User currentUser) throws Exception {
+        if (this.dataStore == null) {
+            throw new WebApplicationException(500);
+        }
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+
+            Team team = this.dataStore.get((Integer) emailInfo.get("teamId"), Team.class);
+
+            List<Recipient> recipients = new ArrayList<Recipient>();
+            if (!team.getContactEmail().isEmpty()) {
+                recipients.add(new Recipient(team.getContactEmail()));
+            }
+            for (String email : team.getEmails().split(",")) {
+                recipients.add(new Recipient(email));
+            }
+            for (User admin : team.getAdmins()) {
+                recipients.add(new Recipient(admin.getEmail(), admin.getFullName()));
+            }
+
+            UserMessage message = this.prepareUserMessage(emailInfo, currentUser);
+
+            message.addRecipients(UlticalRecipientType.BCC, recipients);
+
+            this.mailClient.sendMail(message);
+        }
+        return true;
+    }
+
+    @POST
+    @Path("event")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public boolean sendEmailToEvent(Map<String, Object> emailInfo, @Auth @NotNull User currentUser) throws Exception {
+        if (this.dataStore == null) {
+            throw new WebApplicationException(500);
+        }
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+
+            Event event = this.dataStore.get((Integer) emailInfo.get("eventId"), Event.class);
+
+            List<Recipient> recipients = new ArrayList<Recipient>();
+            if (event.getLocalOrganizer() != null && !event.getLocalOrganizer().getEmail().isEmpty()) {
+                recipients
+                        .add(new Recipient(event.getLocalOrganizer().getEmail(), event.getLocalOrganizer().getName()));
+            }
+            for (User admin : event.getAdmins()) {
+                recipients.add(new Recipient(admin.getEmail(), admin.getFullName()));
+            }
+            UserMessage message = this.prepareUserMessage(emailInfo, currentUser);
+
+            message.addRecipients(UlticalRecipientType.BCC, recipients);
+
+            this.mailClient.sendMail(message);
+        }
         return true;
     }
 }

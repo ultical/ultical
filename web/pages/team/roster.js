@@ -2,8 +2,8 @@
 
 angular.module('ultical.team')
 
-.controller('RosterCtrl', ['$scope', 'storage', '$filter', '$rootScope', 'CONFIG', 'alerter', '$translate', 'moment',
-  function($scope, storage, $filter, $rootScope, CONFIG, alerter, $translate, moment) {
+.controller('RosterCtrl', ['$scope', 'storage', '$filter', '$rootScope', 'CONFIG', 'alerter', '$translate', 'moment', '$state',
+  function($scope, storage, $filter, $rootScope, CONFIG, alerter, $translate, moment, $state) {
 
     $rootScope.saveRoster = function() {
       $scope.rosterCreationPending = true;
@@ -22,6 +22,7 @@ angular.module('ultical.team')
       }
 
       storage.saveRoster($scope.rosterToEdit, $scope.addRosterToThisTeam, function(updatedRoster) {
+        $state.reload();
         if ($scope.modal) {
           $scope.$hide();
         }

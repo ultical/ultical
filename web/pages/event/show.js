@@ -21,6 +21,17 @@ angular.module('ultical.events')
     activeTab: 'events',
   };
 
+  // get own teams to determine if this user may register a team
+  $scope.ownTeams = null;
+  if (authorizer.loggedIn()) {
+    $scope.ownTeams = storage.getOwnTeamsCache(function(cachedOwnTeams) {
+      // only called if own teams were not cached
+      $scope.ownTeams = cachedOwnTeams;
+      addActions();
+    });
+  }
+
+
   // check if we show an event or an edition
   if ($stateParams.eventId !== undefined) {
     $scope.show = {
@@ -62,6 +73,7 @@ angular.module('ultical.events')
 
   $scope.eventIsFuture = false;
 
+
   // init function
   function init(format) {
 		$scope.format = format;
@@ -81,6 +93,24 @@ angular.module('ultical.events')
   			});
       }
 		});
+
+    // check if url name is correct - else modify it
+    if ($scope.show.event) {
+      var shouldBeEventSlug = $filter('slugify')($filter('eventname')($scope.event));
+      if ($stateParams.eventSlug != shouldBeEventSlug) {
+        $state.go('app.eventShow', {eventSlug: shouldBeEventSlug, eventId: $scope.event.id }, {notify: false});
+      }
+    } else if ($scope.show.edition) {
+      var shouldBeEditionSlug = $filter('slugify')($filter('editionname')($scope.edition));
+      if ($stateParams.editionSlug != shouldBeEditionSlug) {
+        $state.go('app.editionShow', {editionSlug: shouldBeEditionSlug, editionId: $scope.edition.id }, {notify: false});
+      }
+    } else {
+      var shouldBeFormatSlug = $filter('slugify')($scope.format.name);
+      if ($stateParams.formatSlug != shouldBeFormatSlug) {
+        $state.go('app.formatShow', {formatSlug: shouldBeFormatSlug, formatId: $scope.format.id }, {notify: false});
+      }
+    }
 
     if ($scope.show.event) {
       headService.setTitle($filter('eventname')($scope.event), {});
@@ -152,7 +182,7 @@ angular.module('ultical.events')
       $scope.enableTeamStandingManagement = (($scope.show.event && !$scope.eventIsFuture) || ($scope.show.edition && $scope.editionHasStarted)) && ($scope.format.x.own || ($scope.show.event && $scope.event.x.own && $scope.edition.allowEventTeamRegManagement));
 
       $scope.show.registration = $scope.show.registration && $scope.edition.x.registrationTime != 'never' &&
-      ((!isEmpty($scope.event) && $scope.event.x.timing == 'future') || !$scope.editionHasStarted);
+      ((!isEmpty($scope.event) && $scope.event.x.timing == 'future') || ($scope.show.edition && !$scope.editionHasStarted));
 
       // if this event is not in the future any more the team lists are different
       $scope.teamOrderReverse = false;
@@ -204,37 +234,83 @@ angular.module('ultical.events')
       showFormatInfo: $scope.show.formatInfo && !isEmpty($scope.format.description),
       showEventInfo: $scope.show.eventInfo && !isEmpty($scope.event.info),
     };
+
+    addActions();
   };
 
-  // Action bar actions
-  if ($scope.show.registration) {
-    actionBar.addSeparator('event-registration');
-    actionBar.addAction({
-      group: 'event-registration',
-      show: function(isLoggedIn) {
-        return !isLoggedIn;
-      },
-      text: 'event.register.notLoggedIn',
-    });
-    actionBar.addAction({
-      group: 'event-registration',
-      show: function(isLoggedIn) {
-        return isLoggedIn && !isEmpty($scope.ownTeams);
-      },
-      button: {
-        text: 'event.register.title',
-        click: function() {
-          $scope.openRegistrationModal();
+  function addActions() {
+    actionBar.clearActions();
+    // Action bar actions
+    if ($scope.show.registration && !$scope.show.format && $scope.edition.x.registrationIsOpen) {
+      actionBar.addSeparator('event-registration');
+      actionBar.addAction({
+        group: 'event-registration',
+        needLogIn: false,
+        text: 'event.register.notLoggedIn',
+      });
+      if (!isEmpty($scope.ownTeams)) {
+        // has own teams
+        actionBar.addAction({
+          group: 'event-registration',
+          needLogIn: true,
+          button: {
+            text: 'event.register.title',
+            click: function() {
+              $scope.openRegistrationModal();
+            }
+          },
+        });
+      } else {
+        // has not yet own teams
+        actionBar.addAction({
+          group: 'event-registration',
+          needLogIn: true,
+          text: 'event.register.noOwnTeam',
+        });
+      }
+    }
+
+    if ($scope.show.event) {
+      actionBar.addAction({
+        group: 'contact-event',
+        needLogIn: true,
+        button: {
+          text: 'event.contactButton',
+          click: function() {
+            openEmailToEventModal();
+          },
         }
-      },
-    });
-    actionBar.addAction({
-      group: 'event-registration',
-      show: function(isLoggedIn) {
-        return isLoggedIn && $scope.ownTeams != null && $scope.ownTeams.length == 0;
-      },
-      text: 'event.register.noOwnTeam',
-    });
+      });
+    }
+
+    if ($scope.show.event && $scope.event.x.own && !$scope.format.x.own) {
+      actionBar.addAction({
+        group: 'event-admin',
+        needLogIn: true,
+        text: 'event.youAreEventAdmin',
+        separator: true,
+      });
+    }
+    if ($scope.format.x.own) {
+      actionBar.addAction({
+        group: 'event-admin',
+        needLogIn: true,
+        text: 'event.youAreFormatAdmin',
+        separator: true,
+      });
+    }
+    if ($scope.format.x.own || ($scope.show.event && $scope.event.x.own)) {
+      actionBar.addAction({
+        group: 'event-admin',
+        needLogIn: true,
+        button: {
+          text: 'event.email.buttonLabel',
+          click: function() {
+            openEmailToTeamsModal();
+          },
+        },
+      });
+    }
   }
 
   $scope.openRegistrationModal = function() {
@@ -246,43 +322,25 @@ angular.module('ultical.events')
     });
   };
 
-  actionBar.addAction({
-    group: 'event-admin',
-    show: function(isLoggedIn) {
-      return isLoggedIn && $scope.show.event && $scope.event.x.own && !$scope.format.x.own;
-    },
-    text: 'event.youAreEventAdmin',
-    separator: true,
-  });
-
-  actionBar.addAction({
-    group: 'event-admin',
-    show: function(isLoggedIn) {
-      return isLoggedIn && $scope.format.x.own;
-    },
-    text: 'event.youAreFormatAdmin',
-    separator: true,
-  });
-
-  actionBar.addAction({
-    group: 'event-admin',
-    show: function(isLoggedIn) {
-      return isLoggedIn && ($scope.format.x.own || $scope.show.event && $scope.event.x.own);
-    },
-    button: {
-      text: 'event.email.buttonLabel',
-      click: function() {
-        openEmailModal();
-      },
-    },
-  });
-
-  function openEmailModal() {
+  function openEmailToTeamsModal() {
     var modal = $modal({
       animation: 'am-fade-and-slide-top',
-      templateUrl: 'pages/event/email_modal.html?v=3',
+      templateUrl: 'pages/event/email_teams_modal.html?v=4',
       show: true,
       scope: $scope,
+    });
+  };
+
+  function openEmailToEventModal() {
+    var newScope = $scope.$new();
+    newScope.mailToEvent = true;
+    newScope.event = $scope.event;
+
+    var modal = $modal({
+      animation: 'am-fade-and-slide-top',
+      templateUrl: 'components/email_service/email_modal.html?v=4',
+      show: true,
+      scope: newScope,
     });
   };
 
@@ -322,13 +380,6 @@ angular.module('ultical.events')
     storage.updateTeamRegStatus($scope.event, teamRegistration, 'DECLINED');
   }
 
-  // get own teams to determine if this user may register a team
-  $scope.ownTeams = null;
-  if (authorizer.loggedIn()) {
-    storage.getOwnTeamsCache(function(cachedOwnTeams) {
-      $scope.ownTeams = cachedOwnTeams;
-    });
-  }
 
 	// collapses
 	$scope.panels = {
@@ -494,7 +545,18 @@ angular.module('ultical.events')
 		return false;
 	};
 
-  $scope.toggleEditStandings = function() {
+  $scope.toggleEditStandings = function(division) {
+    angular.forEach($scope.getPlayingTeams(division), function(teamReg) {
+      if (teamReg.standing == -1) {
+        teamReg.standing = '';
+      }
+      if (teamReg.spiritScore == -1) {
+        teamReg.spiritScore = '';
+      }
+      if (teamReg.ownSpiritScore == -1) {
+        teamReg.ownSpiritScore = '';
+      }
+    });
     $scope.editStandings = !$scope.editStandings;
   }
 
