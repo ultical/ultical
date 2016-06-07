@@ -81,6 +81,19 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
         separator: true,
       });
     }
+
+    actionBar.addAction({
+      group: 'team-contact',
+      needLogIn: true,
+      button: {
+          text: 'team.contactButton',
+          click: function() {
+            openEmailToTeamModal();
+          },
+      },
+      separator: true,
+    });
+
     if ($scope.team.x.own) {
       actionBar.addAction({
         group: 'team-admin',
@@ -109,6 +122,19 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
       }
     }
   }
+
+  function openEmailToTeamModal() {
+    var newScope = $scope.$new();
+    newScope.mailToTeam = true;
+    newScope.team = $scope.team;
+
+    var modal = $modal({
+      animation: 'am-fade-and-slide-top',
+      templateUrl: 'components/email_service/email_modal.html?v=4',
+      show: true,
+      scope: newScope,
+    });
+  };
 
   $scope.$watch('editing', updateActions);
 

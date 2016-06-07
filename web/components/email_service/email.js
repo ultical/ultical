@@ -19,6 +19,11 @@ angular.module('ultical.services', [])
       $scope.descriptionText = $translate.instant('email.descriptionEvent', {eventName: eventName } );
       $scope.email.eventId = $scope.event.id;
       $scope.email.subject = $translate.instant('email.subjectTo', { receiverName: eventName });
+    } else if ($scope.mailToTeam) {
+      var teamName = $scope.team.name;
+      $scope.descriptionText = $translate.instant('email.descriptionTeam', {teamName: teamName } );
+      $scope.email.teamId = $scope.team.id;
+      $scope.email.subject = $translate.instant('email.subjectTo', { receiverName: teamName });
     }
 
     $scope.email.authorDescriptionText = $translate.instant('email.authorDescriptionText', { authorName: authorizer.getUser().fullName });

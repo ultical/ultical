@@ -344,6 +344,7 @@ TRANSLATIONS['de'] = {
 			remove: {
 				tooltip: 'Team löschen',
 			},
+			contactButton: 'Team kontaktieren',
 			confirmDelete: 'Soll dieses Team wirklich gelöscht werden? Dieser Vorgang kann nicht rückgängig gemacht werden!',
 		},
 
