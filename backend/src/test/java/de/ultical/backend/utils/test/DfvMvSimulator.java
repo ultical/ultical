@@ -9,13 +9,21 @@ import javax.ws.rs.core.Response;
 
 import io.dropwizard.testing.FixtureHelpers;
 
+@Path("/")
 public class DfvMvSimulator {
 
-	@Path("/profiles")
+	@Path("profiles")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllProfiles(@QueryParam("secret") String secret, @QueryParam("token") String token) {
 		return Response.ok().type(MediaType.APPLICATION_JSON).entity(FixtureHelpers.fixture("allProfiles.json"))
 				.build();
+	}
+	
+	@Path("verbaende")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getVerbaende(@QueryParam("secret") String secret, @QueryParam("token") String token) {
+		return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity("[{ \"name\":\"Deutscher Frisbeesport Verband\",\"acronym\":\"DFV\",\"id\":1,\"version\":1}]").build();
 	}
 }

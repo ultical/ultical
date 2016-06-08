@@ -1,3 +1,6 @@
+debugMode:
+  enabled: false
+  mailCatcher: team@ultical.de
 server:
   applicationConnectors:
     - type: http
@@ -5,3 +8,25 @@ server:
   adminConnectors:
     - type: http
       port: 0
+dfvApi: 
+  token: token
+  secret: secret
+  url: https://dfv-mv.de/api
+ 
+database:
+  driverClass: com.mysql.jdbc.Driver
+  url: jdbc:mysql://localhost/ultical_integration
+  user: ultical
+  password: ultical
+  
+mail:
+  smtpHost: localhost
+  smtpPort: 5587
+  smtpUser: smtp-user
+  smtpPassword: secret
+  smtpSender: no-reply@example.com
+frontendUrl: http://example.com:1234/front
+corsFilterEnabled: false
+
+jobs:
+  dfvMvSyncEnabled: true
