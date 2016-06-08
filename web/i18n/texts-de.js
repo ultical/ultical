@@ -266,6 +266,9 @@ TRANSLATIONS['de'] = {
 				standingsRank: 'Platzierung',
 				standingsSpirit: 'Spirit (Fremd/Eigen)',
 			},
+			edit: {
+				buttonLabel: 'Turnier bearbeiten',
+			},
 		},
 
 		team: {
