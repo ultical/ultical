@@ -4,14 +4,30 @@
   "firstName": "Test",
   "dse": true,
   "dfvNumber":123456,
-  "club": 1,
-  "lastModified": "2016-06-06 12:13:14567"},
+  "vnr": 1,
+  "mtime": "2016-06-06 12:13:14+01:00"},
 {
 "lastName": "Testa",
   "firstName": "Testa",
   "dse": true,
   "dfvNumber":234567,
-  "club": 1,
-  "lastModified": "2016-06-06 12:13:14567"
+  "vnr": 1,
+  "mtime": "2016-06-06 12:13:14+01:00"
+},
+{
+"lastName": "Häufiger",
+  "firstName": "Name",
+  "dse": true,
+  "dfvNumber":345678,
+  "vnr": 1,
+  "mtime": "2016-06-06 12:13:14+01:00"
+},
+{
+"lastName": "Häufiger",
+  "firstName": "Name",
+  "dse": true,
+  "dfvNumber":456789,
+  "vnr": 1,
+  "mtime": "2016-06-06 12:13:14+01:00"
 }
 ]
