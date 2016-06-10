@@ -236,11 +236,16 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
     },
 
     sendEmail: function(mailInfo, callback, errorCallback) {
+      var uri = '';
       if ('eventId' in mailInfo) {
-        post('command/mail/event', mailInfo, callback, errorCallback);
+        uri =  'command/mail/event';
       } else if ('teamId' in mailInfo) {
-      post('command/mail/team', mailInfo, callback, errorCallback);
+        uri = 'command/mail/team';
       }
+      if (!authorizer.loggedIn()) {
+        uri += '/ano';
+      }
+      post(uri, mailInfo, callback, errorCallback);
     },
 
 		login: function(user, callback) {

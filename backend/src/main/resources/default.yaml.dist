@@ -30,3 +30,7 @@ corsFilterEnabled: false
 
 jobs:
   dfvMvSyncEnabled: false
+reCaptcha:
+  url: https://www.google.com/recaptcha/api/siteverify
+  secret: ...
+  

@@ -17,6 +17,7 @@ var app = angular.module('ultical',
 		 'slugifier',
 		 'ng.deviceDetector',
 		 'angular.filter',
+		 'vcRecaptcha',
 		 ]);
 
 //router ui route
