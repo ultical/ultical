@@ -5,9 +5,9 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 
 import de.ultical.backend.app.mail.ConfirmEmailMessage;
-import de.ultical.backend.app.mail.SystemMessage;
 import de.ultical.backend.app.mail.DfvOptInMessage;
 import de.ultical.backend.app.mail.ForgotPasswordMessage;
+import de.ultical.backend.app.mail.SystemMessage;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.MailCode;
 import de.ultical.backend.model.MailCodeType;

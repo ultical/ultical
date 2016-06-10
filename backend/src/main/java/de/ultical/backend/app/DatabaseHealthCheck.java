@@ -1,6 +1,9 @@
 package de.ultical.backend.app;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Objects;
 
 import javax.sql.DataSource;
