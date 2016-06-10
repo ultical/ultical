@@ -30,6 +30,10 @@ angular.extend(CONFIG_OBJECT, {
 		showCountryCodeWithCity: false,
 	},
 
+	captcha: {
+		publicKey: '6LdnGiITAAAAAIA6JYUOTNg1UEWLQS57jY1apKyz',
+	},
+
 	registration: {
 		minPasswordLength: 10,
 	},

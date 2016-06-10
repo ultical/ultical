@@ -48,8 +48,11 @@ TRANSLATIONS['de'] = {
 			descriptionTeam: 'Verfasse deine Nachricht an die Kontaktpersonen von {{ teamName }}.',
 			descriptionEvent: 'Verfasse deine Nachricht an die lokalen Veranstalter des Turniers {{ eventName }}.',
 			sendButtonLabel: 'Email senden',
+			name: 'Name',
+			namePlaceholder: 'Bitte deinen Namen als Absender eingeben',
 			replyToDesc: 'Diese Emailadresse wird, zusammen mit deinem Namen, als Antwortadresse übermittelt. Sie ist für die Empfänger deiner Nachricht sichtbar.',
 			replyTo: 'Antwortadresse',
+			replyToPlaceholder: 'Bitte Emailadresse angeben',
 			body: 'Nachrichtentext',
 			successTitle: 'Nachricht erfolgreich gesendet!',
 			successText: 'Du erhälst eine Kopie an die angegebene Antwortadresse.',
@@ -58,6 +61,10 @@ TRANSLATIONS['de'] = {
 			subjectFrom: 'Nachricht von {{ senderName }}',
 			subjectTo: 'Nachricht für {{ receiverName }}',
 			empty: 'Bitte gib einen Nachrichtentext ein!',
+			emptyName: 'Bitte gib einen Namen ein',
+			emptyReplyTo: 'Bitte gib eine Antwortadresse an',
+			emptyCaptcha: 'Bitte löse die Aufgabe des Captchas unten in diesem Fenster',
+			errorCaptcha: 'Ein Fehler ist bei der Verarbeitung des Captchas aufgetreten. Bitte löse es erneut',
 		},
 
 		nav: {

@@ -84,7 +84,7 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
 
     actionBar.addAction({
       group: 'team-contact',
-      needLogIn: true,
+      needLogIn: null,
       button: {
           text: 'team.contactButton',
           click: function() {

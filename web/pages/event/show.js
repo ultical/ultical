@@ -270,10 +270,10 @@ angular.module('ultical.events')
       }
     }
 
-    if ($scope.show.event && ($scope.event.admins.length > 0 || !(isEmpty($scope.event.localOrganizer) || isEmpty($scope.event.localOrganizer.email)))) {
+    if ($scope.show.event && $scope.event.admins.length > 0) {
       actionBar.addAction({
         group: 'contact-event',
-        needLogIn: true,
+        needLogIn: null,
         button: {
           text: 'event.contactButton',
           click: function() {

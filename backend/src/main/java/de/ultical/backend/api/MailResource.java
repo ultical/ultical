@@ -23,6 +23,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.app.Authenticator;
+import de.ultical.backend.app.CaptchaVerifier;
 import de.ultical.backend.app.EmailCodeService;
 import de.ultical.backend.app.MailClient;
 import de.ultical.backend.app.MailClient.UlticalMessage.Recipient;
@@ -247,15 +248,26 @@ public class MailResource {
      * @param currentUser
      *            The user currently logged in
      * @return UserMessage object
+     * @throws Exception
      */
-    private UserMessage prepareUserMessage(Map<String, Object> emailInfo, User currentUser) {
+    private UserMessage prepareUserMessage(Map<String, Object> emailInfo, User currentUser) throws Exception {
+
+        if (currentUser == null && !CaptchaVerifier.getInstance().verifyCaptcha((String) emailInfo.get("captcha"))) {
+            throw new CaptchaFailedException();
+        }
+
         UserMessage message = new UserMessage();
 
         message.setSubject((String) emailInfo.get("subject"));
         message.setBody((String) emailInfo.get("body"));
         message.setAuthorDescriptionText((String) emailInfo.get("authorDescriptionText"));
 
-        Recipient currentUserRecipient = new Recipient((String) emailInfo.get("replyTo"), currentUser.getFullName());
+        Recipient currentUserRecipient;
+        if (currentUser == null) {
+            currentUserRecipient = new Recipient((String) emailInfo.get("replyTo"), (String) emailInfo.get("name"));
+        } else {
+            currentUserRecipient = new Recipient((String) emailInfo.get("replyTo"), currentUser.getFullName());
+        }
         message.setAuthor(currentUserRecipient);
         message.addRecipient(UlticalRecipientType.TO, currentUserRecipient);
         message.addRecipient(UlticalRecipientType.REPLY_TO, currentUserRecipient);
@@ -263,10 +275,25 @@ public class MailResource {
         return message;
     }
 
+    public class CaptchaFailedException extends Exception {
+        private static final long serialVersionUID = 1L;
+    }
+
     @POST
     @Path("team")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean sendEmailToTeam(Map<String, Object> emailInfo, @Auth @NotNull User currentUser) throws Exception {
+    public boolean sendEmailToTeam(Map<String, Object> emailInfo, @Auth User currentUser) throws Exception {
+        return this.sendEmailToTeamHelper(emailInfo, currentUser);
+    }
+
+    @POST
+    @Path("team/ano")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public boolean sendEmailToTeamAno(Map<String, Object> emailInfo) throws Exception {
+        return this.sendEmailToTeamHelper(emailInfo, null);
+    }
+
+    private boolean sendEmailToTeamHelper(Map<String, Object> emailInfo, User currentUser) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
@@ -291,14 +318,28 @@ public class MailResource {
             message.addRecipients(UlticalRecipientType.BCC, recipients);
 
             this.mailClient.sendMail(message);
+        } catch (Exception e) {
+            throw new WebApplicationException(500);
         }
+
         return true;
     }
 
     @POST
     @Path("event")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean sendEmailToEvent(Map<String, Object> emailInfo, @Auth @NotNull User currentUser) throws Exception {
+    public boolean sendEmailToEvent(Map<String, Object> emailInfo, @Auth User currentUser) throws Exception {
+        return this.sendEmailToEventHelper(emailInfo, currentUser);
+    }
+
+    @POST
+    @Path("event/ano")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public boolean sendEmailToEventAno(Map<String, Object> emailInfo) throws Exception {
+        return this.sendEmailToEventHelper(emailInfo, null);
+    }
+
+    private boolean sendEmailToEventHelper(Map<String, Object> emailInfo, @Auth User currentUser) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
@@ -320,7 +361,11 @@ public class MailResource {
             message.addRecipients(UlticalRecipientType.BCC, recipients);
 
             this.mailClient.sendMail(message);
+        } catch (Exception e) {
+            System.out.println(e.getMessage() + e.getStackTrace());
+            throw new WebApplicationException(500);
         }
+
         return true;
     }
 }

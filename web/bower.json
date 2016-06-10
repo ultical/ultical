@@ -31,6 +31,7 @@
     "angular-motion": "*",
     "angular-bootstrap": "*",
     "angular-filter": "*",
+    "angular-recaptcha": "*",
     "bootstrap": "*",
     "respond": "*",
     "fontawesome": "*",
