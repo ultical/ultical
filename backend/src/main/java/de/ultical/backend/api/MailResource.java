@@ -282,7 +282,7 @@ public class MailResource {
     @POST
     @Path("team")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean sendEmailToTeam(Map<String, Object> emailInfo, @Auth User currentUser) throws Exception {
+    public boolean sendEmailToTeam(Map<String, Object> emailInfo, @Auth @NotNull User currentUser) throws Exception {
         return this.sendEmailToTeamHelper(emailInfo, currentUser);
     }
 
@@ -328,7 +328,7 @@ public class MailResource {
     @POST
     @Path("event")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean sendEmailToEvent(Map<String, Object> emailInfo, @Auth User currentUser) throws Exception {
+    public boolean sendEmailToEvent(Map<String, Object> emailInfo, @Auth @NotNull User currentUser) throws Exception {
         return this.sendEmailToEventHelper(emailInfo, currentUser);
     }
 
@@ -339,7 +339,7 @@ public class MailResource {
         return this.sendEmailToEventHelper(emailInfo, null);
     }
 
-    private boolean sendEmailToEventHelper(Map<String, Object> emailInfo, @Auth User currentUser) throws Exception {
+    private boolean sendEmailToEventHelper(Map<String, Object> emailInfo, User currentUser) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
