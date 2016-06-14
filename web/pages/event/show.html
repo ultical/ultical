@@ -111,12 +111,9 @@
 				<div ng-if="!show.format">
 					{{ edition.organizer.name }}&nbsp;&nbsp;
 					<a ng-href="mailto:{{ edition.organizer.email }}">
-						<span ng-if="edition.organizer.email | notEmpty">
-							<i class="fa fa-envelope-o"></i>&nbsp;{{ edition.organizer.email }}
-						</span>
-					</a>
+						<span ng-if="edition.organizer.email | notEmpty"><i class="fa fa-envelope-o"></i></span></a>
 					<span ng-if="edition.organizer.phone | notEmpty">
-						&nbsp;&nbsp;<i class="fa fa-phone"></i>&nbsp;{{ edition.organizer.phone }}
+						&nbsp;&nbsp;&nbsp;<i class="fa fa-phone"></i>&nbsp;{{ edition.organizer.phone }}
 					</span>
 				</div>
 			</div>
@@ -127,12 +124,11 @@
 				<div class="strong">{{ 'event.localOrganizer' | translate }}</div>
 				<div>
 					<span>{{ event.localOrganizer.name }}&nbsp;&nbsp;</span>
-					<a ng-href="mailto:{{ event.localOrganizer.email }}" ng-if="event.localOrganizer.email | notEmpty">
-						<i class="fa fa-envelope-o"></i>
-						<span>&nbsp;{{ event.localOrganizer.email }}</span>
-					</a>
+					<span class="cursor-pointer" ng-if="event.admins | notEmpty">
+						<i ng-click="openEmailToEventModal()" class="fa fa-envelope-o"></i>
+					</span>
 					<span ng-if="event.localOrganizer.phone | notEmpty">
-						&nbsp;&nbsp;<i class="fa fa-phone"></i>&nbsp;{{ event.localOrganizer.phone }}
+						&nbsp;&nbsp;&nbsp;<i class="fa fa-phone"></i>&nbsp;{{ event.localOrganizer.phone }}
 					</span>
 				</div>
 			</div>
@@ -145,20 +141,20 @@
 			</div>
 		</div>
 
-		<!-- INFO -->
-		<div class="row" ng-class="{'margin-top': !info.showFormatInfo}" ng-if="info.showEventInfo">
+		<!-- URL -->
+		<div class="row" ng-class="{'margin-top': !info.showFormatInfo}" ng-if="show.formatUrl && format.url | notEmpty">
 			<div class="col-md-12">
-				<div class="info-text user-textarea" ng-class="{'padding-top': info.showFormatInfo }">{{ event.info }}</div>
-			</div>
-		</div>
-
-			<!-- URL -->
-		<div class="row" ng-class="{'margin-top': !info.showFormatInfo && !info.showEventInfo }" ng-if="show.formatUrl && format.url | notEmpty">
-			<div class="col-md-12">
-				<div ng-class="{'padding-top info-text': (info.showFormatInfo || info.showEventInfo) }">
+				<div ng-class="{'padding-top info-text': info.showFormatInfo}">
 					<i class="fa fa-link fa-fw"></i>
 					<a target="_blank" ng-href="{{ format.url | url }}">{{ format.url }}</a>
 				</div>
+			</div>
+		</div>
+
+		<!-- INFO -->
+		<div class="row margin-top" ng-if="info.showEventInfo">
+			<div class="col-md-12">
+				<div class="info-text user-textarea">{{ event.info }}</div>
 			</div>
 		</div>
 
