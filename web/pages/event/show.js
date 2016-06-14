@@ -241,7 +241,7 @@ angular.module('ultical.events')
   function addActions() {
     actionBar.clearActions();
     // Action bar actions
-    if ($scope.show.registration && !$scope.show.format && $scope.edition.x.registrationIsOpen) {
+    if ($scope.show.registration && !$scope.show.format && $scope.edition.x && $scope.edition.x.registrationIsOpen) {
       actionBar.addSeparator('event-registration');
       actionBar.addAction({
         group: 'event-registration',
