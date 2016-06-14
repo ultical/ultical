@@ -278,7 +278,7 @@ angular.module('ultical.events')
         button: {
           text: 'event.contactButton',
           click: function() {
-            openEmailToEventModal();
+            $scope.openEmailToEventModal();
           },
         }
       });
@@ -332,7 +332,7 @@ angular.module('ultical.events')
     });
   };
 
-  function openEmailToEventModal() {
+  $scope.openEmailToEventModal = function() {
     var newScope = $scope.$new();
     newScope.mailToEvent = true;
     newScope.event = $scope.event;
