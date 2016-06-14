@@ -5,14 +5,14 @@
 				<button type="button" class="close" aria-label="Close" ng-click="$hide()">
 					<span aria-hidden="true">&times;</span>
 				</button>
-				<h4 class="modal-title">{{ 'event.register.title' | translate }}</h4>
+				<h4 class="modal-title">{{ 'email.title' | translate }}</h4>
 			</div>
 			<div class="modal-body">
-				<div ng-include="'pages/event/registration.html?v=17'" data-onload="modal = true"></div>
+				<div ng-include="'components/email_service/email.html?v=2'" data-onload="modal = true"></div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" ng-click="$hide()">{{ 'general.close' | translate | capitalize }}</button>
-				<button ng-disabled="teamRegistrationDisabled" type="button" class="btn btn-primary btn-ultical" ng-click="doTeamRegister()">{{ 'event.register.button' | translate }}</button>
+				<button ng-disabled="emailSendDisabled" type="button" class="btn btn-primary btn-ultical" ng-click="sendEmail()">{{ 'email.sendButtonLabel' | translate }}</button>
 			</div>
 		</div>
 	</div>

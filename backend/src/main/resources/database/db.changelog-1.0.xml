@@ -1019,7 +1019,47 @@
 			</column>
 		</addColumn>
 	</changeSet>
-	<changeSet author="bb" id="bb88">
-		<tagDatabase tag="ultical_bb_v1.15" />
+	<changeSet author="bas" id="bas-editionshow-1">
+		<addColumn tableName="TOURNAMENT_EDITION">
+			<column name="name" type="VARCHAR(200)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-2">
+		<sql dbms="mysql" endDelimiter=";">
+			UPDATE TOURNAMENT_EDITION SET name
+			= alternative_name
+		</sql>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-3">
+		<dropColumn tableName="TOURNAMENT_EDITION" columnName="alternative_name" />
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-4">
+		<addColumn tableName="EVENT">
+			<column name="name" type="VARCHAR(200)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-5">
+		<sql dbms="mysql" endDelimiter=";">
+			UPDATE EVENT SET name = (SELECT
+			name FROM TOURNAMENT_EDITION WHERE id = EVENT.tournament_edition)
+		</sql>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-6">
+		<tagDatabase tag="bas_editionshow_v.1.16" />
+	</changeSet>
+	<changeSet author="bas" id="bas84">
+		<addPrimaryKey tableName="EVENT_LOCATION" columnNames="event, location" />
+	</changeSet>
+	<changeSet author="bas" id="bas85">
+		<addDefaultValue columnName="version" tableName="DIVISION_CONFIRMATION"
+			defaultValueNumeric="1" />
+	</changeSet>
+	<changeSet author="bas" id="bas-teamregistration-1">
+		<addColumn tableName="TOURNAMENT_EDITION">
+			<column name="allow_event_team_reg_management" type="BOOLEAN"
+				defaultValueBoolean="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
 	</changeSet>
 </databaseChangeLog>

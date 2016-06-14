@@ -130,23 +130,39 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			get('teams/' + teamId, callback);
 		},
 
-		getAllTeams: function(callback) {
-			get('teams', callback);
+    getAllTeams: function(callback) {
+      get('teams', callback);
+    },
+
+		getAllTeamBasics: function(callback) {
+			get('teams/basics', callback);
 		},
 
 		getOwnTeams: function(callback) {
 			get('teams/own', callback);
 		},
 
+    getOwnTeamBasics: function(callback) {
+			get('teams/own/basics', callback);
+		},
+
     deleteTeam: function(teamId, callback, errCallback) {
         del('teams/' + teamId, callback, errCallback);
+    },
+
+    getFormat: function(formatId, callback) {
+        get('format/' + formatId, callback);
+    },
+
+    getFormatByEdition: function(editionId, callback) {
+      get('format/edition/' + editionId, callback);
     },
 
 		getFormatByEvent: function(eventId, callback) {
 			get('format/event/' + eventId, callback);
 		},
 
-		saveTeam: function(team, oldTeam, callback, errorCallback) {
+    saveTeam: function(team, oldTeam, callback, errorCallback) {
 			var teamToSend = angular.copy(team);
 
 			teamToSend.rosters = [];
@@ -191,32 +207,49 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		},
 
 		registerUser: function(user, callback) {
-			post('register', user, callback);
+			post('command/register', user, callback);
 		},
 
 		changePasswordWithMailCode : function(code, user, callback) {
 			var basicUser = { id: user.id, password: user.password};
-			post('mail/' + code, basicUser, callback);
+			post('command/mail/code/' + code, basicUser, callback);
 		},
 
 		resendConfirmationEmail: function(loginData, callback) {
-			post('mail/resend/confirmation', loginData, callback);
+			post('command/mail/user/confirmation/resend', loginData, callback);
 		},
 
 		resendOptInEmail: function(loginData, callback) {
-			post('mail/resend/optin', loginData, callback);
+			post('command/mail/user/optin/resend', loginData, callback);
 		},
 
 		sendForgotPasswordEmail: function(loginData, callback) {
-			post('mail/resend/password', loginData, callback);
+			post('command/mail/user/password/resend', loginData, callback);
 		},
 
 		redeemMailCode: function(code, callback, errorCallback) {
-			get('mail/' + code, callback, errorCallback);
+			get('command/mail/code/' + code, callback, errorCallback);
 		},
 
+    sendEmailToTeams: function(mailInfo, callback, errorCallback) {
+      post('command/mail/teams', mailInfo, callback, errorCallback);
+    },
+
+    sendEmail: function(mailInfo, callback, errorCallback) {
+      var uri = '';
+      if ('eventId' in mailInfo) {
+        uri =  'command/mail/event';
+      } else if ('teamId' in mailInfo) {
+        uri = 'command/mail/team';
+      }
+      if (!authorizer.loggedIn()) {
+        uri += '/ano';
+      }
+      post(uri, mailInfo, callback, errorCallback);
+    },
+
 		login: function(user, callback) {
-			post('auth', user, callback);
+			post('command/auth', user, callback);
 		},
 
 		getUserProposals: function(userName, callback) {
@@ -237,8 +270,24 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		},
 
 		registerTeamForEdition: function(registration, divisionRegistration, callback, errorCallback) {
-			return post('tournaments/' + divisionRegistration.id + '/register/team', registration, callback, errorCallback);
+			return post('tournaments/division/' + divisionRegistration.id + '/register/team', registration, callback, errorCallback);
 		},
+
+    updateTeamRegistration: function(eventId, teamRegistration, callback, errorCallback) {
+      var teamRegToSend = angular.copy(teamRegistration);
+      teamRegToSend.roster = null;
+      teamRegToSend.timeRegistered = null;
+      return put('tournaments/registration/' + eventId, teamRegToSend, callback, errorCallback);
+    },
+
+    updateTeamRegistrations: function(eventId, teamRegistrations, callback, errorCallback) {
+      var teamRegsToSend = angular.copy(teamRegistrations);
+      angular.forEach(teamRegsToSend, function(teamReg) {
+        teamReg.roster = null;
+        teamReg.timeRegistered = null;
+      });
+      return put('tournaments/registrations/' + eventId , teamRegsToSend, callback, errorCallback);
+    },
 	};
 
 	function addAdminsToTeam(teamId, addList, callback) {

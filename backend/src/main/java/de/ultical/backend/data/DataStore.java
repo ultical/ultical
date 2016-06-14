@@ -29,6 +29,7 @@ import de.ultical.backend.data.mapper.RosterMapper;
 import de.ultical.backend.data.mapper.RosterPlayerMapper;
 import de.ultical.backend.data.mapper.TeamMapper;
 import de.ultical.backend.data.mapper.TeamRegistrationMapper;
+import de.ultical.backend.data.mapper.TournamentEditionMapper;
 import de.ultical.backend.data.mapper.TournamentFormatMapper;
 import de.ultical.backend.data.mapper.UserMapper;
 import de.ultical.backend.model.Association;
@@ -186,6 +187,19 @@ public class DataStore {
                 this.sqlSession.close();
             }
         }
+    }
+
+    public <T extends Identifiable> boolean updateAll(List<T> updatedInstances) {
+        boolean autoClosePrevState = this.autoCloseSession;
+        this.setAutoCloseSession(false);
+        boolean result = true;
+        for (T updatedInstance : updatedInstances) {
+            result = result && this.update(updatedInstance);
+        }
+        if (autoClosePrevState) {
+            this.sqlSession.close();
+        }
+        return result;
     }
 
     public <T extends Identifiable> T get(Integer id, Class<T> clazz) {
@@ -534,6 +548,16 @@ public class DataStore {
         }
     }
 
+    public List<Team> getTeamBasics() {
+        TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+        return teamMapper.getBasics();
+    }
+
+    public List<Team> getTeamBasicsByUser(int userId) {
+        TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+        return teamMapper.getBasicsByUser(userId);
+    }
+
     public List<Team> getTeamsByUser(int userId) {
         TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
         return teamMapper.getByUser(userId);
@@ -669,6 +693,19 @@ public class DataStore {
         }
     }
 
+    public List<Team> getTeamsByEditionDivisionsStatus(Integer editionId, List<Integer> divisionList,
+            List<String> statusList) {
+
+        try {
+            TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+            return teamMapper.getByEditionDivisionStatus(editionId, divisionList, statusList);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public MailCode getMailCode(String code) {
         try {
             MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);
@@ -759,6 +796,17 @@ public class DataStore {
         }
     }
 
+    public TournamentFormat getFormatByEdition(int editionId) {
+        try {
+            TournamentFormatMapper tfMapper = this.sqlSession.getMapper(TournamentFormatMapper.class);
+            return tfMapper.getByEdition(editionId);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public TournamentFormat getFormatByEvent(int eventId) {
         try {
             TournamentFormatMapper tfMapper = this.sqlSession.getMapper(TournamentFormatMapper.class);
@@ -787,7 +835,17 @@ public class DataStore {
             mapper.insert(divisionRegistrationId, teamReg);
             this.sqlSession.commit();
             return teamReg;
-            // mapper.insertAtEnd(div, teamReg);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public TournamentEdition getEditionByTeamRegistration(int teamRegistrationId) {
+        try {
+            final TournamentEditionMapper mapper = this.sqlSession.getMapper(TournamentEditionMapper.class);
+            return mapper.getByTeamRegistration(teamRegistrationId);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

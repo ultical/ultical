@@ -24,6 +24,14 @@ angular.extend(CONFIG_OBJECT, {
 		html5Mode: false,
 		// if set to true a roster cannot be created without selecting (at least) one context
 		rosterNeedsContext: true,
+		// define the start state
+		startState: 'eventsList',
+		// show country code (e.g. 'DE',...) when displaying a city name
+		showCountryCodeWithCity: false,
+	},
+
+	captcha: {
+		publicKey: '6LdnGiITAAAAAIA6JYUOTNg1UEWLQS57jY1apKyz',
 	},
 
 	registration: {
@@ -52,6 +60,7 @@ angular.extend(CONFIG_OBJECT, {
 		emailContact: 'team@ultical.com',
 		bugLink: 'https://github.com/bastrapp/ultical/issues',
 		codeLink: 'https://github.com/bastrapp/ultical',
+		qaLink: 'http://www.frisbeesportverband.de/index.php/mitgliederservice/qa-dfv-turniere-de/',
 	},
 
 });

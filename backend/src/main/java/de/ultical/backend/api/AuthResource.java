@@ -21,7 +21,7 @@ import de.ultical.backend.model.User;
  * @author bas
  *
  */
-@Path("/auth")
+@Path("/command/auth")
 public class AuthResource {
 
     @Inject

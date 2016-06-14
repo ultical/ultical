@@ -7,19 +7,26 @@
 	</div>
 
 	<div class="row margin-top event-list">
-		<div class="col-md-9">
+		<div class="col-md-8">
 
-			<div ng-if="0" class="row" ng-repeat-start="event in (orderedEvents = (events | orderBy : sortKey : sortOrderDesc))"></div>
+			<div ng-if="0" class="row" ng-repeat-start="event in (orderedEvents = (events | filter : eventFilter | orderBy : sortKey : sortOrderDesc))"></div>
 
 			<!-- year -->
-			<div class="row" ng-if="(sortKey == 'startDate') && ($index == 0 || (((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')) && (event.startDate | amDateFormat : 'M') == '1' ))">
+			<div class="row" ng-if="true && ($index == 0 || (((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')) && (event.startDate | amDateFormat : 'M') == '1' ))">
 				<div class="col-md-9">
 					<h4>{{ event.startDate | amDateFormat : 'YYYY' }}</h4>
 				</div>
 			</div>
 
+			<!-- collapsed months -->
+			<div class="row" ng-if="!show.beginningOfYear && true && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY')))">
+				<div class="col-md-9">
+					<h5><a href="#" ng-click="show.beginningOfYear = true">{{ current.january | amDateFormat : 'MMMM' }}<span ng-if="(current.lastMonth | amDateFormat : 'M') != 1"> - {{ current.lastMonth | amDateFormat : 'MMMM' }}</span></a></h5>
+				</div>
+			</div>
+
 			<!-- month -->
-			<div class="row" ng-if="sortKey == 'startDate' && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')))">
+			<div class="row" ng-if="true && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')))">
 				<div class="col-md-9">
 					<h5>{{ event.startDate | amDateFormat : 'MMMM' }}</h5>
 				</div>
@@ -27,24 +34,19 @@
 
 			<!-- event -->
 			<div ng-repeat-end class="row">
-					<a ng-href="{{ getEventUrl(event) }}">
-				<div class="col-md-7 event-list-row">
-						<div class="event-list-date event-list-date-left">{{ event.startDate | amDateFormat : 'D' }}</div>
-						<div class="event-list-date event-list-date-dash">-</div>
-						<div class="event-list-date event-list-date-right">{{ event.endDate | amDateFormat : 'D' }}</div>
+					<a ui-sref="app.eventShow({eventId: event.id, eventSlug: ((event | eventname) | slugify) })">
+				<div class="col-md-9 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != event.startDate || orderedEvents[$index - 1].endDate != event.endDate">
+						<div class="event-list-date event-list-date-left">{{ showDate ? (event.startDate | amDateFormat : 'D') : '' }}</div>
+						<div class="event-list-date event-list-date-dash">{{ showDate ? '-' : '' }}</div>
+						<div class="event-list-date event-list-date-right">{{ showDate ? (event.endDate | amDateFormat : 'D') :'' }}</div>
 						<!-- <span ng-if="(event.startDate | amDateFormat : 'M') != (event.endDate | amDateFormat : 'M')">&nbsp;{{ event.endDate | amDateFormat : 'MMM' }}</span> -->
 
 						<div class="event-list-text">
 							<div class="event-list-text-top">{{ event | eventname }}</div>
 							<div class="event-list-text-bottom">
-								<span class="margin-right-small" ng-if="event.x.divisions | notEmpty">
+								<span class="margin-right-small" ng-if="event.x.divisions | notEmpty">{{ event.x.divisions | divisions : 'basic' }}</span>
 									<!-- 								<i class="fa fa-venus-mars"></i> -->
-									<bas ng-repeat="division in event.x.divisions">{{ division | division }}<bas ng-if="!$last">, </bas></bas>
-								</span>
-								<span class="margin-right" ng-if="event.x.mainLocation | notEmpty">
-									<i class="fa fa-map-marker"></i> {{ event.x.mainLocation | location : 'city' }}
-								</span>
-								&nbsp;
+								<span class="margin-right" ng-if="event.x.mainLocation | notEmpty"><i class="fa fa-map-marker"></i> {{ event.x.mainLocation | location : 'city' }}</span>
 							</div>
 						</div>
 				</div>

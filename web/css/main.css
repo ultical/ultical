@@ -63,6 +63,10 @@ button, input, optgroup, select, textarea {
 	.navbar-header {
 		padding-left: 10px;
 	}
+
+	td.mega-wide {
+		width: 50%;
+	}
 }
 
 #nav-logo img {
@@ -172,6 +176,10 @@ button, input, optgroup, select, textarea {
 	color: white;
 }
 
+input, textarea {
+	width: 100%;
+}
+
 .panel.panel-ultical {
 	background-color: #FAFAFA;
 	/* 	border-color: #D9E9FF; */
@@ -236,7 +244,7 @@ button, input, optgroup, select, textarea {
 	float: right;
 	color: #337AB7;
 	opacity: 0;
-	margin-left: 7px;
+	margin-left: 10px;
 }
 
 .team-actions-link {
@@ -246,6 +254,11 @@ button, input, optgroup, select, textarea {
 
 .panel-heading:hover .team-actions {
 	opacity: 1;
+}
+
+.team-actions-disabled {
+	color: #D6D6D6;
+	cursor: default;
 }
 
 .player-actions {
@@ -331,6 +344,17 @@ select:not([multiple]) {
 	width: 33px;
 }
 
+#edition-view-events .event-list-date-right {
+	width: 25px;
+}
+
+#edition-view-events .event-list-date-right-month {
+	width: 79px;
+}
+
+#edition-view-events .event-list-date-right-month.event-list-date-right-monthyear {
+	width: 100px;
+}
 .event-list-text {
 	display: table-cell;
 }
@@ -367,6 +391,20 @@ select:not([multiple]) {
 .event-list-row:hover {
   background-color: #C2DAF3;
 	cursor: pointer;
+}
+
+#edition-listing .event-list-row {
+	padding-top: 4px;
+	padding-bottom: 6px;
+}
+
+#edition-listing .event-list-date {
+	width: 52px;
+}
+
+#edition-listing .event-list-text {
+	font-weight: 500;
+	padding-top: 2px;
 }
 
 .page-sub-title {
@@ -444,7 +482,7 @@ select:not([multiple]) {
 }
 
 .team-list-standing {
-	width: 82px;
+	width: 77px;
 	text-align: center;
 	padding-right: 10px;
 }
@@ -452,12 +490,13 @@ select:not([multiple]) {
 .label-as-badge {
     border-radius: 1em;
 		font-size: 85%;
+		padding-top: 3px;
 }
 
 .spirit-score-label {
     font-size: 80%;
     line-height: 1.3em;
-		width: 60px;
+		width: 65px;
 		text-align: center;
 		margin-left: 3px;
 }
@@ -495,4 +534,100 @@ select:not([multiple]) {
 }
 .width100 {
 	width: 100%;
+}
+
+.dropdown-caret-fixed-width {
+	width: 0.5em;
+	display: inline-block;
+}
+
+.dropdown-caret-padding {
+	padding-left: 2px;
+}
+
+#eventpage-title h3 {
+	margin-top: 12px;
+	margin-bottom: 2px;
+}
+
+/* breadcrumbs */
+.nav-breadcrumb {
+	padding-left: 0px;
+	color: grey;
+	list-style: none;
+}
+
+.nav-breadcrumb a {
+	color: grey;
+}
+
+.nav-breadcrumb>li {
+	display: inline-block;
+}
+
+.nav-breadcrumb>li+li:before {
+    padding: 0 5px;
+    color: #ccc;
+    content: ">";
+}
+
+.panel-title button {
+	margin-top: -4px;
+	margin-right: -5px;
+}
+
+.standings-edit input {
+	width: 50px;
+}
+
+.standings-edit span {
+	font-weight: 200;
+	margin-left: 20px;
+	font-size:12px;
+}
+
+.action-bar {
+	background-color: #FAFAFA;
+	margin-top: 15px;
+	padding: 10px;
+}
+
+.action-bar .btn {
+	display: table;
+	white-space: normal;
+	width: 160px;
+	height: 36px;
+	line-height: 16px;
+	padding-top: 0;
+	padding-bottom: 0;
+	font-weight: 300;
+}
+
+.action-bar .btn span {
+	display: table-cell;
+	vertical-align: middle;
+}
+.team-edit-sheet {
+	background-color: #FAFAFA;
+	padding: 15px;
+}
+
+.horizontal-separator {
+	margin-bottom: 12px;
+	margin-top: 12px;
+	border-top: solid 1px #DDDDDD;
+}
+
+footer {
+	line-height: 1.7em;
+}
+
+@media ( max-width : 991px) {
+	footer {
+		line-height: 2.5em;
+	}
+}
+
+.team-list-location {
+	font-weight: 300;
 }

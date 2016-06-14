@@ -36,7 +36,7 @@ import de.ultical.backend.model.User;
  * @author bas
  *
  */
-@Path("/register")
+@Path("/command/register")
 public class RegisterResource {
 
     @Inject

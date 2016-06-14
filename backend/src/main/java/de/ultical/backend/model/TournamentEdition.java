@@ -18,7 +18,7 @@ public class TournamentEdition extends Identifiable {
 
     private TournamentFormat tournamentFormat;
 
-    private String alternativeName;
+    private String name;
     private Season season;
 
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -39,6 +39,8 @@ public class TournamentEdition extends Identifiable {
 
     private List<Event> events;
     private String alternativeMatchdayName;
+
+    private boolean allowEventTeamRegManagement = true;
 
     @Override
     public Class<TournamentEditionMapper> getMapper() {

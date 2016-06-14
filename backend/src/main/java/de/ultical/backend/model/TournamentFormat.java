@@ -1,7 +1,6 @@
 package de.ultical.backend.model;
 
 import java.util.List;
-import java.util.Set;
 
 import de.ultical.backend.data.mapper.TournamentFormatMapper;
 import lombok.Data;
@@ -17,7 +16,7 @@ public class TournamentFormat extends Identifiable {
 
     private List<TournamentEdition> editions;
 
-    private Set<User> admins;
+    private List<User> admins;
 
     private String url;
 

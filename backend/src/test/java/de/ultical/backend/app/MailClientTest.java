@@ -19,13 +19,14 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetup;
 
 import de.ultical.backend.app.MailClient.UlticalMessage;
+import de.ultical.backend.app.MailClient.UlticalMessage.Recipient;
+import de.ultical.backend.app.MailClient.UlticalMessage.UlticalRecipientType;
 import de.ultical.backend.app.UltiCalConfig.MailConfig;
 
 public class MailClientTest {
@@ -71,15 +72,16 @@ public class MailClientTest {
         this.client.config = MailClientTest.config;
 
         when(this.testMessage.getSubject()).thenReturn("Test from: " + MailClientTest.class.getName());
-        when(this.testMessage.getRecipients())
-                .thenReturn(new HashSet<String>(Collections.singletonList("test@frisbeesportverband.de")));
-        when(this.testMessage.getRenderedMessage(Mockito.anyString())).thenReturn("Foo Bar");
+        when(this.testMessage.getRecipients(UlticalRecipientType.TO)).thenReturn(
+                new HashSet<Recipient>(Collections.singletonList(new Recipient("test@frisbeesportverband.de"))));
+        when(this.testMessage.getRenderedMessage()).thenReturn("Foo Bar");
         when(this.testMessage.getSenderName()).thenReturn("Mister Frisbee");
 
         when(this.testMessageTwoRec.getSubject()).thenReturn("Test from: " + MailClientTest.class.getName());
-        when(this.testMessageTwoRec.getRecipients()).thenReturn(
-                new HashSet<String>(Arrays.asList("test@frisbeesportverbande.de", "testtoo@frisbeesportverband.de")));
-        when(this.testMessageTwoRec.getRenderedMessage(Mockito.anyString())).thenReturn("Foo Bar");
+        when(this.testMessageTwoRec.getRecipients(UlticalRecipientType.TO))
+                .thenReturn(new HashSet<Recipient>(Arrays.asList(new Recipient("test@frisbeesportverbande.de"),
+                        new Recipient("testtoo@frisbeesportverband.de"))));
+        when(this.testMessageTwoRec.getRenderedMessage()).thenReturn("Foo Bar");
         when(this.testMessageTwoRec.getSenderName()).thenReturn("Mrs Frisbee");
     }
 

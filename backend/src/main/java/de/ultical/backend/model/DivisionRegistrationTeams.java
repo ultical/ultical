@@ -15,7 +15,8 @@ public class DivisionRegistrationTeams extends DivisionRegistration {
 	// BB I think it is sufficient to use a List here, which is inherently ordered.
 	private List<TeamRegistration> registeredTeams;
 
-	public Class<DivisionRegistrationMapper> getMapper() {
+	@Override
+    public Class<DivisionRegistrationMapper> getMapper() {
 		return DivisionRegistrationMapper.class;
 	}
 }

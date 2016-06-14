@@ -14,12 +14,24 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			},
 			events: [],
 			teams: [],
+      formats: [],
+
+      teamsIndexed: {},
+			playerIndexed: {},
+
+      requested: {
+          own: {},
+      },
+
+      // fetch only once:
 			seasons: [],
+      clubs: [],
       contexts: [],
 
-			formatsByEventIndexed: {},
-			teamsIndexed: {},
-			playerIndexed: {},
+      resetUserSpecifics: function() {
+          this.own.teams = [];
+          this.requested.own = {};
+      },
 
 			getEmptyEvent: function() {
 				return createEmptyEvent();
@@ -39,12 +51,17 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 					storeTeam(team, newLoopIndex());
 					callback(team);
 				});
+        angular.forEach(this.teams, function(team) {
+          if (team.id == teamId) {
+            callback(team);
+          }
+        });
 			},
 
-			getAllTeams: function(callback) {
+			getAllTeamBasics: function(callback) {
 				var that = this;
 				callback(that.teams);
-				serverApi.getAllTeams(function(teams) {
+				serverApi.getAllTeamBasics(function(teams) {
 					that.teams = teams;
 
 					var loopIndex = newLoopIndex();
@@ -55,11 +72,41 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				});
 			},
 
+      getOwnTeamsCache: function(callback) {
+        var that = this;
+        if (!that.requested.own.teams) {
+          that.getOwnTeams(callback);
+          return null;
+        } else {
+          // don't callback if we have a direct result
+          return that.own.teams;
+        }
+      },
+
+      getOwnTeamBasics: function(callback) {
+        var that = this;
+        if (that.requested.own.teams) {
+          callback(that.own.teams);
+        }
+        serverApi.getOwnTeamBasics(function(teams) {
+          that.own.teams = teams;
+          that.requested.own.teams = true;
+          var loopIndex = newLoopIndex();
+          angular.forEach(teams, function(team) {
+            storeTeam(team, loopIndex);
+          });
+          callback(that.own.teams);
+        });
+      },
+
 			getOwnTeams: function(callback) {
 				var that = this;
-				callback(that.own.teams);
-				serverApi.getOwnTeams(function(teams) {
+				if (that.requested.own.teams) {
+          callback(that.own.teams);
+				}
+        serverApi.getOwnTeams(function(teams) {
 					that.own.teams = teams;
+          that.requested.own.teams = true;
 					var loopIndex = newLoopIndex();
 					angular.forEach(teams, function(team) {
 						storeTeam(team, loopIndex);
@@ -171,9 +218,11 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				}, errorCallback);
 			},
 
+      // fetch only once
 			getSeasons: function(callback) {
 				var that = this;
-				if (isEmpty(this.seasons)) {
+				if (isEmpty(this.seasons) && !this.gettingSeasons) {
+          that.gettingSeasons = true;
 					serverApi.getSeasons(function(seasons) {
 						that.seasons = seasons;
             callback(seasons);
@@ -183,30 +232,88 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				}
 			},
 
+      // fetch only once
       getContexts: function(callback) {
 				var that = this;
-				if (isEmpty(this.contexts)) {
-					serverApi.getContexts(function(contexts) {
+				if (isEmpty(this.contexts) && !this.gettingContexts) {
+          that.gettingContexts = true;
+          serverApi.getContexts(function(contexts) {
 						that.contexts = contexts;
-            callback(angular.copy(contexts));
+            return callback(angular.copy(contexts));
 					});
 				} else {
-					callback(angular.copy(this.contexts));
+					return callback(angular.copy(this.contexts));
 				}
 			},
+
+      // fetch only once
+      getClubs: function(callback) {
+				var that = this;
+				if (isEmpty(this.clubs) && !this.gettingClubs) {
+          that.gettingClubs = true;
+					serverApi.getAllClubs(function(clubs) {
+						that.clubs = clubs;
+            return callback(clubs);
+					});
+				} else {
+					return callback(this.clubs);
+				}
+			},
+      getFormatForEdition: function(editionId, callback) {
+        var that = this;
+
+        angular.forEach(this.formats, function(format) {
+          angular.forEach(format.editions, function(edition) {
+            if (edition.id == editionId) {
+              callback(format);
+            }
+          });
+        });
+
+				serverApi.getFormatByEdition(editionId, function(data) {
+          that.addFormat(that, data, callback);
+				});
+      },
 
 			getFormatForEvent: function(eventId, callback) {
 				var that = this;
 
-				if (eventId in this.formatsByEventIndexed) {
-					callback(this.formatsByEventIndexed[eventId]);
-				}
+        angular.forEach(this.formats, function(format) {
+          angular.forEach(format.editions, function(edition) {
+            angular.forEach(edition.events, function(event) {
+              if (event.id == eventId) {
+                callback(format);
+              }
+            });
+          });
+        });
+
 				serverApi.getFormatByEvent(eventId, function(data) {
-					storeTournamentFormat(data, newLoopIndex());
-					that.formatsByEventIndexed[eventId] = data;
-					callback(data);
+					that.addFormat(that, data, callback);
 				});
 			},
+
+      getFormat: function(formatId, callback) {
+        var that = this;
+          serverApi.getFormat(formatId, function(data) {
+            that.addFormat(that, data, callback);
+          });
+      },
+
+      addFormat: function(that, data, callback) {
+        storeTournamentFormat(data, newLoopIndex());
+        var formatToReplace = -1;
+        angular.forEach(that.formats, function(format, idx) {
+          if (format.id == data.id) {
+            formatToReplace = idx;
+          }
+        });
+        if (formatToReplace != -1) {
+          that.formats.splice(formatToReplace, 1);
+        }
+        that.formats.push(data);
+        callback(data);
+      },
 
 			getEvent: function(eventId, callback) {
 				var that = this;
@@ -243,7 +350,40 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				}, errorCallback);
 			},
 
-			saveTeam: function(team, callback, errorCallback, activeList) {
+      updateTeamRegStatus: function(event, teamReg, newStatus, callback, errorCallback) {
+        var eventId = 0;
+        if (!isEmpty(event)) {
+          eventId = event.id;
+        }
+        var previousState = teamReg.status;
+        teamReg.status = newStatus;
+        serverApi.updateTeamRegistration(eventId, teamReg, function() {
+          teamReg.version++;
+          if (callback) {
+            callback();
+          }
+        }, function() {
+            teamReg.status = previousState;
+            if (errorCallback) {
+              errorCallback();
+            }
+        });
+      },
+
+      updateStandings: function(event, teamRegs, callback, errorCallback) {
+        var eventId = 0;
+        if (!isEmpty(event)) {
+          eventId = event.id;
+        }
+        serverApi.updateTeamRegistrations(eventId, teamRegs, function() {
+          angular.forEach(teamRegs, function(teamReg) {
+            teamReg.version++;
+          });
+          callback();
+        }, errorCallback);
+      },
+
+			saveTeam: function(team, callback, errorCallback) {
 				var that = this;
 				var oldTeam;
 				if (team.id == -1) {
@@ -283,11 +423,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 					storeTeam(savedTeam, newLoopIndex());
 
-					if (activeList == 'own') {
-						callback(that.own.teams);
-					} else if (activeList == 'all') {
-						callback(that.teams);
-					}
+          callback(savedTeam);
 				}, errorCallback);
 			},
 	}
@@ -476,6 +612,9 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 		});
 
 		edition.x.isSingleEdition = edition.events != null && edition.events.length == 1;
+    angular.forEach(edition.events, function(event) {
+      event.x.isSingleEvent = edition.x.isSingleEdition;
+    });
 
 		var todayDateString = moment().format('YYYY-MM-DD');
 
@@ -529,6 +668,8 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 		});
 
 		storeAssociation(format.association, loopIndex);
+
+
 	}
 
 	function createEmptyEvent() {
@@ -549,7 +690,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 	function createEmptyEdition() {
 		return {
-			alternativeName: '',
+			name: '',
 			season: {
 				year: 2016,
 				surface: 'TURF',

@@ -50,7 +50,7 @@ public class TeamRegistrationMapperTest {
         RULE.getSession().getMapper(this.season.getMapper()).insert(this.season);
 
         this.tes = new TournamentEdition();
-        this.tes.setAlternativeName("alter");
+        this.tes.setName("alter");
 
         this.team = new Team();
         this.team.setName("Goldfingers");

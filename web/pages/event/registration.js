@@ -12,9 +12,9 @@ angular.module('ultical.events')
     $rootScope.teamRegistrationDisabled = false;
 
     $scope.register = {};
-    $scope.register.division = $scope.event.x.divisions[0];
+    $scope.register.division = $scope.divisionsToShow[0];
 
-    $scope.eventName = $scope.event.x.isSingleEvent ? $filter('eventname')($scope.event) : $filter('editionname')($scope.event.tournamentEdition);
+    $scope.eventName = $filter('editionname')($scope.edition);
 
     $scope.changeDivision = function() {
       ownTeamsByDivision = angular.copy(ownTeams);
@@ -23,9 +23,9 @@ angular.module('ultical.events')
       angular.forEach(ownTeams, function(team) {
         angular.forEach(team.rosters, function(roster) {
 
-          if (roster.season.id == $scope.event.tournamentEdition.season.id && roster.divisionAge == $scope.register.division.divisionAge && roster.divisionType == $scope.register.division.divisionType) {
+          if (roster.season.id == $scope.edition.season.id && roster.divisionAge == $scope.register.division.divisionAge && roster.divisionType == $scope.register.division.divisionType) {
             // check for context equality (or null)
-            if ((isEmpty(roster.context) && isEmpty($scope.event.tournamentEdition.context)) || (!isEmpty(roster.context) && !isEmpty($scope.event.tournamentEdition.context) && roster.context.id == $scope.event.tournamentEdition.context.id)) {
+            if ((isEmpty(roster.context) && isEmpty($scope.edition.context)) || (!isEmpty(roster.context) && !isEmpty($scope.edition.context) && roster.context.id == $scope.edition.context.id)) {
               // only add subteams (the main teams have already be added above)
               if (!isEmpty(roster.nameAddition)) {
                 ownTeamsByDivision.push({
@@ -106,9 +106,9 @@ angular.module('ultical.events')
         if ('id' in $scope.chosenTeam) {
           // this is a base-team - let's check if a roster is present
           angular.forEach($scope.chosenTeam.rosters, function(roster) {
-            if (roster.season.id == $scope.event.tournamentEdition.season.id && roster.divisionAge == $scope.register.division.divisionAge && roster.divisionType == $scope.register.division.divisionType) {
+            if (roster.season.id == $scope.edition.season.id && roster.divisionAge == $scope.register.division.divisionAge && roster.divisionType == $scope.register.division.divisionType) {
               // check for context equality (or null)
-              if ((isEmpty(roster.context) && isEmpty($scope.event.tournamentEdition.context)) || (!isEmpty(roster.context) && !isEmpty($scope.event.tournamentEdition.context) && roster.context.id == $scope.event.tournamentEdition.context.id)) {
+              if ((isEmpty(roster.context) && isEmpty($scope.edition.context)) || (!isEmpty(roster.context) && !isEmpty($scope.edition.context) && roster.context.id == $scope.edition.context.id)) {
                 // only look for rosters for the 'base' team
                 if (isEmpty(roster.nameAddition)) {
                   existingRosterForRegistration = roster;
@@ -128,8 +128,8 @@ angular.module('ultical.events')
           id: -1,
           divisionType: $scope.register.division.divisionType,
           divisionAge: $scope.register.division.divisionAge,
-          season: $scope.event.tournamentEdition.season,
-          context: $scope.event.tournamentEdition.context,
+          season: $scope.edition.season,
+          context: $scope.edition.context,
           nameAddition: $scope.newNameAddition.text,
           team: $scope.getTeam($scope.chosenTeam),
         }
@@ -158,7 +158,7 @@ angular.module('ultical.events')
       registration.roster = { id: roster.id};
 
       var division = {};
-      angular.forEach($scope.event.x.divisions, function(div) {
+      angular.forEach($scope.divisionsToShow, function(div) {
         if (div.id == $scope.register.division.id) {
           division = div;
         }

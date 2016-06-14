@@ -108,4 +108,23 @@ public class TournamentFormatResource {
                     Status.INTERNAL_SERVER_ERROR.getStatusCode());
         }
     }
+
+    @GET
+    @Path("/edition/{editionId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TournamentFormat getFormatByEdition(@PathParam("editionId") Integer editionId) throws Exception {
+        this.checkDataStore();
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+
+            TournamentFormat result = this.dataStore.getFormatByEdition(editionId);
+            if (result == null) {
+                throw new WebApplicationException(Status.NOT_FOUND);
+            }
+            return result;
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Accessing database failed!", pe,
+                    Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        }
+    }
 }

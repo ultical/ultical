@@ -43,14 +43,32 @@ public class TeamResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{teamId}")
-    public Team get(@PathParam("teamId") Integer id) {
+    @Path("basics")
+    public List<Team> getBasics() throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
-        Team result = this.dataStore.get(id, Team.class);
-        if (result == null) {
-            throw new WebApplicationException(404);
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            return this.dataStore.getTeamBasics();
+        }
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{teamId}")
+    public Team get(@PathParam("teamId") Integer id) throws Exception {
+        if (this.dataStore == null) {
+            throw new WebApplicationException(500);
+        }
+
+        Team result;
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            result = this.dataStore.get(id, Team.class);
+            if (result == null) {
+                throw new WebApplicationException(404);
+            }
         }
         return result;
     }
@@ -65,6 +83,19 @@ public class TeamResource {
 
         try (AutoCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getTeamsByUser(user.getId());
+        }
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("own/basics")
+    public List<Team> getBasicsByUser(@Auth @NotNull User user) throws Exception {
+        if (this.dataStore == null) {
+            throw new WebApplicationException(500);
+        }
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            return this.dataStore.getTeamBasicsByUser(user.getId());
         }
     }
 
