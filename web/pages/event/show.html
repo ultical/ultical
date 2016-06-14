@@ -410,7 +410,7 @@
 		<div ng-if="show.edition && edition.events.length > 0 && tabs.activeTab == 'events'" class="row margin-top">
 			<div class="col-md-12" id="edition-view-events">
 
-				<div class="row" ng-repeat="listEvent in (orderedEvents = (edition.events | orderBy : 'startDate'))">
+				<div class="row" ng-repeat="listEvent in (orderedEvents = (edition.events | orderBy : ['startDate', 'name']))">
 					<div class="col-md-12">
 						<a ui-sref="app.eventShow({eventId: listEvent.id, eventSlug: (( listEvent | eventname) | slugify ) })">
 							<div class="col-md-12 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != listEvent.startDate || orderedEvents[$index - 1].endDate != listEvent.endDate">
