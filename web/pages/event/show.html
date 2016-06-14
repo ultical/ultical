@@ -152,7 +152,7 @@
 			</div>
 		</div>
 
-		<!-- URL -->
+			<!-- URL -->
 		<div class="row" ng-class="{'margin-top': !info.showFormatInfo && !info.showEventInfo }" ng-if="show.formatUrl && format.url | notEmpty">
 			<div class="col-md-12">
 				<div ng-class="{'padding-top info-text': (info.showFormatInfo || info.showEventInfo) }">
@@ -162,7 +162,19 @@
 			</div>
 		</div>
 
-		<!-- FEES -->
+		<!-- RESOURCES -->
+		<div class="row margin-top" ng-if="show.resources && (event.resources | notEmpty)">
+			<div class="col-md-12">
+				<div class="strong">{{ 'event.resourcesLabel' | translate }}</div>
+				<div class="row" ng-repeat="resource in event.resources">
+					<div class="col-md-12">
+						<a ng-if="!resource.local" ng-href="{{ resource.path }}" target="_blank">{{ resource.title }}</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	<!-- FEES -->
 		<div class="row margin-top" ng-if="(show.editionFees || show.eventFees) && event.x.hasFees">
 			<div class="col-md-12">
 				<div class="strong">{{ 'event.fee.label' | translate }}</div>

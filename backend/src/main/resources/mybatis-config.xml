@@ -66,5 +66,6 @@
 		<mapper class="de.ultical.backend.data.mapper.AssociationMapper" />
 		<mapper class="de.ultical.backend.data.mapper.DivisionConfirmationMapper" />
 		<mapper class="de.ultical.backend.data.mapper.ContextMapper" />
+		<mapper class="de.ultical.backend.data.mapper.ResourceMapper" />
 	</mappers>
 </configuration>

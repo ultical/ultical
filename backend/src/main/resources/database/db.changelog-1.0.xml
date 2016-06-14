@@ -1035,4 +1035,37 @@
 			</column>
 		</addColumn>
 	</changeSet>
+	<changeSet author="bas" id="bas-tag-86">
+		<tagDatabase tag="bas_teamregistration-v.1.17" />
+	</changeSet>
+	<changeSet author="bas" id="bas-resources-1">
+		<createTable tableName="RESOURCE">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="version" type="BIGINT" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="title" type="VARCHAR(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="path" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="local" type="BOOLEAN">
+				<constraints nullable="false" />
+			</column>
+			<column name="event" type="BIGINT" />
+		</createTable>
+	</changeSet>
+	<changeSet author="bas" id="bas-resources-2">
+		<addForeignKeyConstraint constraintName="fk_resource_event"
+			referencedTableName="EVENT" baseColumnNames="event" baseTableName="RESOURCE"
+			referencedColumnNames="id" onDelete="CASCADE" />
+	</changeSet>
+	<changeSet author="bas" id="bas-resources-3">
+		<addUniqueConstraint columnNames="path,event"
+			tableName="RESOURCE" constraintName="uk_resource_path_event" />
+	</changeSet>
+
 </databaseChangeLog>

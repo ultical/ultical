@@ -41,6 +41,8 @@ public class Event extends Identifiable {
 
     private String info;
 
+    private List<Resource> resources;
+
     @Override
     public Class<EventMapper> getMapper() {
         return EventMapper.class;

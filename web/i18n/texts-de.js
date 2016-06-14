@@ -240,6 +240,7 @@ TRANSLATIONS['de'] = {
 				editionLabel: 'Für alle Termine von',
 				matchdayLabel: 'Für diesen Termin',
 			},
+			resourcesLabel: 'Dokumente',
 			rosterNotFixed: 'Roster der Saison',
 			rosterFixed: 'Roster zum Zeitpunkt des Turniers',
 			rosterEditOnTeamPage: 'Das Roster kann auf der Teamseite bearbeitet werden',

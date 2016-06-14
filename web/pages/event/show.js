@@ -43,6 +43,7 @@ angular.module('ultical.events')
       formatInfo: true,
       eventInfo: true,
       formatUrl: true,
+      resources: true,
       editionFees: true,
       eventFees: true,
       feesLabel: true,
