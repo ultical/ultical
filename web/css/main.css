@@ -631,3 +631,8 @@ footer {
 .team-list-location {
 	font-weight: 300;
 }
+
+#image-dfv-small {
+	width: 100px;
+	height: 32px;
+}

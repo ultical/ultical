@@ -10,7 +10,7 @@
 			</button>
 
 			<a ui-sref="app.start">
-				<flip id="nav-logo" flip-show="{{ logoSide }}" ng-mouseenter="toggleLogoFlip()" ng-mouseleave="toggleLogoFlip()"> <flip-panel> <img title="{{ 'nav.title' | translate }}" src="images/logo_dfv_small.png" /> </flip-panel> <flip-panel>
+				<flip id="nav-logo" flip-show="{{ logoSide }}" ng-mouseenter="toggleLogoFlip()" ng-mouseleave="toggleLogoFlip()"> <flip-panel> <img id="image-dfv-small" title="{{ 'nav.title' | translate }}" src="images/logo_dfv_small.png" /> </flip-panel> <flip-panel>
 				<div>{{ 'nav.titleFlipText' | translate }}</div>
 				</flip-panel> </flip>
 			</a>
