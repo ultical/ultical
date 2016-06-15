@@ -14,7 +14,7 @@ angular.module('ultical.events', [])
     // TODO: start with this year
   }
 
-	storage.getEvents(function(data) {
+	storage.getEvents(true, function(data) {
 		$scope.events = data;
 	});
 

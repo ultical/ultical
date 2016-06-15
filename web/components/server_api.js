@@ -92,8 +92,12 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			get('events/' + eventId, callback);
 		},
 
-		getEvents: function(callback) {
-			get('events', callback);
+		getEvents: function(basics, callback) {
+      if (basics) {
+        get('events/basics', callback);
+      } else {
+			  get('events', callback);
+      }
 		},
 
 		getSeasons: function(callback) {
