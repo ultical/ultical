@@ -49,7 +49,7 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
     @Select({ divisionSelect, "WHERE id=#{id}" })
     @TypeDiscriminator(column = "is_player_registration", javaType = Boolean.class, cases = {
             @Case(value = "false", type = DivisionRegistrationTeams.class, results = {
-                    @Result(column = "id", property = "registeredTeams", many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForDivision") ) }),
+                    @Result(column = "id", property = "registeredTeams", many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForDivision")) }),
             @Case(value = "true", type = DivisionRegistrationPlayers.class) }, jdbcType = JdbcType.BOOLEAN)
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "division_age", property = "divisionAge"),
@@ -57,6 +57,17 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
             @Result(column = "division_type", property = "divisionType"),
             @Result(column = "number_of_spots", property = "numberSpots") })
     DivisionRegistration get(int id);
+
+    @Select({ divisionSelect, "WHERE id=#{id}" })
+    @TypeDiscriminator(column = "is_player_registration", javaType = Boolean.class, cases = {
+            @Case(value = "false", type = DivisionRegistrationTeams.class),
+            @Case(value = "true", type = DivisionRegistrationPlayers.class) }, jdbcType = JdbcType.BOOLEAN)
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "divisionAge"),
+            @Result(column = "division_identifier", property = "divisionIdentifier"),
+            @Result(column = "division_type", property = "divisionType"),
+            @Result(column = "number_of_spots", property = "numberSpots") })
+    DivisionRegistration getBasic(int id);
 
     @Override
     @Select({ divisionSelect })
@@ -73,7 +84,7 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
     @Select({ divisionSelect, "WHERE tournament_edition = #{editionId}" })
     @TypeDiscriminator(column = "is_player_registration", javaType = Boolean.class, cases = {
             @Case(value = "false", type = DivisionRegistrationTeams.class, results = {
-                    @Result(column = "id", property = "registeredTeams", many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForDivision") ) }),
+                    @Result(column = "id", property = "registeredTeams", many = @Many(select = "de.ultical.backend.data.mapper.TeamRegistrationMapper.getRegistrationsForDivision")) }),
             @Case(value = "true", type = DivisionRegistrationPlayers.class) }, jdbcType = JdbcType.BOOLEAN)
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "division_age", property = "divisionAge"),
@@ -81,4 +92,15 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
             @Result(column = "division_type", property = "divisionType"),
             @Result(column = "number_of_spots", property = "numberSpots") })
     List<DivisionRegistration> getRegistrationsForEdition(int editionId);
+
+    @Select({ divisionSelect, "WHERE tournament_edition = #{editionId}" })
+    @TypeDiscriminator(column = "is_player_registration", javaType = Boolean.class, cases = {
+            @Case(value = "false", type = DivisionRegistrationTeams.class),
+            @Case(value = "true", type = DivisionRegistrationPlayers.class) }, jdbcType = JdbcType.BOOLEAN)
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "divisionAge"),
+            @Result(column = "division_identifier", property = "divisionIdentifier"),
+            @Result(column = "division_type", property = "divisionType"),
+            @Result(column = "number_of_spots", property = "numberSpots") })
+    List<DivisionRegistration> getBasicRegistrationsForEdition(int editionId);
 }

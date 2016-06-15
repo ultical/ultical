@@ -456,6 +456,11 @@ public class DataStore {
         }
     }
 
+    public List<Event> getEventBasics() {
+        EventMapper eventMapper = this.sqlSession.getMapper(EventMapper.class);
+        return eventMapper.getAllBasics();
+    }
+
     public List<Team> getTeamBasics() {
         TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
         return teamMapper.getBasics();
