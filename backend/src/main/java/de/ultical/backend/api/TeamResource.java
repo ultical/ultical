@@ -127,7 +127,14 @@ public class TeamResource {
 
             // add admins
             for (User admin : newTeam.getAdmins()) {
-                this.dataStore.addAdminToTeam(newTeam, admin);
+                try {
+                    this.dataStore.addAdminToTeam(newTeam, admin);
+                } catch (Exception e) {
+                    System.out.println("Error adding Admin:");
+                    System.out.println("Team: " + newTeam.getName() + " (" + newTeam.getId() + ")");
+                    System.out.println("User: " + admin.getFullName() + " (" + admin.getId() + ")");
+                    System.out.println(e.getMessage());
+                }
             }
 
             newTeam.setVersion(1);
@@ -193,7 +200,14 @@ public class TeamResource {
             this.dataStore.removeAllAdminsFromTeam(updatedTeam);
 
             for (User admin : updatedTeam.getAdmins()) {
-                this.dataStore.addAdminToTeam(updatedTeam, admin);
+                try {
+                    this.dataStore.addAdminToTeam(updatedTeam, admin);
+                } catch (Exception e) {
+                    System.out.println("Error updating Admin:");
+                    System.out.println("Team: " + updatedTeam.getName() + " (" + updatedTeam.getId() + ")");
+                    System.out.println("User: " + admin.getFullName() + " (" + admin.getId() + ")");
+                    System.out.println(e.getMessage());
+                }
             }
         }
     }
@@ -228,8 +242,8 @@ public class TeamResource {
             team.setId(teamId);
             final User admin = new User();
             admin.setId(userId);
-            try {
 
+            try {
                 this.dataStore.addAdminToTeam(team, admin);
             } catch (PersistenceException pe) {
                 throw new WebApplicationException("Accessing the database failed!");
