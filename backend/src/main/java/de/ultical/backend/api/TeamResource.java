@@ -17,6 +17,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
@@ -27,6 +29,8 @@ import io.dropwizard.auth.Auth;
 
 @Path("/teams")
 public class TeamResource {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TeamResource.class);
 
     @Inject
     DataStore dataStore;
@@ -130,10 +134,9 @@ public class TeamResource {
                 try {
                     this.dataStore.addAdminToTeam(newTeam, admin);
                 } catch (Exception e) {
-                    System.out.println("Error adding Admin:");
-                    System.out.println("Team: " + newTeam.getName() + " (" + newTeam.getId() + ")");
-                    System.out.println("User: " + admin.getFullName() + " (" + admin.getId() + ")");
-                    System.out.println(e.getMessage());
+                    LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )", newTeam.getName(),
+                            newTeam.getId(), admin.getFullName(), admin.getId());
+                    LOGGER.error("exception:", e);
                 }
             }
 
@@ -203,10 +206,10 @@ public class TeamResource {
                 try {
                     this.dataStore.addAdminToTeam(updatedTeam, admin);
                 } catch (Exception e) {
-                    System.out.println("Error updating Admin:");
-                    System.out.println("Team: " + updatedTeam.getName() + " (" + updatedTeam.getId() + ")");
-                    System.out.println("User: " + admin.getFullName() + " (" + admin.getId() + ")");
-                    System.out.println(e.getMessage());
+                    LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )\ncurrentUser: {}",
+                            updatedTeam.getName(), updatedTeam.getId(), admin.getFullName(), admin.getId(),
+                            currentUser.getId());
+                    LOGGER.error("exception:", e);
                 }
             }
         }
