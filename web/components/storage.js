@@ -324,12 +324,12 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				});
 			},
 
-			getEvents: function(callback) {
+			getEvents: function(basics, callback) {
 				var that = this;
 				callback(this.events);
 
 				// make API call
-				serverApi.getEvents(function(data) {
+				serverApi.getEvents(basics, function(data) {
 					that.events = data;
 
 					var loopIndex = newLoopIndex();
@@ -546,7 +546,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 		event.x.isSingleEvent = event.tournamentEdition.isSingleEdition;
 		event.x.hasLocalOrganizer = !isEmpty(event.localOrganizer) && !isEmpty(event.localOrganizer.name) && event.tournamentEdition.organizer.id != event.localOrganizer.id;
-		event.x.hasFees = event.tournamentEdition.fees.length > 0 || event.fees.length > 0;
+		event.x.hasFees = (event.tournamentEdition.fees && event.tournamentEdition.fees.length > 0) || (event.fees && event.fees.length > 0);
 
 		var today = moment();
 		if (moment(event.startDate).isAfter(today)) {

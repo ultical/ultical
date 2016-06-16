@@ -54,6 +54,19 @@ public class EventsResource {
     }
 
     @GET
+    @Path("/basics")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Event> getAllEventsBasics(@QueryParam("from") Date from, @QueryParam("to") Date to) throws Exception {
+        // I think we should ignore from and to for the moment ;)
+        this.checkDatatStore();
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            return this.dataStore.getEventBasics();
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Accessing database failed", Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GET
     @Path("/{eventId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Event getEvent(@PathParam("eventId") int eventId) {
