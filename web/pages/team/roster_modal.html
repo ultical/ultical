@@ -5,7 +5,8 @@
         <button type="button" class="close" aria-label="Close" ng-click="$hide()">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title">{{ 'team.roster.newRoster' | translate }}</h4>
+        <h4 ng-if="!isEdit" class="modal-title">{{ 'team.roster.newRoster' | translate }}</h4>
+        <h4 ng-if="isEdit" class="modal-title">{{ 'team.roster.editRoster' | translate }}</h4>
       </div>
       <div class="modal-body">
         <div ng-include="'pages/team/roster.html?v=10'" data-onload="modal = true"></div>

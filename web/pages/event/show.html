@@ -24,454 +24,454 @@
 	</script>
 
 	<div class="row" ng-class="{'hidden-print': printing}" ng-if="format | notEmpty">
-		<div class="col-md-8">
 
-		<!-- BREADCRUMBS -->
-		<div class="row" ng-if="!show.format">
-			<div class="col-md-12">
-				<ol class="nav-breadcrumb">
-					<li><a ui-sref="app.eventsListYear({year: edition.season.year})">{{ edition.season.year }}</a></li>
-					<li><a ui-sref="app.formatShow({formatId: format.id, formatSlug: (format.name | slugify) })">{{ format.name }}</a></li>
-					<li ng-if="show.linkToEdition"><a ui-sref="app.editionShow({editionId: edition.id, editionSlug: ((edition | editionname) | slugify) })">{{ edition | editionname }}</a></li>
-				</ol>
+		<bas-action-bar></bas-action-bar>
+
+		<div class="col-lg-8 col-lg-pull-4 col-sm-9 col-sm-pull-3 col-xs-12">
+
+			<!-- BREADCRUMBS -->
+			<div class="row" ng-if="!show.format">
+				<div class="col-md-12">
+					<ol class="nav-breadcrumb">
+						<li><a ui-sref="app.eventsListYear({year: edition.season.year})">{{ edition.season.year }}</a></li>
+						<li><a ui-sref="app.formatShow({formatId: format.id, formatSlug: (format.name | slugify) })">{{ format.name }}</a></li>
+						<li ng-if="show.linkToEdition"><a ui-sref="app.editionShow({editionId: edition.id, editionSlug: ((edition | editionname) | slugify) })">{{ edition | editionname }}</a></li>
+					</ol>
+				</div>
 			</div>
-		</div>
 
-		<!-- TITLE -->
-		<div class="row">
-			<div class="col-md-12" id="eventpage-title">
-				<h3 ng-if="show.event" class="page-title">{{ event | eventname : 'full' }}</h3>
-				<h3 ng-if="show.edition" class="page-title">{{ edition | editionname }}</h3>
-				<h3 ng-if="show.format" class="page-title">{{ format.name }}</h3>
+			<!-- TITLE -->
+			<div class="row">
+				<div class="col-md-12" id="eventpage-title">
+					<h3 ng-if="show.event" class="page-title">{{ event | eventname : 'full' }}</h3>
+					<h3 ng-if="show.edition" class="page-title">{{ edition | editionname }}</h3>
+					<h3 ng-if="show.format" class="page-title">{{ format.name }}</h3>
+				</div>
 			</div>
-		</div>
 
-		<!-- DATE / SEASON -->
-		<div class="row" ng-if="show.date">
-			<div class="col-md-8 page-sub-title">
-				{{ event.startDate | amDateFormat : ('general.amDateFromSameMonth' | translate) }} - {{ event.endDate | amDateFormat : ('general.amDateToFull' | translate) }}<br />
+			<!-- DATE / SEASON -->
+			<div class="row" ng-if="show.date">
+				<div class="col-xs-7 page-sub-title">
+					{{ event.startDate | amDateFormat : ('general.amDateFromSameMonth' | translate) }} - {{ event.endDate | amDateFormat : ('general.amDateToFull' | translate) }}<br />
+				</div>
+				<div class="col-xs-5 text-right page-sub-title">{{ edition.season | season : true}}</div>
 			</div>
-			<div class="col-md-4 text-right page-sub-title">{{ edition.season | season : true}}</div>
-		</div>
 
-		<div class="row" ng-if="!show.date">
-			<div class="col-md-8 page-sub-title">
-				{{ edition.season | season : true}}
+			<div class="row" ng-if="!show.date">
+				<div class="col-xs-8 page-sub-title">
+					{{ edition.season | season : true}}
+				</div>
 			</div>
-		</div>
 
-		<!-- LOCATION -->
-		<div class="row" ng-if="show.location && !(event.locations | emptyLocation)">
-			<div class="col-md-12 page-sub-title">
-				<span class="dropdown-caret-fixed-width cursor-pointer" ng-click="toggleLocationPanel()">
-					<i ng-if="panels.activeLocationPanel != 0" class="fa fa-caret-right dropdown-caret-padding"></i><i ng-if="panels.activeLocationPanel == 0" class="fa fa-caret-down"></i>
-				</span>
-				<span class="cursor-pointer" ng-click="toggleLocationPanel()">{{ event.locations | location : 'city' }}</span>
+			<!-- LOCATION -->
+			<div class="row" ng-if="show.location && !(event.locations | emptyLocation)">
+				<div class="col-md-12 page-sub-title">
+					<span class="dropdown-caret-fixed-width cursor-pointer" ng-click="toggleLocationPanel()">
+						<i ng-if="panels.activeLocationPanel != 0" class="fa fa-caret-right dropdown-caret-padding"></i><i ng-if="panels.activeLocationPanel == 0" class="fa fa-caret-down"></i>
+					</span>
+					<span class="cursor-pointer" ng-click="toggleLocationPanel()">{{ event.locations | location : 'city' }}</span>
 
-				<!-- TODO add options to look for an organizer -->
+					<!-- TODO add options to look for an organizer -->
+				</div>
 			</div>
-		</div>
 
-		<!-- the more specific location information when uncollapsed -->
-		<div class="location-panel" ng-if="show.location && !(event.locations | emptyLocation)" ng-model="panels.activeLocationPanel" role="tablist" aria-multiselectable="true" bs-collapse>
-			<div class="panel-collapse" role="tabpanel" bs-collapse-target>
-				<div class="panel-body">
-					<div ng-repeat="location in event.locations | orderBy : ['-main', 'title']">
-						<div ng-class="{'strong': location.main }" ng-if="location.title | notEmpty">
-							<i class="fa fa-map-marker"></i>
-							<span>{{ location.title }}</span>
+			<!-- the more specific location information when uncollapsed -->
+			<div class="location-panel" ng-if="show.location && !(event.locations | emptyLocation)" ng-model="panels.activeLocationPanel" role="tablist" aria-multiselectable="true" bs-collapse>
+				<div class="panel-collapse" role="tabpanel" bs-collapse-target>
+					<div class="panel-body">
+						<div ng-repeat="location in event.locations | orderBy : ['-main', 'title']">
+							<div ng-class="{'strong': location.main }" ng-if="location.title | notEmpty">
+								<i class="fa fa-map-marker"></i>
+								<span>{{ location.title }}</span>
+							</div>
+							<div ng-class="{'strong': location.main }" ng-if="location.street | notEmpty">
+								<i ng-if="location.title | isEmpty" class="fa fa-map-marker"></i> {{ location.street }}
+							</div>
+							<div ng-class="{'strong': location.main }" ng-if="(location.zipCode | notEmpty) || (location.city | notEmpty)">
+								<i ng-if="(location.title | isEmpty) && (location.street | isEmpty)" class="fa fa-map-marker"></i>
+								<span ng-show="location.zipCode | notEmpty">{{ location.zipCode }}</span>
+								<span ng-show="location.city | notEmpty">{{ location.city }}</span>
+							</div>
+							<div ng-class="{'strong': location.main }" ng-if="location.country | notEmpty">{{ location | countryname }}</div>
+							<div class="small">
+								<a href="{{ location | location : 'googleMapsUrl' }}" target="_blank">
+									<i class="fa fa-map-o"></i> {{ 'event.linkToMaps' | translate }}
+								</a>
+							</div>
+							<div ng-if="location.additionalInfo | notEmpty" class="margin-top-small">{{ location.additionalInfo }}</div>
+							<div ng-if="!$last" class="margin-bottom"></div>
 						</div>
-						<div ng-class="{'strong': location.main }" ng-if="location.street | notEmpty">
-							<i ng-if="location.title | isEmpty" class="fa fa-map-marker"></i> {{ location.street }}
-						</div>
-						<div ng-class="{'strong': location.main }" ng-if="(location.zipCode | notEmpty) || (location.city | notEmpty)">
-							<i ng-if="(location.title | isEmpty) && (location.street | isEmpty)" class="fa fa-map-marker"></i>
-							<span ng-show="location.zipCode | notEmpty">{{ location.zipCode }}</span>
-							<span ng-show="location.city | notEmpty">{{ location.city }}</span>
-						</div>
-						<div ng-class="{'strong': location.main }" ng-if="location.country | notEmpty">{{ location | countryname }}</div>
-						<div class="small">
-							<a href="{{ location | location : 'googleMapsUrl' }}" target="_blank">
-								<i class="fa fa-map-o"></i> {{ 'event.linkToMaps' | translate }}
-							</a>
-						</div>
-						<div ng-if="location.additionalInfo | notEmpty" class="margin-top-small">{{ location.additionalInfo }}</div>
-						<div ng-if="!$last" class="margin-bottom"></div>
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<!-- ORGANIZER -->
-		<div class="row margin-top" ng-if="show.organizer">
-			<div class="col-md-12">
-				<div class="strong">{{ 'event.organizer' | translate }}</div>
-				<!-- if the edition's organizer equals the association's organizer, don't show the association (else there would be duplicates) -->
-				<div ng-if="show.format || ((format.association | notEmpty) && (format.association.contact == null || (format.association.contact.id != edition.organizer.id)))">{{ format.association.name }}</div>
-				<div ng-if="!show.format">
-					{{ edition.organizer.name }}&nbsp;&nbsp;
-					<a ng-href="mailto:{{ edition.organizer.email }}">
-						<span ng-if="edition.organizer.email | notEmpty"><i class="fa fa-envelope-o"></i></span></a>
-					<span ng-if="edition.organizer.phone | notEmpty">
-						&nbsp;&nbsp;&nbsp;<i class="fa fa-phone"></i>&nbsp;{{ edition.organizer.phone }}
-					</span>
-				</div>
-			</div>
-		</div>
-
-		<div class="row margin-top" ng-if="show.localOrganizer && event.x.hasLocalOrganizer">
-			<div class="col-md-12">
-				<div class="strong">{{ 'event.localOrganizer' | translate }}</div>
-				<div>
-					<span>{{ event.localOrganizer.name }}&nbsp;&nbsp;</span>
-					<span class="cursor-pointer" ng-if="event.admins | notEmpty">
-						<i ng-click="openEmailToEventModal()" class="fa fa-envelope-o"></i>
-					</span>
-					<span ng-if="event.localOrganizer.phone | notEmpty">
-						&nbsp;&nbsp;&nbsp;<i class="fa fa-phone"></i>&nbsp;{{ event.localOrganizer.phone }}
-					</span>
-				</div>
-			</div>
-		</div>
-
-		<!-- FORMAT DESCRIPTION-->
-		<div class="row margin-top" ng-if="info.showFormatInfo">
-			<div class="col-md-12">
-				<div class="info-text user-textarea">{{ format.description }}</div>
-			</div>
-		</div>
-
-		<!-- URL -->
-		<div class="row" ng-class="{'margin-top': !info.showFormatInfo}" ng-if="show.formatUrl && format.url | notEmpty">
-			<div class="col-md-12">
-				<div ng-class="{'padding-top info-text': info.showFormatInfo}">
-					<i class="fa fa-link fa-fw"></i>
-					<a target="_blank" ng-href="{{ format.url | url }}">{{ format.url }}</a>
-				</div>
-			</div>
-		</div>
-
-		<!-- INFO -->
-		<div class="row margin-top" ng-if="info.showEventInfo">
-			<div class="col-md-12">
-				<div class="info-text user-textarea">{{ event.info }}</div>
-			</div>
-		</div>
-
-		<!-- RESOURCES -->
-		<div class="row margin-top" ng-if="show.resources && (event.resources | notEmpty)">
-			<div class="col-md-12">
-				<div class="strong">{{ 'event.resourcesLabel' | translate }}</div>
-				<div class="row" ng-repeat="resource in event.resources">
-					<div class="col-md-12">
-						<a ng-if="!resource.local" ng-href="{{ resource.path }}" target="_blank">{{ resource.title }}</a>
+			<!-- ORGANIZER -->
+			<div class="row margin-top" ng-if="show.organizer">
+				<div class="col-md-12">
+					<div class="strong">{{ 'event.organizer' | translate }}</div>
+					<!-- if the edition's organizer equals the association's organizer, don't show the association (else there would be duplicates) -->
+					<div ng-if="show.format || ((format.association | notEmpty) && (format.association.contact == null || (format.association.contact.id != edition.organizer.id)))">{{ format.association.name }}</div>
+					<div ng-if="!show.format">
+						{{ edition.organizer.name }}&nbsp;&nbsp;
+						<a ng-href="mailto:{{ edition.organizer.email }}">
+							<span ng-if="edition.organizer.email | notEmpty"><i class="fa fa-envelope-o"></i></span></a>
+						<span ng-if="edition.organizer.phone | notEmpty">
+							&nbsp;&nbsp;&nbsp;<i class="fa fa-phone"></i>&nbsp;{{ edition.organizer.phone }}
+						</span>
 					</div>
 				</div>
 			</div>
-		</div>
 
-	<!-- FEES -->
-		<div class="row margin-top" ng-if="(show.editionFees || show.eventFees) && event.x.hasFees">
-			<div class="col-md-12">
-				<div class="strong">{{ 'event.fee.label' | translate }}</div>
-
-				<table>
-					<tbody ng-repeat="fee in getAllFees() | orderBy : 'x.order'">
-						<tr ng-if="$index == 0 && fee.x.fromEdition && show.editionFees && show.feesLabel">
-							<td colspan="4">{{ 'event.fee.editionLabel' | translate }}&nbsp;{{ edition | editionname }}:</td>
-						</tr>
-						<tr ng-if="editionFeeEndIndex == $index && $index > 0 && show.eventFees && show.feesLabel">
-							<td colspan="4" class="margin-top-small">{{ 'event.fee.matchdayLabel' | translate }}:</td>
-						</tr>
-						<tr ng-if="(show.editionFees && fee.x.fromEdition) || (show.eventFees && !fee.x.fromEdition)">
-							<td ng-if="editionFeeEndIndex > 0" class="padding-right">&nbsp;</td>
-							<td class="padding-right">
-								<span ng-if="fee.multiple">{{ 'event.fee.perUnit' | translate }}</span>
-								<span ng-if="fee.type != 'OTHER'">{{ ('event.fee.' + (fee.type | lowercase)) | translate }}</span>
-								<span ng-if="fee.type == 'OTHER'">{{ fee.otherName }}</span>
-							</td>
-							<td class="pull-right padding-right-small">{{ fee.currency | money : fee.amount }}</td>
-							<td class="mega-wide" ng-if="fee.perPerson">{{ 'event.fee.perPerson' | translate }}</td>
-						</tr>
-					</tbody>
-				</table>
-
+			<div class="row margin-top" ng-if="show.localOrganizer && event.x.hasLocalOrganizer">
+				<div class="col-md-12">
+					<div class="strong">{{ 'event.localOrganizer' | translate }}</div>
+					<div>
+						<span>{{ event.localOrganizer.name }}&nbsp;&nbsp;</span>
+						<span class="cursor-pointer" ng-if="event.admins | notEmpty">
+							<i ng-click="openEmailToEventModal()" class="fa fa-envelope-o"></i>
+						</span>
+						<span ng-if="event.localOrganizer.phone | notEmpty">
+							&nbsp;&nbsp;&nbsp;<i class="fa fa-phone"></i>&nbsp;{{ event.localOrganizer.phone }}
+						</span>
+					</div>
+				</div>
 			</div>
-		</div>
 
-		<!-- REGISTRATION INFO -->
-		<div class="row margin-top" ng-if="show.registration">
-			<div class="col-md-12">
-				<div class="strong">{{ 'event.registration' | translate }}</div>
+			<!-- FORMAT DESCRIPTION-->
+			<div class="row margin-top" ng-if="info.showFormatInfo">
+				<div class="col-md-12">
+					<div class="info-text user-textarea">{{ format.description }}</div>
+				</div>
+			</div>
 
-				<div ng-if="edition.x.registrationIsOpen">
-					<!-- Registration is going on right now -->
-					<div class="row">
+			<!-- URL -->
+			<div class="row" ng-class="{'margin-top': !info.showFormatInfo}" ng-if="show.formatUrl && format.url | notEmpty">
+				<div class="col-md-12">
+					<div ng-class="{'padding-top info-text': info.showFormatInfo}">
+						<i class="fa fa-link fa-fw"></i>
+						<a target="_blank" ng-href="{{ format.url | url }}">{{ format.url }}</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- INFO -->
+			<div class="row margin-top" ng-if="info.showEventInfo">
+				<div class="col-md-12">
+					<div class="info-text user-textarea">{{ event.info }}</div>
+				</div>
+			</div>
+
+			<!-- RESOURCES -->
+			<div class="row margin-top" ng-if="show.resources && (event.resources | notEmpty)">
+				<div class="col-md-12">
+					<div class="strong">{{ 'event.resourcesLabel' | translate }}</div>
+					<div class="row" ng-repeat="resource in event.resources">
 						<div class="col-md-12">
-							<span>{{ 'event.registrationEndsAt' | translate }} {{ edition.registrationEnd | amDateFormat : ('general.amDateFormatShort' | translate) }}</span>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div ng-if="loggedIn() && ownTeams.length > 0" class="btn btn-primary btn-ultical margin-top-small" ng-click="openRegistrationModal()">{{ 'event.register.title' | translate }}</div>
-							<span ng-if="!loggedIn()">{{ 'event.register.notLoggedIn' | translate }}</span>
-							<span ng-if="loggedIn() && ownTeams != null &&  ownTeams.length == 0">{{ 'event.register.noOwnTeam' | translate }}</span>
+							<a ng-if="!resource.local" ng-href="{{ resource.path }}" target="_blank">{{ resource.title }}</a>
 						</div>
 					</div>
 				</div>
-				<div ng-if="!edition.x.registrationIsOpen">
-					<!-- Registration is not open - why? -->
-					<div ng-if="edition.x.registrationTime == 'future'">{{ 'event.registrationStartsAt' | translate }} {{ edition.registrationStart | amDateFormat : ('general.amDateFormat' | translate) }}</div>
-					<div ng-if="edition.x.registrationTime == 'past'">{{ 'event.registrationIsOverSince' | translate }} {{ edition.registrationEnd | amDateFormat : ('general.amDateFormat' | translate) }}</div>
-					<div ng-if="edition.x.registrationTime == 'never' && eventIsFuture">{{ 'event.registrationUndefined' | translate }}</div>
+			</div>
+
+			<!-- FEES -->
+			<div class="row margin-top" ng-if="(show.editionFees || show.eventFees) && event.x.hasFees">
+				<div class="col-md-12">
+					<div class="strong">{{ 'event.fee.label' | translate }}</div>
+
+					<table>
+						<tbody ng-repeat="fee in getAllFees() | orderBy : 'x.order'">
+							<tr ng-if="$index == 0 && fee.x.fromEdition && show.editionFees && show.feesLabel">
+								<td colspan="4">{{ 'event.fee.editionLabel' | translate }}&nbsp;{{ edition | editionname }}:</td>
+							</tr>
+							<tr ng-if="editionFeeEndIndex == $index && $index > 0 && show.eventFees && show.feesLabel">
+								<td colspan="4" class="margin-top-small">{{ 'event.fee.matchdayLabel' | translate }}:</td>
+							</tr>
+							<tr ng-if="(show.editionFees && fee.x.fromEdition) || (show.eventFees && !fee.x.fromEdition)">
+								<td ng-if="editionFeeEndIndex > 0" class="padding-right">&nbsp;</td>
+								<td class="padding-right">
+									<span ng-if="fee.multiple">{{ 'event.fee.perUnit' | translate }}</span>
+									<span ng-if="fee.type != 'OTHER'">{{ ('event.fee.' + (fee.type | lowercase)) | translate }}</span>
+									<span ng-if="fee.type == 'OTHER'">{{ fee.otherName }}</span>
+								</td>
+								<td class="pull-right padding-right-small">{{ fee.currency | money : fee.amount }}</td>
+								<td class="mega-wide" ng-if="fee.perPerson">{{ 'event.fee.perPerson' | translate }}</td>
+							</tr>
+						</tbody>
+					</table>
+
 				</div>
 			</div>
-		</div>
 
-		<!-- EDITION EVENTS/DIVISION TAB-CHOOSER -->
-		<div class="row margin-top" ng-if="show.edition">
-			<div class="col-md-12">
-				<div class="margin-top" bs-active-pane="tabs.activeTab" bs-tabs>
-					<div bs-pane title="{{ 'event.editionViewEvents' | translate }}" name="events"></div>
-					<div bs-pane title="{{ 'event.editionViewDivisions' | translate }}" name="divisions"></div>
-				</div>
-			</div>
-		</div>
+			<!-- REGISTRATION INFO -->
+			<div class="row margin-top" ng-if="show.registration">
+				<div class="col-md-12">
+					<div class="strong">{{ 'event.registration' | translate }}</div>
 
-		<!-- DIVISIONS -->
-		<div class="row margin-top" ng-if="tabs.activeTab == 'divisions' && show.divisions && divisionsToShow.length == 0 && show.edition">
-			<div class="col-md-12">
-				{{ 'event.noDivisions' | translate }}
-			</div>
-		</div>
-
-		<div ng-if="show.divisions && divisionsToShow.length > 0 && (!show.edition || tabs.activeTab == 'divisions')" class="row margin-top">
-			<div class="col-md-12">
-				<div ng-if="!show.edition" class="strong">{{ 'event.teamList.title' | translate }}</div>
-
-				<div class="panel-group margin-top-small" ng-model="panels.divisionPanel" role="tablist" aria-multiselectable="true" bs-collapse>
-
-					<!-- DIVISION HEADER -->
-					<div class="panel panel-ultical" ng-repeat="division in divisionsToShow | orderBy : divisionOrder">
-						<div class="panel-heading cursor-pointer" role="tab">
-							<h3 class="panel-title" bs-collapse-toggle>
-								<span>{{ division | division }}</span>
-								<span ng-if="!division.registrationComplete && division.numberSpots != 0" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numberSpots }} {{ 'event.spotsAvailable' | translate }}</span><span class="panel-title-addon" ng-if="!division.registrationComplete && getPlayingTeams(division).length > 0"> - {{ 'event.spotsApplied' | translate : {numApplications: getPlayingTeams(division).length }: 'messageformat' }}</span>
-								<span ng-if="division.registrationComplete" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numTeamsConfirmed }} {{ 'general.teams' | translate }} &nbsp;</span>
-							</h3>
+					<div ng-if="edition.x.registrationIsOpen">
+						<!-- Registration is going on right now -->
+						<div class="row">
+							<div class="col-md-12">
+								<span>{{ 'event.registrationEndsAt' | translate }} {{ edition.registrationEnd | amDateFormat : ('general.amDateFormatShort' | translate) }}</span>
+							</div>
 						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div ng-if="loggedIn() && ownTeams.length > 0" class="btn btn-primary btn-ultical margin-top-small" ng-click="openRegistrationModal()">{{ 'event.register.title' | translate }}</div>
+								<span ng-if="!loggedIn()">{{ 'event.register.notLoggedIn' | translate }}</span>
+								<span ng-if="loggedIn() && ownTeams != null &&  ownTeams.length == 0">{{ 'event.register.noOwnTeam' | translate }}</span>
+							</div>
+						</div>
+					</div>
+					<div ng-if="!edition.x.registrationIsOpen">
+						<!-- Registration is not open - why? -->
+						<div ng-if="edition.x.registrationTime == 'future'">{{ 'event.registrationStartsAt' | translate }} {{ edition.registrationStart | amDateFormat : ('general.amDateFormat' | translate) }}</div>
+						<div ng-if="edition.x.registrationTime == 'past'">{{ 'event.registrationIsOverSince' | translate }} {{ edition.registrationEnd | amDateFormat : ('general.amDateFormat' | translate) }}</div>
+						<div ng-if="edition.x.registrationTime == 'never' && eventIsFuture">{{ 'event.registrationUndefined' | translate }}</div>
+					</div>
+				</div>
+			</div>
 
-						<div class="panel-collapse" role="tabpanel" bs-collapse-target>
-							<div class="panel-body">
+			<!-- EDITION EVENTS/DIVISION TAB-CHOOSER -->
+			<div class="row margin-top" ng-if="show.edition">
+				<div class="col-md-12">
+					<div class="margin-top" bs-active-pane="tabs.activeTab" bs-tabs>
+						<div bs-pane title="{{ 'event.editionViewEvents' | translate }}" name="events"></div>
+						<div bs-pane title="{{ 'event.editionViewDivisions' | translate }}" name="divisions"></div>
+					</div>
+				</div>
+			</div>
 
-								<!-- TEAM LIST -->
-								<div class="row">
-									<div class="col-md-12">
+			<!-- DIVISIONS -->
+			<div class="row margin-top" ng-if="tabs.activeTab == 'divisions' && show.divisions && divisionsToShow.length == 0 && show.edition">
+				<div class="col-md-12">
+					{{ 'event.noDivisions' | translate }}
+				</div>
+			</div>
 
-										<div class="panel-group" ng-model="panels.teamPanel" role="tablist" aria-multiselectable="true" bs-collapse>
+			<div ng-if="show.divisions && divisionsToShow.length > 0 && (!show.edition || tabs.activeTab == 'divisions')" class="row margin-top">
+				<div class="col-md-12">
+					<div ng-if="!show.edition" class="strong">{{ 'event.teamList.title' | translate }}</div>
 
-											<!-- no teams yet -->
-											<div ng-if="getPlayingTeams(division).length == 0 ">
-												<span>{{ 'event.teamList.noTeams' | translate }}</span>
-											</div>
+					<div class="panel-group margin-top-small" ng-model="panels.divisionPanel" role="tablist" aria-multiselectable="true" bs-collapse>
 
-											<!-- team list -->
-											<!-- Controls for sorting result listing -->
-											<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0 && hasStandings[division.id]" class="margin-bottom" ng-click="toggleEditStandings(division)"><a>{{ 'event.teamList.editStandings' | translate }}</a></div>
-											<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0 && !hasStandings[division.id]" class="margin-bottom btn btn-primary btn-ultical" ng-click="toggleEditStandings(division)">{{ 'event.teamList.createStandings' | translate }}</div>
-											<div ng-if="editStandings" class="btn btn-primary btn-ultical margin-bottom" ng-click="saveStandings(division)">{{ 'event.teamList.doneEditStandings' | translate }}</div>
+						<!-- DIVISION HEADER -->
+						<div class="panel panel-ultical" ng-repeat="division in divisionsToShow | orderBy : divisionOrder">
+							<div class="panel-heading cursor-pointer" role="tab">
+								<h3 class="panel-title" bs-collapse-toggle>
+									<span>{{ division | division }}</span>
+									<span ng-if="!division.registrationComplete && division.numberSpots != 0" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numberSpots }} {{ 'event.spotsAvailable' | translate }}</span><span class="panel-title-addon" ng-if="!division.registrationComplete && getPlayingTeams(division).length > 0"> - {{ 'event.spotsApplied' | translate : {numApplications: getPlayingTeams(division).length }: 'messageformat' }}</span>
+									<span ng-if="division.registrationComplete" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numTeamsConfirmed }} {{ 'general.teams' | translate }} &nbsp;</span>
+								</h3>
+							</div>
 
-											<div ng-if="!eventIsFuture && hasStandings[division.id] && !editStandings" class="margin-bottom-small">
+							<div class="panel-collapse" role="tabpanel" bs-collapse-target>
+								<div class="panel-body">
 
-												<div ng-if="show.event && latestEvents[division.id].id != event.id" class="margin-bottom-small">
-													{{ 'event.teamList.standingExplanation' | translate : { eventName : (latestEvents[division.id] | eventname) } }}
+									<!-- TEAM LIST -->
+									<div class="row">
+										<div class="col-md-12">
+
+											<div class="panel-group" ng-model="panels.teamPanel" role="tablist" aria-multiselectable="true" bs-collapse>
+
+												<!-- no teams yet -->
+												<div ng-if="getPlayingTeams(division).length == 0 ">
+													<span>{{ 'event.teamList.noTeams' | translate }}</span>
 												</div>
 
-												<!-- Sort keys to choose from-->
-												<div class="btn-group width100">
-									        <label class="btn btn-default sort-button" data-title="{{ 'event.teamList.sortByResultTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'standing'">{{ 'event.teamList.sortByResult' | translate }}<i ng-class="{invisible: teamListOrder.text != 'standing'}" class="fa fa-sort-desc sort-icon"></i></label>
-									        <label ng-if="hasSpiritScores[division.id]" class="btn btn-default sort-button" data-title="{{ 'event.teamList.sortBySpiritTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'spirit'">{{ 'event.teamList.sortBySpirit' | translate }}<i ng-class="{invisible: teamListOrder.text != 'spirit'}" class="fa fa-sort-desc sort-icon"></i></label>
-													<label device-detector class="btn btn-default sort-button sort-button-last" data-title="{{ 'event.teamList.sortByNameTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'name'">{{ 'event.teamList.sortByName' | translate }}<i ng-class="{invisible: teamListOrder.text != 'name'}" class="fa fa-sort-desc sort-icon"></i></label>
-    										</div>
+												<!-- team list -->
+												<!-- Controls for sorting result listing -->
+												<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0 && hasStandings[division.id]" class="margin-bottom" ng-click="toggleEditStandings(division)"><a>{{ 'event.teamList.editStandings' | translate }}</a></div>
+												<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0 && !hasStandings[division.id]" class="margin-bottom btn btn-primary btn-ultical" ng-click="toggleEditStandings(division)">{{ 'event.teamList.createStandings' | translate }}</div>
+												<div ng-if="editStandings" class="btn btn-primary btn-ultical margin-bottom" ng-click="saveStandings(division)">{{ 'event.teamList.doneEditStandings' | translate }}</div>
 
-											</div>
+												<div ng-if="!eventIsFuture && hasStandings[division.id] && !editStandings" class="margin-bottom-small">
 
-											<!-- ngRepeat TEAMS -->
-											<div ng-init="rosterPlayers = getRelevantPlayers(regTeam, division, edition.season, event)" ng-repeat-start="regTeam in (regTeamSorted = (getPlayingTeams(division) | filter : teamFilter | orderBy : teamOrder : teamOrderReverse)) track by regTeam.id">
-
-												<div class="row margin-bottom-small" ng-class="{'margin-top': !$first}" ng-if="eventIsFuture && regTeamSorted[$index-1].status != regTeam.status && (event.x.own || (regTeam.status != 'DECLINED' && regTeam.status != 'CANCELLED'))">
-													<div class="col-md-6 strong">{{ ('event.teamList.' + (regTeam.status | lowercase)) | translate }}</div>
-												</div>
-
-											</div>
-
-											<div class="panel panel-ultical2" ng-class="{'panel-margin': !$first}" ng-repeat-end ng-if="(regTeam.status != 'DECLINED' && regTeam.status != 'CANCELLED') || event.x.own">
-
-												<div class="panel-heading cursor-pointer" role="tab">
-													<h3 class="panel-title" bs-collapse-toggle>
-
-														<!-- Standings -->
-														<div ng-if="hasStandings[division.id] && !editStandings" class="pull-left margin-right-small">
-															<div class="team-list-standing pull-left">
-																<span class="label-as-badge label label-primary label-ultical" data-title="{{ 'event.teamList.standing' | translate }}" bs-tooltip>{{ regTeam.standing }}</span>
-															</div>
-															<div class="pull-right spirit-score-label" ng-class="{'has-own-spirit': hasOwnSpiritScores[division.id]}" ng-if="hasSpiritScores[division.id]">
-																<div ng-class="{satrong: hasOwnSpiritScores[division.id]}" data-title="{{ 'event.teamList.spiritScore' | translate }}" bs-tooltip>{{ regTeam.spiritScore | decimal : 1 | pad : 4 : '&nbsp;' }}</div>
-																<div ng-if="hasOwnSpiritScores[division.id]" data-placement="bottom" data-title="{{ 'event.teamList.ownSpiritScore' | translate }}" bs-tooltip><em class="own-spirit-score-label">{{ ('(' + (regTeam.ownSpiritScore | decimal : 1)  + ')') | pad : 6 : '&nbsp;' }}</em></div>
-															</div>
-														</div>
-
-														<i ng-if="panels.teamPanel != $index" class="dropdown-caret-fixed-width fa fa-caret-right dropdown-caret-padding margin-right-small"></i>
-														<i ng-if="panels.teamPanel == $index" class="dropdown-caret-fixed-width fa fa-caret-down margin-right-small"></i>
-
-														<a ui-sref="app.teamShow({teamId: regTeam.roster.team.id, teamSlug: (regTeam.roster.team.name | slugify) })">
-															<span>{{ regTeam.roster.team.name }}</span><span ng-if="regTeam.roster.nameAddition | notEmpty">&nbsp;{{ regTeam.roster.nameAddition }}</span><span ng-if="!(regTeam.roster.team.location | emptyLocation)" class="team-list-location">&nbsp;&nbsp;{{ regTeam.roster.team.location | location : 'city' }}</span>
-														</a>
-
-														<span ng-if="loggedIn() && !editStandings" class="panel-title-addon">&nbsp;&nbsp;({{ rosterPlayers.length }}&nbsp;{{ 'general.players' | translate }})</span>
-
-														<div ng-if="enableTeamRegistrationManagement" ng-class="{'team-actions-link-disabled': regTeam.status == 'DECLINED' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.declineTeam' | translate }}" bs-tooltip ng-click="teamRegDecline(regTeam); $event.stopPropagation();">
-															<i class="fa fa-remove"></i>
-														</div>
-														<div ng-if="enableTeamRegistrationManagement" ng-class="{'team-actions-disabled': regTeam.status == 'WAITING_LIST' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.waitlistTeam' | translate }}" bs-tooltip ng-click="teamRegToWaitingList(regTeam); $event.stopPropagation();">
-															<i class="fa fa-list-ol"></i>
-														</div>
-														<div ng-if="enableTeamRegistrationManagement" ng-class="{'team-actions-disabled': regTeam.status == 'CONFIRMED' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.acceptTeam' | translate }}" bs-tooltip ng-click="teamRegConfirm(regTeam); $event.stopPropagation();">
-															<i class="fa fa-check"></i>
-														</div>
-
-														<bas class="standings-edit" ng-if="editStandings" ng-click="$event.stopPropagation();">
-															<span>{{ 'event.teamList.standingsRank' | translate }}</span>
-															<input type="number" ng-model="regTeam.standing" />
-															<span>{{ 'event.teamList.standingsSpirit' | translate }}</span>
-															<input type="text" ng-model="regTeam.spiritScore" />/
-															<input type="text" ng-model="regTeam.ownSpiritScore" />
-
-														</bas>
-
-													</h3>
-												</div>
-
-												<div class="panel-collapse" role="tabpanel" bs-collapse-target>
-													<div class="panel-body">
-
-														<div class="row margin-bottom-small" ng-if="regTeam.team.location.city | notEmpty">
-															<div class="col-md-12">
-																<i class="fa fa-map-marker fa-fw"></i> {{ regTeam.team.location | location }}
-															</div>
-														</div>
-
-														<div class="row">
-															<div class="col-md-12">
-																<div class="margin-bottom-small">
-																	<i class="fa fa-list fa-fw"></i>
-																	<span ng-if="(event | notEmpty) && !eventIsFuture">{{ 'event.rosterFixed' | translate }}</span>
-																	<span ng-if="(event | isEmpty) || eventIsFuture">{{ 'event.rosterNotFixed' | translate }}</span>
-																	<span ng-if="((event | isEmpty) || eventIsFuture) && regTeam.team.x.own">({{ 'event.rosterEditOnTeamPage' | translate }})</span>
-																</div>
-																<div class="margin-left-small" ng-if="rosterPlayers.length > 0 && loggedIn()">
-																	<div ng-repeat="rosterPlayer in rosterPlayers | orderBy : 'player.lastName'">{{ rosterPlayer.player | playername : true }}</div>
-																</div>
-																<div ng-if="loggedIn() && rosterPlayers.length == 0">{{ 'team.roster.empty' | translate }}</div>
-																<div ng-if="!loggedIn()">{{ 'team.roster.notLoggedIn' | translate }}</div>
-															</div>
-														</div>
-
+													<div ng-if="show.event && latestEvents[division.id].id != event.id" class="margin-bottom-small">
+														{{ 'event.teamList.standingExplanation' | translate : { eventName : (latestEvents[division.id] | eventname) } }}
 													</div>
+
+													<!-- Sort keys to choose from-->
+													<div class="btn-group width100">
+										        <label class="btn btn-default sort-button" data-title="{{ 'event.teamList.sortByResultTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'standing'">{{ 'event.teamList.sortByResult' | translate }}<i ng-class="{invisible: teamListOrder.text != 'standing'}" class="fa fa-sort-desc sort-icon"></i></label>
+										        <label ng-if="hasSpiritScores[division.id]" class="btn btn-default sort-button" data-title="{{ 'event.teamList.sortBySpiritTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'spirit'">{{ 'event.teamList.sortBySpirit' | translate }}<i ng-class="{invisible: teamListOrder.text != 'spirit'}" class="fa fa-sort-desc sort-icon"></i></label>
+														<label device-detector class="btn btn-default sort-button sort-button-last" data-title="{{ 'event.teamList.sortByNameTooltip' | translate }}" bs-tooltip ng-model="teamListOrder.text" uib-btn-radio="'name'">{{ 'event.teamList.sortByName' | translate }}<i ng-class="{invisible: teamListOrder.text != 'name'}" class="fa fa-sort-desc sort-icon"></i></label>
+	    										</div>
+
 												</div>
 
+												<!-- ngRepeat TEAMS -->
+												<div ng-init="rosterPlayers = getRelevantPlayers(regTeam, division, edition.season, event)" ng-repeat-start="regTeam in (regTeamSorted = (getPlayingTeams(division) | filter : teamFilter | orderBy : teamOrder : teamOrderReverse)) track by regTeam.id">
+
+													<div class="row margin-bottom-small" ng-class="{'margin-top': !$first}" ng-if="eventIsFuture && regTeamSorted[$index-1].status != regTeam.status && (event.x.own || (regTeam.status != 'DECLINED' && regTeam.status != 'CANCELLED'))">
+														<div class="col-md-6 strong">{{ ('event.teamList.' + (regTeam.status | lowercase)) | translate }}</div>
+													</div>
+
+												</div>
+
+												<div class="panel panel-ultical2" ng-class="{'panel-margin': !$first}" ng-repeat-end ng-if="(regTeam.status != 'DECLINED' && regTeam.status != 'CANCELLED') || event.x.own">
+
+													<div class="panel-heading cursor-pointer" role="tab">
+														<h3 class="panel-title" bs-collapse-toggle>
+
+															<!-- Standings -->
+															<div ng-if="hasStandings[division.id] && !editStandings" class="pull-left margin-right-small">
+																<div class="team-list-standing pull-left">
+																	<span class="label-as-badge label label-primary label-ultical" data-title="{{ 'event.teamList.standing' | translate }}" bs-tooltip>{{ regTeam.standing }}</span>
+																</div>
+																<div class="pull-right spirit-score-label" ng-class="{'has-own-spirit': hasOwnSpiritScores[division.id]}" ng-if="hasSpiritScores[division.id]">
+																	<div ng-class="{satrong: hasOwnSpiritScores[division.id]}" data-title="{{ 'event.teamList.spiritScore' | translate }}" bs-tooltip>{{ regTeam.spiritScore | decimal : 1 | pad : 4 : '&nbsp;' }}</div>
+																	<div ng-if="hasOwnSpiritScores[division.id]" data-placement="bottom" data-title="{{ 'event.teamList.ownSpiritScore' | translate }}" bs-tooltip><em class="own-spirit-score-label">{{ ('(' + (regTeam.ownSpiritScore | decimal : 1)  + ')') | pad : 6 : '&nbsp;' }}</em></div>
+																</div>
+															</div>
+
+															<i ng-if="panels.teamPanel != $index" class="dropdown-caret-fixed-width fa fa-caret-right dropdown-caret-padding margin-right-small"></i>
+															<i ng-if="panels.teamPanel == $index" class="dropdown-caret-fixed-width fa fa-caret-down margin-right-small"></i>
+
+															<a ui-sref="app.teamShow({teamId: regTeam.roster.team.id, teamSlug: (regTeam.roster.team.name | slugify) })">
+																<span>{{ regTeam.roster.team.name }}</span><span ng-if="regTeam.roster.nameAddition | notEmpty">&nbsp;{{ regTeam.roster.nameAddition }}</span><span ng-if="!(regTeam.roster.team.location | emptyLocation)" class="team-list-location">&nbsp;&nbsp;{{ regTeam.roster.team.location | location : 'city' }}</span>
+															</a>
+
+															<span ng-if="loggedIn() && !editStandings" class="panel-title-addon">&nbsp;&nbsp;({{ rosterPlayers.length }}&nbsp;{{ 'general.players' | translate }})</span>
+
+															<div ng-if="enableTeamRegistrationManagement" ng-class="{'team-actions-link-disabled': regTeam.status == 'DECLINED' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.declineTeam' | translate }}" bs-tooltip ng-click="teamRegDecline(regTeam); $event.stopPropagation();">
+																<i class="fa fa-remove"></i>
+															</div>
+															<div ng-if="enableTeamRegistrationManagement" ng-class="{'team-actions-disabled': regTeam.status == 'WAITING_LIST' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.waitlistTeam' | translate }}" bs-tooltip ng-click="teamRegToWaitingList(regTeam); $event.stopPropagation();">
+																<i class="fa fa-list-ol"></i>
+															</div>
+															<div ng-if="enableTeamRegistrationManagement" ng-class="{'team-actions-disabled': regTeam.status == 'CONFIRMED' }" class="ffade team-actions cursor-pointer" data-title="{{ 'event.teamList.acceptTeam' | translate }}" bs-tooltip ng-click="teamRegConfirm(regTeam); $event.stopPropagation();">
+																<i class="fa fa-check"></i>
+															</div>
+
+															<bas class="standings-edit" ng-if="editStandings" ng-click="$event.stopPropagation();">
+																<span>{{ 'event.teamList.standingsRank' | translate }}</span>
+																<input type="number" ng-model="regTeam.standing" />
+																<span>{{ 'event.teamList.standingsSpirit' | translate }}</span>
+																<input type="text" ng-model="regTeam.spiritScore" />/
+																<input type="text" ng-model="regTeam.ownSpiritScore" />
+
+															</bas>
+
+														</h3>
+													</div>
+
+													<div class="panel-collapse" role="tabpanel" bs-collapse-target>
+														<div class="panel-body">
+
+															<div class="row margin-bottom-small" ng-if="regTeam.team.location.city | notEmpty">
+																<div class="col-md-12">
+																	<i class="fa fa-map-marker fa-fw"></i> {{ regTeam.team.location | location }}
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-md-12">
+																	<div class="margin-bottom-small">
+																		<i class="fa fa-list fa-fw"></i>
+																		<span ng-if="(event | notEmpty) && !eventIsFuture">{{ 'event.rosterFixed' | translate }}</span>
+																		<span ng-if="(event | isEmpty) || eventIsFuture">{{ 'event.rosterNotFixed' | translate }}</span>
+																		<span ng-if="((event | isEmpty) || eventIsFuture) && regTeam.team.x.own">({{ 'event.rosterEditOnTeamPage' | translate }})</span>
+																	</div>
+																	<div class="margin-left-small" ng-if="rosterPlayers.length > 0 && loggedIn()">
+																		<div ng-repeat="rosterPlayer in rosterPlayers | orderBy : 'player.lastName'">{{ rosterPlayer.player | playername : true }}</div>
+																	</div>
+																	<div ng-if="loggedIn() && rosterPlayers.length == 0">{{ 'team.roster.empty' | translate }}</div>
+																	<div ng-if="!loggedIn()">{{ 'team.roster.notLoggedIn' | translate }}</div>
+																</div>
+															</div>
+
+														</div>
+													</div>
+
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						</div>
 
+						</div>
+					</div>
+
+					<div class="print-all" ng-if="event.x.own" ng-click="doPrintAll()">
+						<a href="#" class="pull-right">{{ 'event.teamList.printPlayerLists' | translate }}</a>
 					</div>
 				</div>
+			</div>
 
-				<div class="print-all" ng-if="event.x.own" ng-click="doPrintAll()">
-					<a href="#" class="pull-right">{{ 'event.teamList.printPlayerLists' | translate }}</a>
+			<!-- EVENTS -->
+			<div class="row margin-top" ng-if="edition.events.length == 0 && tabs.activeTab == 'events' && show.edition">
+				<div class="col-md-12">
+					{{ 'event.noEvents' | translate }}
 				</div>
 			</div>
-		</div>
 
-		<!-- EVENTS -->
-		<div class="row margin-top" ng-if="edition.events.length == 0 && tabs.activeTab == 'events' && show.edition">
-			<div class="col-md-12">
-				{{ 'event.noEvents' | translate }}
-			</div>
-		</div>
+			<div ng-if="show.edition && edition.events.length > 0 && tabs.activeTab == 'events'" class="row margin-top">
+				<div class="col-md-12" id="edition-view-events">
 
-		<div ng-if="show.edition && edition.events.length > 0 && tabs.activeTab == 'events'" class="row margin-top">
-			<div class="col-md-12" id="edition-view-events">
+					<div class="row" ng-repeat="listEvent in (orderedEvents = (edition.events | orderBy : ['startDate', 'name']))">
+						<div class="col-md-12">
+							<a ui-sref="app.eventShow({eventId: listEvent.id, eventSlug: (( listEvent | eventname) | slugify ) })">
+								<div class="col-md-12 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != listEvent.startDate || orderedEvents[$index - 1].endDate != listEvent.endDate">
 
-				<div class="row" ng-repeat="listEvent in (orderedEvents = (edition.events | orderBy : ['startDate', 'name']))">
-					<div class="col-md-12">
-						<a ui-sref="app.eventShow({eventId: listEvent.id, eventSlug: (( listEvent | eventname) | slugify ) })">
-							<div class="col-md-12 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != listEvent.startDate || orderedEvents[$index - 1].endDate != listEvent.endDate">
+									<div class="event-list-date event-list-date-left">{{ showDate ? (listEvent.startDate | amDateFormat : 'D') : '' }}</div>
+									<div class="event-list-date event-list-date-dash">{{ showDate ? '-' : '' }}</div>
+									<div class="event-list-date event-list-date-right">{{ showDate ? (listEvent.endDate | amDateFormat : 'D') : '' }}</div>
+									<div class="event-list-date event-list-date-right-month" ng-class="{'event-list-date-right-monthyear' : showYearSeparator }">{{ showDate ? (listEvent.endDate | amDateFormat : 'MMMM') : '' }} {{ showYearSeparator ? (listEvent.endDate | amDateFormat : 'YY') : '' }}</div>
 
-								<div class="event-list-date event-list-date-left">{{ showDate ? (listEvent.startDate | amDateFormat : 'D') : '' }}</div>
-								<div class="event-list-date event-list-date-dash">{{ showDate ? '-' : '' }}</div>
-								<div class="event-list-date event-list-date-right">{{ showDate ? (listEvent.endDate | amDateFormat : 'D') : '' }}</div>
-								<div class="event-list-date event-list-date-right-month" ng-class="{'event-list-date-right-monthyear' : showYearSeparator }">{{ showDate ? (listEvent.endDate | amDateFormat : 'MMMM') : '' }} {{ showYearSeparator ? (listEvent.endDate | amDateFormat : 'YY') : '' }}</div>
-
-								<div class="event-list-text">
-									<div class="event-list-text-top">{{ listEvent | eventname }}</div>
-									<div class="event-list-text-bottom">
-										<span class="margin-right-small" ng-if="listEvent.x.divisions | notEmpty">{{ listEvent.x.divisions | divisions : 'basic' }}</span>
-										<span class="margin-right" ng-if="listEvent.x.mainLocation | notEmpty"><i class="fa fa-map-marker"></i> {{ listEvent.x.mainLocation | location : 'city' }}</span>
+									<div class="event-list-text">
+										<div class="event-list-text-top">{{ listEvent | eventname }}</div>
+										<div class="event-list-text-bottom">
+											<span class="margin-right-small" ng-if="listEvent.x.divisions | notEmpty">{{ listEvent.x.divisions | divisions : 'basic' }}</span>
+											<span class="margin-right" ng-if="listEvent.x.mainLocation | notEmpty"><i class="fa fa-map-marker"></i> {{ listEvent.x.mainLocation | location : 'city' }}</span>
+										</div>
 									</div>
 								</div>
-							</div>
-						</a>
+							</a>
+						</div>
 					</div>
-				</div>
 
-			</div>
-		</div>
-
-		<!-- EDITIONS LISTING -->
-		<div ng-if="show.format" class="row margin-top-big" id="edition-listing">
-			<div class="col-md-12">
-				<div class="strong margin-bottom-small">
-						Veranstaltungen
-				</div>
-
-				<div class="row" ng-repeat="edition in (orderedEditions = (format.editions | orderBy : '-season.year'))">
-					<div class="col-md-12">
-
-						<a ng-if="!edition.x.isSingleEdition" ui-sref="app.editionShow({editionId: edition.id, editionSlug: (( edition | editionname) | slugify ) })">
-							<div class="col-md-12 event-list-row">
-								<div class="event-list-date">
-									{{ orderedEditions[$index - 1].season.year != edition.season.year ? edition.season.year : '' }}
-								</div>
-								<div class="event-list-text">
-									{{ edition | editionname }}
-								</div>
-							</div>
-						</a>
-
-						<a ng-if="edition.x.isSingleEdition" ui-sref="app.eventShow({eventId: edition.events[0].id, eventSlug: (( edition.events[0] | eventname) | slugify ) })">
-							<div class="col-md-12 event-list-row">
-								<div class="event-list-date">
-									{{ orderedEditions[$index - 1].season.year != edition.season.year ? edition.season.year : '' }}
-								</div>
-								<div class="event-list-text">
-									{{ edition.events[0] | eventname }}
-								</div>
-							</div>
-						</a>
-
-					</div>
 				</div>
 			</div>
-		</div>
 
+			<!-- EDITIONS LISTING -->
+			<div ng-if="show.format" class="row margin-top-big" id="edition-listing">
+				<div class="col-md-12">
+					<div class="strong margin-bottom-small">
+							Veranstaltungen
+					</div>
 
-		</div> <!-- col-md-8 -->
+					<div class="row" ng-repeat="edition in (orderedEditions = (format.editions | orderBy : '-season.year'))">
+						<div class="col-md-12">
 
-		<bas-action-bar></bas-action-bar>
+							<a ng-if="!edition.x.isSingleEdition" ui-sref="app.editionShow({editionId: edition.id, editionSlug: (( edition | editionname) | slugify ) })">
+								<div class="col-md-12 event-list-row">
+									<div class="event-list-date">
+										{{ orderedEditions[$index - 1].season.year != edition.season.year ? edition.season.year : '' }}
+									</div>
+									<div class="event-list-text">
+										{{ edition | editionname }}
+									</div>
+								</div>
+							</a>
+
+							<a ng-if="edition.x.isSingleEdition" ui-sref="app.eventShow({eventId: edition.events[0].id, eventSlug: (( edition.events[0] | eventname) | slugify ) })">
+								<div class="col-md-12 event-list-row">
+									<div class="event-list-date">
+										{{ orderedEditions[$index - 1].season.year != edition.season.year ? edition.season.year : '' }}
+									</div>
+									<div class="event-list-text">
+										{{ edition.events[0] | eventname }}
+									</div>
+								</div>
+							</a>
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div> <!-- main content -->
 
 	</div> <!-- hiding-print -->
 

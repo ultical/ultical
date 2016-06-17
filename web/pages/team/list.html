@@ -2,60 +2,58 @@
 
 	<div class="row">
 
-		<div class="col-md-8">
+		<bas-action-bar></bas-action-bar>
 
-	<div class="row">
-		<div class="col-md-12">
-			<h3 class="page-title">{{ 'team.list.title' | translate }}</h3>
-		</div>
-	</div>
+		<div class="col-lg-8 col-lg-pull-4 col-sm-9 col-sm-pull-3 col-xs-12">
 
-	<div class="row">
-		<div class="col-md-12">
-			<div class="margin-top" bs-active-pane="tabs.activeTab" bs-tabs>
-				<div ng-if="loggedIn()" bs-pane title="{{ 'team.list.own' | translate }}" name="own"></div>
-				<div bs-pane title="{{ 'team.list.all' | translate }}" name="all"></div>
-			</div>
-		</div>
-	</div>
-
-	<div class="row margin-top ani-fade ani-vslide ani-large" ng-if="editing">
-		<div class="col-md-7">
-			<div class="panel panel-ultical">
-				<div class="panel-body">
-
+			<div class="row">
+				<div class="col-md-12">
+					<h3 class="page-title">{{ 'team.list.title' | translate }}</h3>
 				</div>
 			</div>
 
-		</div>
-	</div>
-
-	<!-- TEAM LIST -->
-	<div class="row margin-top fade">
-
-		<div class="col-md-12">
-			<div class="panel-group" ng-model="panel.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
-				<div class="panel panel-ultical" ng-repeat="team in teams | orderLocaleBy : teamOrder track by team.id">
-					<div class="panel-heading cursor-pointer" role="tab">
-						<a ui-sref="app.teamShow({teamId: team.id, teamSlug: (team.name | slugify) })">
-							<h4 class="panel-title" abs-collapse-toggle>
-								<span>{{ team.name }}</span><span ng-if="!(team.location | emptyLocation)" class="team-list-location">&nbsp;&nbsp;{{ team.location | location : 'city' }}</span>
-							</h4>
-						</a>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="margin-top" bs-active-pane="tabs.activeTab" bs-tabs>
+						<div ng-if="loggedIn()" bs-pane title="{{ 'team.list.own' | translate }}" name="own"></div>
+						<div bs-pane title="{{ 'team.list.all' | translate }}" name="all"></div>
 					</div>
+				</div>
+			</div>
 
-					<!-- <div class="panel-collapse" role="tabpanel" abs-collapse-target>
+			<div class="row margin-top ani-fade ani-vslide ani-large" ng-if="editing">
+				<div class="col-md-7">
+					<div class="panel panel-ultical">
 						<div class="panel-body">
 
 						</div>
-					</div> -->
+					</div>
+
 				</div>
 			</div>
+
+			<!-- TEAM LIST -->
+			<div class="row margin-top fade">
+
+				<div class="col-md-12">
+					<div class="panel-group" ng-model="panel.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
+						<div class="panel panel-ultical" ng-repeat="team in teams | orderLocaleBy : teamOrder track by team.id">
+							<div class="panel-heading cursor-pointer" role="tab">
+								<a ui-sref="app.teamShow({teamId: team.id, teamSlug: (team.name | slugify) })">
+									<h4 class="panel-title" abs-collapse-toggle>
+										<span>{{ team.name }}</span><span ng-if="!(team.location | emptyLocation)" class="team-list-location">&nbsp;&nbsp;{{ team.location | location : 'city' }}</span>
+									</h4>
+								</a>
+							</div>
+
+							<!-- <div class="panel-collapse" role="tabpanel" abs-collapse-target>
+							<div class="panel-body"> </div>	</div> -->
+						</div>
+					</div>
+				</div>
+			</div>
+
 		</div>
 	</div>
-
-</div>
-	<bas-action-bar></bas-action-bar>
-</div>
 
 </div>

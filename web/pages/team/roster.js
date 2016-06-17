@@ -2,8 +2,8 @@
 
 angular.module('ultical.team')
 
-.controller('RosterCtrl', ['$scope', 'storage', '$filter', '$rootScope', 'CONFIG', 'alerter', '$translate', 'moment', '$state',
-  function($scope, storage, $filter, $rootScope, CONFIG, alerter, $translate, moment, $state) {
+.controller('RosterCtrl', ['$rootScope', '$scope', 'storage', '$filter', 'CONFIG', 'alerter', '$translate', 'moment', '$state',
+  function($rootScope, $scope, storage, $filter, CONFIG, alerter, $translate, moment, $state) {
 
     $rootScope.saveRoster = function() {
       $scope.rosterCreationPending = true;
@@ -65,7 +65,7 @@ angular.module('ultical.team')
       $scope.rosterNeedsContext = CONFIG.general.rosterNeedsContext;
 
       if ($scope.rosterToEdit == null) {
-        $scope.isEdit = false;
+        $rootScope.isEdit = false;
         $scope.rosterToEdit = {
           id: -1,
           divisionAge: 'regular',
@@ -75,7 +75,7 @@ angular.module('ultical.team')
           context: {},
         }
       } else {
-        $scope.isEdit = true;
+        $rootScope.isEdit = true;
         $scope.rosterToEdit = angular.copy($scope.rosterToEdit);
         $scope.rosterToEdit.divisionAge = $scope.rosterToEdit.divisionAge.toLowerCase();
         $scope.rosterToEdit.divisionType = $scope.rosterToEdit.divisionType.toLowerCase();
@@ -91,7 +91,7 @@ angular.module('ultical.team')
 
       storage.getSeasons(function(seasons) {
         $scope.selects.seasons = seasons;
-        if (!$scope.isEdit) {
+        if (!$rootScope.isEdit) {
           var thisYear = moment().format('YYYY');
           var thisMonth = parseInt(moment().format('M'));
           var isGymTime = thisMonth < 4 || thisMonth > 9;

@@ -1,8 +1,8 @@
 'use strict';
 
 //nav bar controller
-app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer', 'amMoment', '$rootScope', '$stateParams', '$location', 'storage',
-                              function($scope, CONFIG, $filter, $translate, $state, authorizer, amMoment, $rootScope, $stateParams, $location, storage) {
+app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer', 'amMoment', '$rootScope', '$stateParams', '$location', 'storage', 'actionBar',
+                              function($scope, CONFIG, $filter, $translate, $state, authorizer, amMoment, $rootScope, $stateParams, $location, storage, actionBar) {
 
 	$scope.logoSide = "front";
 
@@ -75,5 +75,12 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 			changeLanguage($stateParams.locale);
 		}
 	});
+
+  $scope.actionAsideCtrl = function($scope) {
+    $scope.head = actionBar.getHead();
+    $scope.actions = actionBar.getActions();
+    $scope.showAction = actionBar.showAction;
+    $scope.isActionAside = true;
+  };
 
 }]);
