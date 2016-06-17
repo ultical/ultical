@@ -294,6 +294,7 @@ TRANSLATIONS['de'] = {
 			roster: {
 				label: 'Aktuelle Roster',
 				newRoster: 'Roster hinzufügen',
+				editRoster: 'Roster bearbeiten',
 				divisionAgeLabel: 'Division',
 				nameAdditionLabel: 'Ergänzung zum Teamnamen',
 				nameAdditionHelp: 'Um Roster für weitere Teams in der selben Division zu erstellen, gib eine Ergänzung zum Teamnamen an (typischerweise \'2\' oder \'II\' für ein zweites Team). Verschiedene Altersgruppen (U17, ...) werden automatisch benannt.',
@@ -304,8 +305,8 @@ TRANSLATIONS['de'] = {
 				rosterNeedsContext: 'Das Roster muss einen Gültigkeitsbereich haben.',
 				empty: 'Keine Spieler hinzugefügt',
 				remove: 'Roster löschen',
-				editTooltip: 'Roster bearbeiten',
-				editPlayersTooltip: 'Spielerliste bearbeiten',
+				editTooltip: 'Roster Info bearbeiten',
+				editPlayersTooltip: 'Spieler hinzufügen / löschen',
 				confirmDelete: 'Soll dieses Roster wirklich gelöscht werden?',
 				newPlayerPlaceholder: 'Name des Spielers',
 				playerAlreadyInRoster: 'Dieser Spieler ist bereits für diese Saison und Division bei {{ teamName }} gemeldet',
