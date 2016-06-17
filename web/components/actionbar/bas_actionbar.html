@@ -1,0 +1,23 @@
+<!-- HEAD about login -->
+<div ng-if="head.loggedIn()">
+  <span>{{ 'actionBar.head.loggedInAs' | translate : { userName: head.getUser().fullName } }}</span>
+</div>
+<div ng-if="!head.loggedIn()">
+  <span>{{ 'actionBar.head.notLoggedIn' | translate }}</span>
+</div>
+
+<!-- actions -->
+<div class="margin-bottom-small action-group" ng-repeat="actionGroup in actions | groupBy : 'group'">
+  <div ng-repeat="action in actionGroup" class="margin-top-small" ng-if="showAction(action)">
+    <div ng-if="action.separator" class="horizontal-separator"></div>
+
+    <div ng-if="action.text">
+      <span>{{ action.text | translate }}</span>
+    </div>
+
+    <div class="btn btn-primary btn-ultical" ng-if="action.button" ng-click="action.button.click()">
+      <span>{{ action.button.text | translate }}</span>
+    </div>
+
+  </div>
+</div>

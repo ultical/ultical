@@ -96,6 +96,7 @@ TRANSLATIONS['de'] = {
 				ownEvents: 'Meine Turniere',
 				logout: 'Abmelden',
 			},
+			actionsLabel: 'Aktionen',
 		},
 
 		season: {

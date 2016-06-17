@@ -2,6 +2,7 @@ html, body {
 	height: 100%;
 	font-size: 13px;
 	font-weight: 300;
+	min-width: 320px;
 }
 
 .view-container {
@@ -43,6 +44,17 @@ button, input, optgroup, select, textarea {
 	}
 }
 
+#image-dfv-small {
+	width: 100px;
+	height: 32px;
+	margin-top: 9px;
+}
+
+#navbar-actions {
+	height: 34px;
+	padding-top: 6px;
+}
+
 @media ( max-width : 767px) {
 	.page-title {
 		margin-top: 0;
@@ -67,10 +79,6 @@ button, input, optgroup, select, textarea {
 	td.mega-wide {
 		width: 50%;
 	}
-}
-
-#nav-logo img {
-	margin-top: 9px;
 }
 
 #nav-logo div {
@@ -117,7 +125,7 @@ button, input, optgroup, select, textarea {
 	cursor: pointer;
 }
 
-#nav-bar-buttons ul.dropdown-menu {
+#navbar-buttons ul.dropdown-menu {
 	background-color: #F3FAFF;
 }
 
@@ -307,7 +315,8 @@ input, textarea {
 /* disable rounded corners */
 .panel-group .panel, .panel, .panel-group, .panel-heading, .panel-footer,
 	.btn, .modal-content, .form-control, .popover, .dropdown-menu, .alert,
-	.nav-tabs>li>a, .input-group-addon {
+	.nav-tabs>li>a, .input-group-addon,
+	.navbar-toggle {
 	border-radius: 0px;
 }
 
@@ -592,7 +601,8 @@ select:not([multiple]) {
 	padding: 10px;
 }
 
-.action-bar .btn {
+.action-bar .btn,
+.action-aside .btn {
 	display: table;
 	white-space: normal;
 	width: 160px;
@@ -603,10 +613,12 @@ select:not([multiple]) {
 	font-weight: 300;
 }
 
-.action-bar .btn span {
+.action-bar .btn span,
+.action-aside .btn span {
 	display: table-cell;
 	vertical-align: middle;
 }
+
 .team-edit-sheet {
 	background-color: #FAFAFA;
 	padding: 15px;
@@ -626,13 +638,13 @@ footer {
 	footer {
 		line-height: 2.5em;
 	}
+	.action-bar .btn,
+	.action-aside .btn {
+		width: 100%;
+	}
 }
+
 
 .team-list-location {
 	font-weight: 300;
-}
-
-#image-dfv-small {
-	width: 100px;
-	height: 32px;
 }

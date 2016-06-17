@@ -9,15 +9,20 @@
 				<span class="icon-bar"></span>
 			</button>
 
+			<button id="navbar-actions" type="button" class="navbar-toggle" bs-aside data-title="{{ 'nav.actionsLabel' | translate }}" data-container="body" data-animation="am-fade-and-slide-left" data-position="right" data-controller="actionAsideCtrl" data-html="true" data-backdrop="true" data-template-url="navbar/action_aside.html?v=2">
+				<span>{{ 'nav.actionsLabel' | translate }}</span>
+			</button>
+
 			<a ui-sref="app.start">
 				<flip id="nav-logo" flip-show="{{ logoSide }}" ng-mouseenter="toggleLogoFlip()" ng-mouseleave="toggleLogoFlip()"> <flip-panel> <img id="image-dfv-small" title="{{ 'nav.title' | translate }}" src="images/logo_dfv_small.png" /> </flip-panel> <flip-panel>
 				<div>{{ 'nav.titleFlipText' | translate }}</div>
 				</flip-panel> </flip>
 			</a>
+
 		</div>
 
-		<div id="nav-bar-buttons" bs-collapse-target="c1" class="navbar-body">
-			<ul bs-collapse-toggle="c1" class="nav navbar-nav">
+		<div id="navbar-buttons" bs-collapse-target class="navbar-body">
+			<ul bs-collapse-toggle class="nav navbar-nav">
 				<li data-animation="am-flip-x" XXXbs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
 					<a ui-sref="app.eventsList({locale: activeLang })" class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</a>
 				</li>
@@ -63,5 +68,6 @@
 			</ul>
 
 		</div>
+
 	</div>
 </div>
