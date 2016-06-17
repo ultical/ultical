@@ -1,13 +1,20 @@
 <div id="event-list" ng-controller="EventListCtrl" ng-init="dateAlreadyShown=(events[0].startDate | amDateFormat : 'YYYY-MM')">
 
 	<div class="row">
-		<div class="col-md-12">
-			<h3 class="page-title">{{ 'event.list.title' | translate }}</h3>
-		</div>
-	</div>
 
-	<div class="row margin-top event-list">
-		<div class="col-md-8">
+		<bas-action-bar></bas-action-bar>
+
+		<div class="col-lg-8 col-lg-pull-4 col-sm-9 col-sm-pull-3 col-xs-12">
+
+			<div class="row">
+				<div class="col-md-12">
+					<h3 class="page-title">{{ 'event.list.title' | translate }}</h3>
+				</div>
+			</div>
+
+			<div class="row margin-top event-list">
+				<div class="col-md-12">
+
 
 			<div ng-if="0" class="row" ng-repeat-start="event in (orderedEvents = (events | filter : eventFilter | orderBy : sortKey : sortOrderDesc))"></div>
 
@@ -55,7 +62,7 @@
 
 		</div>
 	</div>
-
+</div>
 	<div class="row">
 		<div class="col-md-12"></div>
 	</div>
