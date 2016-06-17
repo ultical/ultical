@@ -51,14 +51,14 @@
 
 			<!-- DATE / SEASON -->
 			<div class="row" ng-if="show.date">
-				<div class="col-md-8 page-sub-title">
+				<div class="col-xs-7 page-sub-title">
 					{{ event.startDate | amDateFormat : ('general.amDateFromSameMonth' | translate) }} - {{ event.endDate | amDateFormat : ('general.amDateToFull' | translate) }}<br />
 				</div>
-				<div class="col-md-4 text-right page-sub-title">{{ edition.season | season : true}}</div>
+				<div class="col-xs-5 text-right page-sub-title">{{ edition.season | season : true}}</div>
 			</div>
 
 			<div class="row" ng-if="!show.date">
-				<div class="col-md-8 page-sub-title">
+				<div class="col-xs-8 page-sub-title">
 					{{ edition.season | season : true}}
 				</div>
 			</div>
