@@ -9,3 +9,4 @@ update-db.sh
 derby.log
 *default.yaml
 liquibase.properties
+logs
