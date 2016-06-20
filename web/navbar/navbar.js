@@ -1,8 +1,8 @@
 'use strict';
 
 //nav bar controller
-app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer', 'amMoment', '$rootScope', '$stateParams', '$location', 'storage', 'actionBar',
-                              function($scope, CONFIG, $filter, $translate, $state, authorizer, amMoment, $rootScope, $stateParams, $location, storage, actionBar) {
+app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$state', 'authorizer', 'amMoment', '$rootScope', '$stateParams', '$location', 'storage', 'actionBar', '$aside',
+                              function($scope, CONFIG, $filter, $translate, $state, authorizer, amMoment, $rootScope, $stateParams, $location, storage, actionBar, $aside) {
 
 	$scope.logoSide = "front";
 
@@ -71,19 +71,61 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 
 	// checks language selection through url
 	$scope.$on('$stateChangeSuccess', function rootStateChangeSuccess(event, toState){
-		if($stateParams.locale !== undefined) {
+    console.log("state change success");
+    if($stateParams.locale !== undefined) {
 			changeLanguage($stateParams.locale);
 		}
+    if (menuAside) {
+      menuAside.hide();
+    }
+    if (actionAside) {
+      actionAside.hide();
+    }
 	});
 
-  $scope.actionAsideCtrl = function($scope) {
-    $scope.head = actionBar.getHead();
-    $scope.actions = actionBar.getActions();
-    $scope.showAction = actionBar.showAction;
-    $scope.isActionAside = true;
+  var menuAside = null;
+  var actionAside = null;
+
+  var thisScope = $scope;
+
+  $scope.openMenuAside = function() {
+    menuAside = $aside({
+      title: 'nav.menuLabel',
+      show: true,
+      container: 'body',
+      animation: 'am-fade-and-slide-left',
+      position: 'left',
+      controller: function($scope) {
+        $scope.getUser = thisScope.getUser;
+        $scope.loggedIn = thisScope.loggedIn;
+        $scope.logOut = thisScope.logOut;
+        $scope.languageSelector = thisScope.languageSelector;
+        $scope.selectedLanguage = thisScope.selectedLanguage;
+        $scope.isMenuAside = true;
+      },
+      html: true,
+      backdrop: true,
+      templateUrl: 'navbar/aside.html?v=3',
+    });
   };
 
-  $scope.menuAsideCtrl = function($scope) {
-    $scope.isMenuAside = true;
+  $scope.openActionAside = function() {
+    actionAside = $aside({
+      title: 'nav.actionsLabel',
+      show: true,
+      container: 'body',
+      animation: 'am-fade-and-slide-left',
+      position: 'left',
+      controller: function($scope) {
+        $scope.head = actionBar.getHead();
+        $scope.actions = actionBar.getActions();
+        $scope.showAction = actionBar.showAction;
+        $scope.isActionAside = true;
+      },
+      html: true,
+      backdrop: true,
+      templateUrl: 'navbar/aside.html?v=3',
+    });
   };
+
 }]);

@@ -3,7 +3,7 @@
     <div class="aside-content">
       <div class="aside-header" ng-show="title">
         <button type="button" class="close" ng-click="$hide()">&times;</button>
-        <h4 class="aside-title" ng-bind="title"></h4>
+        <h4 class="aside-title">{{ title | translate }}</h4>
       </div>
 
       <div ng-if="isActionAside" class="aside-body action-aside" ng-include="'components/actionbar/bas_actionbar.html'"></div>
