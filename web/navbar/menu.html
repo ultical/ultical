@@ -41,11 +41,13 @@
 </ul>
 
 <!-- LANGUAGE CHOOSER -->
-<ul class="nav  data-placement="bottom-left" navbar-right navbar-nav" ng-show="languageSelector.length > 1" bs-dropdown="languageSelector" data-animation="am-flip-x">
+<ul class="nav navbar-right navbar-nav" data-placement="bottom-left" ng-show="languageSelector.length > 1" bs-dropdown="languageSelector" data-animation="am-flip-x">
   <li class="navbar-nav navbar-language">
-    <div id="navbar-language-icon">
-      <i class="fa fa-globe"></i>
-    </div>
-    <div id="navbar-language-code">{{ selectedLanguage }}</div>
+    <a href="#" class="navbar-text">
+      <div id="navbar-language-icon">
+        <i class="fa fa-globe"></i>
+      </div>
+      <div id="navbar-language-code">{{ selectedLanguage }}</div>
+    </a>
   </li>
 </ul>

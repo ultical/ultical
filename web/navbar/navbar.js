@@ -66,6 +66,10 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 			// changes url to fire $stateChangeSuccess
 			$location.url($rootScope.otherLangURL);
 			changeLanguage(key);
+
+      if (menuAside) {
+        menuAside.hide();
+      }
 		}
 	};
 
@@ -101,6 +105,7 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
         $scope.logOut = thisScope.logOut;
         $scope.languageSelector = thisScope.languageSelector;
         $scope.selectedLanguage = thisScope.selectedLanguage;
+        $scope.setLanguage = thisScope.setLanguage;
         $scope.isMenuAside = true;
       },
       html: true,
