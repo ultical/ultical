@@ -5,10 +5,10 @@
         <button type="button" class="close" ng-click="$hide()">&times;</button>
         <h4 class="aside-title" ng-bind="title"></h4>
       </div>
-      <div ng-if="isActionAside" class="aside-body action-aside" ng-include="'components/actionbar/bas_actionbar.html'"></div>
-      <div ng-if="isMenuAside" class="aside-body">
 
-      </div>
+      <div ng-if="isActionAside" class="aside-body action-aside" ng-include="'components/actionbar/bas_actionbar.html'"></div>
+      <div ng-if="isMenuAside" class="aside-body menu-aside-body" ng-include="'navbar/menu.html'"></div>
+
       <!-- <div class="aside-footer">
         <button type="button" class="btn btn-default" ng-click="$hide()">{{ 'general.close' | translate }}</button>
       </div> -->
