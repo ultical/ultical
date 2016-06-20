@@ -1,0 +1,51 @@
+<!-- EVENTS -->
+<ul abs-collapse-toggle class="nav navbar-nav">
+  <li data-animation="am-flip-x" XXXbs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
+    <a ui-sref="app.eventsList({locale: activeLang })" class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</a>
+  </li>
+</ul>
+
+<!-- TEAMS -->
+<ul class="nav navbar-nav">
+  <li>
+    <a  ui-sref="app.teamsList({locale: activeLang })" class="navbar-text">{{ 'nav.teams' | translate }}</a>
+  </li>
+</ul>
+
+<!-- if logged in: USER MENU -->
+<ul ng-show="loggedIn()" class="nav navbar-right navbar-nav" data-animation="am-flip-x" data-container="body" data-placement="{{ isMenuAside ? 'bottom-left' : 'bottom-right'}}" bs-dropdown>
+  <li>
+    <a href="#" class="navbar-text">{{ getUser() | username }}</a>
+  </li>
+</ul>
+
+<ul class="menu-aside dropdown-menu" role="menu">
+  <li><a ui-sref="app.teamsOwn({locale: activeLang })">{{ 'nav.profileDropdown.ownTeams' | translate }}</a></li>
+<!-- 				<li><a ui-sref="app.eventsList">{{ 'nav.profileDropdown.ownEvents' | translate }}</a></li> -->
+  <li class="divider"></li>
+  <li><a href="#" ng-click="logOut()">{{ 'nav.profileDropdown.logout' | translate }}</a></li>
+</ul>
+
+<!-- LOGIN MENU -->
+<ul ng-show="!loggedIn()" class="nav navbar-right navbar-nav">
+  <li data-container="body" data-placement="{{ isMenuAside ? 'right' : 'bottom-right'}}" data-template-url="pages/user/login_popover.html?v=13" data-animation="am-flip-x" data-auto-close="1" bs-popover>
+    <a href="#" class="navbar-text">{{ 'nav.login' | translate }}</a>
+  </li>
+</ul>
+
+<!-- REGISTER -->
+<ul class="nav navbar-right navbar-nav" ng-show="!loggedIn()" data-animation="am-fade-and-slide-top" data-template-url="pages/user/registration_modal.html?v=14" bs-modal="modal">
+  <li>
+    <a href="#" class="navbar-text">{{ 'nav.register' | translate }}</a>
+  </li>
+</ul>
+
+<!-- LANGUAGE CHOOSER -->
+<ul class="nav  data-placement="bottom-left" navbar-right navbar-nav" ng-show="languageSelector.length > 1" bs-dropdown="languageSelector" data-animation="am-flip-x">
+  <li class="navbar-nav navbar-language">
+    <div id="navbar-language-icon">
+      <i class="fa fa-globe"></i>
+    </div>
+    <div id="navbar-language-code">{{ selectedLanguage }}</div>
+  </li>
+</ul>

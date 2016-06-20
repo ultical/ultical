@@ -83,4 +83,7 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
     $scope.isActionAside = true;
   };
 
+  $scope.menuAsideCtrl = function($scope) {
+    $scope.isMenuAside = true;
+  };
 }]);

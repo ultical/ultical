@@ -97,6 +97,7 @@ TRANSLATIONS['de'] = {
 				logout: 'Abmelden',
 			},
 			actionsLabel: 'Aktionen',
+			menuLabel: 'Menü',
 		},
 
 		season: {

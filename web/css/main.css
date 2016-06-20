@@ -140,9 +140,13 @@ button, input, optgroup, select, textarea {
 }
 
 .navbar-body > ul:hover,
-.navbar-body ul:hover .navbar-text,
+/*.navbar-body ul:hover .navbar-text,*/
+.menu-aside-body ul:hover .navbar-text,
+.menu-aside-body ul:focus .navbar-text,
 .dropdown-menu > li > a:hover,
-.dropdown-menu > li > a:focus {
+.dropdown-menu > li > a:focus,
+.nav>li>a:focus, .nav>li>a:hover
+ {
   color: #000;
   text-decoration: none;
   background-color: #C2DAF3;
@@ -162,10 +166,19 @@ button, input, optgroup, select, textarea {
 	padding: 0 0 5px 0;
 }
 
-#login-popover, .navbar .dropdown-menu {
+.shared-icon-bar {
+	float: left;
+	margin-right: 10px;
+	margin-top: 2px;
+}
+
+#login-popover,
+.navbar .dropdown-menu,
+.menu-aside.dropdown-menu {
 	background-color: #F3FAFF;
 	-webkit-box-shadow: none;
 	box-shadow: none;
+	z-index: 1080;
 }
 
 #login-popover.login-error {
