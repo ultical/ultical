@@ -79,6 +79,10 @@ button, input, optgroup, select, textarea {
 	td.mega-wide {
 		width: 50%;
 	}
+
+	.navbar-language .navbar-text {
+		height: 40px;
+	}
 }
 
 #nav-logo div {
@@ -108,17 +112,14 @@ button, input, optgroup, select, textarea {
 
 #navbar-language-icon {
 	float: left;
-	font-size: 25px;
-	margin-top: 6px;
-	margin-left: 20px;
+	font-size: 22px;
+	margin-top: -2px;
 }
 
 #navbar-language-code {
-	float: right;
-	margin-top: 15px;
-	margin-bottom: 15px;
-	margin-right: 20px;
+	float: left;
 	margin-left: 5px;
+	width: 20px;
 }
 
 .navbar-body ul {
