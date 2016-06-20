@@ -75,7 +75,6 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 
 	// checks language selection through url
 	$scope.$on('$stateChangeSuccess', function rootStateChangeSuccess(event, toState){
-    console.log("state change success");
     if($stateParams.locale !== undefined) {
 			changeLanguage($stateParams.locale);
 		}
