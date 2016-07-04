@@ -219,7 +219,7 @@ public class MailResource {
             // get all team admins and email addresses
             List<Recipient> recipients = new ArrayList<Recipient>();
             for (Team team : teams) {
-                if (!team.getContactEmail().isEmpty()) {
+                if (team.getContactEmail() != null && !team.getContactEmail().isEmpty()) {
                     recipients.add(new Recipient(team.getContactEmail()));
                 }
                 for (String email : team.getEmails().split(",")) {
