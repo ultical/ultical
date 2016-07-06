@@ -135,7 +135,36 @@ public class MailClient {
         } catch (NoSuchProviderException npe) {
             LOGGER.error("Failed to open transport", npe);
         } catch (MessagingException me) {
-            LOGGER.error("Failed to build message", me);
+            LOGGER.error("Failed to build or send message");
+            LOGGER.error("Subject: " + m.getSubject());
+            LOGGER.error("From: " + m.getSenderName());
+
+            String toString = "";
+            for (Recipient recipient : m.getRecipients(UlticalRecipientType.TO)) {
+                toString += (this.getEncodedNameAddress(recipient));
+            }
+            LOGGER.error("To: " + toString);
+
+            String ccString = "";
+            for (Recipient recipient : m.getRecipients(UlticalRecipientType.CC)) {
+                ccString += (this.getEncodedNameAddress(recipient));
+            }
+            LOGGER.error("CC: " + ccString);
+
+            String bccString = "";
+            for (Recipient recipient : m.getRecipients(UlticalRecipientType.BCC)) {
+                bccString += (this.getEncodedNameAddress(recipient));
+            }
+            LOGGER.error("BCC: " + bccString);
+
+            String replyToString = "";
+            for (Recipient recipient : m.getRecipients(UlticalRecipientType.REPLY_TO)) {
+                replyToString += (this.getEncodedNameAddress(recipient));
+            }
+            LOGGER.error("ReplyTo: " + replyToString);
+
+            LOGGER.error("Body: " + m.getRenderedMessage());
+            LOGGER.error(me.toString());
         }
     }
 
