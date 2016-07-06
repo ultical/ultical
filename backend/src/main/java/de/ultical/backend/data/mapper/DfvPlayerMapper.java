@@ -43,4 +43,5 @@ public interface DfvPlayerMapper extends BaseMapper<DfvPlayer> {
     @Results({
             @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get", fetchType = FetchType.EAGER) ) })
     DfvPlayer getByDfvNumber(int dfvNumber);
+    
 }
