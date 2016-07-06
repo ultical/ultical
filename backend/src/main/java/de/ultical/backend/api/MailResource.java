@@ -234,9 +234,10 @@ public class MailResource {
 
             message.addRecipients(UlticalRecipientType.BCC, recipients);
 
-            this.mailClient.sendMail(message);
+            if (!this.mailClient.sendMail(message)) {
+                throw new WebApplicationException("Error sending Mail", Status.INTERNAL_SERVER_ERROR);
+            }
         }
-
         return true;
     }
 
@@ -317,11 +318,12 @@ public class MailResource {
 
             message.addRecipients(UlticalRecipientType.BCC, recipients);
 
-            this.mailClient.sendMail(message);
+            if (!this.mailClient.sendMail(message)) {
+                throw new WebApplicationException("Error sending Mail", Status.INTERNAL_SERVER_ERROR);
+            }
         } catch (Exception e) {
             throw new WebApplicationException(500);
         }
-
         return true;
     }
 
@@ -360,12 +362,13 @@ public class MailResource {
 
             message.addRecipients(UlticalRecipientType.BCC, recipients);
 
-            this.mailClient.sendMail(message);
+            if (!this.mailClient.sendMail(message)) {
+                throw new WebApplicationException("Error sending Mail", Status.INTERNAL_SERVER_ERROR);
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage() + e.getStackTrace());
             throw new WebApplicationException(500);
         }
-
         return true;
     }
 }
