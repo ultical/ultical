@@ -141,29 +141,28 @@ public class MailClient {
 
             String toString = "";
             for (Recipient recipient : m.getRecipients(UlticalRecipientType.TO)) {
-                toString += (this.getEncodedNameAddress(recipient));
+                toString += (recipient.getName() + " <" + recipient.getEmail() + ">");
             }
             LOGGER.error("To: " + toString);
 
             String ccString = "";
             for (Recipient recipient : m.getRecipients(UlticalRecipientType.CC)) {
-                ccString += (this.getEncodedNameAddress(recipient));
+                ccString += (recipient.getName() + " <" + recipient.getEmail() + ">");
             }
             LOGGER.error("CC: " + ccString);
 
             String bccString = "";
             for (Recipient recipient : m.getRecipients(UlticalRecipientType.BCC)) {
-                bccString += (this.getEncodedNameAddress(recipient));
+                bccString += (recipient.getName() + " <" + recipient.getEmail() + ">");
             }
             LOGGER.error("BCC: " + bccString);
 
             String replyToString = "";
             for (Recipient recipient : m.getRecipients(UlticalRecipientType.REPLY_TO)) {
-                replyToString += (this.getEncodedNameAddress(recipient));
+                replyToString += (recipient.getName() + " <" + recipient.getEmail() + ">");
             }
             LOGGER.error("ReplyTo: " + replyToString);
 
-            LOGGER.error("Body: " + m.getRenderedMessage());
             LOGGER.error(me.toString());
         }
     }
