@@ -56,7 +56,7 @@ TRANSLATIONS['de'] = {
 			body: 'Nachrichtentext',
 			successTitle: 'Nachricht erfolgreich gesendet!',
 			successText: 'Du erhälst eine Kopie an die angegebene Antwortadresse.',
-			failure: 'Es ist ein unbekannter Fehler aufgetreten. Bitte versuche es später erneut.',
+			failure: 'Es ist ein unbekannter Fehler aufgetreten. Bitte kontrolliere noch einmal die angegebene Antwortadresse.',
 			authorDescriptionText: 'Diese Email wurde von {{ authorName }} über dfv-turniere.de versendet.',
 			subjectFrom: 'Nachricht von {{ senderName }}',
 			subjectTo: 'Nachricht für {{ receiverName }}',
