@@ -237,6 +237,7 @@ input, textarea {
 
 .editable-list-item {
 	float: left;
+	margin-bottom: 10px;
 	border-color: #B3B3B3;
 	border-width: 1px;
 	border-style: solid;
