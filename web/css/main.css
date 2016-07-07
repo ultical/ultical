@@ -141,6 +141,7 @@ button, input, optgroup, select, textarea {
 }
 
 .navbar-body > ul:hover,
+.navbar-body > ul:focus,
 /*.navbar-body ul:hover .navbar-text,*/
 .menu-aside-body ul:hover .navbar-text,
 .menu-aside-body ul:focus .navbar-text,
@@ -157,8 +158,10 @@ button, input, optgroup, select, textarea {
 	cursor: pointer;
 }
 
-.navbar-language:hover #navbar-language-icon, .navbar-language:hover #navbar-language-code
-	{
+.navbar-language:hover #navbar-language-icon,
+.navbar-language:focus #navbar-language-icon,
+.navbar-language:hover #navbar-language-code
+.navbar-language:focus #navbar-language-code {
 	color: #000000;
 }
 
@@ -259,7 +262,8 @@ input, textarea {
 	opacity: 0;
 }
 
-.editable-list:hover .editable-list-remove {
+.editable-list:hover .editable-list-remove,
+.editable-list:focus .editable-list-remove {
 	opacity: 1;
 }
 
@@ -275,7 +279,8 @@ input, textarea {
 	margin-top: 6px;
 }
 
-.panel-heading:hover .team-actions {
+.panel-heading:hover .team-actions,
+	.panel-heading:focus .team-actions {
 	opacity: 1;
 }
 
@@ -290,7 +295,8 @@ input, textarea {
 	margin-left: 7px;
 }
 
-.roster-list:hover .player-actions {
+.roster-list:hover .player-actions,
+	.roster-list:focus .player-actions {
 	opacity: 1;
 }
 
@@ -323,7 +329,8 @@ input, textarea {
 .btn-primary.btn-ultical, .label-primary.label-ultical {
 	background-color: #20408E;
 }
-.btn-primary.btn-ultical:hover {
+.btn-primary.btn-ultical:hover,
+	.btn-primary.btn-ultical:focus {
 	background-color: #286090;
 }
 
@@ -412,7 +419,8 @@ select:not([multiple]) {
     margin-top: 10px;
 }
 
-.event-list-row:hover {
+.event-list-row:hover,
+	.event-list-row:focus {
   background-color: #C2DAF3;
 	cursor: pointer;
 }
