@@ -275,6 +275,8 @@ TRANSLATIONS['de'] = {
 				doneEditStandings: 'Ergebnisse speichern',
 				standingsRank: 'Platzierung',
 				standingsSpirit: 'Spirit (Fremd/Eigen)',
+				notQualified: 'Nicht qualifiziert',
+				notQualifiedTooptip: 'Das Team hat sich auf diesem Qualifikationsturnier nicht für ein weiteres Turnier qualifiziert (Roster wird freigegeben)',
 			},
 		},
 

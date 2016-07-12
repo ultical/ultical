@@ -349,7 +349,8 @@
 																<span>{{ 'event.teamList.standingsSpirit' | translate }}</span>
 																<input type="text" ng-model="regTeam.spiritScore" />/
 																<input type="text" ng-model="regTeam.ownSpiritScore" />
-
+																<span ng-if="format.x.own" data-title="{{ 'event.teamList.notQualifiedTooptip' | translate }}" bs-tooltip>{{ 'event.teamList.notQualified' | translate }}</span>
+																<input ng-if="format.x.own" data-title="{{ 'event.teamList.notQualifiedTooptip' | translate }}" bs-tooltip type="checkbox" ng-model="regTeam.notQualified" />
 															</bas>
 
 														</h3>
