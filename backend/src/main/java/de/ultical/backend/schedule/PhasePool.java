@@ -198,8 +198,42 @@ public class PhasePool extends Phase {
         case PhaseOptions.POOL_TIE_BREAKER_SCORED_POINTS_POOL:
             return this.tieBreakHelper(tiedTeams, PoolStatsComparator.SORT_BY_SCORED_POINTS, true, tieBreakerLevel);
         case PhaseOptions.POOL_TIE_BREAKER_BY_LOT:
-            // TODO: do the drawing of a random winner
-            break;
+            // do the drawing of a random winner
+            // to receive a reproducible but not obvious value we count all
+            // points scored in this pool - if it's an even number, team 1 wins,
+            // if not team 2 wins
+            if (tiedTeams.size() >= 10) {
+                return tiedTeams;
+            }
+            int pointsScored = 0;
+            for (Game game : this.getGames()) {
+                pointsScored += game.getFinalScore1() + game.getFinalScore2();
+            }
+            String hashBase = "abcdefghijKlmnop" + this.getName() + pointsScored;
+            hashBase += hashBase + hashBase + hashBase;
+            int hash = hashBase.hashCode();
+            String hashString = String.valueOf(hash);
+
+            // starting in the end of the string we look for occurences of
+            // figures that match the indices of the tiedTeams list, this is our
+            // order
+            List<TeamRepresentation> randomOrder = new ArrayList<TeamRepresentation>();
+            Set<Integer> indicesUsed = new HashSet<Integer>();
+
+            for (int i = hashString.length() - 1; i >= 0; i--) {
+                int randomIndex = Integer.valueOf(hashString.indexOf(i));
+                if (randomIndex <= tiedTeams.size() - 1 && !indicesUsed.contains(randomIndex)) {
+                    randomOrder.add(tiedTeams.get(randomIndex));
+                }
+            }
+            if (randomOrder.size() != tiedTeams.size()) {
+                for (int i = 0; i < tiedTeams.size(); i++) {
+                    if (!indicesUsed.contains(i)) {
+                        randomOrder.add(tiedTeams.get(i));
+                    }
+                }
+            }
+            return randomOrder;
         }
 
         return rankedTeams;
