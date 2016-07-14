@@ -126,6 +126,7 @@ public class PhasePool extends Phase {
             int i = 1;
             for (Round round : this.getRounds()) {
                 round.setTimingIndex(this.getRounds().size() - i);
+                round.setTitle(this.getName() + " " + (this.getRounds().size() - i + 1));
                 i++;
             }
             Collections.reverse(this.getRounds());
@@ -209,10 +210,11 @@ public class PhasePool extends Phase {
             for (Game game : this.getGames()) {
                 pointsScored += game.getFinalScore1() + game.getFinalScore2();
             }
-            String hashBase = "abcdefghijKlmnop" + this.getName() + pointsScored;
-            hashBase += hashBase + hashBase + hashBase;
-            int hash = hashBase.hashCode();
-            String hashString = String.valueOf(hash);
+            String hashBase = "abcdefghijK" + this.getName() + pointsScored;
+            String hashString = "";
+            for (int i = 0; i < 20; i++) {
+                hashString += String.valueOf(Math.abs((i + hashBase + i).hashCode()));
+            }
 
             // starting in the end of the string we look for occurences of
             // figures that match the indices of the tiedTeams list, this is our
@@ -221,9 +223,10 @@ public class PhasePool extends Phase {
             Set<Integer> indicesUsed = new HashSet<Integer>();
 
             for (int i = hashString.length() - 1; i >= 0; i--) {
-                int randomIndex = Integer.valueOf(hashString.indexOf(i));
-                if (randomIndex <= tiedTeams.size() - 1 && !indicesUsed.contains(randomIndex)) {
+                int randomIndex = Integer.valueOf(String.valueOf(hashString.charAt(i)));
+                if (randomIndex < tiedTeams.size() && !indicesUsed.contains(randomIndex)) {
                     randomOrder.add(tiedTeams.get(randomIndex));
+                    indicesUsed.add(randomIndex);
                 }
             }
             if (randomOrder.size() != tiedTeams.size()) {

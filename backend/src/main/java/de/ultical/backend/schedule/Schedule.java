@@ -38,7 +38,7 @@ public class Schedule {
     }
 
     public List<Round> getRounds() {
-        this.finalizeScheduleCreation();
+        // this.finalizeScheduleCreation();
         List<Round> rounds = new ArrayList<Round>();
 
         for (Phase phase : this.phases) {
@@ -49,7 +49,7 @@ public class Schedule {
         Collections.sort(rounds, new Comparator<Round>() {
             @Override
             public int compare(Round round1, Round round2) {
-                return Integer.compare(round1.getTimingIndex(), round2.getTimingIndex());
+                return Integer.compare(round1.getPhaseTimingIndex(), round2.getPhaseTimingIndex());
             }
         });
         return rounds;

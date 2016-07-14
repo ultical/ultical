@@ -18,7 +18,7 @@ public class Round {
         this.games = new ArrayList<Game>();
     }
 
-    public int getTimingIndex() {
+    public int getPhaseTimingIndex() {
         return this.phase.getTimingIndex() * 10000 + this.timingIndex;
     }
 

@@ -16,7 +16,6 @@ import de.ultical.backend.model.Team;
 
 public class PhaseBracketTest {
 
-    private static TeamRepresentation[] teamReps;
     private static final String PHASE_NAME = "Test Phase";
     private static final String TEAM_NAME_PREFIX = "Test Team ";
 
@@ -32,7 +31,7 @@ public class PhaseBracketTest {
         int numTeams = 7;
 
         Map<Integer, TeamRepresentation> inputTeamMapping = new HashMap<Integer, TeamRepresentation>();
-        teamReps = new TeamRepresentation[numTeams];
+        TeamRepresentation[] teamReps = new TeamRepresentation[numTeams];
         for (int i = 0; i < numTeams; i++) {
             Team team = new Team();
             team.setName(TEAM_NAME_PREFIX + (i + 1));
