@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import lombok.Data;
 import lombok.ToString;
@@ -74,6 +75,9 @@ public abstract class Phase {
         for (PhaseAdapter adapter : this.incomingAdapters) {
             this.inputMapping.putAll(adapter.getNextTeamMapping());
         }
+        for (Entry<Integer, TeamRepresentation> entry : this.inputMapping.entrySet()) {
+            entry.getValue().setSeed(entry.getKey());
+        }
     }
 
     /**
@@ -105,6 +109,7 @@ public abstract class Phase {
     private void createPositionTitles() {
         for (int i = 1; i <= this.numTeams; i++) {
             this.outputMapping.put(i, new TeamRepresentation(i + ". " + this.name));
+            this.outputMapping.get(i).setSeed(i);
         }
     }
 

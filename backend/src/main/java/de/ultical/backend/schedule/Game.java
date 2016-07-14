@@ -35,7 +35,15 @@ public class Game {
     }
 
     public int getWinningTendency() {
-        return this.finalScore1 > this.finalScore2 ? -1 : (this.finalScore1 == this.finalScore2 ? 0 : 1);
+        if (this.hasBye() || this.hasNoShow()) {
+            if (this.getTeam1().isBye() || this.getTeam1().isNoShow()) {
+                return 1;
+            } else {
+                return -1;
+            }
+        } else {
+            return this.finalScore1 > this.finalScore2 ? -1 : (this.finalScore1 == this.finalScore2 ? 0 : 1);
+        }
     }
 
     public boolean isOver() {
@@ -43,17 +51,12 @@ public class Game {
     }
 
     public TeamRepresentation getWinner() {
-        if (this.hasBye() || this.hasNoShow()) {
-            if (this.getTeam1().isBye() || this.getTeam1().isNoShow()) {
-                return this.getTeam2();
-            } else {
-                return this.getTeam1();
-            }
-        } else {
-            if (this.getFinalScore1() == this.getFinalScore2()) {
-                return null;
-            }
-            return this.getFinalScore1() > this.getFinalScore2() ? this.getTeam1() : this.getTeam2();
-        }
+        int wt = this.getWinningTendency();
+        return wt < 0 ? this.getTeam1() : wt > 0 ? this.getTeam2() : null;
+    }
+
+    public TeamRepresentation getLooser() {
+        int wt = this.getWinningTendency();
+        return wt < 0 ? this.getTeam2() : wt > 0 ? this.getTeam1() : null;
     }
 }

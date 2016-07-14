@@ -28,6 +28,7 @@ public class PhaseSeeding extends Phase {
         Map<Integer, TeamRepresentation> seeding = new HashMap<Integer, TeamRepresentation>();
         for (Entry<Integer, Team> entry : teamSeeding.entrySet()) {
             seeding.put(entry.getKey(), new TeamRepresentation(entry.getValue()));
+            seeding.get(entry.getKey()).setSeed(entry.getKey());
         }
         this.setOutputMapping(seeding);
         this.checkCompleteness();

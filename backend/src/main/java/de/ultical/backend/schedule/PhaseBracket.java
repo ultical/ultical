@@ -35,6 +35,7 @@ public class PhaseBracket extends Phase {
         // if there are less teams than 2^x fill the list up with byes
         while (Math.ceil(Math.log(teamList.size()) / Math.log(2)) > (Math.log(teamList.size()) / Math.log(2))) {
             teamList.put(teamList.size() + 1, new TeamRepresentation(true));
+            teamList.get(teamList.size()).setSeed(teamList.size());
         }
 
         for (int roundNumber = 0; roundNumber < this.getNumRounds(); roundNumber++) {
@@ -129,7 +130,93 @@ public class PhaseBracket extends Phase {
 
     @Override
     protected Map<Integer, TeamRepresentation> updateStandings() {
-        // TODO Auto-generated method stub
+
+        // ask in the previous phases for (current) standings
+        this.createTeamInputMapping();
+
+        boolean allGamesPlayed = true;
+
+        for (Game game : this.getGames()) {
+            if (!game.isOver()) {
+                allGamesPlayed = false;
+            }
+        }
+
+        Map<Integer, TeamRepresentation> standingsMap = new HashMap<Integer, TeamRepresentation>();
+
+        // go through all games and check for teams not yet filled in (because
+        // previous round has not been ready back then)
+        for (int roundNumber = 0; roundNumber < this.getNumRounds(); roundNumber++) {
+
+            for (Game game : this.getRounds().get(roundNumber).getGames()) {
+
+                if (roundNumber == 0) {
+                    // first round - take from inputMapping / seeding
+                    if (!game.getTeam1().isBye()) {
+                        game.getTeam1().setTeam(this.getInputMapping().get(game.getTeam1().getSeed()).getTeam());
+                    }
+                    if (!game.getTeam2().isBye()) {
+                        game.getTeam2().setTeam(this.getInputMapping().get(game.getTeam2().getSeed()).getTeam());
+                    }
+                } else {
+                    // not first round - take from previous games
+                    if (game.getTeam1().getTeam() == null) {
+                        String[] prevGame1Parts = game.getTeam1().getTitle().split(" ");
+                        Game prevGame1 = this.findGame(roundNumber - 1, prevGame1Parts[1]);
+                        if (prevGame1.isOver() && prevGame1.getWinningTendency() != 0) {
+                            if (prevGame1Parts[0].equals(PhaseBracket.WINNER)) {
+                                game.getTeam1().setTeam(prevGame1.getWinner().getTeam());
+                            } else {
+                                if (prevGame1.getLooser().isBye()) {
+                                    game.getTeam1().setBye(true);
+                                } else {
+                                    game.getTeam1().setTeam(prevGame1.getLooser().getTeam());
+                                }
+                            }
+                        }
+                    }
+                    if (game.getTeam2().getTeam() == null) {
+                        String[] prevGame2Parts = game.getTeam2().getTitle().split(" ");
+                        Game prevGame2 = this.findGame(roundNumber - 1, prevGame2Parts[1]);
+                        if (prevGame2.isOver() && prevGame2.getWinningTendency() != 0) {
+                            if (prevGame2Parts[0].equals(PhaseBracket.WINNER)) {
+                                game.getTeam2().setTeam(prevGame2.getWinner().getTeam());
+                            } else {
+                                if (prevGame2.getLooser().isBye()) {
+                                    game.getTeam2().setBye(true);
+                                } else {
+                                    game.getTeam2().setTeam(prevGame2.getLooser().getTeam());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (Game game : this.getRounds().get(this.getNumRounds() - 1).getGames()) {
+            // create ranking
+            String[] gameNameParts = game.getIdentifier().split("-");
+            standingsMap.put(Integer.parseInt(gameNameParts[1]), game.getWinner());
+            standingsMap.put(Integer.parseInt(gameNameParts[1]) + 1, game.getLooser());
+        }
+
+        // if all games are played, apply mapping to output mapping to provide
+        // for next phase
+        if (allGamesPlayed) {
+            this.setComplete(true);
+            this.setOutputMapping(standingsMap);
+        }
+
+        return standingsMap;
+    }
+
+    private Game findGame(int roundNumber, String identifier) {
+        for (Game game : this.getRounds().get(roundNumber).getGames()) {
+            if (game.getIdentifier().equalsIgnoreCase(identifier)) {
+                return game;
+            }
+        }
         return null;
     }
 

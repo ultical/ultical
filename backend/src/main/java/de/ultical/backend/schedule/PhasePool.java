@@ -84,6 +84,7 @@ public class PhasePool extends Phase {
         if (workingInputMapping.size() % 2 != 0) {
             seedingList.add(-1);
             workingInputMapping.put(-1, new TeamRepresentation(true));
+            workingInputMapping.get(-1).setSeed(workingInputMapping.size());
         }
 
         for (int i = 0; i < seedingList.size(); i++) {
@@ -138,14 +139,6 @@ public class PhasePool extends Phase {
 
     @Override
     protected Map<Integer, TeamRepresentation> updateStandings() {
-        // Rules to rank the teams after the games
-        // 1 - number of wins in this pool
-        // 2 - number of wins in games between the equally ranked teams
-        // 3 - point difference of games between the equally ranked teams
-        // 4 - point difference of all games of this pool
-        // 5 - scored points in games between the equally ranked teams
-        // 6 - scored points in all games of this pool
-        // 7 - by lot
 
         boolean allGamesPlayed = true;
 

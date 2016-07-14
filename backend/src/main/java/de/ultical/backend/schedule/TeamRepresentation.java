@@ -9,11 +9,13 @@ public class TeamRepresentation {
     private String title;
     private boolean bye = false;
     private boolean noShow = false;
+    private int seed;
 
     public TeamRepresentation(TeamRepresentation teamRep) {
         this.team = teamRep.getTeam();
         this.title = teamRep.getTitle();
         this.bye = teamRep.isBye();
+        this.seed = 0;
     }
 
     public TeamRepresentation(Team team) {
