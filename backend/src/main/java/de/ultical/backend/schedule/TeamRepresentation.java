@@ -32,7 +32,13 @@ public class TeamRepresentation {
         if (this.team != null) {
             return this.team.getName();
         } else {
-            return this.title != null ? this.title : "";
+            if (this.isBye()) {
+                return "* bye *";
+            } else if (this.isNoShow()) {
+                return "* no show *";
+            } else {
+                return this.title != null ? this.title : "";
+            }
         }
     }
 

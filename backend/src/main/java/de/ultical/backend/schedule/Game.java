@@ -11,7 +11,7 @@ public class Game {
     private String identifier = "";
     private Phase round;
     private boolean over;
-
+    // private SpiritSheet spirit
     private int timingIndex = 0;
 
     public boolean didStart() {
@@ -20,8 +20,8 @@ public class Game {
 
     @Override
     public String toString() {
-        String output = this.team1.getName() + " - " + this.finalScore1 + " : " + this.finalScore2 + " - "
-                + this.team2.getName();
+        String output = this.getIdentifier() + " " + this.team1.getName() + " - " + this.finalScore1 + " : "
+                + this.finalScore2 + " - " + this.team2.getName();
 
         return output;
     }
@@ -40,5 +40,20 @@ public class Game {
 
     public boolean isOver() {
         return this.over || this.hasBye();
+    }
+
+    public TeamRepresentation getWinner() {
+        if (this.hasBye() || this.hasNoShow()) {
+            if (this.getTeam1().isBye() || this.getTeam1().isNoShow()) {
+                return this.getTeam2();
+            } else {
+                return this.getTeam1();
+            }
+        } else {
+            if (this.getFinalScore1() == this.getFinalScore2()) {
+                return null;
+            }
+            return this.getFinalScore1() > this.getFinalScore2() ? this.getTeam1() : this.getTeam2();
+        }
     }
 }

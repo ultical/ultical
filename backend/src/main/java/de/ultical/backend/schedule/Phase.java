@@ -5,34 +5,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.ToString;
 
 @ToString
+@Data
 public abstract class Phase {
 
     protected int numTeams;
+    private boolean complete = false;
 
-    @Getter
-    protected boolean complete = false;
-
-    protected int timingIndex = -1;
-
-    @Setter
-    protected PhaseOptions options;
-
-    @Getter
+    private int timingIndex = -1;
+    private PhaseOptions options;
     private String name;
+    private List<Round> rounds;
 
-    @Getter
-    protected List<Round> rounds;
+    private List<PhaseAdapter> incomingAdapters;
+    private List<PhaseAdapter> outgoingAdapters;
 
-    protected List<PhaseAdapter> incomingAdapters;
-    protected List<PhaseAdapter> outgoingAdapters;
-
-    protected Map<Integer, TeamRepresentation> inputMapping;
-    protected Map<Integer, TeamRepresentation> outputMapping;
+    private Map<Integer, TeamRepresentation> inputMapping;
+    private Map<Integer, TeamRepresentation> outputMapping;
 
     public Phase(String name, int numTeams) {
         this.numTeams = numTeams;
@@ -42,6 +34,7 @@ public abstract class Phase {
         this.inputMapping = new HashMap<Integer, TeamRepresentation>();
         this.outputMapping = new HashMap<Integer, TeamRepresentation>();
         this.name = name;
+        this.rounds = new ArrayList<Round>();
 
         this.createPositionTitles();
     }

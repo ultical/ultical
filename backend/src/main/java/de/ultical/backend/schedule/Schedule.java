@@ -100,7 +100,7 @@ public class Schedule {
      * @throws Exception
      */
     public void finalizeScheduleCreation() {
-        if (this.seedingPhase.timingIndex < 0) {
+        if (this.seedingPhase.getTimingIndex() < 0) {
             this.doPhaseTiming(this.seedingPhase);
         }
 
@@ -110,14 +110,14 @@ public class Schedule {
     }
 
     private void doPhaseTiming(Phase phase) {
-        if (phase.timingIndex < 0) {
-            phase.timingIndex = 0;
+        if (phase.getTimingIndex() < 0) {
+            phase.setTimingIndex(0);
         }
 
-        for (PhaseAdapter outgoingAdapter : phase.outgoingAdapters) {
+        for (PhaseAdapter outgoingAdapter : phase.getOutgoingAdapters()) {
             Phase nextPhase = outgoingAdapter.getNextPhase();
-            if (nextPhase.timingIndex < phase.timingIndex) {
-                nextPhase.timingIndex = phase.timingIndex + 1;
+            if (nextPhase.getTimingIndex() < phase.getTimingIndex()) {
+                nextPhase.setTimingIndex(phase.getTimingIndex() + 1);
             }
             this.doPhaseTiming(nextPhase);
         }

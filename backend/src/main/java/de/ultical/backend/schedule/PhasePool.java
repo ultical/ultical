@@ -62,12 +62,11 @@ public class PhasePool extends Phase {
 
     public PhasePool(String name, int numTeams) {
         super(name, numTeams);
-        this.tieBreakOrder = this.options.getTieBreakOrder();
+        this.tieBreakOrder = this.getOptions().getTieBreakOrder();
     }
 
     @Override
     public void finalizeCreation() {
-        this.rounds = new ArrayList<Round>();
 
         // ask in the previous phases for (current) standings
         this.createTeamInputMapping();
@@ -79,7 +78,7 @@ public class PhasePool extends Phase {
         }
 
         Map<Integer, TeamRepresentation> workingInputMapping = new HashMap<Integer, TeamRepresentation>(
-                this.inputMapping);
+                this.getInputMapping());
 
         // if odd number of teams add a dummy
         if (workingInputMapping.size() % 2 != 0) {
@@ -90,46 +89,45 @@ public class PhasePool extends Phase {
         for (int i = 0; i < seedingList.size(); i++) {
 
             Round round = new Round(this);
-            round.phaseIdx = i;
-            round.games = new ArrayList<Game>();
+            round.setTimingIndex(i);
 
-            int teamIdx = round.phaseIdx % seedingList.size();
+            int teamIdx = round.getTimingIndex() % seedingList.size();
 
             Game game;
 
             game = new Game();
             game.setTeam1(workingInputMapping.get(seedingList.get(teamIdx)));
             game.setTeam2(workingInputMapping.get(1));
-            if ((!game.hasBye() || this.options.isTrue(PhaseOptions.POOL_SHOW_GAMES_WITH_BYE))
-                    && (!game.hasNoShow() || this.options.isTrue(PhaseOptions.POOL_SHOW_GAMES_WITH_NO_SHOW))) {
-                round.games.add(game);
+            if ((!game.hasBye() || this.getOptions().isTrue(PhaseOptions.POOL_SHOW_GAMES_WITH_BYE))
+                    && (!game.hasNoShow() || this.getOptions().isTrue(PhaseOptions.POOL_SHOW_GAMES_WITH_NO_SHOW))) {
+                round.addGame(game);
             }
 
             for (int idx = 1; idx < (seedingList.size() + 1) / 2; idx++) {
-                int idxTeam1 = (round.phaseIdx + idx) % seedingList.size();
-                int idxTeam2 = (round.phaseIdx + seedingList.size() - idx) % seedingList.size();
+                int idxTeam1 = (round.getTimingIndex() + idx) % seedingList.size();
+                int idxTeam2 = (round.getTimingIndex() + seedingList.size() - idx) % seedingList.size();
 
                 game = new Game();
                 game.setTeam1(workingInputMapping.get(seedingList.get(idxTeam1)));
                 game.setTeam2(workingInputMapping.get(seedingList.get(idxTeam2)));
-                if ((!game.hasBye() || this.options.isTrue(PhaseOptions.POOL_SHOW_GAMES_WITH_BYE))
-                        && (!game.hasNoShow() || this.options.isTrue(PhaseOptions.POOL_SHOW_GAMES_WITH_NO_SHOW))) {
-                    round.games.add(game);
+                if ((!game.hasBye() || this.getOptions().isTrue(PhaseOptions.POOL_SHOW_GAMES_WITH_BYE))
+                        && (!game.hasNoShow() || this.getOptions().isTrue(PhaseOptions.POOL_SHOW_GAMES_WITH_NO_SHOW))) {
+                    round.addGame(game);
                 }
             }
 
-            this.rounds.add(round);
+            this.getRounds().add(round);
         }
 
         // the highest seeds should play each other last if not specified
         // otherwise in the options
-        if (!this.options.isTrue(PhaseOptions.POOL_HIGHEST_SEEDS_PLAY_FIRST)) {
+        if (!this.getOptions().isTrue(PhaseOptions.POOL_HIGHEST_SEEDS_PLAY_FIRST)) {
             int i = 1;
-            for (Round round : this.rounds) {
-                round.phaseIdx = this.rounds.size() - i;
+            for (Round round : this.getRounds()) {
+                round.setTimingIndex(this.getRounds().size() - i);
                 i++;
             }
-            Collections.reverse(this.rounds);
+            Collections.reverse(this.getRounds());
         }
     }
 
@@ -158,7 +156,7 @@ public class PhasePool extends Phase {
         }
 
         List<TeamRepresentation> standingsList = this
-                .breakTie(new ArrayList<TeamRepresentation>(this.inputMapping.values()));
+                .breakTie(new ArrayList<TeamRepresentation>(this.getInputMapping().values()));
 
         Map<Integer, TeamRepresentation> standingsMap = new HashMap<Integer, TeamRepresentation>();
         int rank = 0;
@@ -170,8 +168,8 @@ public class PhasePool extends Phase {
         // if all games are played, apply mapping to output mapping to provide
         // for next phase
         if (allGamesPlayed) {
-            this.complete = true;
-            this.outputMapping = standingsMap;
+            this.setComplete(true);
+            this.setOutputMapping(standingsMap);
         }
 
         return standingsMap;

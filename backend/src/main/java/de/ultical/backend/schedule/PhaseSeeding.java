@@ -29,17 +29,17 @@ public class PhaseSeeding extends Phase {
         for (Entry<Integer, Team> entry : teamSeeding.entrySet()) {
             seeding.put(entry.getKey(), new TeamRepresentation(entry.getValue()));
         }
-        this.outputMapping = seeding;
+        this.setOutputMapping(seeding);
         this.checkCompleteness();
     }
 
     protected void setSeed(Integer seed, TeamRepresentation teamRep) {
-        this.outputMapping.put(seed, teamRep);
+        this.getOutputMapping().put(seed, teamRep);
         this.checkCompleteness();
     }
 
     private void checkCompleteness() {
-        this.complete = this.outputMapping.size() == this.numTeams;
+        this.setComplete(this.getOutputMapping().size() == this.getNumTeams());
     }
 
     @Override
@@ -48,6 +48,6 @@ public class PhaseSeeding extends Phase {
 
     @Override
     protected Map<Integer, TeamRepresentation> updateStandings() {
-        return this.outputMapping;
+        return this.getOutputMapping();
     }
 }

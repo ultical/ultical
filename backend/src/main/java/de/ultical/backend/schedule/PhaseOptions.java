@@ -24,6 +24,9 @@ public class PhaseOptions {
     public static final String POOL_TIE_BREAKER_SCORED_POINTS_POOL = "tie_breaker_scored_points_pool"; // 5
     public static final String POOL_TIE_BREAKER_BY_LOT = "tie_breaker_by_lot"; // 6
 
+    // BRACKET PHASE OPTIONS
+    public static final String PLAY_LOOSER_BRACKET = "play_looser_bracket"; // true
+
     Map<String, String> entries;
 
     public PhaseOptions() {

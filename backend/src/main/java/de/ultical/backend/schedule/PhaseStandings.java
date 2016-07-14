@@ -25,11 +25,11 @@ public class PhaseStandings extends Phase {
     }
 
     public Map<Integer, Team> getStandings() {
-        this.createTeamInputMapping();
+        this.updateStandings();
 
         Map<Integer, Team> standings = new HashMap<Integer, Team>();
 
-        for (Entry<Integer, TeamRepresentation> entry : this.inputMapping.entrySet()) {
+        for (Entry<Integer, TeamRepresentation> entry : this.getInputMapping().entrySet()) {
             standings.put(entry.getKey(), entry.getValue().getTeam());
         }
 
@@ -38,12 +38,12 @@ public class PhaseStandings extends Phase {
 
     @Override
     public void finalizeCreation() {
-        // TODO Auto-generated method stub
+        // nothing to do here, there are no games to be played
     }
 
     @Override
     protected Map<Integer, TeamRepresentation> updateStandings() {
-        // TODO Auto-generated method stub
+        this.createTeamInputMapping();
         return null;
     }
 

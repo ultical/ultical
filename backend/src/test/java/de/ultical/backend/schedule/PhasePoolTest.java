@@ -80,7 +80,7 @@ public class PhasePoolTest {
             assertEquals(game.getTeam2(), teams[0]);
         }
 
-        assertEquals(this.phasePool.outputMapping.get(1).getName(), "1. " + PHASE_NAME);
+        assertEquals(this.phasePool.getOutputMapping().get(1).getName(), "1. " + PHASE_NAME);
 
         // TODO: set options POOL_SHOW_GAMES_WITH_BYE and check for games with
         // bye
@@ -105,7 +105,7 @@ public class PhasePoolTest {
         // check that no results are yet published in the outputMapping
         this.phasePool.updateStandings();
         assertEquals(this.phasePool.isComplete(), false);
-        assertEquals(this.phasePool.outputMapping.get(1).getTitle(), "1. " + PHASE_NAME);
+        assertEquals(this.phasePool.getOutputMapping().get(1).getTitle(), "1. " + PHASE_NAME);
 
         // set missing game results
         // game 2 - Seed 2 vs Seed 1
@@ -117,8 +117,8 @@ public class PhasePoolTest {
         this.phasePool.updateStandings();
         assertEquals(this.phasePool.isComplete(), true);
 
-        assertEquals(this.phasePool.outputMapping.get(0).getName(), TEAM_NAME_PREFIX + "2");
-        assertEquals(this.phasePool.outputMapping.get(1).getName(), TEAM_NAME_PREFIX + "1");
-        assertEquals(this.phasePool.outputMapping.get(2).getName(), TEAM_NAME_PREFIX + "3");
+        assertEquals(this.phasePool.getOutputMapping().get(0).getName(), TEAM_NAME_PREFIX + "2");
+        assertEquals(this.phasePool.getOutputMapping().get(1).getName(), TEAM_NAME_PREFIX + "1");
+        assertEquals(this.phasePool.getOutputMapping().get(2).getName(), TEAM_NAME_PREFIX + "3");
     }
 }
