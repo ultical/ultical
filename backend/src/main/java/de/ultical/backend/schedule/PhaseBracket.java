@@ -88,9 +88,9 @@ public class PhaseBracket extends Phase {
                 game.setTeam1(new TeamRepresentation(WINNER + " " + game1.getIdentifier()));
                 game.setTeam2(new TeamRepresentation(WINNER + " " + game2.getIdentifier()));
                 if (game1.hasBye() || game1.hasNoShow()) {
-                    game.setTeam1(game1.getWinner());
+                    game.getTeam1().setTeam(game1.getWinner().getTeam());
                 } else if (game2.hasBye() || game2.hasNoShow()) {
-                    game.setTeam2(game2.getWinner());
+                    game.getTeam2().setTeam(game2.getWinner().getTeam());
                 }
             } else {
                 // Looser part of bracket
@@ -130,7 +130,6 @@ public class PhaseBracket extends Phase {
 
     @Override
     protected Map<Integer, TeamRepresentation> updateStandings() {
-
         // ask in the previous phases for (current) standings
         this.createTeamInputMapping();
 

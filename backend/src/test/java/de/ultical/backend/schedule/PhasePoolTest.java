@@ -117,8 +117,8 @@ public class PhasePoolTest {
         this.phasePool.updateStandings();
         assertEquals(this.phasePool.isComplete(), true);
 
-        assertEquals(this.phasePool.getOutputMapping().get(0).getName(), TEAM_NAME_PREFIX + "2");
-        assertEquals(this.phasePool.getOutputMapping().get(1).getName(), TEAM_NAME_PREFIX + "1");
-        assertEquals(this.phasePool.getOutputMapping().get(2).getName(), TEAM_NAME_PREFIX + "3");
+        assertEquals(this.phasePool.getOutputMapping().get(1).getName(), TEAM_NAME_PREFIX + "2");
+        assertEquals(this.phasePool.getOutputMapping().get(2).getName(), TEAM_NAME_PREFIX + "1");
+        assertEquals(this.phasePool.getOutputMapping().get(3).getName(), TEAM_NAME_PREFIX + "3");
     }
 }

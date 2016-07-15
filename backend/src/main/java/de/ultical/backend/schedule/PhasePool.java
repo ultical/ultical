@@ -141,6 +141,8 @@ public class PhasePool extends Phase {
     @Override
     protected Map<Integer, TeamRepresentation> updateStandings() {
 
+        this.createTeamInputMapping();
+
         boolean allGamesPlayed = true;
 
         for (Game game : this.getGames()) {
@@ -153,7 +155,7 @@ public class PhasePool extends Phase {
                 .breakTie(new ArrayList<TeamRepresentation>(this.getInputMapping().values()));
 
         Map<Integer, TeamRepresentation> standingsMap = new HashMap<Integer, TeamRepresentation>();
-        int rank = 0;
+        int rank = 1;
         for (TeamRepresentation teamRep : standingsList) {
             standingsMap.put(rank, teamRep);
             rank++;

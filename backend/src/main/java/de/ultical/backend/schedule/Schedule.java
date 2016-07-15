@@ -7,30 +7,32 @@ import java.util.List;
 import java.util.Map;
 
 import de.ultical.backend.model.Team;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+@Data
 public class Schedule {
 
-    @Getter
     private int numTeams;
-
-    @Getter
-    @Setter
     private List<Phase> phases;
-
-    @Getter
     private PhaseSeeding seedingPhase;
+    private PhaseStandings standingPhase;
 
     public Schedule(int numTeams) {
         this.phases = new ArrayList<Phase>();
         this.numTeams = numTeams;
+        this.standingPhase = null;
         this.createSeedingPhase();
+        this.createStandingPhase();
     }
 
     private void createSeedingPhase() {
         this.seedingPhase = new PhaseSeeding("Seeding", this.numTeams);
         this.addPhase(this.seedingPhase);
+    }
+
+    private void createStandingPhase() {
+        this.standingPhase = new PhaseStandings("Standings", this.numTeams);
+        this.addPhase(this.standingPhase);
     }
 
     public void addPhase(Phase phase) {
@@ -64,21 +66,11 @@ public class Schedule {
     }
 
     public Map<Integer, Team> getStandings() {
-        for (Phase phase : this.phases) {
-            if (phase instanceof PhaseStandings) {
-                return ((PhaseStandings) phase).getStandings();
-            }
-        }
-        return null;
+        return this.standingPhase.getStandings();
     }
 
     public boolean isComplete() {
-        for (Phase phase : this.phases) {
-            if (phase instanceof PhaseStandings) {
-                return phase.isComplete();
-            }
-        }
-        return false;
+        return this.standingPhase.isComplete();
     }
 
     public void setSeeding(Map<Integer, Team> teamSeeding) {
@@ -124,6 +116,6 @@ public class Schedule {
     }
 
     public void updateSchedule() {
-        // TODO: do this also
+        this.standingPhase.updateStandings();
     }
 }
