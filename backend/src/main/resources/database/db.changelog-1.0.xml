@@ -1067,5 +1067,8 @@
 		<addUniqueConstraint columnNames="path,event"
 			tableName="RESOURCE" constraintName="uk_resource_path_event" />
 	</changeSet>
-
+	<changeSet author="bas" id="bas-div-1">
+		<addUniqueConstraint columnNames="tournament_format, admin"
+			tableName="TOURNAMENT_FORMAT_ULTICAL_USERS" constraintName="uk_tournament_format_ultical_users" />
+	</changeSet>
 </databaseChangeLog>
