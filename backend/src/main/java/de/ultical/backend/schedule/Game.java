@@ -11,7 +11,7 @@ public class Game {
     private String identifier = "";
     private Phase round;
     private boolean over;
-    // private SpiritSheet spirit
+    private SpiritSheet spiritSheet;
     private int timingIndex = 0;
 
     public boolean didStart() {
