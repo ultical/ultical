@@ -30,6 +30,7 @@ import de.ultical.backend.model.User;
 public class DfvProfileLoader {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DfvProfileLoader.class);
+    private final static String DEV_EMAIL = "team@ultical.com";
     @Inject
     Client client;
 
@@ -38,7 +39,7 @@ public class DfvProfileLoader {
 
     @Inject
     DataStore dataStore;
-    
+
     @Inject
     MailClient mailClient;
 
@@ -82,38 +83,68 @@ public class DfvProfileLoader {
     private void validateRosterParticipation(DfvPlayer updatedPlayer) {
         if (!updatedPlayer.isEligible()) {
 
-        	List<Roster> rosters = dataStore.getRosterForPlayer(updatedPlayer);
-        	final LocalDateTime now = LocalDateTime.now();
-        	for (Roster roster : rosters) {
-        		List<LocalDate> blockingDate = dataStore.getRosterBlockingDates(roster.getId());
-        		if (blockingDate == null || blockingDate.isEmpty() || blockingDate.stream().allMatch(d -> d.isAfter(now.toLocalDate()))) {
-        			//we either have no blocking-date for the roster or the blocking-date is later in time, thus we can safely removve the player from the roster.
-        			dataStore.removePlayerFromRoster(updatedPlayer.getId(), roster.getId());
-        			
-        			StringBuilder sb = new StringBuilder();
-    				sb.append("Der Spieler ").append(updatedPlayer.getFirstName()).append(' ').append(updatedPlayer.getLastName()).append(" (Dfv-Nummer: ").append(updatedPlayer.getDfvNumber()).append(')');
-    				sb.append(" wurde aus dem Roster für die Saison ").append(roster.getSeason().getYear()).append(' ').append(roster.getSeason().getSurface()).append(' ').append(roster.getDivisionType()).append(' ');
-    				if (roster.getNameAddition() != null && !roster.getNameAddition().isEmpty()) {
-    					sb.append(roster.getNameAddition());
-    					sb.append(' ');
-    					
-    				}
-    				sb.append("entfernt, da er die Vorraussetzungen für eine Spielberechtigung im DFV nicht mehr erfüllt.");
-    				String firstParagraph = sb.toString();
-    				String explainParagraph = "Die Gründe dafür können sein:\n\tDer Spieler wurde von seinem Verein noch nicht für das nächste Kalenderjahr gemeldet\n\tDer Spieler hat seine Datenschutzerklärung zurück gezogen.";
-    				
-        			for (User admin : roster.getTeam().getAdmins()) {
-        				SystemMessage sm = new SystemMessage();
-        				sm.addParagraph(firstParagraph);
-        				sm.addParagraph(explainParagraph);
-        				sm.addRecipient(admin.getEmail(), admin.getDfvPlayer().getFirstName(), admin.getDfvPlayer().getFirstName() + " " + admin.getDfvPlayer().getLastName());
-        				sm.setSubject("Spieler aus Roster entfernt");
-        				mailClient.sendMail(sm);
-        			}
-        		}
-        		// if blocking-date lies in the past, we should not removve the player from roster but ensure that the player cannot be added to any future rosters. This is done by checking the eligible flag.
-        		// the rare-case the a player has to be remove from a roster while the season, for which the roster is used, is still in use could NOT be handled using our current data-model. However, I really doubt that this case will happen to us.
-        	}
+            List<Roster> rosters = this.dataStore.getRosterForPlayer(updatedPlayer);
+            final LocalDateTime now = LocalDateTime.now();
+            for (Roster roster : rosters) {
+                List<LocalDate> blockingDate = this.dataStore.getRosterBlockingDates(roster.getId());
+                if (blockingDate == null || blockingDate.isEmpty()
+                        || blockingDate.stream().allMatch(d -> d.isAfter(now.toLocalDate()))) {
+                    // we either have no blocking-date for the roster or the
+                    // blocking-date is later in time, thus we can safely
+                    // removve the player from the roster.
+                    this.dataStore.removePlayerFromRoster(updatedPlayer.getId(), roster.getId());
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("Der Spieler ").append(updatedPlayer.getFirstName()).append(' ')
+                            .append(updatedPlayer.getLastName()).append(" (Dfv-Nummer: ")
+                            .append(updatedPlayer.getDfvNumber()).append(')');
+                    sb.append(" wurde aus dem Roster für die Saison ").append(roster.getSeason().getYear()).append(' ')
+                            .append(roster.getSeason().getSurface()).append(' ').append(roster.getDivisionType())
+                            .append(' ');
+                    if (roster.getNameAddition() != null && !roster.getNameAddition().isEmpty()) {
+                        sb.append(roster.getNameAddition());
+                        sb.append(' ');
+
+                    }
+                    sb.append(
+                            "entfernt, da er die Vorraussetzungen für eine Spielberechtigung im DFV nicht mehr erfüllt.");
+                    String firstParagraph = sb.toString();
+                    String explainParagraph = "Die Gründe dafür können sein:\n\tDer Spieler wurde von seinem Verein noch nicht für das nächste Kalenderjahr gemeldet\n\tDer Spieler hat seine Datenschutzerklärung zurück gezogen.";
+
+                    for (User admin : roster.getTeam().getAdmins()) {
+                        SystemMessage sm = new SystemMessage();
+                        sm.addParagraph(firstParagraph);
+                        sm.addParagraph(explainParagraph);
+                        sm.addRecipient(admin.getEmail(), admin.getDfvPlayer().getFirstName(),
+                                admin.getDfvPlayer().getFirstName() + " " + admin.getDfvPlayer().getLastName());
+                        sm.setSubject("Spieler aus Roster entfernt");
+                        this.mailClient.sendMail(sm);
+                    }
+                } else {
+                    // if blocking-date lies in the past, we should not remove
+                    // the player from roster but ensure that the player cannot
+                    // be added to any future rosters. This is done by checking
+                    // the eligible flag.
+                    // the rare-case the a player has to be remove from a roster
+                    // while the season, for which the roster is used, is still
+                    // in use could NOT be handled using our current data-model.
+                    // However, I really doubt that this case will happen to us.
+                    SystemMessage sm = new SystemMessage();
+                    sm.addRecipient(DEV_EMAIL);
+                    sm.setSubject("Spieler zur laufenden Saison aus Roster entfernt!");
+                    sm.setGreetings("Hi Team");
+                    sm.setGoodbye("Viele Grüße");
+                    sm.setGoodbyeName("Euer Server");
+                    sm.addParagraph(String.format(
+                            "Der Spieler %s %s Dfv-Nummer: %d wurde es dem Roster (id=%d) von %s (id=%d) für die Saison %d %s %s %s entfernt, da er nicht länger spielberechtigt ist.",
+                            updatedPlayer.getFirstName(), updatedPlayer.getLastName(), updatedPlayer.getDfvNumber(),
+                            roster.getId(), roster.getTeam().getName(), roster.getTeam().getId(),
+                            roster.getSeason().getYear(), roster.getDivisionAge(), roster.getDivisionType(),
+                            roster.getSeason().getSurface()));
+                    this.mailClient.sendMail(sm);
+
+                }
+            }
         }
     }
 
