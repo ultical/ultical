@@ -110,14 +110,14 @@ public interface RosterMapper extends BaseMapper<Roster> {
             "JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id", "JOIN ROSTER r ON tr.roster = r.id",
             "WHERE tr.status = 'CONFIRMED' AND tr.not_qualified = false AND r.id = #{rosterId}" })
     List<LocalDate> getBlockingDate(int rosterId);
-    
-    @Select({SELECT_STMT, " r LEFT JOIN ROSTER_PLAYERS rp ON r.id = rp.roster"," LEFT JOIN PLAYERS dp ON rp.player = dp.id"," WHERE dp.id = #{player.id}"})
+
+    @Select({ SELECT_STMT, " r LEFT JOIN ROSTER_PLAYERS rp ON r.id = rp.roster", " WHERE rp.player = #{id}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
-        @Result(column = "division_age", property = "division_age"),
-        @Result(column = "division_type", property = "division_type"),
-        @Result(column = "name_addition", property = "nameAddition"),
-        @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get") ),
-        @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
-        @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
+            @Result(column = "division_age", property = "division_age"),
+            @Result(column = "division_type", property = "division_type"),
+            @Result(column = "name_addition", property = "nameAddition"),
+            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get") ),
+            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
     List<Roster> getRostersForPlayer(DfvPlayer player);
 }
