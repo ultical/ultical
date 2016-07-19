@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.Team;
 import lombok.Data;
 
@@ -16,6 +17,9 @@ public class Schedule {
     private List<Phase> phases;
     private PhaseSeeding seedingPhase;
     private PhaseStandings standingPhase;
+
+    // TODO: implement qualifications based on results
+    private Map<Integer, DivisionRegistration> qualifications;
 
     public Schedule(int numTeams) {
         this.phases = new ArrayList<Phase>();
