@@ -115,7 +115,7 @@ public class SitemapResource {
                 String changefreq = "WEEKLY";
                 String lastmod = aWeekAgo.format(dtf);
 
-                String loc = slg.slugify(team.getName()) + "--7" + team.getId();
+                String loc = "teams/" + slg.slugify(team.getName()) + "--7" + team.getId();
                 this.appendUrlElements(urlset, doc, locales, loc, lastmod, priority, changefreq);
             }
 
