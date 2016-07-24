@@ -97,8 +97,8 @@ public class PhasePool extends Phase {
             Game game;
 
             game = new Game();
-            game.setTeam1(workingInputMapping.get(seedingList.get(teamIdx)));
-            game.setTeam2(workingInputMapping.get(1));
+            game.setHome(workingInputMapping.get(seedingList.get(teamIdx)));
+            game.setAway(workingInputMapping.get(1));
             if ((!game.hasBye() || this.getOptions().isTrue(PhaseOptions.POOL_SHOW_GAMES_WITH_BYE))
                     && (!game.hasNoShow() || this.getOptions().isTrue(PhaseOptions.POOL_SHOW_GAMES_WITH_NO_SHOW))) {
                 round.addGame(game);
@@ -109,8 +109,8 @@ public class PhasePool extends Phase {
                 int idxTeam2 = (round.getTimingIndex() + seedingList.size() - idx) % seedingList.size();
 
                 game = new Game();
-                game.setTeam1(workingInputMapping.get(seedingList.get(idxTeam1)));
-                game.setTeam2(workingInputMapping.get(seedingList.get(idxTeam2)));
+                game.setHome(workingInputMapping.get(seedingList.get(idxTeam1)));
+                game.setAway(workingInputMapping.get(seedingList.get(idxTeam2)));
                 if ((!game.hasBye() || this.getOptions().isTrue(PhaseOptions.POOL_SHOW_GAMES_WITH_BYE))
                         && (!game.hasNoShow() || this.getOptions().isTrue(PhaseOptions.POOL_SHOW_GAMES_WITH_NO_SHOW))) {
                     round.addGame(game);
@@ -210,7 +210,7 @@ public class PhasePool extends Phase {
             }
             int pointsScored = 0;
             for (Game game : this.getGames()) {
-                pointsScored += game.getFinalScore1() + game.getFinalScore2();
+                pointsScored += game.getFinalScoreHome() + game.getFinalScoreAway();
             }
             String hashBase = "abcdefghijK" + this.getName() + pointsScored;
             String hashString = "";
@@ -339,16 +339,16 @@ public class PhasePool extends Phase {
         }
 
         for (Game game : this.getGames()) {
-            if (game.getFinalScore1() < 0 || game.getFinalScore2() < 0) {
+            if (game.getFinalScoreHome() < 0 || game.getFinalScoreAway() < 0) {
                 continue;
             }
             PoolStats team1Stat = null, team2Stat = null;
             // get teams playing this game
             for (PoolStats poolStats : teamStats) {
-                if (game.getTeam1().equals(poolStats.getTeamRep())) {
+                if (game.getHome().equals(poolStats.getTeamRep())) {
                     team1Stat = poolStats;
                 }
-                if (game.getTeam2().equals(poolStats.getTeamRep())) {
+                if (game.getAway().equals(poolStats.getTeamRep())) {
                     team2Stat = poolStats;
                 }
             }
@@ -359,14 +359,14 @@ public class PhasePool extends Phase {
                 if (team1Stat != null) {
                     team1Stat.setGamesPlayed(team1Stat.getGamesPlayed() + 1);
                     team1Stat.setWinnerPoints(team1Stat.getWinnerPoints() + (game.getWinningTendency() * -1) + 1);
-                    team1Stat.setScoredPoints(team1Stat.getScoredPoints() + game.getFinalScore1());
-                    team1Stat.setReceivedPoints(team1Stat.getReceivedPoints() + game.getFinalScore2());
+                    team1Stat.setScoredPoints(team1Stat.getScoredPoints() + game.getFinalScoreHome());
+                    team1Stat.setReceivedPoints(team1Stat.getReceivedPoints() + game.getFinalScoreAway());
                 }
                 if (team2Stat != null) {
                     team2Stat.setGamesPlayed(team2Stat.getGamesPlayed() + 1);
                     team2Stat.setWinnerPoints(team2Stat.getWinnerPoints() + game.getWinningTendency() + 1);
-                    team2Stat.setScoredPoints(team2Stat.getScoredPoints() + game.getFinalScore2());
-                    team2Stat.setReceivedPoints(team2Stat.getReceivedPoints() + game.getFinalScore1());
+                    team2Stat.setScoredPoints(team2Stat.getScoredPoints() + game.getFinalScoreAway());
+                    team2Stat.setReceivedPoints(team2Stat.getReceivedPoints() + game.getFinalScoreHome());
                 }
             }
         }

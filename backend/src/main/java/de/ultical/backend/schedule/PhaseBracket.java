@@ -59,8 +59,8 @@ public class PhaseBracket extends Phase {
                  */
                 currentSeed = this.getOpponent(teamList.size() / 2, currentSeed);
             }
-            game.setTeam1(teamList.get(currentSeed));
-            game.setTeam2(teamList.get(this.getOpponent(teamList.size(), currentSeed)));
+            game.setHome(teamList.get(currentSeed));
+            game.setAway(teamList.get(this.getOpponent(teamList.size(), currentSeed)));
 
             this.getRounds().get(0).addGame(game);
         }
@@ -85,21 +85,21 @@ public class PhaseBracket extends Phase {
                 Game game2 = this.getRounds().get(roundNumber - 1).getGames()
                         .get((highestRank - 1) / 2 + (gameNumber * 2) + 1);
 
-                game.setTeam1(new TeamRepresentation(WINNER + " " + game1.getIdentifier()));
-                game.setTeam2(new TeamRepresentation(WINNER + " " + game2.getIdentifier()));
+                game.setHome(new TeamRepresentation(WINNER + " " + game1.getIdentifier()));
+                game.setAway(new TeamRepresentation(WINNER + " " + game2.getIdentifier()));
                 if (game1.hasBye() || game1.hasNoShow()) {
-                    game.getTeam1().setTeam(game1.getWinner().getTeam());
+                    game.getHome().setTeam(game1.getWinner().getTeam());
                 } else if (game2.hasBye() || game2.hasNoShow()) {
-                    game.getTeam2().setTeam(game2.getWinner().getTeam());
+                    game.getAway().setTeam(game2.getWinner().getTeam());
                 }
             } else {
                 // Looser part of bracket
                 game.setIdentifier(ROUND_TITLES[this.getNumRounds() - roundNumber - 1] + "-" + highestRank + "-"
                         + (1 + gameNumber));
 
-                game.setTeam1(new TeamRepresentation(LOOSER + " " + this.getRounds().get(roundNumber - 1).getGames()
+                game.setHome(new TeamRepresentation(LOOSER + " " + this.getRounds().get(roundNumber - 1).getGames()
                         .get(((highestRank - 1 - numberOfTeams) / 2) + gameNumber * 2).getIdentifier()));
-                game.setTeam2(new TeamRepresentation(LOOSER + " " + this.getRounds().get(roundNumber - 1).getGames()
+                game.setAway(new TeamRepresentation(LOOSER + " " + this.getRounds().get(roundNumber - 1).getGames()
                         .get(((highestRank - 1 - numberOfTeams) / 2) + gameNumber * 2 + 1).getIdentifier()));
             }
 
@@ -151,40 +151,40 @@ public class PhaseBracket extends Phase {
 
                 if (roundNumber == 0) {
                     // first round - take from inputMapping / seeding
-                    if (!game.getTeam1().isBye()) {
-                        game.getTeam1().setTeam(this.getInputMapping().get(game.getTeam1().getSeed()).getTeam());
+                    if (!game.getHome().isBye()) {
+                        game.getHome().setTeam(this.getInputMapping().get(game.getHome().getSeed()).getTeam());
                     }
-                    if (!game.getTeam2().isBye()) {
-                        game.getTeam2().setTeam(this.getInputMapping().get(game.getTeam2().getSeed()).getTeam());
+                    if (!game.getAway().isBye()) {
+                        game.getAway().setTeam(this.getInputMapping().get(game.getAway().getSeed()).getTeam());
                     }
                 } else {
                     // not first round - take from previous games
-                    if (game.getTeam1().getTeam() == null) {
-                        String[] prevGame1Parts = game.getTeam1().getTitle().split(" ");
+                    if (game.getHome().getTeam() == null) {
+                        String[] prevGame1Parts = game.getHome().getTitle().split(" ");
                         Game prevGame1 = this.findGame(roundNumber - 1, prevGame1Parts[1]);
                         if (prevGame1.isOver() && prevGame1.getWinningTendency() != 0) {
                             if (prevGame1Parts[0].equals(PhaseBracket.WINNER)) {
-                                game.getTeam1().setTeam(prevGame1.getWinner().getTeam());
+                                game.getHome().setTeam(prevGame1.getWinner().getTeam());
                             } else {
                                 if (prevGame1.getLooser().isBye()) {
-                                    game.getTeam1().setBye(true);
+                                    game.getHome().setBye(true);
                                 } else {
-                                    game.getTeam1().setTeam(prevGame1.getLooser().getTeam());
+                                    game.getHome().setTeam(prevGame1.getLooser().getTeam());
                                 }
                             }
                         }
                     }
-                    if (game.getTeam2().getTeam() == null) {
-                        String[] prevGame2Parts = game.getTeam2().getTitle().split(" ");
+                    if (game.getAway().getTeam() == null) {
+                        String[] prevGame2Parts = game.getAway().getTitle().split(" ");
                         Game prevGame2 = this.findGame(roundNumber - 1, prevGame2Parts[1]);
                         if (prevGame2.isOver() && prevGame2.getWinningTendency() != 0) {
                             if (prevGame2Parts[0].equals(PhaseBracket.WINNER)) {
-                                game.getTeam2().setTeam(prevGame2.getWinner().getTeam());
+                                game.getAway().setTeam(prevGame2.getWinner().getTeam());
                             } else {
                                 if (prevGame2.getLooser().isBye()) {
-                                    game.getTeam2().setBye(true);
+                                    game.getAway().setBye(true);
                                 } else {
-                                    game.getTeam2().setTeam(prevGame2.getLooser().getTeam());
+                                    game.getAway().setTeam(prevGame2.getLooser().getTeam());
                                 }
                             }
                         }

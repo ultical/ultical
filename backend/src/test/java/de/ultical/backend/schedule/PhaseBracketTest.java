@@ -59,9 +59,9 @@ public class PhaseBracketTest {
     public void testFinalizeCreation() {
         this.phaseBracket.finalizeCreation();
 
-        assertEquals(this.phaseBracket.getGames().get(0).getTeam1().getName(), TEAM_NAME_PREFIX + "1");
-        assertEquals(this.phaseBracket.getRounds().get(2).getGames().get(0).getTeam1().getName(), "Winner SF-1-1");
-        assertEquals(this.phaseBracket.getRounds().get(2).getGames().get(3).getTeam2().getName(), "Looser SF-5-2");
+        assertEquals(this.phaseBracket.getGames().get(0).getHome().getName(), TEAM_NAME_PREFIX + "1");
+        assertEquals(this.phaseBracket.getRounds().get(2).getGames().get(0).getHome().getName(), "Winner SF-1-1");
+        assertEquals(this.phaseBracket.getRounds().get(2).getGames().get(3).getAway().getName(), "Looser SF-5-2");
     }
 
     @Test
@@ -70,53 +70,53 @@ public class PhaseBracketTest {
 
         List<Game> games1 = this.phaseBracket.getRounds().get(0).getGames();
 
-        games1.get(1).setFinalScore1(14);
-        games1.get(1).setFinalScore2(15);
+        games1.get(1).setFinalScoreHome(14);
+        games1.get(1).setFinalScoreAway(15);
         games1.get(1).setOver(true);
 
-        games1.get(2).setFinalScore1(13);
-        games1.get(2).setFinalScore2(14);
+        games1.get(2).setFinalScoreHome(13);
+        games1.get(2).setFinalScoreAway(14);
         games1.get(2).setOver(true);
 
-        games1.get(3).setFinalScore1(15);
-        games1.get(3).setFinalScore2(12);
+        games1.get(3).setFinalScoreHome(15);
+        games1.get(3).setFinalScoreAway(12);
         games1.get(3).setOver(true);
 
         this.phaseBracket.updateStandings();
 
-        assertEquals(this.phaseBracket.getRounds().get(1).getGames().get(1).getTeam1().getName(), TEAM_NAME_PREFIX + 7);
-        assertEquals(this.phaseBracket.getRounds().get(1).getGames().get(1).getTeam2().getName(), TEAM_NAME_PREFIX + 3);
-        assertEquals(this.phaseBracket.getRounds().get(1).getGames().get(2).getTeam1().isBye(), true);
-        assertEquals(this.phaseBracket.getRounds().get(1).getGames().get(3).getTeam1().getName(), TEAM_NAME_PREFIX + 2);
+        assertEquals(this.phaseBracket.getRounds().get(1).getGames().get(1).getHome().getName(), TEAM_NAME_PREFIX + 7);
+        assertEquals(this.phaseBracket.getRounds().get(1).getGames().get(1).getAway().getName(), TEAM_NAME_PREFIX + 3);
+        assertEquals(this.phaseBracket.getRounds().get(1).getGames().get(2).getHome().isBye(), true);
+        assertEquals(this.phaseBracket.getRounds().get(1).getGames().get(3).getAway().getName(), TEAM_NAME_PREFIX + 2);
 
         List<Game> games2 = this.phaseBracket.getRounds().get(1).getGames();
 
-        games2.get(0).setFinalScore1(15);
-        games2.get(0).setFinalScore2(14);
+        games2.get(0).setFinalScoreHome(15);
+        games2.get(0).setFinalScoreAway(14);
         games2.get(0).setOver(true);
 
-        games2.get(1).setFinalScore1(1);
-        games2.get(1).setFinalScore2(15);
+        games2.get(1).setFinalScoreHome(1);
+        games2.get(1).setFinalScoreAway(15);
         games2.get(1).setOver(true);
 
-        games2.get(3).setFinalScore1(15);
-        games2.get(3).setFinalScore2(13);
+        games2.get(3).setFinalScoreHome(15);
+        games2.get(3).setFinalScoreAway(13);
         games2.get(3).setOver(true);
 
         this.phaseBracket.updateStandings();
 
         List<Game> games3 = this.phaseBracket.getRounds().get(2).getGames();
 
-        games3.get(0).setFinalScore1(15);
-        games3.get(0).setFinalScore2(14);
+        games3.get(0).setFinalScoreHome(15);
+        games3.get(0).setFinalScoreAway(14);
         games3.get(0).setOver(true);
 
-        games3.get(1).setFinalScore1(15);
-        games3.get(1).setFinalScore2(14);
+        games3.get(1).setFinalScoreHome(15);
+        games3.get(1).setFinalScoreAway(14);
         games3.get(1).setOver(true);
 
-        games3.get(2).setFinalScore1(15);
-        games3.get(2).setFinalScore2(14);
+        games3.get(2).setFinalScoreHome(15);
+        games3.get(2).setFinalScoreAway(14);
         games3.get(2).setOver(true);
 
         this.phaseBracket.updateStandings();

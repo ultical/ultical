@@ -1,6 +1,6 @@
 package de.ultical.backend.schedule;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ public class PhaseSeeding extends Phase {
 
     @Override
     public List<Round> getRounds() {
-        return new ArrayList<Round>();
+        return Collections.emptyList();
     }
 
     @Override

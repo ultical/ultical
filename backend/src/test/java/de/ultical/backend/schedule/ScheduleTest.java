@@ -94,8 +94,8 @@ public class ScheduleTest {
         List<Round> rounds = this.schedule.getRounds();
         for (Round round : rounds) {
             for (Game game : round.getGames()) {
-                game.setFinalScore1(15);
-                game.setFinalScore2(13);
+                game.setFinalScoreHome(15);
+                game.setFinalScoreAway(13);
                 game.setOver(true);
             }
         }

@@ -74,10 +74,10 @@ public class PhasePoolTest {
 
         // assert that the last game is seed 1 vs seed 2
         Game game = this.phasePool.getGames().get(2);
-        if (game.getTeam1().equals(teams[0])) {
-            assertEquals(game.getTeam2(), teams[1]);
-        } else if (game.getTeam1().equals(teams[1])) {
-            assertEquals(game.getTeam2(), teams[0]);
+        if (game.getHome().equals(teams[0])) {
+            assertEquals(game.getAway(), teams[1]);
+        } else if (game.getHome().equals(teams[1])) {
+            assertEquals(game.getAway(), teams[0]);
         }
 
         assertEquals(this.phasePool.getOutputMapping().get(1).getName(), "1. " + PHASE_NAME);
@@ -94,12 +94,12 @@ public class PhasePoolTest {
         // set some game results
         List<Game> games = this.phasePool.getGames();
         // game 0 - Seed 2 vs Seed 3
-        games.get(0).setFinalScore1(15);
-        games.get(0).setFinalScore2(12);
+        games.get(0).setFinalScoreHome(15);
+        games.get(0).setFinalScoreAway(12);
         games.get(0).setOver(true);
         // game 1 - Seed 3 vs Seed 1
-        games.get(1).setFinalScore1(15);
-        games.get(1).setFinalScore2(13);
+        games.get(1).setFinalScoreHome(15);
+        games.get(1).setFinalScoreAway(13);
         games.get(1).setOver(true);
 
         // check that no results are yet published in the outputMapping
@@ -109,8 +109,8 @@ public class PhasePoolTest {
 
         // set missing game results
         // game 2 - Seed 2 vs Seed 1
-        games.get(2).setFinalScore1(14);
-        games.get(2).setFinalScore2(15);
+        games.get(2).setFinalScoreHome(14);
+        games.get(2).setFinalScoreAway(15);
         games.get(2).setOver(true);
 
         // check order in the results
