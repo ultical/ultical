@@ -117,6 +117,7 @@ public interface RosterMapper extends BaseMapper<Roster> {
             @Result(column = "division_type", property = "division_type"),
             @Result(column = "name_addition", property = "nameAddition"),
             @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get") ),
+            @Result(column = "team", property = "team", one = @One(select = "de.ultical.backend.data.mapper.TeamMapper.getForRoster") ),
             @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
             @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
     List<Roster> getRostersForPlayer(DfvPlayer player);
