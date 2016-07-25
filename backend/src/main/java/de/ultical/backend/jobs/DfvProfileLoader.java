@@ -111,6 +111,9 @@ public class DfvProfileLoader {
                     String firstParagraph = sb.toString();
                     String explainParagraph = "Die Gründe dafür können sein:\n\tDer Spieler wurde von seinem Verein noch nicht für das nächste Kalenderjahr gemeldet\n\tDer Spieler hat seine Datenschutzerklärung zurück gezogen.";
 
+                    // TODO: take the next line out again
+                    LOGGER.debug("Player " + updatedPlayer.getId() + " removed from Roster " + roster.getId());
+
                     for (User admin : roster.getTeam().getAdmins()) {
                         SystemMessage sm = new SystemMessage();
                         sm.addParagraph(firstParagraph);
