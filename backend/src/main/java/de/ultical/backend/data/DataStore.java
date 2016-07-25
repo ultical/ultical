@@ -1,7 +1,6 @@
 package de.ultical.backend.data;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -906,16 +905,16 @@ public class DataStore {
             }
         }
     }
-    
+
     public List<Roster> getRosterForPlayer(final DfvPlayer player) {
-    	Objects.requireNonNull(player);
-    	try {
-    		DfvPlayerMapper mapper = this.sqlSession.getMapper(player.getMapper());
-    		return Collections.emptyList();
-    	} finally {
-    		if (this.autoCloseSession) {
-    			this.sqlSession.close();
-    		}
-    	}
+        Objects.requireNonNull(player);
+        try {
+            RosterMapper mapper = this.sqlSession.getMapper(RosterMapper.class);
+            return mapper.getRostersForPlayer(player);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 }
