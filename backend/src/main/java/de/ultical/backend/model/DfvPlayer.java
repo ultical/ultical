@@ -1,6 +1,7 @@
 package de.ultical.backend.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -8,6 +9,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.app.LocalDateDeserializer;
 import de.ultical.backend.app.LocalDateSerializer;
+import de.ultical.backend.app.LocalDateTimeDeserializer;
+import de.ultical.backend.app.LocalDateTimeSerializer;
 import de.ultical.backend.data.mapper.DfvPlayerMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,19 +25,23 @@ public class DfvPlayer extends Player {
 
     public DfvPlayer(DfvMvPlayer dfvPlayer) {
         super();
-        this.setBirthDate(LocalDate.parse(dfvPlayer.getGeburtsdatum()));
-        this.setDfvNumber(dfvPlayer.getDfvnr());
-        this.setGender(dfvPlayer.getGeschlecht().equalsIgnoreCase("m") ? Gender.MALE
-                : dfvPlayer.getGeschlecht().equalsIgnoreCase("w") ? Gender.FEMALE : Gender.NA);
+        this.setBirthDate(LocalDate.parse(dfvPlayer.getDobString()));
+        this.setDfvNumber(dfvPlayer.getDfvNumber());
+        this.setGender(Gender.robustValueOf(dfvPlayer.getGender()));
     }
 
     private int dfvNumber;
+    private boolean eligible;
 
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate birthDate;
 
     private Club club;
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime lastModified;
 
     @Override
     public Class<DfvPlayerMapper> getMapper() {

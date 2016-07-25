@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.ibatis.exceptions.PersistenceException;
@@ -40,6 +41,7 @@ public class UserMapperTest {
         player.setGender(Gender.MALE);
         player.setDfvNumber(123456);
         player.setBirthDate(LocalDate.of(1979, 1, 25));
+        player.setLastModified(LocalDateTime.now());
 
         DfvPlayerMapper playerMapper = staticSession.getMapper(DfvPlayerMapper.class);
         PlayerMapper pMapper = staticSession.getMapper(PlayerMapper.class);

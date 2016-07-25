@@ -1,5 +1,7 @@
 package de.ultical.backend.api.transferClasses;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -14,11 +16,13 @@ public class DfvMvName {
     private boolean dse;
     private int dfvNumber;
     private Club club;
-    private Date lastModified;
+    private boolean active;
+
+    private LocalDateTime lastModified;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ssXXX")
-    public void setMtime(Date lastModified) {
-        this.lastModified = lastModified;
+    public void setMtime(Date lastModifiedDate) {
+        this.lastModified = LocalDateTime.ofInstant(lastModifiedDate.toInstant(), ZoneId.systemDefault());
     }
 
     public void setVnr(int clubNumber) {

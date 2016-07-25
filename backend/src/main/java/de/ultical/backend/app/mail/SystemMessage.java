@@ -48,7 +48,7 @@ public class SystemMessage implements UlticalMessage {
         default:
             this.setSenderName("DFV-Turniere");
             this.setGreetings("Hallo");
-            this.setGoodbye("Viele Grüße,");
+            this.setGoodbye("Viele Grüße");
             this.setGoodbyeName("DFV-Turniere");
         }
     }

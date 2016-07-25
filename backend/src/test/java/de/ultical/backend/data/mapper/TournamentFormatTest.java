@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.Before;
@@ -49,6 +50,7 @@ public class TournamentFormatTest {
         player.setGender(Gender.MALE);
         player.setDfvNumber(123456);
         player.setBirthDate(LocalDate.of(1979, 1, 25));
+        player.setLastModified(LocalDateTime.now());
         DBRULE.getSession().getMapper(PlayerMapper.class).insertPlayer(player, player instanceof DfvPlayer);
         DBRULE.getSession().getMapper(player.getMapper()).insert(player);
 

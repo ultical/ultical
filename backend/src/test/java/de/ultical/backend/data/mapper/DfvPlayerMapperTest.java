@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.After;
@@ -32,6 +33,7 @@ public class DfvPlayerMapperTest {
         this.dfvPlayer.setFirstName("Brodie");
         this.dfvPlayer.setLastName("Smith");
         this.dfvPlayer.setGender(Gender.MALE);
+        this.dfvPlayer.setLastModified(LocalDateTime.now());
 
         this.dfvPlayer.setBirthDate(LocalDate.now());
     }

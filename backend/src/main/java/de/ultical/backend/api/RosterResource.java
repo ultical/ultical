@@ -170,12 +170,22 @@ public class RosterResource {
                 dfvPlayer.setLastName(dfvMvName.getLastName());
                 dfvPlayer.setEmail(dfvMvPlayer.getEmail());
 
-                Club club = this.dataStore.getClub(dfvMvPlayer.getVerein());
+                Club club = this.dataStore.getClub(dfvMvPlayer.getClub());
                 dfvPlayer.setClub(club);
 
                 player = dfvPlayer;
 
                 this.dataStore.storeDfvPlayer(dfvPlayer);
+            }
+
+            /*
+             * check if found player is an active or passive player. If the
+             * player is passive, an addition to an roster is not allowed.
+             */
+            if (!player.isEligible()) {
+                throw new WebApplicationException(
+                        "e102 - Player is registered as a passive player. Passive players are not allowed to participate in tournaments.",
+                        Status.EXPECTATION_FAILED);
             }
 
             this.checkPlayerEligibility(roster, player);

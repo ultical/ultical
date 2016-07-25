@@ -992,6 +992,33 @@
 	<changeSet author="bas" id="bas83">
 		<tagDatabase tag="ultical_bas_v.1.16" />
 	</changeSet>
+	<changeSet author="bb" id="bb82">
+		<addColumn tableName="DFV_PLAYER">
+			<column name="eligible" type="BOOLEAN" defaultValueBoolean="true"></column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="bb" id="bb83">
+		<addNotNullConstraint tableName="DFV_PLAYER"
+			columnName="eligible" columnDataType="BOOLEAN" defaultNullValue="true" />
+	</changeSet>
+	<changeSet author="bb" id="bb84">
+		<addColumn tableName="DFV_MV_NAME">
+			<column name="last_modified" type="TIMESTAMP" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bb" id="bb85">
+		<addNotNullConstraint tableName="DFV_MV_NAME"
+			columnName="last_modified" columnDataType="TIMESTAMP"
+			defaultNullValue="2016-01-01" />
+	</changeSet>
+	<changeSet author="bb" id="bb86">
+		<addColumn tableName="DFV_PLAYER">
+			<column name="last_modified" type="TIMESTAMP"
+				defaultValueDate="2016-01-01 00:00:00">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 	<changeSet author="bas" id="bas-editionshow-1">
 		<addColumn tableName="TOURNAMENT_EDITION">
 			<column name="name" type="VARCHAR(200)" />
