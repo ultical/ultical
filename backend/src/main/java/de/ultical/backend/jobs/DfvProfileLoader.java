@@ -132,6 +132,11 @@ public class DfvProfileLoader {
                     // while the season, for which the roster is used, is still
                     // in use could NOT be handled using our current data-model.
                     // However, I really doubt that this case will happen to us.
+
+                    // TODO: take the next line out again
+                    LOGGER.debug("Admin Warning: Player " + updatedPlayer.getId() + " removed from Roster "
+                            + roster.getId());
+
                     SystemMessage sm = new SystemMessage();
                     sm.addRecipient(DEV_EMAIL);
                     sm.setSubject("Spieler zur laufenden Saison aus Roster entfernt!");
