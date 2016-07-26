@@ -89,7 +89,7 @@ public class DfvProfileLoader {
                         || blockingDate.stream().allMatch(d -> d.isAfter(now.toLocalDate()))) {
                     // we either have no blocking-date for the roster or the
                     // blocking-date is later in time, thus we can safely
-                    // removve the player from the roster.
+                    // remove the player from the roster.
                     this.dataStore.removePlayerFromRoster(updatedPlayer.getId(), roster.getId());
 
                     StringBuilder sb = new StringBuilder();
@@ -110,7 +110,8 @@ public class DfvProfileLoader {
                     String explainParagraph = "Die Gründe dafür können sein:\n\tDer Spieler wurde von seinem Verein noch nicht für das nächste Kalenderjahr gemeldet\n\tDer Spieler hat seine Datenschutzerklärung zurück gezogen.";
 
                     // TODO: take the next line out again
-                    LOGGER.error("Player " + updatedPlayer.getId() + " removed from Roster " + roster.getId());
+                    LOGGER.error("Player {} removed from Roster {}. Roster blocking dates were: {}",
+                            updatedPlayer.getId(), roster.getId(), blockingDate);
 
                     // for (User admin : roster.getTeam().getAdmins()) {
                     // SystemMessage sm = new SystemMessage();
@@ -123,6 +124,17 @@ public class DfvProfileLoader {
                     // sm.setSubject("Spieler aus Roster entfernt");
                     // this.mailClient.sendMail(sm);
                     // }
+                } else if (blockingDate.stream().noneMatch(d -> d.isAfter(now.toLocalDate()))) {
+                    /*
+                     * the first if-block ensured that blockingDate is != null
+                     * and not empty. Thus we now found out, that the roster's
+                     * corresponding season is over by now. In this case we do
+                     * not remove the player from the roster.
+                     */
+                    LOGGER.info(
+                            "Player {} is no longer eligible, but not removed from roster {}, as the roster's season {} {} {} {} lies in the past",
+                            updatedPlayer.getId(), roster.getId(), roster.getSeason().getYear(),
+                            roster.getDivisionType(), roster.getDivisionAge(), roster.getSeason().getSurface());
                 } else {
                     // if blocking-date lies in the past, we should not remove
                     // the player from roster but ensure that the player cannot
