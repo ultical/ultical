@@ -96,7 +96,7 @@ public class SystemMessage implements UlticalMessage {
                 recipientName = recipient;
             }
         }
-        if (!recipientName.isEmpty()) {
+        if (recipientName != null && !recipientName.isEmpty()) {
             sb.append(" ").append(recipientName);
         }
         sb.append(",").append(nl).append(nl);
