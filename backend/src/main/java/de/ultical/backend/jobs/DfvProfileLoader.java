@@ -19,13 +19,11 @@ import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.app.MailClient;
 import de.ultical.backend.app.UltiCalConfig;
-import de.ultical.backend.app.mail.SystemMessage;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.Gender;
 import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.User;
 
 public class DfvProfileLoader {
 
@@ -112,17 +110,19 @@ public class DfvProfileLoader {
                     String explainParagraph = "Die Gründe dafür können sein:\n\tDer Spieler wurde von seinem Verein noch nicht für das nächste Kalenderjahr gemeldet\n\tDer Spieler hat seine Datenschutzerklärung zurück gezogen.";
 
                     // TODO: take the next line out again
-                    LOGGER.debug("Player " + updatedPlayer.getId() + " removed from Roster " + roster.getId());
+                    LOGGER.error("Player " + updatedPlayer.getId() + " removed from Roster " + roster.getId());
 
-                    for (User admin : roster.getTeam().getAdmins()) {
-                        SystemMessage sm = new SystemMessage();
-                        sm.addParagraph(firstParagraph);
-                        sm.addParagraph(explainParagraph);
-                        sm.addRecipient(admin.getEmail(), admin.getDfvPlayer().getFirstName(),
-                                admin.getDfvPlayer().getFirstName() + " " + admin.getDfvPlayer().getLastName());
-                        sm.setSubject("Spieler aus Roster entfernt");
-                        this.mailClient.sendMail(sm);
-                    }
+                    // for (User admin : roster.getTeam().getAdmins()) {
+                    // SystemMessage sm = new SystemMessage();
+                    // sm.addParagraph(firstParagraph);
+                    // sm.addParagraph(explainParagraph);
+                    // sm.addRecipient(admin.getEmail(),
+                    // admin.getDfvPlayer().getFirstName(),
+                    // admin.getDfvPlayer().getFirstName() + " " +
+                    // admin.getDfvPlayer().getLastName());
+                    // sm.setSubject("Spieler aus Roster entfernt");
+                    // this.mailClient.sendMail(sm);
+                    // }
                 } else {
                     // if blocking-date lies in the past, we should not remove
                     // the player from roster but ensure that the player cannot
@@ -134,22 +134,29 @@ public class DfvProfileLoader {
                     // However, I really doubt that this case will happen to us.
 
                     // TODO: take the next line out again
-                    LOGGER.debug("Admin Warning: Player " + updatedPlayer.getId() + " removed from Roster "
+                    LOGGER.error("Admin Warning: Player " + updatedPlayer.getId() + " removed from Roster "
                             + roster.getId());
 
-                    SystemMessage sm = new SystemMessage();
-                    sm.addRecipient(DEV_EMAIL);
-                    sm.setSubject("Spieler zur laufenden Saison aus Roster entfernt!");
-                    sm.setGreetings("Hi Team");
-                    sm.setGoodbye("Viele Grüße");
-                    sm.setGoodbyeName("Euer Server");
-                    sm.addParagraph(String.format(
-                            "Der Spieler %s %s Dfv-Nummer: %d wurde es dem Roster (id=%d) von %s (id=%d) für die Saison %d %s %s %s entfernt, da er nicht länger spielberechtigt ist.",
-                            updatedPlayer.getFirstName(), updatedPlayer.getLastName(), updatedPlayer.getDfvNumber(),
-                            roster.getId(), roster.getTeam().getName(), roster.getTeam().getId(),
-                            roster.getSeason().getYear(), roster.getDivisionAge(), roster.getDivisionType(),
-                            roster.getSeason().getSurface()));
-                    this.mailClient.sendMail(sm);
+                    // SystemMessage sm = new SystemMessage();
+                    // sm.addRecipient(DEV_EMAIL);
+                    // sm.setSubject("Spieler zur laufenden Saison aus Roster
+                    // entfernt!");
+                    // sm.setGreetings("Hi Team");
+                    // sm.setGoodbye("Viele Grüße");
+                    // sm.setGoodbyeName("Euer Server");
+                    // sm.addParagraph(String.format(
+                    // "Der Spieler %s %s Dfv-Nummer: %d wurde es dem Roster
+                    // (id=%d) von %s (id=%d) für die Saison %d %s %s %s
+                    // entfernt, da er nicht länger spielberechtigt ist.",
+                    // updatedPlayer.getFirstName(),
+                    // updatedPlayer.getLastName(),
+                    // updatedPlayer.getDfvNumber(),
+                    // roster.getId(), roster.getTeam().getName(),
+                    // roster.getTeam().getId(),
+                    // roster.getSeason().getYear(), roster.getDivisionAge(),
+                    // roster.getDivisionType(),
+                    // roster.getSeason().getSurface()));
+                    // this.mailClient.sendMail(sm);
 
                 }
             }
