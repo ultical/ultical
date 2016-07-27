@@ -992,15 +992,6 @@
 	<changeSet author="bas" id="bas83">
 		<tagDatabase tag="ultical_bas_v.1.16" />
 	</changeSet>
-	<changeSet author="bb" id="bb82">
-		<addColumn tableName="DFV_PLAYER">
-			<column name="eligible" type="BOOLEAN" defaultValueBoolean="true"></column>
-		</addColumn>
-	</changeSet>
-	<changeSet author="bb" id="bb83">
-		<addNotNullConstraint tableName="DFV_PLAYER"
-			columnName="eligible" columnDataType="BOOLEAN" defaultNullValue="true" />
-	</changeSet>
 	<changeSet author="bb" id="bb84">
 		<addColumn tableName="DFV_MV_NAME">
 			<column name="last_modified" type="TIMESTAMP" />
@@ -1097,5 +1088,13 @@
 	<changeSet author="bas" id="bas-div-1">
 		<addUniqueConstraint columnNames="tournament_format, admin"
 			tableName="TOURNAMENT_FORMAT_ULTICAL_USERS" constraintName="uk_tournament_format_ultical_users" />
+	</changeSet>
+	<changeSet author="bb" id="bb-eligible-1">
+		<addColumn tableName="DFV_PLAYER">
+			<column name="eligible_until" type="TIMESTAMP" value="null" defaultValueDate="null"/>
+		</addColumn>
+	</changeSet>
+	<changeSet author="bb" id="bb-eligible-2">
+		<tagDatabase tag="v1.18"></tagDatabase>
 	</changeSet>
 </databaseChangeLog>

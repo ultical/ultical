@@ -31,7 +31,10 @@ public class DfvPlayer extends Player {
     }
 
     private int dfvNumber;
-    private boolean eligible;
+
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    private LocalDateTime eligibleUntil;
 
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
@@ -42,6 +45,20 @@ public class DfvPlayer extends Player {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime lastModified;
+
+    /**
+     * <code>True</code> if the player is eligible for tournaments of the
+     * DFV.<br />
+     * This method simply checks whether {@link #eligibleUntil} is null,
+     * following the assumption that the <code>eligibleUntil</code> value always
+     * a point in the past.
+     * 
+     * @return <code>true</code> if the player is eligible for DFV tournaments,
+     *         <code>false</code> otherwise.
+     */
+    public boolean isEligible() {
+        return this.eligibleUntil == null;
+    }
 
     @Override
     public Class<DfvPlayerMapper> getMapper() {
