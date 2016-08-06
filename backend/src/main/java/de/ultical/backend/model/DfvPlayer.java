@@ -3,6 +3,7 @@ package de.ultical.backend.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -32,8 +33,8 @@ public class DfvPlayer extends Player {
 
     private int dfvNumber;
 
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime eligibleUntil;
 
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -56,6 +57,7 @@ public class DfvPlayer extends Player {
      * @return <code>true</code> if the player is eligible for DFV tournaments,
      *         <code>false</code> otherwise.
      */
+    @JsonIgnore
     public boolean isEligible() {
         return this.eligibleUntil == null;
     }
