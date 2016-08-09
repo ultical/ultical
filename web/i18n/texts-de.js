@@ -322,6 +322,7 @@ TRANSLATIONS['de'] = {
 				player: 'Spieler',
 				players: 'Spieler',
 				notLoggedIn: 'Spieler sind nur für angemeldete Benutzer sichtbar',
+				eligibleUntil: 'spielberechtigt bis',
 			},
 			edit: {
 				deleteTeam: 'Team löschen',
