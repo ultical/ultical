@@ -48,7 +48,11 @@ public class DataStorePlayerNeedsUpdateTest {
 
     private DfvPlayer buildPlayer(String fn, String ln, int dfvNr, boolean eligible, LocalDateTime mod) {
         DfvPlayer firstPlayer = new DfvPlayer();
-        firstPlayer.setEligible(eligible);
+        if (eligible) {
+            firstPlayer.setEligibleUntil(null);
+        } else {
+            firstPlayer.setEligibleUntil(LocalDateTime.now().minusMonths(1));
+        }
         firstPlayer.setFirstName(fn);
         firstPlayer.setLastName(ln);
         firstPlayer.setDfvNumber(dfvNr);

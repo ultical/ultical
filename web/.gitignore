@@ -3,3 +3,4 @@ bower_components
 .settings
 config/config.js
 .htaccess
+/node_modules/

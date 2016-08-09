@@ -2,6 +2,7 @@ package de.ultical.backend.data;
 
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.apache.ibatis.session.SqlSession;
@@ -48,7 +49,11 @@ public class DataStoreTest {
         player.setFirstName(fn);
         player.setLastName(ln);
         player.setDfvNumber(dfvNr);
-        player.setEligible(eligible);
+        if (eligible) {
+            player.setEligibleUntil(null);
+        } else {
+            player.setEligibleUntil(LocalDateTime.now().minusMonths(1));
+        }
         return player;
     }
 

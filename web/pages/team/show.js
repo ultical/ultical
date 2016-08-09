@@ -494,6 +494,10 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
       }
     }, 100);
   });
+  
+  $scope.stringToDate = function(date) {
+	  return moment(date).toDate();
+  }
 
   doRun();
 

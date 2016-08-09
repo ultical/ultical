@@ -18,12 +18,13 @@ public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
     private static final char DATE_TIME_SEPARATOR = 'T';
     private static final char TIME_SEPARATOR = ':';
     private static final char DATE_SEPARATOR = '-';
-    public final static DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendValue(ChronoField.YEAR)
-            .appendLiteral(DATE_SEPARATOR).appendValue(ChronoField.MONTH_OF_YEAR).appendLiteral(DATE_SEPARATOR)
-            .appendValue(ChronoField.DAY_OF_MONTH).appendLiteral(DATE_TIME_SEPARATOR)
-            .appendValue(ChronoField.HOUR_OF_DAY).appendLiteral(TIME_SEPARATOR).appendValue(ChronoField.MINUTE_OF_HOUR)
-            .appendLiteral(TIME_SEPARATOR).appendValue(ChronoField.SECOND_OF_MINUTE).appendLiteral('.')
-            .appendValue(ChronoField.MILLI_OF_SECOND).toFormatter();
+    public final static DateTimeFormatter dtf = new DateTimeFormatterBuilder().appendValue(ChronoField.YEAR, 4)
+            .appendLiteral(DATE_SEPARATOR).appendValue(ChronoField.MONTH_OF_YEAR, 2).appendLiteral(DATE_SEPARATOR)
+            .appendValue(ChronoField.DAY_OF_MONTH, 2).appendLiteral(DATE_TIME_SEPARATOR)
+            .appendValue(ChronoField.HOUR_OF_DAY, 2).appendLiteral(TIME_SEPARATOR)
+            .appendValue(ChronoField.MINUTE_OF_HOUR, 2).appendLiteral(TIME_SEPARATOR)
+            .appendValue(ChronoField.SECOND_OF_MINUTE, 2).appendLiteral('.').appendValue(ChronoField.MILLI_OF_SECOND, 3)
+            .toFormatter();
 
     @Override
     public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers)

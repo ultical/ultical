@@ -151,6 +151,7 @@
                       <div class="col-md-12">
                         <div ng-if="loggedIn() && roster.players.length > 0" class="roster-list" ng-repeat="rosterPlayer in roster.players | orderBy : 'player.lastName'">
                           {{ rosterPlayer.player | playername : true }}
+                          <small ng-if="rosterPlayer.player.eligibleUntil">spielberechtigt bis: {{stringToDate(rosterPlayer.player.eligibleUntil) | date : 'shortDate'}}</small>
                           <span ng-if="team.x.own && editingRosterPlayers == roster.id && !rosterPlayer.blocked" ng-click="removePlayerFromRoster(rosterPlayer.player, roster, team)" class="ffade player-actions cursor-pointer" data-title="{{ 'team.roster.removePlayerTooltip' | translate }}" bs-tooltip>
                             <i class="fa fa-remove"></i>
                           </span>
