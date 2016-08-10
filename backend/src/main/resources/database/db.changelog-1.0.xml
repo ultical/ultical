@@ -1112,7 +1112,7 @@
 	</changeSet>
 	<changeSet id="bas-team-renames-1" author="bas">
 		<addColumn tableName="TEAM_REGISTRATION">
-			<column name="team_name" type="VARCHAR(255)" defaultValue="" >
+			<column name="team_name" type="VARCHAR(255)" defaultValue="">
 				<constraints nullable="false" />
 			</column>
 		</addColumn>
@@ -1120,9 +1120,10 @@
 	<changeSet id="bas-team-renames-2" author="bas">
 		<sql dbms="mysql" endDelimiter=";">
 			UPDATE TEAM_REGISTRATION SET
-			team_name = (SELECT
-			name FROM TEAM LEFT JOIN ROSTER ON ROSTER.team =
-			TEAM.id WHERE ROSTER.id = TEAM_REGISTRATION.roster)
+			team_name = (TRIM((SELECT
+			CONCAT_WS (' ', TEAM.name,
+			ROSTER.name_addition) FROM TEAM LEFT JOIN ROSTER ON ROSTER.team =
+			TEAM.id WHERE ROSTER.id = TEAM_REGISTRATION.roster)));
 		</sql>
 	</changeSet>
 </databaseChangeLog>
