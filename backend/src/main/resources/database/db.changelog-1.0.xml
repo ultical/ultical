@@ -1091,10 +1091,23 @@
 	</changeSet>
 	<changeSet author="bb" id="bb-eligible-1">
 		<addColumn tableName="DFV_PLAYER">
-			<column name="eligible_until" type="TIMESTAMP" value="null" defaultValueDate="null"/>
+			<column name="eligible_until" type="TIMESTAMP" value="null"
+				defaultValueDate="null" />
 		</addColumn>
 	</changeSet>
 	<changeSet author="bb" id="bb-eligible-2">
 		<tagDatabase tag="v1.18"></tagDatabase>
+	</changeSet>
+	<changeSet id="bas-bugfix-reserved-words" author="bas">
+		<renameColumn tableName="RESOURCE" oldColumnName="path"
+			newColumnName="location_path" columnDataType="VARCHAR(255)" />
+		<renameColumn tableName="RESOURCE" oldColumnName="local"
+			newColumnName="is_local" columnDataType="BOOLEAN" />
+	</changeSet>
+	<changeSet id="bas-bugfix-reserved-words-2" author="bas">
+		<addNotNullConstraint tableName="RESOURCE"
+			columnName="location_path" columnDataType="VARCHAR(255)" />
+		<addNotNullConstraint tableName="RESOURCE"
+			columnName="is_local" columnDataType="BOOLEAN" />
 	</changeSet>
 </databaseChangeLog>
