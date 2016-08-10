@@ -135,7 +135,7 @@ angular.module('ultical.events')
         }
 
         storage.saveRoster(rosterToCreate, rosterToCreate.team, function(newRoster) {
-          doRegister(newRoster);
+          doRegister(newRoster, $scope.getTeam($scope.chosenTeam));
         }, function(errorResponse) {
           if (errorResponse.status = 409) {
             alerter.error('', 'event.register.rosterDuplicated', {
@@ -148,14 +148,15 @@ angular.module('ultical.events')
         });
       } else {
         // choose roster to register
-        doRegister(existingRosterForRegistration);
+        doRegister(existingRosterForRegistration, $scope.getTeam($scope.chosenTeam));
       }
     };
 
-    function doRegister(roster) {
+    function doRegister(roster, team) {
       var registration = {};
       registration.comment = $scope.register.comment ? $scope.register.comment : null;
       registration.roster = { id: roster.id};
+      registration.teamName = team.name + (!isEmpty(roster.nameAddition) ? ' ' + roster.nameAddition : '');
 
       var division = {};
       angular.forEach($scope.divisionsToShow, function(div) {

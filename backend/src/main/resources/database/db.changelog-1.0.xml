@@ -1110,4 +1110,19 @@
 		<addNotNullConstraint tableName="RESOURCE"
 			columnName="is_local" columnDataType="BOOLEAN" />
 	</changeSet>
+	<changeSet id="bas-team-renames-1" author="bas">
+		<addColumn tableName="TEAM_REGISTRATION">
+			<column name="team_name" type="VARCHAR(255)" defaultValue="" >
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="bas-team-renames-2" author="bas">
+		<sql dbms="mysql" endDelimiter=";">
+			UPDATE TEAM_REGISTRATION SET
+			team_name = (SELECT
+			name FROM TEAM LEFT JOIN ROSTER ON ROSTER.team =
+			TEAM.id WHERE ROSTER.id = TEAM_REGISTRATION.roster)
+		</sql>
+	</changeSet>
 </databaseChangeLog>
