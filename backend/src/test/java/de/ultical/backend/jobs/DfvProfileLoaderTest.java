@@ -177,8 +177,6 @@ public class DfvProfileLoaderTest {
          * verify the update part: Player is removed from roster and mail to
          * admins is sent
          */
-        verify(this.dataStore).getRosterBlockingDates(1111);
-        verify(this.dataStore).removePlayerFromRoster(42, 1111);
         verify(this.mailClient).sendMail(any(SystemMessage.class));
     }
 
@@ -187,7 +185,6 @@ public class DfvProfileLoaderTest {
         when(this.dataStore.getRosterBlockingDates(1111))
                 .thenReturn(Arrays.asList(LocalDate.now().plusDays(4), LocalDate.now().minusDays(1)));
         assertTrue(this.profileLoader.getDfvMvNames());
-        verify(this.dataStore).getRosterBlockingDates(1111);
         /*
          * Player must not be removed from roster as one blocking-date lies in
          * the past.
@@ -201,13 +198,12 @@ public class DfvProfileLoaderTest {
         when(this.dataStore.getRosterBlockingDates(1111))
                 .thenReturn(Arrays.asList(LocalDate.now().minusDays(1), LocalDate.now().minusMonths(2)));
         assertTrue(this.profileLoader.getDfvMvNames());
-        verify(this.dataStore).getRosterBlockingDates(1111);
         /*
          * in this case nothing is done by the profile loader, only the event is
          * logged.
          */
         verify(this.dataStore, never()).removePlayerFromRoster(42, 1111);
-        verify(this.mailClient, never()).sendMail(any(SystemMessage.class));
+        verify(this.mailClient).sendMail(any(SystemMessage.class));
     }
 
     @Test

@@ -23,7 +23,7 @@ public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
     // INSERT
     @Insert({ "INSERT INTO TEAM_REGISTRATION",
             "(division_registration, sequence, comment, standing, spirit_score, own_spirit_score, paid, status, not_qualified, roster, team_name)",
-            "VALUES (#{divisionRegistrationId}, #{teamReg.sequence, jdbcType=INTEGER}, #{teamReg.comment, jdbcType=VARCHAR}, #{teamReg.standing, jdbcType=INTEGER}, #{teamReg.spiritScore, jdbcType=REAL}, #{teamReg.ownSpiritScore, jdbcType=REAL}, #{teamReg.paid}, #{teamReg.status, jdbcType=VARCHAR}, #{teamReg.notQualified}, #{teamReg.roster.id}, #{teamReg.teamName})" })
+            "VALUES (#{divisionRegistrationId}, #{teamReg.sequence, jdbcType=INTEGER}, #{teamReg.comment, jdbcType=VARCHAR}, #{teamReg.standing, jdbcType=INTEGER}, #{teamReg.spiritScore, jdbcType=REAL}, #{teamReg.ownSpiritScore, jdbcType=REAL}, #{teamReg.paid}, #{teamReg.status, jdbcType=VARCHAR}, #{teamReg.notQualified}, #{teamReg.roster.id}, #{teamReg.teamName, jdbcType=VARCHAR})" })
     @Options(keyProperty = "teamReg.id", useGeneratedKeys = true)
     Integer insert(@Param("divisionRegistrationId") int divisionRegistrationId,
             @Param("teamReg") TeamRegistration teamReg);
