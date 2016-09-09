@@ -31,6 +31,7 @@
 <link href="css/animations.css" rel="stylesheet" type="text/css" />
 <link href="css/generals.css" rel="stylesheet" type="text/css" />
 <link href="css/main.css" rel="stylesheet" type="text/css" />
+<link href="css/aside.css" rel="stylesheet" type="text/css" />
 
 <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
 <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
@@ -57,21 +58,34 @@
 <body>
 
 	<div id="wrapper">
+
 		<div ng-include="'navbar/nav.html'" ng-controller="NavBarCtrl"></div>
 
 		<div class="container">
-			<div id="pageAlertSpace"></div>
-			<div class="view-container" ng-cloak ui-view></div>
+
+			<div id="page-alert-space">
+
+				<!-- you need JS enabled message -->
+				<noscript>
+					<div class="alert alert-danger">
+						UltiCal needs JavaScript in order to work. Please enable it in your browser's settings...
+					</div>
+				</noscript>
+			</div>
+
+			<div class="view-container" ui-view></div>
 		</div>
 
 		<footer ng-include="'footer/footer.html'"></footer>
 	</div>
 
+
+
 	<!-- bower:js -->
 	<script src="bower_components/angular/angular.min.js"></script>
 	<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
 	<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
-	<script src="bower_components/angular-strap/dist/angular-strap.min.js"></script>
+	<script src="bower_components/angular-strap/dist/angular-strap.js"></script>
 	<script src="bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
 	<script src="bower_components/angular-animate/angular-animate.min.js"></script>
 	<script src="bower_components/respond/dest/respond.min.js"></script>
@@ -83,6 +97,14 @@
 	<script src="bower_components/moment/locale/en-gb.js"></script>
 	<script src="bower_components/angular-slugify/angular-slugify.js"></script>
 	<script src="bower_components/jsog/lib/JSOG.js"></script>
+	<script src="bower_components/angular-bootstrap/ui-bootstrap.min.js"></script>
+	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+	<script type="text/javascript" src="bower_components/re-tree/re-tree.min.js"></script>
+	<script type="text/javascript" src="bower_components/ng-device-detector/ng-device-detector.min.js"></script>
+	<script src="bower_components/messageformat/messageformat.js"></script>
+	<script src="bower_components/angular-translate-interpolation-messageformat/angular-translate-interpolation-messageformat.min.js"></script>
+	<script src="bower_components/angular-filter/dist/angular-filter.min.js"></script>
+	<script src="bower_components/angular-recaptcha/release/angular-recaptcha.min.js"></script>
 	<!-- endbower -->
 
 	<script src="i18n/texts-de.js"></script>
@@ -91,11 +113,17 @@
 	<script src="config/config.js"></script>
 
 	<script src="pages/start/start.js"></script>
+  <!-- team -->
 	<script src="pages/team/list.js"></script>
+	<script src="pages/team/roster.js"></script>
+	<script src="pages/team/show.js"></script>
+	<!-- event -->
 	<script src="pages/event/list.js"></script>
 	<script src="pages/event/edit.js"></script>
 	<script src="pages/event/show.js"></script>
 	<script src="pages/event/registration.js"></script>
+	<script src="pages/event/email_teams.js"></script>
+	<!-- user -->
 	<script src="pages/user/login.js"></script>
 	<script src="pages/user/registration.js"></script>
 	<script src="pages/user/mails.js"></script>
@@ -109,8 +137,12 @@
 	<script src="components/map_service.js"></script>
 	<script src="components/mapboxapi.js"></script>
 	<script src="components/flip_directive.js"></script>
-	<script src="components/ultical_directives.js"></script>
 	<script src="components/head_service.js"></script>
+	<script src="components/actionbar/actionbar_service.js"></script>
+	<script src="components/email_service/email.js"></script>
+
+	<script src="components/directives/bas-enter.js"></script>
+	<script src="components/actionbar/bas_actionbar_directive.js"></script>
 
 	<script src="components/unstructured.js"></script>
 	<script src="components/general_services.js"></script>
@@ -118,6 +150,11 @@
 	<script src="components/ultical_filters.js"></script>
 	<script src="navbar/navbar.js"></script>
 	<script src="footer/footer.js"></script>
+
+	<script
+	  src="https://www.google.com/recaptcha/api.js?onload=vcRecaptchaApiLoaded&render=explicit"
+	  async defer>
+	</script>
 
 
 </body>

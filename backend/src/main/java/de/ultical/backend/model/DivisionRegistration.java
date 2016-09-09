@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 public abstract class DivisionRegistration extends Identifiable {
 
     public enum DivisionRegistrationStatus {
-        PENDING, CONFIRMED, WAITING_LIST, DECLINED
+        PENDING, CONFIRMED, WAITING_LIST, DECLINED, CANCELLED
     }
 
     // define division about gender and age

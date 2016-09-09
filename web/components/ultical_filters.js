@@ -1,5 +1,11 @@
 'use strict';
 
+app.filter('slugify', ['Slug', function(slug) {
+	return function(prettyString) {
+		return slug.slugify(prettyString);
+	};
+}]);
+
 app.filter('locationObject', ['$translate', function($translate) {
 	return function (location) {
 		if (isEmpty(location)) {
@@ -108,7 +114,7 @@ app.filter('emptyLocation', [function() {
 	};
 }]);
 
-app.filter('location', ['$translate', 'locationObjectFilter', 'countrynameFilter', function ($translate, locationObjectFilter, countrynameFilter) {
+app.filter('location', ['CONFIG', '$translate', 'locationObjectFilter', 'countrynameFilter', function (CONFIG, $translate, locationObjectFilter, countrynameFilter) {
 	return function (location, type) {
 		if (isEmpty(location)) {
 			return '';
@@ -154,18 +160,26 @@ app.filter('location', ['$translate', 'locationObjectFilter', 'countrynameFilter
 			}
 		}
 
-		if (!isEmpty(location.city)) {
-			if (!isEmptyString(locationString)) {
-				locationString += ', ';
+		if (type != 'country') {
+			if (!isEmpty(location.city)) {
+				if (!isEmptyString(locationString)) {
+					locationString += ', ';
+				}
+				locationString += location.city;
 			}
-			locationString += location.city;
 		}
 
-		if (!isEmpty(location.country)) {
-			if (!isEmpty(locationString)) {
-				locationString += ', ';
+		if (type != 'city' || CONFIG.general.showCountryCodeWithCity) {
+			if (!isEmpty(location.country)) {
+				if (!isEmpty(locationString)) {
+					locationString += ', ';
+				}
+				if (CONFIG.general.showCountryCodeWithCity) {
+					locationString += location.countryCode.toUpperCase();
+				} else {
+					locationString += countrynameFilter(location);
+				}
 			}
-			locationString += countrynameFilter(location);
 		}
 
 		if (type == 'googleMapsUrl') {
@@ -228,17 +242,20 @@ app.filter('playername', [function () {
 	};
 }]);
 
-app.filter('editionname', ['$translate', 'matchdaynameFilter', function ($translate, matchdaynameFilter) {
+app.filter('editionname', [function () {
 	return function(edition) {
 		var editionName = '';
-		if (isEmptyString(edition.alternativeName)) {
+		if (isEmpty(edition)) {
+			return '';
+		}
+		if (isEmptyString(edition.name)) {
 			// use tournament format name
 			editionName = edition.tournamentFormat.name;
 			// add year
 			editionName += ' ' + edition.season.year;
 		} else {
 			// this tournament edition uses a different name than the tournament format
-			editionName = edition.alternativeName;
+			editionName = edition.name;
 		}
 		return editionName;
 	}
@@ -250,7 +267,13 @@ app.filter('eventname', ['$translate', 'matchdaynameFilter', 'editionnameFilter'
 			return '';
 		}
 
-		var eventName = editionnameFilter(event.tournamentEdition);
+		var eventName = '';
+
+		if (isEmptyString(event.name)) {
+			eventName = editionnameFilter(event.tournamentEdition);
+		} else {
+			eventName = event.name;
+		}
 
 		// this is a multi-matchday-tournament
 		if (event.matchdayNumber != -1) {
@@ -310,14 +333,18 @@ app.filter('season', ['$translate', function($translate) {
 }]);
 
 app.filter('division', ['$translate', function($translate) {
-	return function(obj) {
+	return function(obj, type) {
 		if (isEmpty(obj) || isEmpty(obj.divisionAge) || isEmpty(obj.divisionType)) {
 			return '';
 		}
 
+		if (isEmpty(type)) {
+			type = 'full';
+		}
+
 		var divisionString = '';
 
-		if (!isEmpty(obj.divisionIdentifier)) {
+		if (!isEmpty(obj.divisionIdentifier) && type == 'full') {
 			divisionString += obj.divisionIdentifier + ' ';
 		}
 
@@ -330,4 +357,31 @@ app.filter('division', ['$translate', function($translate) {
 
 		return divisionString;
 	}
+}]);
+
+app.filter('divisions', ['divisionFilter', function(divisionFilter) {
+	return function(divisionArray, type) {
+		if (isEmpty(divisionArray)) {
+			return '';
+		}
+
+		if (isEmpty(type)) {
+			type = 'full';
+		}
+
+		var divisionStrings = {};
+
+		angular.forEach(divisionArray, function(division) {
+			divisionStrings[divisionFilter(division, type)] = true;
+		});
+
+		var resultString = '';
+		angular.forEach(divisionStrings, function(val, divisionString) {
+			resultString += divisionString + ', ';
+		});
+
+		return resultString.substring(0, resultString.length - 2);
+	}
+
+
 }]);

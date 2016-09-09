@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Data
-public class DefaultMessage implements UlticalMessage {
+public class SystemMessage implements UlticalMessage {
 
     private final String DEFAULT_LANGUAGE = "de";
 
@@ -22,7 +22,7 @@ public class DefaultMessage implements UlticalMessage {
 
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    private Map<String, String> recipients;
+    private Map<Recipient, String> recipients;
 
     private List<String> paragraphs;
 
@@ -33,16 +33,14 @@ public class DefaultMessage implements UlticalMessage {
 
     private String senderName;
 
-    private String footer;
-
-    public DefaultMessage() {
+    public SystemMessage() {
         this("de");
     }
 
-    public DefaultMessage(String language) {
+    public SystemMessage(String language) {
         this.setLanguage(language);
 
-        this.recipients = new HashMap<String, String>();
+        this.recipients = new HashMap<Recipient, String>();
         this.paragraphs = new ArrayList<String>();
 
         switch (language.toLowerCase()) {
@@ -50,10 +48,8 @@ public class DefaultMessage implements UlticalMessage {
         default:
             this.setSenderName("DFV-Turniere");
             this.setGreetings("Hallo");
-            this.setGoodbye("Viele Grüße,");
+            this.setGoodbye("Viele Grüße");
             this.setGoodbyeName("DFV-Turniere");
-            this.setFooter(System.lineSeparator() + "-----" + System.lineSeparator() + "www.dfv-turniere.de"
-                    + System.lineSeparator() + "Der Turnierkalender des DFV");
         }
     }
 
@@ -69,44 +65,39 @@ public class DefaultMessage implements UlticalMessage {
     }
 
     public void addRecipient(String email, String firstName, String fullName) {
-        this.recipients.put(this.createFullRecipient(email, fullName), firstName);
-    }
-
-    private String createFullRecipient(String email, String name) {
-        StringBuilder recipientSb = new StringBuilder();
-
-        if (name != null && !name.isEmpty()) {
-            recipientSb.append(name).append(" <");
-        }
-        recipientSb.append(email);
-        if (name != null && !name.isEmpty()) {
-            recipientSb.append(">");
-        }
-        return recipientSb.toString();
+        Recipient recipient = new Recipient(email);
+        recipient.setName(fullName);
+        this.recipients.put(recipient, firstName);
     }
 
     @Override
-    public Set<String> getRecipients() {
-        return this.recipients.keySet();
+    public Set<Recipient> getRecipients(UlticalRecipientType recipientType) {
+        if (recipientType == UlticalRecipientType.TO) {
+            return this.recipients.keySet();
+        } else {
+            return null;
+        }
     }
 
     public void addParagraph(String paragraph) {
         this.paragraphs.add(paragraph);
     }
 
-    public boolean readyToSend() {
-        return !(this.getRecipients().isEmpty() || this.getParagraphs().isEmpty() || this.getSubject().isEmpty());
-    }
-
     @Override
-    public String getRenderedMessage(String email) {
+    public String getRenderedMessage() {
         StringBuilder sb = new StringBuilder();
         String nl = System.lineSeparator();
 
         sb.append(this.getGreetings());
 
-        if (this.recipients.get(email) != null && !this.recipients.get(email).isEmpty()) {
-            sb.append(" ").append(this.recipients.get(email));
+        String recipientName = "";
+        if (this.recipients.size() == 1) {
+            for (String recipient : this.recipients.values()) {
+                recipientName = recipient;
+            }
+        }
+        if (recipientName != null && !recipientName.isEmpty()) {
+            sb.append(" ").append(recipientName);
         }
         sb.append(",").append(nl).append(nl);
 
@@ -117,9 +108,6 @@ public class DefaultMessage implements UlticalMessage {
         sb.append(this.getGoodbye()).append(nl);
         sb.append(this.getGoodbyeName()).append(nl);
 
-        sb.append(this.getFooter());
-
         return sb.toString();
     }
-
 }

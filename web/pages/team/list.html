@@ -1,425 +1,59 @@
 <div ng-controller="TeamListCtrl">
 
 	<div class="row">
-		<div class="col-md-12">
-			<h3 class="page-title">{{ 'team.list.title' | translate }}</h3>
-		</div>
-	</div>
 
-	<div class="row">
-		<div class="col-md-12">
-			<div class="margin-top" bs-active-pane="tabs.activeTab" bs-tabs>
-				<div ng-if="loggedIn()" bs-pane title="{{ 'team.list.own' | translate }}" name="own"></div>
-				<div bs-pane title="{{ 'team.list.all' | translate }}" name="all"></div>
+		<bas-action-bar></bas-action-bar>
+
+		<div class="col-lg-8 col-lg-pull-4 col-sm-9 col-sm-pull-3 col-xs-12">
+
+			<div class="row">
+				<div class="col-md-12">
+					<h3 class="page-title">{{ 'team.list.title' | translate }}</h3>
+				</div>
 			</div>
-		</div>
-	</div>
 
-	<div class="row margin-top ani-fade ani-vslide ani-large" ng-if="editing">
-		<div class="col-md-7">
-			<div class="panel panel-ultical">
-				<div class="panel-body">
-					<form name="inputForm">
-
-						<div class="row margin-bottom" ng-if="teamToEdit.id == -1" >
-							<div class="col-md-12">
-								<span class="help-block">{{ 'team.edit.introduction' | translate }}</span>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group" ng-class="{'has-error': inputForm.name.$touched && inputForm.name.$invalid}">
-									<label class="" for="tteName">{{ 'team.edit.nameLabel' | translate }}</label>
-									<input min-length="2" name="name" required type="text" ng-model="teamToEdit.name" class="form-control" id="tteName" size="30" placeholder="{{ 'team.edit.namePlaceholder' | translate }}">
-								</div>
-							</div>
-							<div class="col-md-4 col-md-offset-2">
-								<div class="form-group">
-									<label for="tteFoundingDate">{{ 'team.edit.foundingDateLabel' | translate }}</label>
-									<input type="number" ng-model="teamToEdit.foundingDate" max="2100" min="1900" ng-maxlength="4" size="4" class="form-control" id="tteFoundingDate">
-								</div>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="tteDesc">{{ 'team.edit.descriptionLabel' | translate }}</label>
-									<textarea class="form-control" id="tteDesc" ng-model="teamToEdit.description" rows="3" placeholder="{{ 'team.edit.descriptionPlaceholder' | translate }}"></textarea>
-								</div>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group has-feedback" ng-class="{'has-error': (inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing}">
-									<label for="tteCity">{{ 'team.edit.locationCityLabel' | translate }}</label>
-									<input name="location" required bas-object-typeahead="location" type="text" id="ttyCity" container="body" class="form-control" ng-model="teamToEdit.location" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" data-comparator="typeaheadPreMatching"
-									bs-options="location | locationObject as location | location for location in getLocations($viewValue)" placeholder="{{ 'team.edit.locationCityLabel' | translate }}" bs-typeahead
-									/>
-									<span ng-show="teamToEdit.location.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
-									<span ng-if="(inputForm.location.$touched && (teamToEdit.location.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'team.edit.locationMissing' | translate }}</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group has-feedback">
-									<label for="tteClub">{{ 'team.edit.clubLabel' | translate }}</label>
-									<input bas-object-typeahead="club" data-min-length="3" id="tteClub" type="text" container="body" class="form-control" ng-model="teamToEdit.club" data-animation="am-flip-x" data-auto-select="1" data-trim-value="0" bs-options="club as club.name for club in allClubs"
-									placeholder="{{ 'team.edit.clubPlaceholder' | translate }}" bs-typeahead
-									>
-									<span ng-show="teamToEdit.club.id != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
-								</div>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group" ng-class="{'has-error': inputForm.contactEmail.$touched && inputForm.contactEmail.$invalid}">
-									<label for="tteContactEmail">{{ 'team.edit.contactEmailLabel' | translate }}</label>
-									<input name="contactEmail" type="email" class="form-control" id="tteContactEmail" ng-model="teamToEdit.contactEmail" placeholder="{{ 'team.edit.contactEmailPlaceholder' | translate }}" />
-									<span class="help-block">{{ 'team.edit.contactEmailHelp' | translate }}</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="tteUrl">{{ 'team.edit.urlLabel' | translate }}</label>
-									<input type="text" class="form-control" id="tteUrl" ng-model="teamToEdit.url" placeholder="{{ 'team.edit.urlPlaceholder' | translate }}" />
-								</div>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="tteTwitter">{{ 'team.edit.twitterNameLabel' | translate }}</label>
-									<input type="text" class="form-control" id="tteTwitter" ng-model="teamToEdit.twitterName" placeholder="{{ 'team.edit.twitterNamePlaceholder' | translate }}" />
-								</div>
-							</div>
-						</div>
-
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="tteFbUrl">{{ 'team.edit.facebookUrlLabel' | translate }}</label>
-									<input type="text" class="form-control" id="tteFbUrl" ng-model="teamToEdit.facebookUrl" placeholder="{{ 'team.edit.facebookUrlPlaceholder' | translate }}" />
-								</div>
-							</div>
-						</div>
-					</form>
-
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="tteAdmins">{{ 'team.admins' | translate }}</label>
-
-								<div class="form-control-static">
-									<div class="editable-list" ng-repeat="admin in teamToEdit.admins">
-										<div class="editable-list-item" ng-class="{'no-remove': (admin.id == activeUserId && teamToEdit.id == -1) || (teamToEdit.admins.length < 2) }">{{ admin.dfvPlayer != null ? admin.dfvPlayer.firstName + ' ' + admin.dfvPlayer.lastName : admin.email }}</div>
-										<div ng-hide="(admin.id == activeUserId && teamToEdit.id == -1) || (teamToEdit.admins.length < 2)" ng-click="removeAdmin(admin.id)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'team.edit.adminsRemoveTooltip' | translate }}" bs-tooltip>
-											<span class="fa-stack fa-lg">
-												<i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x fa-inverse"></i>
-											</span>
-										</div>
-									</div>
-								</div>
-
-								<div class="input-group input-group-colored col-md-6 margin-top-small">
-									<span ng-click="addAdmin(newAdmin)" class="cursor-pointer input-group-addon">
-										<span class="glyphicon glyphicon-plus"></span>
-									</span>
-									<input bas-object-typeahead="admins" type="text" data-container="body" class="form-control" id="tteAdmins" bas-enter="addAdmin(newAdmin)" ng-blur="addAdmin(newAdmin)" ng-model="newAdmin.obj" data-animation="am-flip-x" data-auto-select="0" data-trim-value="0"
-									bs-options="user as user.fullName for user in getUsers($viewValue)" placeholder="{{ 'team.edit.adminsPlaceholder' | translate }}" bs-typeahead
-									>
-								</div>
-								<span class="help-block">{{ 'team.edit.adminsHelp' | translate }}</span>
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="tteEmails">{{ 'team.edit.emailsLabel' | translate }} ({{ 'general.optional' | translate }})</label>
-
-								<div class="form-control-static" ng-hide="teamToEdit.emails.length == 0">
-									<div class="editable-list" ng-repeat="email in teamToEdit.emails">
-										<div class="editable-list-item">{{ email }}</div>
-										<div ng-click="removeEmail(email)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'team.edit.emailsRemoveTooltip' | translate }}" bs-tooltip>
-											<span class="fa-stack fa-lg">
-												<i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x fa-inverse"></i>
-											</span>
-										</div>
-									</div>
-								</div>
-
-								<div class="input-group input-group-colored col-md-6">
-									<span ng-click="addEmail(newEmail)" class="input-group-addon">
-										<span class="glyphicon glyphicon-plus"></span>
-									</span>
-									<form name="emailForm">
-										<input type="email" class="form-control" id="tteEmails" ng-model="newEmail.text" bas-enter="addEmail(emailForm, newEmail)" ng-blur="addEmail(emailForm, newEmail)" placeholder="{{ 'team.edit.emailsPlaceholder' | translate }}" />
-									</form>
-								</div>
-								<span class="help-block">{{ 'team.edit.emailsHelp' | translate }}</span>
-							</div>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="col-md-12" id="team-edit-error{{ teamToEdit.id }}">
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="col-md-12">
-							<button type="click" ng-click="saveTeam(teamToEdit)" class="btn btn-primary">{{ 'general.save' | translate }}</button>
-							<button type="click" ng-click="cancel()" class="btn btn-default">{{ 'general.cancel' | translate }}</button>
-
-							<button ng-if="teamToEdit.id != -1" type="click" ng-click="deleteTeam(teamToEdit)" class="btn btn-danger pull-right">{{ 'team.edit.deleteTeam' | translate }}</button>
-						</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="margin-top" bs-active-pane="tabs.activeTab" bs-tabs>
+						<div ng-if="loggedIn()" bs-pane title="{{ 'team.list.own' | translate }}" name="own"></div>
+						<div bs-pane title="{{ 'team.list.all' | translate }}" name="all"></div>
 					</div>
 				</div>
 			</div>
 
-		</div>
-	</div>
-
-	<div class="row margin-top-big ffade-in" ng-show="tabs.activeTab == 'own' && !editing">
-		<div class="col-md-12">
-			<button ng-if="bigButtons" ng-click="createNewTeam()" type="button" class="btn btn-primary">
-				<span class="glyphicon glyphicon-plus-sign glyphicon-big" aria-hidden="true"></span>
-				{{ 'team.list.newTeam' | translate }}
-			</button>
-			<a class="alternative-button-link" ng-if="!bigButtons" ng-click="createNewTeam()">{{ 'team.list.newTeam' | translate }}</a>
-		</div>
-	</div>
-
-	<!-- TEAM LIST -->
-	<div class="row margin-top fade" ng-hide="editing">
-
-		<div class="col-md-8">
-			<div class="panel-group" ng-model="panel.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
-				<div class="panel panel-ultical" ng-repeat="team in teams | orderLocaleBy : teamOrder track by team.id">
-					<div class="panel-heading cursor-pointer" role="tab">
-						<h4 class="panel-title" bs-collapse-toggle>
-							<span>{{ team.name }}</span>
-							<div ng-if="false && team.x.own" ng-click="deleteTeam(team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.remove.tooltip' | translate }}" bs-tooltip>
-								<i class="fa fa-remove"></i>
-							</div>
-							<div ng-if="team.x.own" ng-click="editTeam(team)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.edit.tooltip' | translate }}" bs-tooltip>
-								<i class="fa fa-pencil"></i>
-							</div>
-						</h4>
-					</div>
-
-					<div class="panel-collapse" role="tabpanel" bs-collapse-target>
+			<div class="row margin-top ani-fade ani-vslide ani-large" ng-if="editing">
+				<div class="col-md-7">
+					<div class="panel panel-ultical">
 						<div class="panel-body">
 
-							<div class="row margin-bottom" ng-if="team.description | notEmpty">
-								<div class="col-md-12">{{team.description }}</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<!-- TEAM LIST -->
+			<div class="row margin-top fade">
+
+				<div class="col-md-12">
+					<div class="panel-group" ng-model="panel.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
+						<div class="panel panel-ultical" ng-repeat="team in teams | orderLocaleBy : teamOrder track by team.id">
+							<div class="panel-heading cursor-pointer" role="tab">
+								<a ui-sref="app.teamShow({teamId: team.id, teamSlug: (team.name | slugify) })">
+									<h4 class="panel-title" abs-collapse-toggle>
+										<span>{{ team.name }}</span><span ng-if="!(team.location | emptyLocation)" class="team-list-location">&nbsp;&nbsp;{{ team.location | location : 'city' }}</span>
+									</h4>
+								</a>
 							</div>
 
-							<div class="row" ng-if="team.location.city | notEmpty">
-								<div class="col-md-12">
-									<i class="fa fa-map-marker fa-fw"></i> {{ team.location | location }}
-								</div>
-							</div>
-
-							<div class="row" ng-if="team.club | notEmpty">
-								<div class="col-md-12">
-									<span class="glyphicon glyphicon-home fa-fw" aria-hidden="true"></span>
-									{{ team.club.name }}
-								</div>
-							</div>
-
-							<div class="row" ng-if="team.foundingDate != 0">
-								<div class="col-md-12">
-									<i class="fa fa-calendar fa-fw"></i>
-									<a target="_blank" href="https://{{ currentLocale }}.wikipedia.org/wiki/{{ team.foundingDate }}">{{ team.foundingDate }}</a>
-								</div>
-							</div>
-
-							<div class="row margin-top" ng-if="(team.location.city | notEmpty) || (team.foundingDate != 0) || (team.club | notEmpty)">
-								<div class="col-md-12"></div>
-							</div>
-
-							<div class="row" ng-if="team.contactEmail | notEmpty">
-								<div class="col-md-12">
-									<i class="fa fa-envelope-o fa-fw"></i>
-									<a ng-href="mailto:{{ team.contactEmail }}">{{ team.contactEmail }}</a>
-								</div>
-							</div>
-
-							<div class="row" ng-if="team.url | notEmpty">
-								<div class="col-md-12">
-									<i class="fa fa-link fa-fw"></i>
-									<a target="_blank" ng-href="{{ team.url | url }}">{{ team.url }}</a>
-								</div>
-							</div>
-
-							<div class="row" ng-if="team.facebookUrl | notEmpty">
-								<div class="col-md-12">
-									<i class="fa fa-facebook fa-fw"></i>
-									<a target="_blank" ng-href="{{ team.facebookUrl | url }}">{{ team.facebookUrl }}</a>
-								</div>
-							</div>
-
-							<div class="row" ng-if="team.twitterName != ''">
-								<div class="col-md-12">
-									<i class="fa fa-twitter fa-fw"></i>
-									<a target="_blank" ng-href="https://www.twitter.com/{{ team.twitterName }}">{{ team.twitterName }}</a>
-								</div>
-							</div>
-
-							<div class="row margin-top" ng-if="(team.contactEmail | notEmpty) || (team.url | notEmpty) || (team.facebookUrl | notEmpty) || (team.twitterName != '')">
-								<div class="col-md-12"></div>
-							</div>
-
-							<!-- ROSTERS -->
-							<div class="row" ng-if="team.rosters.length > 0 || (team.x.own && !bigButtons)">
-								<div class="col-md-12">
-									<i class="fa fa-list fa-fw"></i>
-									<span ng-hide="team.rosters.length == 0 && editingRoster == -1">{{ 'team.roster.label' | translate }}</span>
-
-									<span ng-show="!bigButtons && team.x.own && !editing && editingRoster == -1 && team.rosters.length != 0"> &nbsp;(</span>
-									<a class="alternative-button-link" ng-click="createNewRoster(team)" ng-show="!bigButtons && team.x.own && !editing && editingRoster == -1">{{ 'team.roster.newRoster' | translate }}</a>
-									<span ng-show="!bigButtons && team.x.own && !editing && editingRoster == -1 && team.rosters.length != 0">)</span>
-								</div>
-							</div>
-
-							<div class="row">
-								<div class="col-md-12">
-									<div class="margin-top-small" id="roster-error{{ team.id }}"></div>
-								</div>
-							</div>
-
-							<div class="row margin-top ffade-in animation-delay" ng-show="bigButtons && team.x.own && !editing && editingRoster == -1">
-								<div class="col-md-12">
-									<button ng-click="createNewRoster(team)" type="button" class="btn btn-primary">
-										<span class="glyphicon glyphicon-plus-sign glyphicon-big" aria-hidden="true"></span>
-										{{ 'team.roster.newRoster' | translate }}
-									</button>
-								</div>
-							</div>
-
-							<div class="row padding-top ani-fade ani-vslide ani-short" ng-if="editingRoster == team.id">
-								<div class="col-md-9">
-									<div class="row" id="new-roster-form">
-										<div class="col-md-7">
-											<label class="" for="rosDivAge">{{ 'team.roster.divisionAgeLabel' | translate }}</label>
-											<div class="form-group">
-												<div class="row">
-													<div class="col-md-7">
-														<button id="rosDivAge" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.divisionAge" bs-options="divisionAge as 'division.' + divisionAge | translate for divisionAge in selects.divisionAges" bs-select>
-															<span class="caret"></span>
-														</button>
-													</div>
-													<div class="col-md-5">
-														<button id="rosDivType" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.divisionType" bs-options="divisionType as 'division.' + divisionType | translate for divisionType in selects.divisionTypes" bs-select>
-															<span class="caret"></span>
-														</button>
-													</div>
-												</div>
-											</div>
-										</div>
-
-										<div class="col-md-5">
-											<div class="form-group">
-												<label class="" for="rosSeason">{{ 'season.season' | translate }}</label>
-												<button id="rosSeason" type="button" class="btn btn-default" data-container="body" ng-model="newRoster.season" bs-options="season as season | season : 'fullName' for season in selects.seasons | orderBy : ['-year', '-plusOneYear']" bs-select>
-													<span class="caret"></span>
-												</button>
-											</div>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-md-7">
-											<button type="click" ng-click="saveRoster(newRoster, team)" class="btn btn-primary">{{ 'general.create' | translate }}</button>
-											<button type="click" ng-click="cancelRosterEdit()" class="btn btn-default">{{ 'general.cancel' | translate }}</button>
-										</div>
-									</div>
-
-								</div>
-							</div>
-
-							<div class="row margin-top-small" class="roster-listing" ng-if="team.rosters.length > 0">
-								<div class="col-md-12">
-
-									<div class="panel-group" ng-model="teamPanels.activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
-
-										<div class="panel panel-ultical2" ng-repeat="roster in team.rosters | orderBy : ['-season.year', '-season.plusOneYear'] track by roster.id">
-											<div class="panel-heading cursor-pointer" role="tab">
-												<h3 class="panel-title" bs-collapse-toggle>
-													<span>{{ roster.season | season : true }} - {{ roster | division }}</span>
-													<span ng-if="loggedIn()" class="panel-title-addon">&nbsp;&nbsp;(&nbsp;{{ roster.players.length }}&nbsp;)</span>
-													<div ng-if="team.x.own" ng-click="editRoster(roster, team, $index)" class="ffade team-actions cursor-pointer" data-title="{{ 'team.roster.editTooltip' | translate }}" bs-tooltip>
-														<i class="fa fa-pencil"></i>
-													</div>
-												</h3>
-											</div>
-
-											<div class="panel-collapse" role="tabpanel" bs-collapse-target>
-												<div class="panel-body">
-
-													<!-- adding player to roster - input -->
-													<div class="row" ng-if="team.x.own && editingRosterPlayers == roster.id">
-														<div class="col-md-12">
-															<div class="row">
-																<div class="col-md-12">
-																	<div id="add-player-error"></div>
-																</div>
-															</div>
-															<div class="row margin-bottom">
-																<div class="col-md-7">
-																	<div class="input-group input-group-colored">
-																		<span ng-click="addPlayerToRoster(newPlayer, roster)" class="cursor-pointer input-group-addon">
-																			<span class="glyphicon glyphicon-plus"></span>
-																		</span>
-																		<input ng-change="addPlayerToRoster(newPlayer, roster)" ng-disabled="editRosterBlock" type="text" data-container="body" class="form-control" bas-enter="addPlayerToRoster(newPlayer, roster)" ng-blur="addPlayerToRoster(newPlayer, roster)" ng-model="newPlayer.obj" data-comparator="typeaheadPreMatching"
-																		data-animation="am-flip-x" data-auto-select="0" data-trim-value="0" data-html="1" bs-options="player as player.fullName for player in getPlayers($viewValue)" placeholder="{{ 'team.roster.newPlayerPlaceholder' | translate }}" bs-typeahead
-																		>
-																	</div>
-																</div>
-																<div class="col-md-2">
-																	<div class="btn btn-default" ng-click="rosterEditEnd(roster, team)">{{ 'general.done' | translate }}</div>
-																</div>
-																<div class="col-md-3 team-actions-link">
-																	<a href="#" ng-if="team.x.own && !roster.blocked" ng-click="deleteRoster(roster, team)" class="cursor-pointer">{{ 'team.roster.remove' | translate }}</a>
-																</div>
-															</div>
-														</div>
-													</div>
-
-													<div class="row">
-														<div class="col-md-12">
-															<div ng-if="loggedIn() && roster.players.length > 0" class="roster-list" ng-repeat="rosterPlayer in roster.players | orderBy : 'player.lastName'">
-																{{ rosterPlayer.player | playername : true }}
-																<span ng-if="team.x.own && editingRosterPlayers == roster.id && !rosterPlayer.blocked" ng-click="removePlayerFromRoster(rosterPlayer.player, roster, team)" class="ffade player-actions cursor-pointer" data-title="{{ 'team.roster.removePlayerTooltip' | translate }}" bs-tooltip>
-																	<i class="fa fa-remove"></i>
-																</span>
-															</div>
-															<div ng-if="loggedIn() && roster.players.length == 0">{{ 'team.roster.empty' | translate }}</div>
-															<div ng-if="!loggedIn()">{{ 'team.roster.notLoggedIn' | translate }}</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+							<!-- <div class="panel-collapse" role="tabpanel" abs-collapse-target>
+							<div class="panel-body"> </div>	</div> -->
 						</div>
 					</div>
 				</div>
 			</div>
+
 		</div>
 	</div>
+
 </div>

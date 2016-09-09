@@ -10,7 +10,7 @@
     "amd",
     "globals"
   ],
-  "license": "MIT",
+  "license": "GPL",
   "homepage": "",
   "private": true,
   "ignore": [
@@ -24,15 +24,20 @@
     "angular": "*",
     "angular-ui-router": "*",
     "angular-translate": "*",
+    "angular-translate-interpolation-messageformat": "*",
     "angular-sanitize": "*",
     "angular-strap": "*",
     "angular-animate": "*",
     "angular-motion": "*",
+    "angular-bootstrap": "*",
+    "angular-filter": "*",
+    "angular-recaptcha": "*",
     "bootstrap": "*",
     "respond": "*",
     "fontawesome": "*",
-    "angular-moment": "*",
+    "angular-moment": ">=1.0.0-beta.1",
     "angular-slugify": "*",
-    "jsog": "*"
+    "jsog": "*",
+    "ng-device-detector": "*"
   }
 }

@@ -22,6 +22,7 @@ import org.mockito.MockitoAnnotations;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.model.Context;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionType;
@@ -33,6 +34,8 @@ import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.User;
 
 public class RosterResourceTest {
+
+    private static final int DFV_NUMBER_PASSIVE = 12344321;
 
     private static final int USER_ID = 23;
 
@@ -83,10 +86,15 @@ public class RosterResourceTest {
     DfvMvName dfvNameJunior;
     @Mock
     DfvMvName dfvNameWoman;
+    @Mock
+    DfvPlayer passivePlayer;
+    @Mock
+    DfvMvName dfvNamePassive;
 
     private RosterResource resource;
 
     private Season season;
+    private Context dfvContext;
 
     @Rule
     public ExpectedException expected = ExpectedException.none();
@@ -98,6 +106,10 @@ public class RosterResourceTest {
         this.season = new Season();
         this.season.setId(1);
         this.season.setYear(2016);
+
+        this.dfvContext = new Context();
+        this.dfvContext.setId(1);
+        this.dfvContext.setAcronym("DFV");
 
         when(this.rosterMaster.getId()).thenReturn(Integer.valueOf(ROSTER_ID_MASTER));
         when(this.rosterMaster.getSeason()).thenReturn(this.season);
@@ -120,11 +132,15 @@ public class RosterResourceTest {
         when(this.rosterOpenRegularA.getDivisionType()).thenReturn(DivisionType.OPEN);
         when(this.rosterOpenRegularA.getSeason()).thenReturn(this.season);
         when(this.rosterOpenRegularA.getTeam()).thenReturn(this.teamA);
+        when(this.rosterOpenRegularA.getContext()).thenReturn(this.dfvContext);
+        when(this.rosterOpenRegularA.getNameAddition()).thenReturn("");
         when(this.rosterOpenRegularB.getId()).thenReturn(ROSTER_ID_OPEN_REG_B);
         when(this.rosterOpenRegularB.getDivisionAge()).thenReturn(DivisionAge.REGULAR);
         when(this.rosterOpenRegularB.getDivisionType()).thenReturn(DivisionType.OPEN);
         when(this.rosterOpenRegularB.getSeason()).thenReturn(this.season);
         when(this.rosterOpenRegularB.getTeam()).thenReturn(this.teamB);
+        when(this.rosterOpenRegularB.getContext()).thenReturn(this.dfvContext);
+        when(this.rosterOpenRegularB.getNameAddition()).thenReturn("");
         when(this.dataStore.get(eq(ROSTER_ID_OPEN_REG_A), eq(Roster.class))).thenReturn(this.rosterOpenRegularA);
         when(this.dataStore.get(eq(ROSTER_ID_OPEN_REG_B), eq(Roster.class))).thenReturn(this.rosterOpenRegularB);
         when(this.dataStore.get(eq(TEAM_42), eq(Team.class))).thenReturn(this.teamA);
@@ -136,6 +152,7 @@ public class RosterResourceTest {
         when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_MASTER)).thenReturn(this.playerMasters);
         when(this.playerMasters.getBirthDate()).thenReturn(LocalDate.of(1983, 12, 31));
         when(this.playerMasters.getGender()).thenReturn(Gender.MALE);
+        when(this.playerMasters.isEligible()).thenReturn(Boolean.TRUE);
         when(this.teamA.getId()).thenReturn(Integer.valueOf(TEAM_42));
         when(this.teamA.getAdmins()).thenReturn(Collections.singletonList(this.currentUser));
         when(this.teamB.getId()).thenReturn(Integer.valueOf(TEAM_43));
@@ -146,16 +163,22 @@ public class RosterResourceTest {
         when(this.dfvNameJunior.isDse()).thenReturn(Boolean.TRUE);
         when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_JUNIOR)).thenReturn(this.playerJuniors);
         when(this.playerJuniors.getBirthDate()).thenReturn(LocalDate.of(1995, 5, 1));
+        when(this.playerJuniors.isEligible()).thenReturn(Boolean.TRUE);
 
         when(this.dfvNameWoman.getDfvNumber()).thenReturn(Integer.valueOf(DFV_NUMBER_WOMAN));
         when(this.dfvNameWoman.isDse()).thenReturn(Boolean.TRUE);
         when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_WOMAN)).thenReturn(this.playerWoman);
         when(this.playerWoman.getGender()).thenReturn(Gender.FEMALE);
         when(this.playerWoman.getBirthDate()).thenReturn(LocalDate.of(1991, 3, 20));
+        when(this.playerWoman.isEligible()).thenReturn(Boolean.TRUE);
 
         when(this.teamRegA.getId()).thenReturn(TEAM_REG_A);
-        when(this.teamRegA.getTeam()).thenReturn(this.teamA);
+        when(this.teamRegA.getRoster()).thenReturn(this.rosterOpenRegularA);
 
+        when(this.passivePlayer.getId()).thenReturn(DFV_NUMBER_PASSIVE);
+        when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_PASSIVE)).thenReturn(this.passivePlayer);
+        when(this.dfvNamePassive.getDfvNumber()).thenReturn(DFV_NUMBER_PASSIVE);
+        when(this.dfvNamePassive.isDse()).thenReturn(Boolean.TRUE);
         this.resource = new RosterResource();
         this.resource.dataStore = this.dataStore;
     }
@@ -169,9 +192,10 @@ public class RosterResourceTest {
     public void testAddPlayerToTwoRosters() throws Exception {
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG_A, this.dfvNameMaster);
         verify(this.dataStore).addPlayerToRoster(this.rosterOpenRegularA, this.playerMasters);
-        when(this.dataStore.getTeamRegistrationOfPlayerSeason(this.playerMasters.getId(), this.season.getId(),
-                DivisionAge.REGULAR.name(), DivisionType.OPEN.name()))
-                        .thenReturn(Collections.singletonList(this.teamRegA));
+        when(this.dataStore.getRosterByPlayerSeasonDivision(this.playerMasters.getId(), this.rosterOpenRegularB))
+                .thenReturn(Collections.singletonList(this.rosterOpenRegularA));
+        when(this.dataStore.getTeamRegistrationsByRoster(this.rosterOpenRegularA))
+                .thenReturn(Collections.singletonList(this.teamRegA));
         this.expected.expect(WebApplicationException.class);
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG_B, this.dfvNameMaster);
         verify(this.dataStore, times(1)).addPlayerToRoster(any(), any());
@@ -217,6 +241,18 @@ public class RosterResourceTest {
     public void testAddWomanToWomen() throws Exception {
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_WOMEN, this.dfvNameWoman);
         verify(this.dataStore).addPlayerToRoster(this.rosterWomen, this.playerWoman);
+    }
+
+    @Test(expected = WebApplicationException.class)
+    public void testAddPassivePlayer() throws Exception {
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG_A, this.dfvNamePassive);
+    }
+
+    @Test(expected = WebApplicationException.class)
+    public void testNoDse() throws Exception {
+        final DfvMvName noDseMVName = new DfvMvName();
+        noDseMVName.setDse(false);
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG_A, noDseMVName);
     }
 
     @Test

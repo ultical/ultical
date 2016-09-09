@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.apache.ibatis.exceptions.PersistenceException;
@@ -33,7 +34,7 @@ public class DfvMvMapperTest {
         this.dfvMvName.setVorname(VORNAME);
         this.dfvMvName.setNachname(NACHNAME);
         this.dfvMvName.setDse(true);
-
+        this.dfvMvName.setLastModified(LocalDateTime.now());
         this.mapper = DBRULE.getSession().getMapper(DfvMvNameMapper.class);
     }
 
@@ -51,12 +52,14 @@ public class DfvMvMapperTest {
         other.setDfvnr(41234568);
         other.setFirstName(VORNAME);
         other.setLastName(NACHNAME);
+        other.setLastModified(LocalDateTime.now());
         this.mapper.insert(other);
 
         other = new DfvMvName();
         other.setDfvnr(51234569);
         other.setVorname(VORNAME);
         other.setNachname(NACHNAME);
+        other.setLastModified(LocalDateTime.now());
         this.mapper.insert(other);
 
         List<DfvMvName> names = this.mapper.getAll();

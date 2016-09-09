@@ -22,7 +22,7 @@ import de.ultical.backend.model.UnregisteredPlayer;
 
 public interface PlayerMapper extends BaseMapper<Player> {
 
-    public static final String SELECT_STMT = "SELECT id, version, first_name as firstName, last_name as lastName, email, gender, birth_date as birthDate, dfv_number as dfvNumber, is_registered, club FROM PLAYER p LEFT JOIN DFV_PLAYER ON p.id = DFV_PLAYER.player_id LEFT JOIN UNREGISTERED_PLAYER ON p.id = UNREGISTERED_PLAYER.player_id";
+    public static final String SELECT_STMT = "SELECT id, version, first_name as firstName, last_name as lastName, email, gender, birth_date as birthDate, dfv_number as dfvNumber, is_registered, club, eligible_until as eligibleUntil, last_modified as lastModified FROM PLAYER p LEFT JOIN DFV_PLAYER ON p.id = DFV_PLAYER.player_id LEFT JOIN UNREGISTERED_PLAYER ON p.id = UNREGISTERED_PLAYER.player_id";
 
     // INSERT
     @Insert({ "INSERT INTO PLAYER (first_name, last_name, gender, is_registered)",
@@ -48,7 +48,7 @@ public interface PlayerMapper extends BaseMapper<Player> {
     @TypeDiscriminator(column = "is_registered", javaType = Boolean.class, jdbcType = JdbcType.BOOLEAN, cases = {
             @Case(type = DfvPlayer.class, value = "true"), @Case(type = UnregisteredPlayer.class, value = "false") })
     @Results({
-            @Result(column = "club", property = "club", javaType = Club.class, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
+            @Result(column = "club", property = "club", javaType = Club.class, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get")) })
     Player get(int id);
 
     @Override
@@ -56,6 +56,6 @@ public interface PlayerMapper extends BaseMapper<Player> {
     @TypeDiscriminator(column = "is_registered", javaType = Boolean.class, jdbcType = JdbcType.BOOLEAN, cases = {
             @Case(type = DfvPlayer.class, value = "true"), @Case(type = UnregisteredPlayer.class, value = "false") })
     @Results({
-            @Result(column = "club", property = "club", javaType = Club.class, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ) })
+            @Result(column = "club", property = "club", javaType = Club.class, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get")) })
     List<Player> getAll();
 }

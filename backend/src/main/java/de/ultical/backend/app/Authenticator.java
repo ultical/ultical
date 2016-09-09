@@ -9,10 +9,26 @@ import org.apache.ibatis.exceptions.PersistenceException;
 
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.Event;
+import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.Team;
+import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.model.User;
 
 public class Authenticator {
+
+    public static void assureRosterAdmin(DataStore dataStore, Integer rosterId, User currentUser) {
+        Roster storedRoster = null;
+        try {
+            storedRoster = dataStore.get(rosterId, Roster.class);
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Accessing the database failed!", Status.INTERNAL_SERVER_ERROR);
+        }
+        if (storedRoster == null) {
+            throw new WebApplicationException(String.format("Roster with id %d does not exist!", rosterId),
+                    Status.NOT_FOUND);
+        }
+        checkTeamAdmin(storedRoster.getTeam(), currentUser);
+    }
 
     public static void assureTeamAdmin(DataStore dataStore, Integer teamId, User currentUser) {
         Team storedTeam = null;
@@ -25,15 +41,19 @@ public class Authenticator {
             throw new WebApplicationException(String.format("Team with id %d does not exist!", teamId),
                     Status.NOT_FOUND);
         }
+        checkTeamAdmin(storedTeam, currentUser);
+    }
+
+    public static void checkTeamAdmin(Team team, User currentUser) {
         boolean isAdmin = false;
-        for (User admin : storedTeam.getAdmins()) {
+        for (User admin : team.getAdmins()) {
             if (admin.getId() == currentUser.getId()) {
                 isAdmin = true;
                 break;
             }
         }
         if (!isAdmin) {
-            throw new WebApplicationException(String.format("You are not an admin for team %s", storedTeam.getName()),
+            throw new WebApplicationException(String.format("You are not an admin for team %s", team.getName()),
                     Status.FORBIDDEN);
         }
     }
@@ -73,6 +93,34 @@ public class Authenticator {
         }
         if (!isAdmin) {
             throw new WebApplicationException(String.format("You are not an admin for event %d", storedEvent.getId()),
+                    Status.FORBIDDEN);
+        }
+    }
+
+    public static void assureEditionAdmin(DataStore dataStore, Integer editionId, User currentUser) {
+        TournamentFormat storedFormat = null;
+        try {
+            storedFormat = dataStore.getFormatByEdition(editionId);
+        } catch (PersistenceException pe) {
+            throw new WebApplicationException("Accessing the database failed!", Status.INTERNAL_SERVER_ERROR);
+        }
+        assureFormatAdmin(storedFormat, currentUser);
+    }
+
+    public static void assureFormatAdmin(TournamentFormat storedFormat, User currentUser) {
+        if (storedFormat == null) {
+            throw new WebApplicationException("Format does not exist!", Status.NOT_FOUND);
+        }
+        List<User> admins = storedFormat.getAdmins();
+        boolean isAdmin = false;
+        for (User admin : admins) {
+            if (admin.getId() == currentUser.getId()) {
+                isAdmin = true;
+                break;
+            }
+        }
+        if (!isAdmin) {
+            throw new WebApplicationException(String.format("You are not an admin for format %d", storedFormat.getId()),
                     Status.FORBIDDEN);
         }
     }

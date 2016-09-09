@@ -14,11 +14,24 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			},
 			events: [],
 			teams: [],
-			seasons: [],
+      formats: [],
 
-			formatsByEventIndexed: {},
-			teamsIndexed: {},
+      teamsIndexed: {},
 			playerIndexed: {},
+
+      requested: {
+          own: {},
+      },
+
+      // fetch only once:
+			seasons: [],
+      clubs: [],
+      contexts: [],
+
+      resetUserSpecifics: function() {
+          this.own.teams = [];
+          this.requested.own = {};
+      },
 
 			getEmptyEvent: function() {
 				return createEmptyEvent();
@@ -38,12 +51,17 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 					storeTeam(team, newLoopIndex());
 					callback(team);
 				});
+        angular.forEach(this.teams, function(team) {
+          if (team.id == teamId) {
+            callback(team);
+          }
+        });
 			},
 
-			getAllTeams: function(callback) {
+			getAllTeamBasics: function(callback) {
 				var that = this;
 				callback(that.teams);
-				serverApi.getAllTeams(function(teams) {
+				serverApi.getAllTeamBasics(function(teams) {
 					that.teams = teams;
 
 					var loopIndex = newLoopIndex();
@@ -54,11 +72,41 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				});
 			},
 
+      getOwnTeamsCache: function(callback) {
+        var that = this;
+        if (!that.requested.own.teams) {
+          that.getOwnTeams(callback);
+          return null;
+        } else {
+          // don't callback if we have a direct result
+          return that.own.teams;
+        }
+      },
+
+      getOwnTeamBasics: function(callback) {
+        var that = this;
+        if (that.requested.own.teams) {
+          callback(that.own.teams);
+        }
+        serverApi.getOwnTeamBasics(function(teams) {
+          that.own.teams = teams;
+          that.requested.own.teams = true;
+          var loopIndex = newLoopIndex();
+          angular.forEach(teams, function(team) {
+            storeTeam(team, loopIndex);
+          });
+          callback(that.own.teams);
+        });
+      },
+
 			getOwnTeams: function(callback) {
 				var that = this;
-				callback(that.own.teams);
-				serverApi.getOwnTeams(function(teams) {
+				if (that.requested.own.teams) {
+          callback(that.own.teams);
+				}
+        serverApi.getOwnTeams(function(teams) {
 					that.own.teams = teams;
+          that.requested.own.teams = true;
 					var loopIndex = newLoopIndex();
 					angular.forEach(teams, function(team) {
 						storeTeam(team, loopIndex);
@@ -95,7 +143,34 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
       },
 
 			saveRoster: function(roster, team, callback, errorCallback) {
-				serverApi.postRoster(roster, team.id, callback, errorCallback);
+        if (roster.id != -1) {
+          var rosterToSend = angular.copy(roster);
+          rosterToSend.players = [];
+          serverApi.putRoster(rosterToSend, team, function(updatedRoster) {
+            updatedRoster.players = roster.players;
+            updatedRoster.x = {};
+
+            var indexToReplace = -1;
+            angular.forEach(team.rosters, function(roster, idx) {
+              if (roster.id == updatedRoster.id) {
+                indexToReplace = idx;
+              }
+            });
+            if (indexToReplace >= 0) {
+              team.rosters.splice(indexToReplace, 1);
+              team.rosters.push(updatedRoster);
+            }
+
+            callback(updatedRoster);
+          }, errorCallback);
+        } else {
+				  serverApi.postRoster(roster, team.id, function(updatedRoster) {
+            updatedRoster.x = {};
+            updatedRoster.players = [];
+            team.rosters.push(updatedRoster);
+            callback(updatedRoster);
+          }, errorCallback);
+        }
 			},
 
 			deleteRoster: function(roster, team, callback, errorCallback) {
@@ -143,29 +218,102 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				}, errorCallback);
 			},
 
+      // fetch only once
 			getSeasons: function(callback) {
 				var that = this;
-				if (isEmpty(this.seasons)) {
+				if (isEmpty(this.seasons) && !this.gettingSeasons) {
+          that.gettingSeasons = true;
 					serverApi.getSeasons(function(seasons) {
 						that.seasons = seasons;
+            callback(seasons);
 					});
 				} else {
 					callback(this.seasons);
 				}
 			},
 
+      // fetch only once
+      getContexts: function(callback) {
+				var that = this;
+				if (isEmpty(this.contexts) && !this.gettingContexts) {
+          that.gettingContexts = true;
+          serverApi.getContexts(function(contexts) {
+						that.contexts = contexts;
+            return callback(angular.copy(contexts));
+					});
+				} else {
+					return callback(angular.copy(this.contexts));
+				}
+			},
+
+      // fetch only once
+      getClubs: function(callback) {
+				var that = this;
+				if (isEmpty(this.clubs) && !this.gettingClubs) {
+          that.gettingClubs = true;
+					serverApi.getAllClubs(function(clubs) {
+						that.clubs = clubs;
+            return callback(clubs);
+					});
+				} else {
+					return callback(this.clubs);
+				}
+			},
+      getFormatForEdition: function(editionId, callback) {
+        var that = this;
+
+        angular.forEach(this.formats, function(format) {
+          angular.forEach(format.editions, function(edition) {
+            if (edition.id == editionId) {
+              callback(format);
+            }
+          });
+        });
+
+				serverApi.getFormatByEdition(editionId, function(data) {
+          that.addFormat(that, data, callback);
+				});
+      },
+
 			getFormatForEvent: function(eventId, callback) {
 				var that = this;
 
-				if (eventId in this.formatsByEventIndexed) {
-					callback(this.formatsByEventIndexed[eventId]);
-				}
+        angular.forEach(this.formats, function(format) {
+          angular.forEach(format.editions, function(edition) {
+            angular.forEach(edition.events, function(event) {
+              if (event.id == eventId) {
+                callback(format);
+              }
+            });
+          });
+        });
+
 				serverApi.getFormatByEvent(eventId, function(data) {
-					storeTournamentFormat(data, newLoopIndex());
-					that.formatsByEventIndexed[eventId] = data;
-					callback(data);
+					that.addFormat(that, data, callback);
 				});
 			},
+
+      getFormat: function(formatId, callback) {
+        var that = this;
+          serverApi.getFormat(formatId, function(data) {
+            that.addFormat(that, data, callback);
+          });
+      },
+
+      addFormat: function(that, data, callback) {
+        storeTournamentFormat(data, newLoopIndex());
+        var formatToReplace = -1;
+        angular.forEach(that.formats, function(format, idx) {
+          if (format.id == data.id) {
+            formatToReplace = idx;
+          }
+        });
+        if (formatToReplace != -1) {
+          that.formats.splice(formatToReplace, 1);
+        }
+        that.formats.push(data);
+        callback(data);
+      },
 
 			getEvent: function(eventId, callback) {
 				var that = this;
@@ -176,12 +324,12 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				});
 			},
 
-			getEvents: function(callback) {
+			getEvents: function(basics, callback) {
 				var that = this;
 				callback(this.events);
 
 				// make API call
-				serverApi.getEvents(function(data) {
+				serverApi.getEvents(basics, function(data) {
 					that.events = data;
 
 					var loopIndex = newLoopIndex();
@@ -195,14 +343,47 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				});
 			},
 
-			registerTeamForEdition: function(teamReg, divisionReg, callback) {
+			registerTeamForEdition: function(teamReg, divisionReg, callback, errorCallback) {
 				serverApi.registerTeamForEdition(teamReg, divisionReg, function(newTeamReg) {
 					divisionReg.registeredTeams.push(newTeamReg);
 					callback(newTeamReg);
-				});
+				}, errorCallback);
 			},
 
-			saveTeam: function(team, callback, errorCallback, activeList) {
+      updateTeamRegStatus: function(event, teamReg, newStatus, callback, errorCallback) {
+        var eventId = 0;
+        if (!isEmpty(event)) {
+          eventId = event.id;
+        }
+        var previousState = teamReg.status;
+        teamReg.status = newStatus;
+        serverApi.updateTeamRegistration(eventId, teamReg, function() {
+          teamReg.version++;
+          if (callback) {
+            callback();
+          }
+        }, function() {
+            teamReg.status = previousState;
+            if (errorCallback) {
+              errorCallback();
+            }
+        });
+      },
+
+      updateStandings: function(event, teamRegs, callback, errorCallback) {
+        var eventId = 0;
+        if (!isEmpty(event)) {
+          eventId = event.id;
+        }
+        serverApi.updateTeamRegistrations(eventId, teamRegs, function() {
+          angular.forEach(teamRegs, function(teamReg) {
+            teamReg.version++;
+          });
+          callback();
+        }, errorCallback);
+      },
+
+			saveTeam: function(team, callback, errorCallback) {
 				var that = this;
 				var oldTeam;
 				if (team.id == -1) {
@@ -242,11 +423,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 					storeTeam(savedTeam, newLoopIndex());
 
-					if (activeList == 'own') {
-						callback(that.own.teams);
-					} else if (activeList == 'all') {
-						callback(that.teams);
-					}
+          callback(savedTeam);
 				}, errorCallback);
 			},
 	}
@@ -369,7 +546,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 		event.x.isSingleEvent = event.tournamentEdition.isSingleEdition;
 		event.x.hasLocalOrganizer = !isEmpty(event.localOrganizer) && !isEmpty(event.localOrganizer.name) && event.tournamentEdition.organizer.id != event.localOrganizer.id;
-		event.x.hasFees = event.tournamentEdition.fees.length > 0 || event.fees.length > 0;
+		event.x.hasFees = (event.tournamentEdition.fees && event.tournamentEdition.fees.length > 0) || (event.fees && event.fees.length > 0);
 
 		var today = moment();
 		if (moment(event.startDate).isAfter(today)) {
@@ -384,6 +561,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 		event.x.divisions = [];
 
 		if ('divisionConfirmations' in event && !isEmpty(event.divisionConfirmations)) {
+      event.x.usesDivisionConfirmations = true;
 			angular.forEach(event.divisionConfirmations, function(divisionConfirmation) {
 				var division = angular.copy(divisionConfirmation.divisionRegistration);
 
@@ -398,6 +576,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			});
 		} else {
 			// this event gets all divisions and teams from the edition
+      event.x.usesDivisionConfirmations = false;
 			if (isEmpty(event.tournamentEdition.divisionRegistrations)) {
 				event.x.divisions = [];
 			} else {
@@ -424,17 +603,42 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 		storeContact(edition.organizer, loopIndex);
 
+    edition.x.latestEvent = {};
+    edition.x.eventsPerDivision = {};
 		angular.forEach(edition.divisionRegistrations, function(divReg, idx) {
 			storeDivReg(divReg, loopIndex);
+      edition.x.latestEvent[divReg.id] = {};
+      edition.x.eventsPerDivision[divReg.id] = [];
 		});
 
 		edition.x.isSingleEdition = edition.events != null && edition.events.length == 1;
+    angular.forEach(edition.events, function(event) {
+      event.x.isSingleEvent = edition.x.isSingleEdition;
+    });
 
 		var todayDateString = moment().format('YYYY-MM-DD');
 
 		edition.x.registrationIsOpen = !isEmpty(edition.registrationStart) && edition.registrationStart  <= todayDateString && edition.registrationEnd >= todayDateString;
 		edition.x.registrationTime = isEmpty(edition.registrationStart) ? 'never' : (edition.registrationStart > todayDateString ? 'future' : 'past');
-	}
+
+    // find and store all events for each division
+    angular.forEach(edition.events, function(event) {
+      angular.forEach(event.x.divisions, function(div) {
+        edition.x.eventsPerDivision[div.id].push(event);
+      });
+    });
+
+    // find the last event of each division
+    edition.x.lastestEventPerDivision = {};
+    angular.forEach(edition.x.eventsPerDivision, function(div, divId) {
+      edition.x.lastestEventPerDivision[divId] = {startDate: '1900-01-01'};
+      angular.forEach(div, function(event) {
+        if (event.startDate > edition.x.lastestEventPerDivision[divId].startDate) {
+          edition.x.lastestEventPerDivision[divId] = event;
+        }
+      });
+    });
+  }
 
 	function storeDivReg(divReg, loopIndex) {
 		// divRegs are unique to editions
@@ -445,7 +649,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 	}
 
 	function storeTeamRegistration(teamReg, loopIndex) {
-		storeTeam(teamReg.team, loopIndex);
+		storeRoster(teamReg.roster, loopIndex);
 	}
 
 	function storeTournamentFormat(format, loopIndex) {
@@ -464,6 +668,8 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 		});
 
 		storeAssociation(format.association, loopIndex);
+
+
 	}
 
 	function createEmptyEvent() {
@@ -484,7 +690,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 	function createEmptyEdition() {
 		return {
-			alternativeName: '',
+			name: '',
 			season: {
 				year: 2016,
 				surface: 'TURF',

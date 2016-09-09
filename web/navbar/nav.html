@@ -1,67 +1,36 @@
 <div class="navbar navbar-default navbar-fixed-top hidden-print" role="banner" bs-navbar ng-cloak>
-	<div class="container" bs-collapse data-start-collapsed="true">
+	<div class="container">
 
 		<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" bs-collapse-toggle>
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
+
+			<button id="navbar-actions" type="button" class="navbar-toggle" ng-click="openMenuAside()">
+				<div class="shared-icon-bar">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</div>
+
+				<span>{{ 'nav.menuLabel' | translate }}</span>
 			</button>
 
-			<a ui-sref="app.start">
-				<flip id="nav-logo" flip-show="{{ logoSide }}" ng-mouseenter="toggleLogoFlip()" ng-mouseleave="toggleLogoFlip()"> <flip-panel> <img title="{{ 'nav.title' | translate }}" src="images/logo_dfv_small.png" /> </flip-panel> <flip-panel>
+			<button id="navbar-actions" type="button" class="navbar-toggle" ng-click="openActionAside()">
+				<div class="shared-icon-bar">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</div>
+
+				<span>{{ 'nav.actionsLabel' | translate }}</span>
+			</button>
+
+			<a href="start"> <!-- href is just a random string in order for the catch-all to work -->
+				<flip id="nav-logo" flip-show="{{ logoSide }}" ng-mouseenter="toggleLogoFlip()" ng-mouseleave="toggleLogoFlip()"> <flip-panel> <img id="image-dfv-small" title="{{ 'nav.title' | translate }}" src="images/logo_dfv_small.png" /> </flip-panel> <flip-panel>
 				<div>{{ 'nav.titleFlipText' | translate }}</div>
 				</flip-panel> </flip>
 			</a>
 		</div>
 
-		<div id="nav-bar-buttons" bs-collapse-target="c1" class="navbar-body">
-			<ul bs-collapse-toggle="c1" class="nav navbar-nav">
-				<li data-animation="am-flip-x" XXXbs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
-					<a ui-sref="app.eventsList" class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</a>
-				</li>
-			</ul>
+		<div id="navbar-buttons" class="hidden-xs navbar-body" ng-include="'navbar/menu.html'"></div>
 
-			<ul class="nav navbar-nav">
-				<li>
-					<a  ui-sref="app.teamsList({locale: activeLang })" class="navbar-text">{{ 'nav.teams' | translate }}</a>
-				</li>
-			</ul>
-
-			<ul class="nav navbar-right navbar-nav" data-placement="bottom-right" data-animation="am-flip-x" bs-dropdown>
-				<li ng-show="loggedIn()">
-					<div class="navbar-text">{{ getUser() | username }}</div>
-				</li>
-			</ul>
-			<ul class="dropdown-menu" role="menu">
-				<li><a ui-sref="app.teamsOwn({locale: activeLang })">{{ 'nav.profileDropdown.ownTeams' | translate }}</a></li>
-<!-- 				<li><a ui-sref="app.eventsList">{{ 'nav.profileDropdown.ownEvents' | translate }}</a></li> -->
-				<li class="divider"></li>
-				<li><a href="#" ng-click="logOut()">{{ 'nav.profileDropdown.logout' | translate }}</a></li>
-			</ul>
-
-			<ul ng-show="!loggedIn()" class="nav navbar-right navbar-nav">
-				<li data-placement="bottom-right" data-template-url="pages/user/login_popover.html?v=13" data-animation="am-flip-x" data-auto-close="1" bs-popover>
-					<div class="navbar-text">{{ 'nav.login' | translate }}</div>
-				</li>
-			</ul>
-
-			<ul class="nav navbar-right navbar-nav" ng-show="!loggedIn()" data-animation="am-fade-and-slide-top" data-template-url="pages/user/registration_modal.html?v=14" bs-modal="modal">
-				<li>
-					<div class="navbar-text">{{ 'nav.register' | translate }}</div>
-				</li>
-			</ul>
-
-			<ul class="nav navbar-right navbar-nav" ng-show="languageSelector.length > 1" bs-dropdown="languageSelector" data-animation="am-flip-x" data-placement="bottom-left">
-				<li class="navbar-nav navbar-language">
-					<div id="navbar-language-icon">
-						<i class="fa fa-globe"></i>
-					</div>
-					<div id="navbar-language-code">{{ selectedLanguage }}</div>
-				</li>
-			</ul>
-
-		</div>
 	</div>
 </div>

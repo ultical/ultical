@@ -30,9 +30,25 @@ public class UltiCalConfig extends Configuration {
         private String mailCatcher = "";
     }
 
+    @Data
+    public static class JobsConfig {
+        private boolean dfvMvSyncEnabled = false;
+    }
+
+    @Data
+    public static class ReCaptcha {
+        private String url;
+        private String secret;
+    }
+
+
     private DfvApiConfig dfvApi;
 
     private DebugMode debugMode;
+
+    private ReCaptcha reCaptcha;
+
+    private JobsConfig jobs;
 
     @NotNull
     private DataSourceFactory database;

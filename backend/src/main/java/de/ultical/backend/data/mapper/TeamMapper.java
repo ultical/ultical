@@ -44,6 +44,27 @@ public interface TeamMapper extends BaseMapper<Team> {
     void removeAllAdmins(@Param("team") Team team);
 
     // SELECT
+    @Select("SELECT id, version, name, founding_date, location, url, contact_email, twitter_name, facebook_url, club FROM TEAM")
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "name", property = "name"), @Result(column = "founding_date", property = "foundingDate"),
+            @Result(column = "url", property = "url"), @Result(column = "contact_email", property = "contactEmail"),
+            @Result(column = "twitter_name", property = "twitterName"),
+            @Result(column = "facebook_url", property = "facebookUrl"),
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get")),
+            @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get")) })
+    List<Team> getBasics();
+
+    @Select({ "SELECT id, version, name, founding_date, location, url, contact_email, twitter_name, facebook_url, club",
+            "FROM TEAM t", "LEFT JOIN TEAM_ULTICAL_USERS tuc ON tuc.team = t.id", "WHERE tuc.admin = #{userId}" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "name", property = "name"), @Result(column = "founding_date", property = "foundingDate"),
+            @Result(column = "url", property = "url"), @Result(column = "contact_email", property = "contactEmail"),
+            @Result(column = "twitter_name", property = "twitterName"),
+            @Result(column = "facebook_url", property = "facebookUrl"),
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get")),
+            @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get")) })
+    List<Team> getBasicsByUser(int userId);
+
     @Override
     @Select("SELECT * FROM TEAM WHERE id=#{id}")
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
@@ -53,11 +74,37 @@ public interface TeamMapper extends BaseMapper<Team> {
             @Result(column = "contact_email", property = "contactEmail"),
             @Result(column = "twitter_name", property = "twitterName"),
             @Result(column = "facebook_url", property = "facebookUrl"),
-            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
-            @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
-            @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
-            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get")),
+            @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get")),
+            @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam")),
+            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam")) })
     Team get(int id);
+
+    @Select("SELECT * FROM TEAM WHERE id=#{id}")
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "description", property = "description"), @Result(column = "name", property = "name"),
+            @Result(column = "founding_date", property = "foundingDate"),
+            @Result(column = "emails", property = "emails"), @Result(column = "url", property = "url"),
+            @Result(column = "contact_email", property = "contactEmail"),
+            @Result(column = "twitter_name", property = "twitterName"),
+            @Result(column = "facebook_url", property = "facebookUrl"),
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get")),
+            @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get")),
+            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam")) })
+    Team getForTeamRegistration(int id);
+
+    @Select("SELECT * FROM TEAM WHERE id=#{id}")
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "description", property = "description"), @Result(column = "name", property = "name"),
+            @Result(column = "founding_date", property = "foundingDate"),
+            @Result(column = "emails", property = "emails"), @Result(column = "url", property = "url"),
+            @Result(column = "contact_email", property = "contactEmail"),
+            @Result(column = "twitter_name", property = "twitterName"),
+            @Result(column = "facebook_url", property = "facebookUrl"),
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get")),
+            @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get")),
+            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam")) })
+    Team getForRoster(int id);
 
     @Override
     @Select("SELECT * FROM TEAM")
@@ -68,10 +115,10 @@ public interface TeamMapper extends BaseMapper<Team> {
             @Result(column = "contact_email", property = "contactEmail"),
             @Result(column = "twitter_name", property = "twitterName"),
             @Result(column = "facebook_url", property = "facebookUrl"),
-            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
-            @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
-            @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
-            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get")),
+            @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get")),
+            @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam")),
+            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam")) })
     List<Team> getAll();
 
     // returns all teams the corresponding user is admin of
@@ -83,14 +130,31 @@ public interface TeamMapper extends BaseMapper<Team> {
             @Result(column = "contact_email", property = "contactEmail"),
             @Result(column = "twitter_name", property = "twitterName"),
             @Result(column = "facebook_url", property = "facebookUrl"),
-            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
-            @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get") ),
-            @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam") ),
-            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam") ) })
+            @Result(column = "club", property = "club", one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get")),
+            @Result(column = "location", property = "location", one = @One(select = "de.ultical.backend.data.mapper.LocationMapper.get")),
+            @Result(column = "id", property = "rosters", many = @Many(select = "de.ultical.backend.data.mapper.RosterMapper.getForTeam")),
+            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam")) })
     List<Team> getByUser(int userId);
 
     // returns a team with the given name
     @Select("SELECT id FROM TEAM WHERE name = #{teamName}")
     @Results({ @Result(column = "id", property = "id") })
     Team getByName(String teamName);
+
+    // get all teams that participate in the specified division of the specified
+    // edition with the specified participation status
+    @Select({ "<script>", "SELECT * FROM TEAM t", "LEFT JOIN ROSTER r ON r.team = t.id",
+            "LEFT JOIN TEAM_REGISTRATION tr ON tr.roster = r.id",
+            "LEFT JOIN DIVISION_REGISTRATION dr ON tr.division_registration = dr.id",
+            "LEFT JOIN TOURNAMENT_EDITION te ON te.id = dr.tournament_edition", "WHERE tr.status IN ",
+            "<foreach item='status' collection='statusList' open='(' separator=',' close=')'>", "#{status}",
+            "</foreach>", "AND dr.id IN ",
+            "<foreach item='division' collection='divisionList' open='(' separator=',' close=')'>", "#{division.id}",
+            "</foreach>", "AND te.id = #{editionId}", "</script>" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "emails", property = "emails"), @Result(column = "url", property = "url"),
+            @Result(column = "contact_email", property = "contactEmail"),
+            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForTeam")) })
+    List<Team> getByEditionDivisionStatus(@Param("editionId") Integer editionId,
+            @Param("divisionList") List<Integer> divisionList, @Param("statusList") List<String> statusList);
 }

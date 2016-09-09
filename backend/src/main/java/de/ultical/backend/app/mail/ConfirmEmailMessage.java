@@ -2,7 +2,7 @@ package de.ultical.backend.app.mail;
 
 import java.util.Map;
 
-public class ConfirmEmailMessage extends DefaultMessage {
+public class ConfirmEmailMessage extends SystemMessage {
 
     public ConfirmEmailMessage() {
         super();

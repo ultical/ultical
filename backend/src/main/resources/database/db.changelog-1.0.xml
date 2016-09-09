@@ -910,4 +910,278 @@
 		</preConditions>
 		<dropTable tableName="UNREGISTERED_PLAYER" />
 	</changeSet>
+	<changeSet author="bas" id="bas68">
+		<createTable tableName="CONTEXT">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="version" type="BIGINT" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="VARCHAR(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="acronym" type="VARCHAR(10)">
+				<constraints nullable="false" unique="true"
+					uniqueConstraintName="uk_context_acronym" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet author="bas" id="bas69">
+		<addColumn tableName="ROSTER">
+			<column name="name_addition" type="VARCHAR(10)" defaultValue="">
+				<constraints nullable="false" />
+			</column>
+			<column name="context" type="BIGINT" />
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_roster_context"
+			referencedTableName="CONTEXT" baseColumnNames="context"
+			baseTableName="ROSTER" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet author="bas" id="bas70">
+		<addColumn tableName="TEAM_REGISTRATION">
+			<column name="roster" type="BIGINT" />
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_team_registration_roster"
+			referencedTableName="ROSTER" baseColumnNames="roster" baseTableName="TEAM_REGISTRATION"
+			referencedColumnNames="id" />
+	</changeSet>
+	<changeSet author="bas" id="bas71">
+		<dropForeignKeyConstraint baseTableName="ROSTER"
+			constraintName="fk_roster_season" />
+		<dropForeignKeyConstraint baseTableName="ROSTER"
+			constraintName="fk_roster_team" />
+		<dropUniqueConstraint tableName="ROSTER"
+			constraintName="uk_roster_team_season_division" />
+		<addForeignKeyConstraint constraintName="fk_roster_season"
+			referencedTableName="SEASON" baseColumnNames="season" baseTableName="ROSTER"
+			referencedColumnNames="id" />
+		<addForeignKeyConstraint constraintName="fk_roster_team"
+			referencedTableName="TEAM" baseColumnNames="team" baseTableName="ROSTER"
+			referencedColumnNames="id" />
+		<addUniqueConstraint constraintName="uk_roster_team_season_division_addition_context"
+			columnNames="team, season, division_type, division_age, name_addition, context"
+			tableName="ROSTER" />
+	</changeSet>
+	<changeSet author="bas" id="bas72">
+		<addColumn tableName="TOURNAMENT_EDITION">
+			<column name="context" type="BIGINT" />
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_tournament_edition_context"
+			referencedTableName="CONTEXT" baseColumnNames="context"
+			baseTableName="TOURNAMENT_EDITION" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet author="bas" id="bas73">
+		<tagDatabase tag="bas_v1.12" />
+	</changeSet>
+	<changeSet author="bas" id="bas74">
+		<dropForeignKeyConstraint baseTableName="TEAM_REGISTRATION"
+			constraintName="fk_team_registration_division_registration" />
+		<dropForeignKeyConstraint baseTableName="TEAM_REGISTRATION"
+			constraintName="fk_team_registration_team" />
+		<dropUniqueConstraint tableName="TEAM_REGISTRATION"
+			constraintName="uk_team_registration_division_registration_team" />
+		<dropNotNullConstraint tableName="TEAM_REGISTRATION"
+			columnDataType="BIGINT" columnName="team" />
+		<addForeignKeyConstraint constraintName="fk_team_registration_division_registration"
+			referencedTableName="DIVISION_REGISTRATION" baseColumnNames="division_registration"
+			baseTableName="TEAM_REGISTRATION" referencedColumnNames="id" />
+		<addUniqueConstraint columnNames="division_registration, roster"
+			constraintName="uk_team_registration_division_registration_roster"
+			tableName="TEAM_REGISTRATION" />
+	</changeSet>
+	<changeSet author="bas" id="bas75">
+		<tagDatabase tag="bas_v1.13" />
+	</changeSet>
+	<changeSet author="bas" id="bas76">
+		<sql dbms="mysql" endDelimiter=";
+		">UPDATE TEAM_REGISTRATION tr2 SET
+			roster = (
+			SELECT r.id
+			FROM ROSTER r
+			LEFT JOIN TEAM t ON r.team = t.id
+			LEFT JOIN (SELECT * FROM TEAM_REGISTRATION) tr ON tr.team = t.id
+			LEFT
+			JOIN DIVISION_REGISTRATION dr ON tr.division_registration = dr.id
+			LEFT JOIN TOURNAMENT_EDITION te ON dr.tournament_edition = te.id
+			WHERE dr.division_type = r.division_type
+			AND dr.division_age =
+			r.division_age
+			AND te.season = r.season
+			AND r.name_addition = ''
+			AND
+			tr.id = tr2.id)
+		</sql>
+	</changeSet>
+	<changeSet author="bas" id="bas77">
+		<tagDatabase tag="bas_v1.14" />
+	</changeSet>
+	<changeSet dbms="derby" author="bas" id="bas78">
+		<insert tableName="CONTEXT">
+			<column name="id" valueNumeric="1" />
+			<column name="name" value="Deutscher Frisbeesport-Verband" />
+			<column name="acronym" value="DFV" />
+		</insert>
+	</changeSet>
+	<changeSet dbms="mysql" author="bas" id="bas78">
+		<insert tableName="CONTEXT">
+			<column name="id" value="1" />
+			<column name="name" value="Deutscher Frisbeesport-Verband" />
+			<column name="acronym" value="DFV" />
+		</insert>
+	</changeSet>
+	<changeSet author="bas" id="bas79">
+		<sql dbms="mysql" endDelimiter=";">
+			UPDATE ROSTER r SET context = 1
+			WHERE context IS NULL
+		</sql>
+	</changeSet>
+	<changeSet author="bas" id="bas80">
+		<tagDatabase tag="bas_v1.15" />
+	</changeSet>
+	<changeSet author="bas" id="bas81">
+		<dropColumn tableName="TEAM_REGISTRATION" columnName="team" />
+	</changeSet>
+	<changeSet author="bas" id="bas82">
+		<addColumn tableName="TEAM_REGISTRATION">
+			<column name="own_spirit_score" type="FLOAT(4)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas83">
+		<tagDatabase tag="ultical_bas_v.1.16" />
+	</changeSet>
+	<changeSet author="bb" id="bb84">
+		<addColumn tableName="DFV_MV_NAME">
+			<column name="last_modified" type="TIMESTAMP" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bb" id="bb85">
+		<addNotNullConstraint tableName="DFV_MV_NAME"
+			columnName="last_modified" columnDataType="TIMESTAMP"
+			defaultNullValue="2016-01-01" />
+	</changeSet>
+	<changeSet author="bb" id="bb86">
+		<addColumn tableName="DFV_PLAYER">
+			<column name="last_modified" type="TIMESTAMP"
+				defaultValueDate="2016-01-01 00:00:00">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-1">
+		<addColumn tableName="TOURNAMENT_EDITION">
+			<column name="name" type="VARCHAR(200)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-2">
+		<sql dbms="mysql" endDelimiter=";">
+			UPDATE TOURNAMENT_EDITION SET name
+			= alternative_name
+		</sql>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-3">
+		<dropColumn tableName="TOURNAMENT_EDITION" columnName="alternative_name" />
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-4">
+		<addColumn tableName="EVENT">
+			<column name="name" type="VARCHAR(200)" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-5">
+		<sql dbms="mysql" endDelimiter=";">
+			UPDATE EVENT SET name = (SELECT
+			name FROM TOURNAMENT_EDITION WHERE id = EVENT.tournament_edition)
+		</sql>
+	</changeSet>
+	<changeSet author="bas" id="bas-editionshow-6">
+		<tagDatabase tag="bas_editionshow_v.1.16" />
+	</changeSet>
+	<changeSet author="bas" id="bas84">
+		<addPrimaryKey tableName="EVENT_LOCATION" columnNames="event, location" />
+	</changeSet>
+	<changeSet author="bas" id="bas85">
+		<addDefaultValue columnName="version" tableName="DIVISION_CONFIRMATION"
+			defaultValueNumeric="1" />
+	</changeSet>
+	<changeSet author="bas" id="bas-teamregistration-1">
+		<addColumn tableName="TOURNAMENT_EDITION">
+			<column name="allow_event_team_reg_management" type="BOOLEAN"
+				defaultValueBoolean="true">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="bas" id="bas-tag-86">
+		<tagDatabase tag="bas_teamregistration-v.1.17" />
+	</changeSet>
+	<changeSet author="bas" id="bas-resources-1">
+		<createTable tableName="RESOURCE">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="version" type="BIGINT" defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="title" type="VARCHAR(100)">
+				<constraints nullable="false" />
+			</column>
+			<column name="path" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="local" type="BOOLEAN">
+				<constraints nullable="false" />
+			</column>
+			<column name="event" type="BIGINT" />
+		</createTable>
+	</changeSet>
+	<changeSet author="bas" id="bas-resources-2">
+		<addForeignKeyConstraint constraintName="fk_resource_event"
+			referencedTableName="EVENT" baseColumnNames="event" baseTableName="RESOURCE"
+			referencedColumnNames="id" onDelete="CASCADE" />
+	</changeSet>
+	<changeSet author="bas" id="bas-resources-3">
+		<addUniqueConstraint columnNames="path,event"
+			tableName="RESOURCE" constraintName="uk_resource_path_event" />
+	</changeSet>
+	<changeSet author="bas" id="bas-div-1">
+		<addUniqueConstraint columnNames="tournament_format, admin"
+			tableName="TOURNAMENT_FORMAT_ULTICAL_USERS" constraintName="uk_tournament_format_ultical_users" />
+	</changeSet>
+	<changeSet author="bb" id="bb-eligible-1">
+		<addColumn tableName="DFV_PLAYER">
+			<column name="eligible_until" type="TIMESTAMP" value="null"
+				defaultValueDate="null" />
+		</addColumn>
+	</changeSet>
+	<changeSet author="bb" id="bb-eligible-2">
+		<tagDatabase tag="v1.18"></tagDatabase>
+	</changeSet>
+	<changeSet id="bas-bugfix-reserved-words" author="bas">
+		<renameColumn tableName="RESOURCE" oldColumnName="path"
+			newColumnName="location_path" columnDataType="VARCHAR(255)" />
+		<renameColumn tableName="RESOURCE" oldColumnName="local"
+			newColumnName="is_local" columnDataType="BOOLEAN" />
+	</changeSet>
+	<changeSet id="bas-bugfix-reserved-words-2" author="bas">
+		<addNotNullConstraint tableName="RESOURCE"
+			columnName="location_path" columnDataType="VARCHAR(255)" />
+		<addNotNullConstraint tableName="RESOURCE"
+			columnName="is_local" columnDataType="BOOLEAN" />
+	</changeSet>
+	<changeSet id="bas-team-renames-1" author="bas">
+		<addColumn tableName="TEAM_REGISTRATION">
+			<column name="team_name" type="VARCHAR(255)" defaultValue="">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="bas-team-renames-2" author="bas">
+		<sql dbms="mysql" endDelimiter=";">
+			UPDATE TEAM_REGISTRATION SET
+			team_name = (TRIM((SELECT
+			CONCAT_WS (' ', TEAM.name,
+			ROSTER.name_addition) FROM TEAM LEFT JOIN ROSTER ON ROSTER.team =
+			TEAM.id WHERE ROSTER.id = TEAM_REGISTRATION.roster)));
+		</sql>
+	</changeSet>
 </databaseChangeLog>

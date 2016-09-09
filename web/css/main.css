@@ -2,6 +2,7 @@ html, body {
 	height: 100%;
 	font-size: 13px;
 	font-weight: 300;
+	min-width: 350px;
 }
 
 .view-container {
@@ -28,7 +29,7 @@ button, input, optgroup, select, textarea {
 }
 
 @media ( min-width : 768px) {
-	#pageAlertSpace {
+	#page-alert-space {
 		margin-top: 60px;
 	}
 
@@ -41,6 +42,17 @@ button, input, optgroup, select, textarea {
 	.navbar-right {
 		margin-right: 0px;
 	}
+}
+
+#image-dfv-small {
+	width: 100px;
+	height: 32px;
+	margin-top: 9px;
+}
+
+#navbar-actions {
+	height: 34px;
+	padding-top: 6px;
 }
 
 @media ( max-width : 767px) {
@@ -63,10 +75,14 @@ button, input, optgroup, select, textarea {
 	.navbar-header {
 		padding-left: 10px;
 	}
-}
 
-#nav-logo img {
-	margin-top: 9px;
+	td.mega-wide {
+		width: 50%;
+	}
+
+	.navbar-language .navbar-text {
+		height: 40px;
+	}
 }
 
 #nav-logo div {
@@ -96,24 +112,21 @@ button, input, optgroup, select, textarea {
 
 #navbar-language-icon {
 	float: left;
-	font-size: 25px;
-	margin-top: 6px;
-	margin-left: 20px;
+	font-size: 22px;
+	margin-top: -2px;
 }
 
 #navbar-language-code {
-	float: right;
-	margin-top: 15px;
-	margin-bottom: 15px;
-	margin-right: 20px;
+	float: left;
 	margin-left: 5px;
+	width: 20px;
 }
 
 .navbar-body ul {
 	cursor: pointer;
 }
 
-#nav-bar-buttons ul.dropdown-menu {
+#navbar-buttons ul.dropdown-menu {
 	background-color: #F3FAFF;
 }
 
@@ -128,9 +141,14 @@ button, input, optgroup, select, textarea {
 }
 
 .navbar-body > ul:hover,
-.navbar-body ul:hover .navbar-text,
+.navbar-body > ul:focus,
+/*.navbar-body ul:hover .navbar-text,*/
+.menu-aside-body ul:hover .navbar-text,
+.menu-aside-body ul:focus .navbar-text,
 .dropdown-menu > li > a:hover,
-.dropdown-menu > li > a:focus {
+.dropdown-menu > li > a:focus,
+.nav>li>a:focus, .nav>li>a:hover
+ {
   color: #000;
   text-decoration: none;
   background-color: #C2DAF3;
@@ -140,8 +158,10 @@ button, input, optgroup, select, textarea {
 	cursor: pointer;
 }
 
-.navbar-language:hover #navbar-language-icon, .navbar-language:hover #navbar-language-code
-	{
+.navbar-language:hover #navbar-language-icon,
+.navbar-language:focus #navbar-language-icon,
+.navbar-language:hover #navbar-language-code
+.navbar-language:focus #navbar-language-code {
 	color: #000000;
 }
 
@@ -150,10 +170,19 @@ button, input, optgroup, select, textarea {
 	padding: 0 0 5px 0;
 }
 
-#login-popover, .dropdown-menu {
+.shared-icon-bar {
+	float: left;
+	margin-right: 10px;
+	margin-top: 2px;
+}
+
+#login-popover,
+.navbar .dropdown-menu,
+.menu-aside.dropdown-menu {
 	background-color: #F3FAFF;
 	-webkit-box-shadow: none;
 	box-shadow: none;
+	z-index: 1080;
 }
 
 #login-popover.login-error {
@@ -170,6 +199,10 @@ button, input, optgroup, select, textarea {
 
 #login-popover-content .error-text {
 	color: white;
+}
+
+input, textarea {
+	width: 100%;
 }
 
 .panel.panel-ultical {
@@ -207,6 +240,7 @@ button, input, optgroup, select, textarea {
 
 .editable-list-item {
 	float: left;
+	margin-bottom: 10px;
 	border-color: #B3B3B3;
 	border-width: 1px;
 	border-style: solid;
@@ -228,7 +262,8 @@ button, input, optgroup, select, textarea {
 	opacity: 0;
 }
 
-.editable-list:hover .editable-list-remove {
+.editable-list:hover .editable-list-remove,
+.editable-list:focus .editable-list-remove {
 	opacity: 1;
 }
 
@@ -236,7 +271,7 @@ button, input, optgroup, select, textarea {
 	float: right;
 	color: #337AB7;
 	opacity: 0;
-	margin-left: 7px;
+	margin-left: 10px;
 }
 
 .team-actions-link {
@@ -244,8 +279,14 @@ button, input, optgroup, select, textarea {
 	margin-top: 6px;
 }
 
-.panel-heading:hover .team-actions {
+.panel-heading:hover .team-actions,
+	.panel-heading:focus .team-actions {
 	opacity: 1;
+}
+
+.team-actions-disabled {
+	color: #D6D6D6;
+	cursor: default;
 }
 
 .player-actions {
@@ -254,28 +295,26 @@ button, input, optgroup, select, textarea {
 	margin-left: 7px;
 }
 
-.roster-list:hover .player-actions {
+.roster-list:hover .player-actions,
+	.roster-list:focus .player-actions {
 	opacity: 1;
 }
 
-#new-roster-form button {
-	width: 100%;
-}
-
-#new-roster-form .btn .caret {
+.select-btn .caret {
 	float: right;
 	top: 8px;
 	position: relative;
 }
 
 @-moz-document url-prefix() {
-    #new-roster-form .btn .caret {
+	.select-btn .caret {
 		top: -11px;
 	}
 }
 
-#new-roster-form .btn {
+.select-btn {
 	text-align: left;
+	width: 100%;
 }
 
 .roster-listing .panel-group {
@@ -287,21 +326,19 @@ button, input, optgroup, select, textarea {
 	font-size: 14px;
 }
 
-.alternative-button-link {
-	cursor: pointer;
-}
-
-.btn-primary.btn-ultical {
+.btn-primary.btn-ultical, .label-primary.label-ultical {
 	background-color: #20408E;
 }
-.btn-primary.btn-ultical:hover {
+.btn-primary.btn-ultical:hover,
+	.btn-primary.btn-ultical:focus {
 	background-color: #286090;
 }
 
 /* disable rounded corners */
 .panel-group .panel, .panel, .panel-group, .panel-heading, .panel-footer,
 	.btn, .modal-content, .form-control, .popover, .dropdown-menu, .alert,
-	.nav-tabs>li>a, .input-group-addon {
+	.nav-tabs>li>a, .input-group-addon,
+	.navbar-toggle {
 	border-radius: 0px;
 }
 
@@ -338,6 +375,17 @@ select:not([multiple]) {
 	width: 33px;
 }
 
+#edition-view-events .event-list-date-right {
+	width: 25px;
+}
+
+#edition-view-events .event-list-date-right-month {
+	width: 79px;
+}
+
+#edition-view-events .event-list-date-right-month.event-list-date-right-monthyear {
+	width: 100px;
+}
 .event-list-text {
 	display: table-cell;
 }
@@ -371,9 +419,24 @@ select:not([multiple]) {
     margin-top: 10px;
 }
 
-.event-list-row:hover {
-    background-color: #C2DAF3;
+.event-list-row:hover,
+	.event-list-row:focus {
+  background-color: #C2DAF3;
 	cursor: pointer;
+}
+
+#edition-listing .event-list-row {
+	padding-top: 4px;
+	padding-bottom: 6px;
+}
+
+#edition-listing .event-list-date {
+	width: 52px;
+}
+
+#edition-listing .event-list-text {
+	font-weight: 500;
+	padding-top: 2px;
 }
 
 .page-sub-title {
@@ -432,4 +495,179 @@ select:not([multiple]) {
 }
 .user-textarea {
 	white-space: pre-wrap;
+}
+
+.input-prefix {
+	font-size: 14px;
+	top: 3px;
+	position: relative;
+}
+
+#new-roster-creation-cancel {
+	position: absolute;
+	right: 15px;
+	top: 8px;
+}
+
+.form-control.new-roster-creation-input {
+	width: 120px;
+}
+
+.team-list-standing {
+	width: 77px;
+	text-align: center;
+	padding-right: 10px;
+}
+
+.label-as-badge {
+    border-radius: 1em;
+		font-size: 85%;
+		padding-top: 3px;
+}
+
+.spirit-score-label {
+    font-size: 80%;
+    line-height: 1.3em;
+		width: 65px;
+		text-align: center;
+		margin-left: 3px;
+}
+
+.spirit-score-label.has-own-spirit {
+	margin-top: -7px;
+}
+
+.own-spirit-score-label {
+	font-size: 90%;
+}
+
+.btn .sort-icon {
+	margin-left: 5px;
+	margin-right: -5px;
+	font-size: 13px;
+}
+
+.btn.sort-button {
+	font-size: 13px;
+}
+
+.btn.sort-button-last {
+	float: none;
+	overflow: hidden;
+	width: auto;
+	display: block;
+	text-align: left;
+	border-left-width: 0px;
+}
+
+.btn.sort-button-last.browser-safari {
+	width:280px;
+	border-left-width: 1px;
+}
+.width100 {
+	width: 100%;
+}
+
+.dropdown-caret-fixed-width {
+	width: 0.5em;
+	display: inline-block;
+}
+
+.dropdown-caret-padding {
+	padding-left: 2px;
+}
+
+#eventpage-title h3 {
+	margin-top: 12px;
+	margin-bottom: 2px;
+}
+
+/* breadcrumbs */
+.nav-breadcrumb {
+	padding-left: 0px;
+	color: grey;
+	list-style: none;
+}
+
+.nav-breadcrumb a {
+	color: grey;
+}
+
+.nav-breadcrumb>li {
+	display: inline-block;
+}
+
+.nav-breadcrumb>li+li:before {
+    padding: 0 5px;
+    color: #ccc;
+    content: ">";
+}
+
+.panel-title button {
+	margin-top: -4px;
+	margin-right: -5px;
+}
+
+.standings-edit input {
+	width: 50px;
+}
+
+.standings-edit span {
+	font-weight: 200;
+	margin-left: 20px;
+	font-size:12px;
+}
+
+.action-bar {
+	background-color: #FAFAFA;
+	margin-top: 15px;
+	padding: 10px;
+}
+
+.action-bar .btn,
+.action-aside .btn {
+	display: table;
+	white-space: normal;
+	width: 160px;
+	height: 36px;
+	line-height: 16px;
+	padding-top: 0;
+	padding-bottom: 0;
+	font-weight: 300;
+}
+
+.action-bar .btn span,
+.action-aside .btn span {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.team-edit-sheet {
+	background-color: #FAFAFA;
+	padding: 15px;
+}
+
+.horizontal-separator {
+	margin-bottom: 12px;
+	margin-top: 12px;
+	border-top: solid 1px #DDDDDD;
+}
+
+footer {
+	line-height: 1.7em;
+}
+
+@media ( max-width : 991px) {
+	footer {
+		line-height: 2.5em;
+	}
+	.action-bar .btn,
+	.action-aside .btn {
+		width: 100%;
+	}
+}
+
+
+.team-list-location {
+	font-weight: 300;
 }

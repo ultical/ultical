@@ -2,7 +2,7 @@ package de.ultical.backend.app.mail;
 
 import java.util.Map;
 
-public class DfvOptInMessage extends DefaultMessage {
+public class DfvOptInMessage extends SystemMessage {
 
     public DfvOptInMessage() {
         super();

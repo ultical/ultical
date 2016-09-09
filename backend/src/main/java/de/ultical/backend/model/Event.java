@@ -20,6 +20,7 @@ public class Event extends Identifiable {
     private int matchdayNumber = -1;
 
     private TournamentEdition tournamentEdition;
+    private String name;
 
     private List<Location> locations;
 
@@ -39,6 +40,8 @@ public class Event extends Identifiable {
     private Contact localOrganizer;
 
     private String info;
+
+    private List<Resource> resources;
 
     @Override
     public Class<EventMapper> getMapper() {

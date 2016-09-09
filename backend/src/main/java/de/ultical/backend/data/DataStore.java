@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -25,9 +27,9 @@ import de.ultical.backend.data.mapper.MailCodeMapper;
 import de.ultical.backend.data.mapper.PlayerMapper;
 import de.ultical.backend.data.mapper.RosterMapper;
 import de.ultical.backend.data.mapper.RosterPlayerMapper;
-import de.ultical.backend.data.mapper.SeasonMapper;
 import de.ultical.backend.data.mapper.TeamMapper;
 import de.ultical.backend.data.mapper.TeamRegistrationMapper;
+import de.ultical.backend.data.mapper.TournamentEditionMapper;
 import de.ultical.backend.data.mapper.TournamentFormatMapper;
 import de.ultical.backend.data.mapper.UserMapper;
 import de.ultical.backend.model.Association;
@@ -41,7 +43,6 @@ import de.ultical.backend.model.Identifiable;
 import de.ultical.backend.model.MailCode;
 import de.ultical.backend.model.Player;
 import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.TournamentEdition;
@@ -188,6 +189,19 @@ public class DataStore {
         }
     }
 
+    public <T extends Identifiable> boolean updateAll(List<T> updatedInstances) {
+        boolean autoClosePrevState = this.autoCloseSession;
+        this.setAutoCloseSession(false);
+        boolean result = true;
+        for (T updatedInstance : updatedInstances) {
+            result = result && this.update(updatedInstance);
+        }
+        if (autoClosePrevState) {
+            this.sqlSession.close();
+        }
+        return result;
+    }
+
     public <T extends Identifiable> T get(Integer id, Class<T> clazz) {
         try {
             T instance = clazz.newInstance();
@@ -245,11 +259,10 @@ public class DataStore {
         }
     }
 
-    public List<TeamRegistration> getTeamRegistrationOfPlayerSeason(int playerId, int seasonId, String divisionAge,
-            String divisionType) {
+    public List<Event> getEventByTeamRegistrations(List<TeamRegistration> teamRegistrations) {
         try {
-            RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
-            return rosterMapper.getTrByPlayerSeasonDivisionQualified(playerId, seasonId, divisionAge, divisionType);
+            EventMapper eventMapper = this.sqlSession.getMapper(EventMapper.class);
+            return eventMapper.getByTeamRegistrations(teamRegistrations);
         } finally {
             if (this.sqlSession != null && this.autoCloseSession) {
                 this.sqlSession.close();
@@ -257,10 +270,43 @@ public class DataStore {
         }
     }
 
-    public Roster getRosterOfTeamSeason(int teamId, int seasonId, String divisionAge, String divisionType) {
+    public List<TeamRegistration> getTeamRegistrationsByRosters(List<Roster> rosters) {
+        try {
+            TeamRegistrationMapper trMapper = this.sqlSession.getMapper(TeamRegistrationMapper.class);
+            return trMapper.getByRosters(rosters);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public List<TeamRegistration> getTeamRegistrationsByRoster(Roster roster) {
+        try {
+            TeamRegistrationMapper trMapper = this.sqlSession.getMapper(TeamRegistrationMapper.class);
+            return trMapper.getByRoster(roster);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public List<Roster> getRosterByPlayerSeasonDivision(int playerId, Roster roster) {
         try {
             RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
-            return rosterMapper.getByTeamSeasonDivision(teamId, seasonId, divisionAge, divisionType);
+            return rosterMapper.getByPlayerSeasonDivision(playerId, roster);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public Roster getRosterOfTeamSeason(Roster roster) {
+        try {
+            RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);
+            return rosterMapper.getByTeamSeasonDivision(roster);
         } finally {
             if (this.sqlSession != null && this.autoCloseSession) {
                 this.sqlSession.close();
@@ -401,6 +447,96 @@ public class DataStore {
         }
     }
 
+    public DfvMvName getDfvMvName(final int dfvNumber) {
+        try {
+            DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
+            DfvMvName result = nameMapper.get(dfvNumber);
+            return result;
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    static class PlayerNeedsUpdatePredicate implements Predicate<PlayerMvNamePair> {
+        /**
+         * return <code>true</code> if the <code>DfvPlayer</code> and the
+         * <code>DfvMvName</code> contained in the pair differ in either:
+         * <ul>
+         * <li><code>firstName</code></li>
+         * <li><code>lastName</code></li>
+         * <li><code>active</code></li>
+         * <li><code>dfvNumber</code></li>
+         * </ul>
+         * property
+         *
+         * @param pair
+         *            the pair to check
+         */
+        public static boolean needsUpdate(PlayerMvNamePair pair) {
+            DfvPlayer player = pair.player;
+            DfvMvName name = pair.name;
+
+            if (name == null && !player.isEligible()) {
+                // the player is 'deactivated' in our system AND in the DFV db
+                return false;
+            }
+
+            if (name == null
+                    || (name.getLastModified() != null && name.getLastModified().isAfter(player.getLastModified()))) {
+                // name has been modified after player has been modified. Thus,
+                // we have to update the information in player with the new
+                // information in the dfv-mv.de database.
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean test(PlayerMvNamePair pair) {
+            return needsUpdate(pair);
+        }
+    }
+
+    final static class PlayerMvNamePair {
+        private final DfvPlayer player;
+        private final DfvMvName name;
+
+        PlayerMvNamePair(final DfvPlayer player, final DfvMvName name) {
+            this.player = player;
+            this.name = name;
+        }
+
+    }
+
+    /**
+     * Returns a list of players whose {@link DfvPlayer#getLastModified()
+     * lastModified} date is older then the correpsonding {@link DfvMvName}'s
+     * date.
+     *
+     * @return a list of players, which need an update.
+     */
+    public List<DfvPlayer> getPlayersToUpdate() {
+        // TODO this task could be solved completely by the database!
+        try {
+            List<DfvPlayer> result = null;
+            final DfvPlayerMapper playerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
+            final DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
+
+            List<DfvPlayer> allPlayers = playerMapper.getAll();
+            result = allPlayers.stream()
+                    .map(player -> new PlayerMvNamePair(player, nameMapper.get(player.getDfvNumber())))
+                    .filter(PlayerNeedsUpdatePredicate::needsUpdate).map(pair -> pair.player)
+                    .collect(Collectors.toList());
+            return result;
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public List<DfvMvName> getDfvNames(String firstname, String lastname) {
         try {
             DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
@@ -412,63 +548,19 @@ public class DataStore {
         }
     }
 
-    public List<Season> getAllSeasons() {
-        try {
-            SeasonMapper sm = this.sqlSession.getMapper(SeasonMapper.class);
-            return sm.getAll();
-        } finally {
-            if (this.sqlSession != null && this.autoCloseSession) {
-                this.sqlSession.close();
-            }
-        }
+    public List<Event> getEventBasics() {
+        EventMapper eventMapper = this.sqlSession.getMapper(EventMapper.class);
+        return eventMapper.getAllBasics();
     }
 
-    public Season getSeason(final int id) {
-        try {
-            SeasonMapper sm = this.sqlSession.getMapper(SeasonMapper.class);
-            return sm.get(id);
-        } finally {
-            if (this.sqlSession != null && this.autoCloseSession) {
-                this.sqlSession.close();
-            }
-        }
+    public List<Team> getTeamBasics() {
+        TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+        return teamMapper.getBasics();
     }
 
-    public Season addSeason(final Season newSeason) {
-        Season checkedSeason = Objects.requireNonNull(newSeason);
-        try {
-            SeasonMapper mapper = this.sqlSession.getMapper(checkedSeason.getMapper());
-            mapper.insert(checkedSeason);
-            this.sqlSession.commit();
-            return checkedSeason;
-        } catch (PersistenceException pe) {
-            this.sqlSession.rollback();
-            throw pe;
-        } finally {
-            if (this.sqlSession != null && this.autoCloseSession) {
-                this.sqlSession.close();
-            }
-        }
-    }
-
-    public boolean updateSeason(final Season updSeason) {
-        boolean result = false;
-        Objects.requireNonNull(updSeason);
-        int updateCount = 0;
-        try {
-            SeasonMapper mapper = this.sqlSession.getMapper(updSeason.getMapper());
-            updateCount = mapper.update(updSeason);
-            this.sqlSession.commit();
-        } catch (PersistenceException pe) {
-            this.sqlSession.rollback();
-            throw pe;
-        } finally {
-            if (this.sqlSession != null && this.autoCloseSession) {
-                this.sqlSession.close();
-            }
-        }
-        result = updateCount == 1;
-        return result;
+    public List<Team> getTeamBasicsByUser(int userId) {
+        TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+        return teamMapper.getBasicsByUser(userId);
     }
 
     public List<Team> getTeamsByUser(int userId) {
@@ -606,6 +698,19 @@ public class DataStore {
         }
     }
 
+    public List<Team> getTeamsByEditionDivisionsStatus(Integer editionId, List<Integer> divisionList,
+            List<String> statusList) {
+
+        try {
+            TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+            return teamMapper.getByEditionDivisionStatus(editionId, divisionList, statusList);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public MailCode getMailCode(String code) {
         try {
             MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);
@@ -674,10 +779,10 @@ public class DataStore {
         }
     }
 
-    public List<DfvMvName> findDfvMvName(String searchString) {
+    public List<DfvMvName> findDfvMvName(List<String> searchStrings) {
         try {
             DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
-            return nameMapper.find(searchString);
+            return nameMapper.find(searchStrings);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();
@@ -689,6 +794,17 @@ public class DataStore {
         try {
             EventMapper em = this.sqlSession.getMapper(EventMapper.class);
             return em.getByDivisionRegistration(divisionId);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public TournamentFormat getFormatByEdition(int editionId) {
+        try {
+            TournamentFormatMapper tfMapper = this.sqlSession.getMapper(TournamentFormatMapper.class);
+            return tfMapper.getByEdition(editionId);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();
@@ -724,7 +840,6 @@ public class DataStore {
             mapper.insert(divisionRegistrationId, teamReg);
             this.sqlSession.commit();
             return teamReg;
-            // mapper.insertAtEnd(div, teamReg);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();
@@ -732,10 +847,21 @@ public class DataStore {
         }
     }
 
-    public void unregisterTeamFromDivision(DivisionRegistrationTeams div, Team t) {
+    public TournamentEdition getEditionByTeamRegistration(int teamRegistrationId) {
+        try {
+            final TournamentEditionMapper mapper = this.sqlSession.getMapper(TournamentEditionMapper.class);
+            return mapper.getByTeamRegistration(teamRegistrationId);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public void unregisterTeamFromDivision(DivisionRegistrationTeams div, Roster roster) {
         try {
             final TeamRegistrationMapper mapper = this.sqlSession.getMapper(TeamRegistrationMapper.class);
-            mapper.delete(div, t);
+            mapper.delete(div, roster);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();
@@ -778,6 +904,18 @@ public class DataStore {
         } catch (PersistenceException pe) {
             this.sqlSession.rollback();
             throw pe;
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public List<Roster> getRosterForPlayer(final DfvPlayer player) {
+        Objects.requireNonNull(player);
+        try {
+            RosterMapper mapper = this.sqlSession.getMapper(RosterMapper.class);
+            return mapper.getRostersForPlayer(player);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

@@ -1,0 +1,85 @@
+<div ng-controller="RosterCtrl">
+  <div id="rosterError"></div>
+  <form name="rosterToEditForm" class="form-horizontal">
+    <fieldset ng-disabled="rosterCreationPending">
+
+      <div class="row">
+        <div class="col-md-12">
+
+          <div class="form-group">
+            <label for="rosDivAge" class="col-sm-3 control-label">{{ 'team.roster.divisionAgeLabel' | translate }}</label>
+            <div class="col-sm-4">
+              <button ng-disabled="isEdit" id="rosDivAge" type="button" class="btn btn-default select-btn" ng-model="rosterToEdit.divisionAge" bs-options="divisionAge as 'division.' + divisionAge | translate for divisionAge in selects.divisionAges" bs-select>
+                <span class="caret"></span>
+              </button>
+            </div>
+            <div class="col-sm-3">
+              <button ng-disabled="isEdit" id="rosDivType" type="button" class="btn btn-default select-btn" ng-model="rosterToEdit.divisionType" bs-options="divisionType as 'division.' + divisionType | translate for divisionType in selects.divisionTypes" bs-select>
+                <span class="caret"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="rosSeason" class="col-sm-3 control-label">{{ 'season.season' | translate }}</label>
+            <div class="col-sm-4">
+              <button ng-disabled="isEdit" id="rosSeason" type="button" class="btn btn-default select-btn" ng-model="rosterToEdit.season" bs-options="season as season | season : 'fullName' for season in selects.seasons | orderBy : ['-year', '-plusOneYear']" bs-select>
+                <span class="caret"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group margin-top">
+            <label for="rosNameAddition" class="col-sm-3 control-label">{{ 'team.roster.nameAdditionLabel' | translate }}</label>
+            <div class="col-sm-9">
+              <div class="row">
+                <div class="col-sm-5">
+                  <input class="form-control" id="rosNameAddition" ng-model="rosterToEdit.nameAddition" maxlength="10" type="text"/>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-11">
+                  <div class="help-block">{{ 'team.roster.nameAdditionHelp' | translate }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CONTEXTS -->
+          <div class="form-group" ng-show="chooseContexts">
+            <label for="rosContext" class="col-sm-3 control-label">{{ 'team.roster.contextLabel' | translate }}</label>
+            <div class="col-sm-9">
+
+              <div class="row">
+                <div class="col-sm-9">
+
+                  <button ng-disabled="isEdit" id="rosContext" type="button" class="btn btn-default select-btn" ng-model="rosterToEdit.context" data-placeholder="{{ 'team.roster.noContext' | translate }}" bs-options="context as getSelectText(context) for context in selects.contexts | orderBy : 'acronym'" bs-select>
+                    <span class="caret"></span>
+                  </button>
+
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-11">
+                  <div class="help-block">{{ 'team.roster.contextHelp' | translate }}</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="form-group" ng-if="rosterToEdit.id != -1">
+            <label for="rosDelete" class="col-sm-3 control-label">{{ 'team.roster.remove' | translate }}</label>
+            <div class="col-sm-9">
+              <button href="#" ng-if="!rosterToEdit.x.blocked" ng-click="deleteRoster(rosterToEdit)" class="btn btn-danger">{{ 'team.roster.remove' | translate }}</button>
+              <div ng-if="rosterToEdit.x.blocked" class="help-block">{{ 'team.roster.rosterBlocked' | translate }}</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </fieldset>
+  </form>
+</div>

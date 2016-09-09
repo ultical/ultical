@@ -17,6 +17,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
@@ -27,6 +29,8 @@ import io.dropwizard.auth.Auth;
 
 @Path("/teams")
 public class TeamResource {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TeamResource.class);
 
     @Inject
     DataStore dataStore;
@@ -43,14 +47,32 @@ public class TeamResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{teamId}")
-    public Team get(@PathParam("teamId") Integer id) {
+    @Path("basics")
+    public List<Team> getBasics() throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
-        Team result = this.dataStore.get(id, Team.class);
-        if (result == null) {
-            throw new WebApplicationException(404);
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            return this.dataStore.getTeamBasics();
+        }
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{teamId}")
+    public Team get(@PathParam("teamId") Integer id) throws Exception {
+        if (this.dataStore == null) {
+            throw new WebApplicationException(500);
+        }
+
+        Team result;
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            result = this.dataStore.get(id, Team.class);
+            if (result == null) {
+                throw new WebApplicationException(404);
+            }
         }
         return result;
     }
@@ -68,39 +90,59 @@ public class TeamResource {
         }
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("own/basics")
+    public List<Team> getBasicsByUser(@Auth @NotNull User user) throws Exception {
+        if (this.dataStore == null) {
+            throw new WebApplicationException(500);
+        }
+
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            return this.dataStore.getTeamBasicsByUser(user.getId());
+        }
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Team add(Team t, @Auth @NotNull User currentUser) throws Exception {
+    public Team add(Team newTeam, @Auth @NotNull User currentUser) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
         try (AutoCloseable c = this.dataStore.getClosable()) {
 
-            t = this.prepareTeam(t);
+            newTeam = this.prepareTeam(newTeam);
 
-            if (t.getLocation() == null || t.getLocation().getCity() == null || t.getLocation().getCity().isEmpty()) {
+            if (newTeam.getLocation() == null || newTeam.getLocation().getCity() == null
+                    || newTeam.getLocation().getCity().isEmpty()) {
                 throw new WebApplicationException("Location must be specified", Status.EXPECTATION_FAILED);
                 // t.setLocation(new Location());
             }
 
-            this.dataStore.addNew(t.getLocation());
-
-            Team result = null;
+            this.dataStore.addNew(newTeam.getLocation());
 
             try {
-                result = this.dataStore.addNew(t);
+                newTeam = this.dataStore.addNew(newTeam);
             } catch (PersistenceException pe) {
                 throw new WebApplicationException(pe);
             }
 
             // add admins
-            for (User admin : t.getAdmins()) {
-                this.dataStore.addAdminToTeam(result, admin);
+            for (User admin : newTeam.getAdmins()) {
+                try {
+                    this.dataStore.addAdminToTeam(newTeam, admin);
+                } catch (Exception e) {
+                    LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )", newTeam.getName(),
+                            newTeam.getId(), admin.getFullName(), admin.getId());
+                    LOGGER.error("exception:", e);
+                }
             }
 
-            return result;
+            newTeam.setVersion(1);
+
+            return newTeam;
         }
     }
 
@@ -161,7 +203,14 @@ public class TeamResource {
             this.dataStore.removeAllAdminsFromTeam(updatedTeam);
 
             for (User admin : updatedTeam.getAdmins()) {
-                this.dataStore.addAdminToTeam(updatedTeam, admin);
+                try {
+                    this.dataStore.addAdminToTeam(updatedTeam, admin);
+                } catch (Exception e) {
+                    LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )\ncurrentUser: {}",
+                            updatedTeam.getName(), updatedTeam.getId(), admin.getFullName(), admin.getId(),
+                            currentUser.getId());
+                    LOGGER.error("exception:", e);
+                }
             }
         }
     }
@@ -196,8 +245,8 @@ public class TeamResource {
             team.setId(teamId);
             final User admin = new User();
             admin.setId(userId);
-            try {
 
+            try {
                 this.dataStore.addAdminToTeam(team, admin);
             } catch (PersistenceException pe) {
                 throw new WebApplicationException("Accessing the database failed!");

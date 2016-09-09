@@ -31,4 +31,27 @@ corsFilterEnabled: false
 
 #change the following line to true if you want to use the 'dfv-mode'
 useDFVRestriction: false
-  
+
+jobs:
+  dfvMvSyncEnabled: false
+reCaptcha:
+  url: https://www.google.com/recaptcha/api/siteverify
+  secret: ...
+
+logging:
+  level: INFO
+  appenders:
+    - type: file
+      currentLogFilename: ./logs/ultical.log
+      archive: true
+      archivedLogFilenamePattern: ./logs/ultical-%d.log.gz
+      archivedFileCount: 7
+      threshold: INFO
+      logFormat: '%-5p [%d{ISO8601,CET}] %c{5}:%-15X{remoteIp} %m%n%rEx'
+    - type: file
+      currentLogFilename: ./logs/ultical-err.log
+      archive: true
+      archivedLogFilenamePattern: ./logs/ultical-err-%d.log.gz
+      archivedFileCount: 14
+      threshold: ERROR
+      logFormat: '%-5p [%d{ISO8601,CET}] %c{5}:%-15X{remoteIp} %m%n%rEx'

@@ -1,11 +1,15 @@
 package de.ultical.backend.utils.test;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Objects;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
 import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.*;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
