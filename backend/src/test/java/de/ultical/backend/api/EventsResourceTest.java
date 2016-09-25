@@ -17,6 +17,7 @@ import de.ultical.backend.model.Event;
 import de.ultical.backend.model.User;
 import de.ultical.backend.model.TournamentEdition;
 import de.ultical.backend.model.TournamentFormat;
+import de.ultical.backend.model.DivisionRegistration;
 
 public class EventsResourceTest {
 
@@ -24,6 +25,8 @@ public class EventsResourceTest {
     private final static int UNKNOWN_EVENT_ID = 2;
     private final static int EXCEPTION_EVENT_ID = 3;
     private final static int USER_ID = 42;
+    private final static int UPDATEABLE_DIV_ID = 52;
+    private final static int NON_UPDATEABLE_DIV_ID = 53;
     
     private EventsResource resource;
     
@@ -37,6 +40,12 @@ public class EventsResourceTest {
     private Event event3;
     @Mock
     private User user;
+    @Mock
+    private DivisionRegistration storedDiv;
+    @Mock
+    private DivisionRegistration updateDiv;
+    @Mock
+    private DivisionRegistration nonUpdateDiv;
 
     @Before
     public void setUp() throws Exception {
@@ -59,6 +68,13 @@ public class EventsResourceTest {
 	TournamentFormat tf = mock(TournamentFormat.class);
 	when(te.getTournamentFormat()).thenReturn(tf);
 	when(tf.getAdmins()).thenReturn(Collections.emptyList());
+
+	when(this.ds.addDivisionToEdition(any(TournamentEdition.class),any(DivisionRegistration.class))).thenReturn(this.storedDiv);
+
+	when(this.updateDiv.getId()).thenReturn(UPDATEABLE_DIV_ID);
+	when(this.nonUpdateDiv.getId()).thenReturn(NON_UPDATEABLE_DIV_ID);
+	when(this.ds.update(this.updateDiv)).thenReturn(true);
+	when(this.ds.update(this.nonUpdateDiv)).thenReturn(false);
     }
 
     @Test
@@ -120,5 +136,48 @@ public class EventsResourceTest {
 	User unauthorizedUser = mock(User.class);
 	when(unauthorizedUser.getId()).thenReturn(USER_ID + 1);
 	this.resource.updateEvent(KNOWN_EVENT_ID, this.event1, unauthorizedUser);
+    }
+
+    @Test
+    public void testAddDivision() throws Exception {
+	DivisionRegistration div = mock(DivisionRegistration.class);
+	DivisionRegistration result = this.resource.addDivision(KNOWN_EVENT_ID, div, this.user);
+	Assert.assertNotNull(result);
+	Assert.assertSame(result, this.storedDiv);
+	
+    }
+
+    @Test (expected = WebApplicationException.class)
+    public void testAddDivionUnauthorized() throws Exception {
+	DivisionRegistration div = mock(DivisionRegistration.class);
+	this.resource.addDivision(UNKNOWN_EVENT_ID, div, this.user);
+    }
+
+    /*
+     * TODO: add a test-case for a violated foreign-key constraint
+     * (cf. addDivision in EventsResource). IN order to do this it
+     * will be required to enhance the mocking, such that e.g. the id
+     * of the 'fake edition' will be matched and a
+     * PersistenceException will be thrown in that case. 
+     */
+
+    @Test
+    public void testUpdateDivision() throws Exception {
+	this.resource.updateDivsion(KNOWN_EVENT_ID, this.updateDiv, UPDATEABLE_DIV_ID, this.user);
+    }
+
+    @Test(expected = WebApplicationException.class)
+    public void testUpdateDivsionWrongDivID() throws Exception {
+	this.resource.updateDivsion(KNOWN_EVENT_ID, this.updateDiv, NON_UPDATEABLE_DIV_ID, this.user);
+    }
+
+    @Test(expected = WebApplicationException.class)
+    public void testUpdateDivisionUnauthorized() throws Exception {
+	this.resource.updateDivsion(UNKNOWN_EVENT_ID, this.updateDiv, UPDATEABLE_DIV_ID, this.user);
+    }
+
+    @Test(expected = WebApplicationException.class)
+    public void testUpdateDivisionUpdateFails() throws Exception {
+	this.resource.updateDivsion(KNOWN_EVENT_ID, this.nonUpdateDiv, NON_UPDATEABLE_DIV_ID, this.user);
     }
 }
