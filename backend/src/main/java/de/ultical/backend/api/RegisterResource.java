@@ -40,16 +40,16 @@ import de.ultical.backend.model.User;
 public class RegisterResource {
 
     @Inject
-    private Client client;
+    Client client;
 
     @Inject
-    private DataStore dataStore;
+    DataStore dataStore;
 
     @Inject
-    private UltiCalConfig config;
+    UltiCalConfig config;
 
     @Inject
-    private MailClient mailClient;
+    MailClient mailClient;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
