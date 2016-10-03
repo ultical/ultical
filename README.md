@@ -41,3 +41,12 @@ Inside the `web/`directory install dependencies with bower:
 `bower install`
 
 Change the document root of your web server to the web directory
+
+### Update license information
+
+To check if the project license is compatible with the dependencies' licenses, the file `web/NOTICE` file was generated with the following commands and contains a list of all the used libraries and their licenses.
+
+```bash
+npm install -g bower-license
+bower-license -e json > NOTICE
+```

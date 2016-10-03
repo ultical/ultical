@@ -10,8 +10,8 @@
     "amd",
     "globals"
   ],
-  "license": "GPL",
-  "homepage": "",
+  "license": "GPLv3",
+  "homepage": "https://github.com/bastrapp/ultical",
   "private": true,
   "ignore": [
     "**/.*",
