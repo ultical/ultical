@@ -17,3 +17,9 @@ cache:
 jdk:
   - oraclejdk8
 
+notifications:
+  email:
+    recipients:
+      - TEAM_EMAIL
+    on_success: change
+    on_failure: always
