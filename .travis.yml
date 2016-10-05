@@ -1,0 +1,8 @@
+language: java
+sudo: false
+env:
+  global:
+    - TEST_DIR=backend
+jdk:
+  - oraclejdk8
+  - openjdk8
