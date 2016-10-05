@@ -1,8 +1,8 @@
 language: java
 sudo: false
-env:
-  global:
-    - TEST_DIR=backend
+before_install:
+  - cd backend
+
 jdk:
   - oraclejdk8
-  - openjdk8
+
