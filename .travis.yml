@@ -1,8 +1,18 @@
 language: java
+
 sudo: false
+
+# change working directory to backend
+# if we at some point in time also want to build the
+# client part, we need some more logic at this place
 before_install:
   - cd backend
 
+# use caching to speed up build
+cache:
+  directories:
+    - $HOME/.m2
+  
 jdk:
   - oraclejdk8
 
