@@ -1,0 +1,5 @@
+jdbc.driverClassName=org.apache.derby.jdbc.EmbeddedDriver
+jdbc.url=jdbc:derby:memory:test;create=true
+jdbc.username=APP
+jdbc.password=APP
+jdbc.maxConnections=30

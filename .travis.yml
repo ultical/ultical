@@ -7,6 +7,7 @@ sudo: false
 # client part, we need some more logic at this place
 before_install:
   - cd backend
+  - cp src/main/resources/jdbc.properties.travis src/main/resources/jdbc.properties
 
 # use caching to speed up build
 cache:
