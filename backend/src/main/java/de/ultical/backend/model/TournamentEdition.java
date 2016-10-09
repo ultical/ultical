@@ -11,11 +11,13 @@ import de.ultical.backend.app.LocalDateSerializer;
 import de.ultical.backend.data.mapper.TournamentEditionMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import javax.validation.constraints.NotNull;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class TournamentEdition extends Identifiable {
 
+    @NotNull
     private TournamentFormat tournamentFormat;
 
     private String name;

@@ -1,5 +1,7 @@
 package de.ultical.backend.app;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import com.google.common.cache.CacheBuilderSpec;
@@ -60,4 +62,6 @@ public class UltiCalConfig extends Configuration {
     private String frontendUrl;
 
     private boolean corsFilterEnabled = false;
+
+    private List<String> overallAdmins;
 }

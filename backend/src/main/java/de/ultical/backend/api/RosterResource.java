@@ -60,7 +60,7 @@ public class RosterResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Roster addRoster(@Auth User currentUser, @NotNull Roster newRoster) throws Exception {
+    public Roster addRoster(@Auth @NotNull User currentUser, @NotNull Roster newRoster) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
@@ -86,7 +86,7 @@ public class RosterResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Roster updateRoster(@Auth User currentUser, @NotNull Roster updatedRoster) throws Exception {
+    public Roster updateRoster(@Auth @NotNull User currentUser, @NotNull Roster updatedRoster) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injection for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
@@ -127,7 +127,7 @@ public class RosterResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{rosterId}")
-    public Player addPlayerToRoster(@Auth User currentUser, @PathParam("rosterId") Integer rosterId,
+    public Player addPlayerToRoster(@Auth @NotNull User currentUser, @PathParam("rosterId") Integer rosterId,
             @NotNull DfvMvName dfvMvName) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injection for data store failed!",

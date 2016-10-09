@@ -19,11 +19,14 @@ import org.apache.ibatis.exceptions.PersistenceException;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.exception.AuthorizationException;
 import de.ultical.backend.model.DivisionRegistration.DivisionRegistrationStatus;
 import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.TournamentEdition;
+import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
+import javax.validation.Valid;
 
 @Path("/tournaments")
 public class TournamentResource {
@@ -54,22 +57,30 @@ public class TournamentResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public TournamentEdition storeTournament(final TournamentEdition newEdition) {
+    public TournamentEdition storeTournament(final @Valid TournamentEdition newEdition, @Auth @NotNull User currentUser) throws Exception {
         this.checkDataStore();
-        try {
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+	    final TournamentFormat tf = this.dataStore.get(newEdition.getTournamentFormat().getId(), TournamentFormat.class);
+	    if (tf == null) {
+		throw new WebApplicationException(String.format("TournamentFormat with id: %d could not be found in the database", newEdition.getTournamentFormat().getId()), Status.BAD_REQUEST);
+	    }
+	    Authenticator.assureFormatAdmin(tf, currentUser);
             TournamentEdition result = this.dataStore.addNew(newEdition);
             return result;
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing database failed", pe, Status.INTERNAL_SERVER_ERROR);
-        }
+        } catch (AuthorizationException ae) {
+	    throw new WebApplicationException(Status.UNAUTHORIZED);
+	}
     }
 
     @PUT
     @Path("/{editionId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateTournament(final @PathParam("editionId") Integer editionId, TournamentEdition edition) {
+    public void updateTournament(final @PathParam("editionId") Integer editionId, @Valid TournamentEdition edition, @Auth @NotNull User currentUser) throws Exception {
         this.checkDataStore();
-        try {
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+	    Authenticator.assureEditionAdmin(this.dataStore, editionId, currentUser);
             if (editionId.equals(edition.getId()) == false) {
                 throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
             }

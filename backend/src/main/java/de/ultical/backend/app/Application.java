@@ -212,6 +212,13 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         if (config.isCorsFilterEnabled()) {
             this.addCorsFilter(env);
         }
+
+	/*
+	 * add overall admins
+	 */
+	if (config.getOverallAdmins() != null) {
+	    config.getOverallAdmins().stream().forEach(de.ultical.backend.app.Authenticator::addAdmin);
+	}
     }
 
     /*

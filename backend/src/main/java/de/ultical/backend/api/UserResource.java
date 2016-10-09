@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
+import javax.validation.constraints.NotNull;
 
 @Path("/users")
 public class UserResource {
@@ -31,7 +32,7 @@ public class UserResource {
     @GET
     @Path("/{userId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public User getSeasonById(@PathParam("userId") Integer id, @Auth User user) {
+    public User getSeasonById(@PathParam("userId") Integer id, @Auth @NotNull User user) {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
@@ -52,7 +53,7 @@ public class UserResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> getAllSeasons(@QueryParam("search") String searchString, @Auth User user) throws Exception {
+    public List<User> getAllSeasons(@QueryParam("search") String searchString, @Auth @NotNull User user) throws Exception {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);

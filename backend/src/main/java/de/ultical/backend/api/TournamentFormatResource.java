@@ -3,6 +3,7 @@ package de.ultical.backend.api;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -16,8 +17,14 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
 
+import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.exception.AuthorizationException;
 import de.ultical.backend.model.TournamentFormat;
+import de.ultical.backend.model.User;
+
+import io.dropwizard.auth.Auth;
+
 
 @Path("/format")
 public class TournamentFormatResource {
@@ -42,23 +49,26 @@ public class TournamentFormatResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public TournamentFormat addNewFormat(TournamentFormat tf) {
+    public TournamentFormat addNewFormat(TournamentFormat tf, @Auth @NotNull User currentUser) throws Exception {
         this.checkDataStore();
-        try {
+        try (AutoCloseable c = this.dataStore.getClosable()){
+	    Authenticator.assureOverallAdmin(currentUser);
             TournamentFormat result = this.dataStore.addNew(tf);
             return result;
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing database failed!", pe,
                     Status.INTERNAL_SERVER_ERROR.getStatusCode());
-        }
+        } catch (AuthorizationException ae) {
+	    throw new WebApplicationException(Status.UNAUTHORIZED);
+	}
     }
 
     @PUT
     @Path("/{formatId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateFormat(@PathParam("formatId") Integer formatId, TournamentFormat updatedFormat) {
+    public void updateFormat(@PathParam("formatId") Integer formatId, TournamentFormat updatedFormat, @Auth @NotNull User currentUser) throws Exception {
         this.checkDataStore();
-        try {
+        try (AutoCloseable c = this.dataStore.getClosable()) {
             if (formatId.equals(updatedFormat.getId()) == false) {
                 throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
             }
@@ -70,7 +80,9 @@ public class TournamentFormatResource {
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing database failed!", pe,
                     Status.INTERNAL_SERVER_ERROR.getStatusCode());
-        }
+        } catch (AuthorizationException ae) {
+	    throw new WebApplicationException(Status.UNAUTHORIZED);
+	}
     }
 
     @GET
