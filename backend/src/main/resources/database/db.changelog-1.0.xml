@@ -1126,4 +1126,24 @@
 			TEAM.id WHERE ROSTER.id = TEAM_REGISTRATION.roster)));
 		</sql>
 	</changeSet>
+	<changeSet id="bb-iban-reisekosten" author="bb">
+	  <addColumn tableName="TEAM_REGISTRATION">
+	    <column name="iban" type="VARCHAR(29)">
+	      <constraints nullable="true" />
+	    </column>
+	  </addColumn>
+	</changeSet>
+	<changeSet id="bb-team-distance" author="bb">
+	  <addColumn tableName="TEAM_REGISTRATION">
+	    <column name="distance" type="INTEGER" />
+	  </addColumn>
+	</changeSet>
+	<changeSet id="bb-team-travel-fees" author="bb">
+	  <addColumn tableName="TEAM_REGISTRATION">
+	    <column name="travel_fee" type="FLOAT" />
+	  </addColumn>
+	</changeSet>
+	<changeSet id="bb-tag-db-reisekosten" author="bb">
+	  <tagDatabase tag="v1.19" />
+	</changeSet>
 </databaseChangeLog>
