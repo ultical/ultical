@@ -38,6 +38,8 @@ import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.LocalDateMixIn;
 import de.ultical.backend.data.mapper.UserMapper;
 import de.ultical.backend.model.User;
+import de.ultical.backend.services.IBANValidationService;
+import de.ultical.backend.services.impl.IBANValidationServiceImpl;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.AuthenticationException;
@@ -134,7 +136,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
                 }).to(UltiCalConfig.class);
                 this.bindAsContract(MailClient.class);
                 this.bindFactory(SessionFactory.class).to(Session.class);
-
+		this.bind(IBANValidationServiceImpl.class).to(IBANValidationService.class);
             }
         });
 

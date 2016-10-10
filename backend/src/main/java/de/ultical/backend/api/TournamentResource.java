@@ -20,11 +20,14 @@ import org.apache.ibatis.exceptions.PersistenceException;
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.exception.AuthorizationException;
+import de.ultical.backend.exception.IBANValidationException;
 import de.ultical.backend.model.DivisionRegistration.DivisionRegistrationStatus;
 import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.TournamentEdition;
 import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.model.User;
+import de.ultical.backend.services.IBANValidationService;
+
 import io.dropwizard.auth.Auth;
 import javax.validation.Valid;
 
@@ -34,6 +37,9 @@ public class TournamentResource {
     @Inject
     DataStore dataStore;
 
+    @Inject
+    IBANValidationService ibanService;
+    
     private void checkDataStore() {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency injection for datastore failed!",
@@ -106,6 +112,12 @@ public class TournamentResource {
             TeamRegistration teamRegistration, @Auth @NotNull User currentUser) throws Exception {
 
         this.checkDataStore();
+	final String normalizedIban = this.reformatIBAN(teamRegistration.getIban());
+	try {
+	    this.ibanService.validateIBAN(normalizedIban);
+	} catch (IBANValidationException ive) {
+	    throw new WebApplicationException("IBAN is invalid", Status.BAD_REQUEST);
+	}
 
         try (AutoCloseable c = this.dataStore.getClosable()) {
             Authenticator.assureRosterAdmin(this.dataStore, teamRegistration.getRoster().getId(), currentUser);
@@ -122,6 +134,15 @@ public class TournamentResource {
             throw new WebApplicationException("Probably duplicate entry" + pe.getMessage(), Status.CONFLICT);
         }
     }
+
+	private String reformatIBAN(final String origIban) {
+	    if(origIban == null) {
+		throw new WebApplicationException("IBAN is required", Status.BAD_REQUEST);
+	    }
+	    String formattedIban = origIban.trim();
+	    formattedIban = formattedIban.replace("\\w|\\.|-","");
+	    return formattedIban.toUpperCase();
+	}
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
