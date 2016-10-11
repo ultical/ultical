@@ -111,7 +111,8 @@ public class TeamRegistrationMapperTest {
         goldfingersRegistration.setRoster(this.roster);
         goldfingersRegistration.setComment("the GUC is coming!");
         goldfingersRegistration.setStatus(DivisionRegistrationStatus.WAITING_LIST);
-        goldfingersRegistration.setTeamName("GUC");
+        goldfingersRegistration.setTeamName("Goldfingers");
+
         this.mapper.insert(this.divisionRegOpen.getId(), goldfingersRegistration);
 
         Team gucMixed = new Team();
@@ -127,8 +128,7 @@ public class TeamRegistrationMapperTest {
         TeamRegistration gucMixedReg = new TeamRegistration();
         gucMixedReg.setRoster(rosterMixed);
         gucMixedReg.setStatus(DivisionRegistrationStatus.PENDING);
-        gucMixedReg.setTeamName("GUC MIXED");
-
+        gucMixedReg.setTeamName("Goldfingers");
         RULE.getSession().getMapper(gucMixed.getMapper()).insert(gucMixed);
         RULE.getSession().getMapper(rosterMixed.getMapper()).insert(rosterMixed);
 
@@ -150,7 +150,7 @@ public class TeamRegistrationMapperTest {
         wallCityReg.setComment("Down comes the hammer!");
         wallCityReg.setRoster(rosterWallCity);
         wallCityReg.setStatus(DivisionRegistrationStatus.CONFIRMED);
-        wallCityReg.setTeamName("WC");
+        wallCityReg.setTeamName("WallCity");
         this.mapper.insert(this.divisionRegOpen.getId(), wallCityReg);
 
         foundEdition = RULE.getSession().getMapper(this.tes.getMapper()).get(this.tes.getId());

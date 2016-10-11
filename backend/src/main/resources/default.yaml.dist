@@ -51,3 +51,7 @@ logging:
       archivedFileCount: 14
       threshold: ERROR
       logFormat: '%-5p [%d{ISO8601,CET}] %c{5}:%-15X{remoteIp} %m%n%rEx'
+
+overallAdmins:
+  - admin@installation.xyz
+  - second@admin.zyd

@@ -1,0 +1,25 @@
+language: java
+
+sudo: false
+
+# change working directory to backend
+# if we at some point in time also want to build the
+# client part, we need some more logic at this place
+before_install:
+  - cd backend
+  - cp src/main/resources/jdbc.properties.travis src/main/resources/jdbc.properties
+
+# use caching to speed up build
+cache:
+  directories:
+    - $HOME/.m2
+  
+jdk:
+  - oraclejdk8
+
+notifications:
+  email:
+    recipients:
+      - TEAM_EMAIL
+    on_success: change
+    on_failure: always

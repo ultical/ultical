@@ -62,7 +62,7 @@ public class PrepareDBRule implements TestRule {
 				derbyDatabase.setConnection(liquibaseConnection);
 				liquibase = new Liquibase(PrepareDBRule.this.changeLogFile, new ClassLoaderResourceAccessor(),
 						derbyDatabase);
-				liquibase.getLog().setLogLevel(LogLevel.DEBUG);
+				liquibase.getLog().setLogLevel(LogLevel.WARNING);
 				liquibase.update((Contexts) null);
 			} finally {
 

@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/ultical/ultical.svg?branch=master)](https://travis-ci.org/ultical/ultical)
 # UltiCal
 
 UltiCal is being developed as a free and open source team and tournament management platform. We are backed by the German Discsport Federation (DFV). Their live version can be found at dfv-turniere.de
