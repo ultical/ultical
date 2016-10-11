@@ -2,12 +2,18 @@ language: java
 
 sudo: false
 
+addons:
+  sonarqube: true
+
 # change working directory to backend
 # if we at some point in time also want to build the
 # client part, we need some more logic at this place
 before_install:
   - cd backend
   - cp src/main/resources/jdbc.properties.travis src/main/resources/jdbc.properties
+
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.login=SONAR_TOKEN -Dsonar.branch=TRAVIS_BRANCH
 
 # use caching to speed up build
 cache:
