@@ -43,8 +43,8 @@
 			<div ng-repeat-end class="row">
 					<a ui-sref="app.eventShow({eventId: event.id, eventSlug: ((event | eventname) | slugify) })">
 				<div class="col-md-9 col-sm-11 col-xs-12 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != event.startDate || orderedEvents[$index - 1].endDate != event.endDate">
-						<div class="event-list-date event-list-date-left">{{ showDate ? (event.startDate | amDateFormat : 'D') : '' }}</div>
-						<div class="event-list-date event-list-date-dash">{{ showDate ? '-' : '' }}</div>
+						<div class="event-list-date event-list-date-left"><span ng-if="event.startDate != event.endDate">{{ showDate ? (event.startDate | amDateFormat : 'D') : '' }}</span></div>
+						<div class="event-list-date event-list-date-dash"><span ng-if="event.startDate != event.endDate">{{ showDate ? '-' : '' }}</span></div>
 						<div class="event-list-date event-list-date-right">{{ showDate ? (event.endDate | amDateFormat : 'D') :'' }}</div>
 						<!-- <span ng-if="(event.startDate | amDateFormat : 'M') != (event.endDate | amDateFormat : 'M')">&nbsp;{{ event.endDate | amDateFormat : 'MMM' }}</span> -->
 
