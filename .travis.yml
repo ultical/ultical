@@ -13,12 +13,13 @@ before_install:
   - cp src/main/resources/jdbc.properties.travis src/main/resources/jdbc.properties
 
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch=$TRAVIS_BRANCH
+  - mvn -X clean org.jacoco:jacoco-maven-plugin:prepare-agent test sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch=$TRAVIS_BRANCH
 
 # use caching to speed up build
 cache:
   directories:
     - $HOME/.m2
+    - $HOME/.sonar/cache
   
 jdk:
   - oraclejdk8
