@@ -24,19 +24,20 @@ public class DatabaseHealthCheck extends HealthCheck {
 			return Result.unhealthy("No Config present!");
 		}
 		Result result = null;
+
 		try (Connection connection = this.dataSource.getConnection()){
-			Statement stmt = connection.createStatement();
-			ResultSet queryResult = stmt.executeQuery("SELECT 1");
-			if (queryResult != null) {
+		    try (Statement stmt = connection.createStatement()) {
+			try (ResultSet queryResult = stmt.executeQuery("SELECT 1")) {
+			    if (queryResult != null) {
 				result = Result.healthy();
-			} else {
+			    } else {
 				result = Result.unhealthy("Query did not provide a result");
+			    }
 			}
-			
-		} catch (SQLException e) {
+		    }
+		}catch (SQLException e) {
 			result = Result.unhealthy(e);
-		}
-		
+		} 		
 		return result;
 	}
 

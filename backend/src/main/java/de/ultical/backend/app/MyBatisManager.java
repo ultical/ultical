@@ -29,19 +29,17 @@ public class MyBatisManager implements Managed, Factory<SqlSession> {
 
 	@Override
 	public void start() throws Exception {
-		Reader reader = null;
-		try {
-			reader = Resources.getResourceAsReader("mybatis-config.xml");
-			Environment iBatisEnv = new Environment("production", new JdbcTransactionFactory(), dataSource);
-			XMLConfigBuilder builder = new XMLConfigBuilder(reader, "production");
-
-			Configuration iBatisConfig = builder.parse();
-			iBatisConfig.setEnvironment(iBatisEnv);
-
-			this.sessionFactory = new SqlSessionFactoryBuilder().build(iBatisConfig);
-		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage());
-		}
+	    try (Reader reader = Resources.getResourceAsReader("mybatis-config.xml")) {
+		Environment iBatisEnv = new Environment("production", new JdbcTransactionFactory(), dataSource);
+		XMLConfigBuilder builder = new XMLConfigBuilder(reader, "production");
+		
+		Configuration iBatisConfig = builder.parse();
+		iBatisConfig.setEnvironment(iBatisEnv);
+		
+		this.sessionFactory = new SqlSessionFactoryBuilder().build(iBatisConfig);
+	    } catch (IOException e) {
+		throw new RuntimeException(e.getMessage());
+	    }
 	}
 
 	@Override

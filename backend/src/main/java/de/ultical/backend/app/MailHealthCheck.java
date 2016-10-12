@@ -44,7 +44,7 @@ public class MailHealthCheck extends HealthCheck {
             }
 
         };
-        MailClient mailClient = ServiceLocatorProvider.INSTANCE.getServiceLocator()
+        MailClient mailClient = ServiceLocatorProvider.getInstance().getServiceLocator()
                 .createAndInitialize(MailClient.class);
         mailClient.sendMail(message);
         return Result.healthy("At least we did not receive an exception, when sending mails!");
