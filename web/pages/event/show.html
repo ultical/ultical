@@ -416,8 +416,8 @@
 								<div class="col-md-12 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != listEvent.startDate || orderedEvents[$index - 1].endDate != listEvent.endDate">
 
 									<div class="event-list-date event-list-date-left">{{ showDate ? (listEvent.startDate | amDateFormat : 'D') : '' }}</div>
-									<div class="event-list-date event-list-date-dash"><span ng-if="event.startDate != event.endDate">{{ showDate ? '-' : '' }}</span></div>
-									<div class="event-list-date event-list-date-right"><span ng-if="event.startDate != event.endDate">{{ showDate ? (listEvent.endDate | amDateFormat : 'D') : '' }}</span></div>
+									<div class="event-list-date event-list-date-dash"><span ng-if="listEvent.startDate != listEvent.endDate">{{ showDate ? '-' : '' }}</span></div>
+									<div class="event-list-date event-list-date-right"><span ng-if="listEvent.startDate != listEvent.endDate">{{ showDate ? (listEvent.endDate | amDateFormat : 'D') : '' }}</span></div>
 									<div class="event-list-date event-list-date-right-month" ng-class="{'event-list-date-right-monthyear' : showYearSeparator }">{{ showDate ? (listEvent.endDate | amDateFormat : 'MMMM') : '' }} {{ showYearSeparator ? (listEvent.endDate | amDateFormat : 'YY') : '' }}</div>
 
 									<div class="event-list-text">
