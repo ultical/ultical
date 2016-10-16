@@ -26,7 +26,9 @@
 			</div>
 
 			<!-- collapsed months -->
-			<div class="row" ng-if="!show.beginningOfYear && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY') == (current.thisYear)))">
+			<div class="row" ng-if="!show.beginningOfYear && $index == 0">
+
+			 <!-- || ((event.startDate | amDateFormat : 'YYYY') == (current.thisYear)))"> -->
 				<div class="col-md-9">
 					<h5><a href="#" ng-click="show.beginningOfYear = true">{{ current.january | amDateFormat : 'MMMM' }}<span ng-if="(current.lastMonth | amDateFormat : 'M') != 1"> - {{ current.lastMonth | amDateFormat : 'MMMM' }}</span></a></h5>
 				</div>
