@@ -30,6 +30,8 @@ import io.dropwizard.auth.Auth;
 @Path("/teams")
 public class TeamResource {
 
+    private static final String DB_ACCESS_FAILED = "database access failed";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TeamResource.class);
 
     @Inject
@@ -126,6 +128,7 @@ public class TeamResource {
             try {
                 newTeam = this.dataStore.addNew(newTeam);
             } catch (PersistenceException pe) {
+                LOGGER.error(DB_ACCESS_FAILED, pe);
                 throw new WebApplicationException(pe);
             }
 
@@ -192,6 +195,7 @@ public class TeamResource {
             try {
                 updated = this.dataStore.update(updatedTeam);
             } catch (PersistenceException pe) {
+                LOGGER.error(DB_ACCESS_FAILED, pe);
                 throw new WebApplicationException(pe);
             }
             if (!updated) {
@@ -228,6 +232,7 @@ public class TeamResource {
             Team teamToDelete = this.dataStore.get(teamId, Team.class);
             this.dataStore.remove(teamToDelete.getLocation().getId(), Location.class);
         } catch (PersistenceException pe) {
+            LOGGER.error(DB_ACCESS_FAILED, pe);
             throw new WebApplicationException("c17 - Deletion not successful!", Status.CONFLICT);
         }
     }
@@ -249,7 +254,8 @@ public class TeamResource {
             try {
                 this.dataStore.addAdminToTeam(team, admin);
             } catch (PersistenceException pe) {
-                throw new WebApplicationException("Accessing the database failed!");
+                LOGGER.error(DB_ACCESS_FAILED, pe);
+                throw new WebApplicationException(DB_ACCESS_FAILED);
             }
         }
     }
@@ -273,7 +279,8 @@ public class TeamResource {
 
                 this.dataStore.removeAdminFromTeam(fakeTeam, fakeAdmin);
             } catch (PersistenceException pe) {
-                throw new WebApplicationException("Acessecing the database failes!");
+                LOGGER.error(DB_ACCESS_FAILED, pe);
+                throw new WebApplicationException(DB_ACCESS_FAILED);
             }
         }
     }

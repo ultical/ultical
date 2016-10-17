@@ -20,6 +20,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.app.Authenticator;
@@ -46,6 +48,8 @@ import io.dropwizard.auth.Auth;
  */
 @Path("/command/mail")
 public class MailResource {
+
+    private final static Logger LOG = LoggerFactory.getLogger(MailResource.class);
 
     @Inject
     DataStore dataStore;
@@ -217,7 +221,7 @@ public class MailResource {
                     (List<Integer>) emailInfo.get("divisions"), (List<String>) emailInfo.get("status"));
 
             // get all team admins and email addresses
-            List<Recipient> recipients = new ArrayList<Recipient>();
+            List<Recipient> recipients = new ArrayList<>();
             for (Team team : teams) {
                 if (team.getContactEmail() != null && !team.getContactEmail().isEmpty()) {
                     recipients.add(new Recipient(team.getContactEmail()));
@@ -303,7 +307,7 @@ public class MailResource {
 
             Team team = this.dataStore.get((Integer) emailInfo.get("teamId"), Team.class);
 
-            List<Recipient> recipients = new ArrayList<Recipient>();
+            List<Recipient> recipients = new ArrayList<>();
             if (!team.getContactEmail().isEmpty()) {
                 recipients.add(new Recipient(team.getContactEmail()));
             }
@@ -322,6 +326,7 @@ public class MailResource {
                 throw new WebApplicationException("Error sending Mail", Status.INTERNAL_SERVER_ERROR);
             }
         } catch (Exception e) {
+            LOG.error("something unexpected happened", e);
             throw new WebApplicationException(500);
         }
         return true;
@@ -350,7 +355,7 @@ public class MailResource {
 
             Event event = this.dataStore.get((Integer) emailInfo.get("eventId"), Event.class);
 
-            List<Recipient> recipients = new ArrayList<Recipient>();
+            List<Recipient> recipients = new ArrayList<>();
             if (event.getLocalOrganizer() != null && !event.getLocalOrganizer().getEmail().isEmpty()) {
                 recipients
                         .add(new Recipient(event.getLocalOrganizer().getEmail(), event.getLocalOrganizer().getName()));
@@ -366,7 +371,7 @@ public class MailResource {
                 throw new WebApplicationException("Error sending Mail", Status.INTERNAL_SERVER_ERROR);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage() + e.getStackTrace());
+            LOG.error("exception occurred", e);
             throw new WebApplicationException(500);
         }
         return true;

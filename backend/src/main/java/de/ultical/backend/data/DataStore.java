@@ -520,7 +520,7 @@ public class DataStore {
     public List<DfvPlayer> getPlayersToUpdate() {
         // TODO this task could be solved completely by the database!
         try {
-            List<DfvPlayer> result = null;
+            List<DfvPlayer> result;
             final DfvPlayerMapper playerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
             final DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
 

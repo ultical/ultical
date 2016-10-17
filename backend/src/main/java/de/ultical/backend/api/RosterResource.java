@@ -46,6 +46,8 @@ import io.dropwizard.auth.Auth;
 @Path("/roster")
 public class RosterResource {
 
+    private static final String DB_ACCESS_FAILED = "Database access failed!";
+
     private final static Logger LOGGER = LoggerFactory.getLogger(RosterResource.class);
 
     @Inject
@@ -73,8 +75,8 @@ public class RosterResource {
             try {
                 newRoster = this.dataStore.addNew(newRoster);
             } catch (PersistenceException pe) {
-                LOGGER.error("Database access failed!", pe);
-                throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
+                LOGGER.error(DB_ACCESS_FAILED, pe);
+                throw new WebApplicationException(DB_ACCESS_FAILED, Status.INTERNAL_SERVER_ERROR);
             }
 
             newRoster.setVersion(1);
@@ -99,8 +101,8 @@ public class RosterResource {
             try {
                 this.dataStore.update(updatedRoster);
             } catch (PersistenceException pe) {
-                LOGGER.error("Database access failed!", pe);
-                throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
+                LOGGER.error(DB_ACCESS_FAILED, pe);
+                throw new WebApplicationException(DB_ACCESS_FAILED, Status.INTERNAL_SERVER_ERROR);
             }
 
             updatedRoster.setVersion(updatedRoster.getVersion() + 1);
@@ -319,7 +321,8 @@ public class RosterResource {
 
                 this.dataStore.removePlayerFromRoster(playerId, rosterId);
             } catch (PersistenceException pe) {
-                throw new WebApplicationException("Accessing the database failes!");
+                LOGGER.error(DB_ACCESS_FAILED, pe);
+                throw new WebApplicationException(DB_ACCESS_FAILED);
             }
         }
     }

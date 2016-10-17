@@ -16,6 +16,8 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -32,6 +34,8 @@ public class SitemapResource {
 
     public static final String DOMAIN_URL = "https://www.dfv-turniere.de";
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(SitemapResource.class);
+
     @Inject
     DataStore dataStore;
 
@@ -41,7 +45,7 @@ public class SitemapResource {
 
         Document doc;
 
-        List<String> locales = new ArrayList<String>();
+        List<String> locales = new ArrayList<>();
         locales.add("de");
 
         LocalDate today = LocalDate.now();
@@ -122,7 +126,7 @@ public class SitemapResource {
             return doc;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("exception occurred", e);
         }
 
         return null;
@@ -130,7 +134,7 @@ public class SitemapResource {
     }
 
     private String getEventName(Event event) {
-        String output = "";
+        String output;
 
         if (event.getName().isEmpty()) {
             return this.getEditionName(event.getTournamentEdition());
@@ -206,9 +210,9 @@ public class SitemapResource {
         try {
             slg = new Slugify();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("IO-Error", e);
         }
-        Map<String, String> customReplacements = new HashMap<String, String>();
+        Map<String, String> customReplacements = new HashMap<>();
         customReplacements.put("ö", "o");
         customReplacements.put("ä", "a");
         customReplacements.put("ü", "u");

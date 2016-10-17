@@ -19,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
@@ -32,6 +34,8 @@ import io.dropwizard.auth.Auth;
 @Path("/events")
 public class EventsResource {
 
+    private static final String DB_ACCESS_FAILURE = "Accessing database failed";
+    private final static Logger LOG = LoggerFactory.getLogger(EventsResource.class);
     @Inject
     DataStore dataStore;
 
@@ -49,7 +53,8 @@ public class EventsResource {
         try {
             return this.dataStore.getAll(Event.class);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing databaes failed", Status.INTERNAL_SERVER_ERROR);
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -62,7 +67,8 @@ public class EventsResource {
         try (AutoCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getEventBasics();
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed", Status.INTERNAL_SERVER_ERROR);
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -78,7 +84,8 @@ public class EventsResource {
             }
             return result;
         } catch (PersistenceException e) {
-            throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
+            LOG.error(DB_ACCESS_FAILURE, e);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -92,7 +99,8 @@ public class EventsResource {
             Event storedEvent = this.dataStore.addNew(t);
             return storedEvent;
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -114,7 +122,8 @@ public class EventsResource {
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
             }
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
         }
     }
 

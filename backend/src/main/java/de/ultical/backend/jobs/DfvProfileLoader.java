@@ -207,6 +207,7 @@ public class DfvProfileLoader {
         try {
             mvPlayer = playerInvocationBuilder.get(DfvMvPlayer.class);
         } catch (NotFoundException e) {
+            LOGGER.error(String.format("failed to load player=%d", player.getDfvNumber()), e);
             return null;
         }
 

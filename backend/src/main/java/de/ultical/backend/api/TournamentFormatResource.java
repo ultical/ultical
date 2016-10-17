@@ -16,19 +16,23 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.exception.AuthorizationException;
 import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.model.User;
-
 import io.dropwizard.auth.Auth;
-
 
 @Path("/format")
 public class TournamentFormatResource {
 
+    private static final String LOGIN_MESSAGE = "please login first";
+    private static final String UNAUTHORIZED_WARNING = "unauthorized access";
+    private static final String DB_ACCESS_FAILED = "database access failed";
+    private final static Logger LOGGER = LoggerFactory.getLogger(TournamentFormatResource.class);
     @Inject
     DataStore dataStore;
 
@@ -51,22 +55,24 @@ public class TournamentFormatResource {
     @Produces(MediaType.APPLICATION_JSON)
     public TournamentFormat addNewFormat(TournamentFormat tf, @Auth @NotNull User currentUser) throws Exception {
         this.checkDataStore();
-        try (AutoCloseable c = this.dataStore.getClosable()){
-	    Authenticator.assureOverallAdmin(currentUser);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            Authenticator.assureOverallAdmin(currentUser);
             TournamentFormat result = this.dataStore.addNew(tf);
             return result;
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed!", pe,
-                    Status.INTERNAL_SERVER_ERROR.getStatusCode());
+            LOGGER.error(DB_ACCESS_FAILED, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILED, pe, Status.INTERNAL_SERVER_ERROR.getStatusCode());
         } catch (AuthorizationException ae) {
-	    throw new WebApplicationException(Status.UNAUTHORIZED);
-	}
+            LOGGER.warn(UNAUTHORIZED_WARNING, ae);
+            throw new WebApplicationException(LOGIN_MESSAGE, ae, Status.UNAUTHORIZED);
+        }
     }
 
     @PUT
     @Path("/{formatId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateFormat(@PathParam("formatId") Integer formatId, TournamentFormat updatedFormat, @Auth @NotNull User currentUser) throws Exception {
+    public void updateFormat(@PathParam("formatId") Integer formatId, TournamentFormat updatedFormat,
+            @Auth @NotNull User currentUser) throws Exception {
         this.checkDataStore();
         try (AutoCloseable c = this.dataStore.getClosable()) {
             if (formatId.equals(updatedFormat.getId()) == false) {
@@ -78,11 +84,12 @@ public class TournamentFormatResource {
                         Status.CONFLICT);
             }
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed!", pe,
-                    Status.INTERNAL_SERVER_ERROR.getStatusCode());
+            LOGGER.error(DB_ACCESS_FAILED, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILED, pe, Status.INTERNAL_SERVER_ERROR.getStatusCode());
         } catch (AuthorizationException ae) {
-	    throw new WebApplicationException(Status.UNAUTHORIZED);
-	}
+            LOGGER.warn(UNAUTHORIZED_WARNING, ae);
+            throw new WebApplicationException(LOGIN_MESSAGE, ae, Status.UNAUTHORIZED);
+        }
     }
 
     @GET
@@ -97,8 +104,8 @@ public class TournamentFormatResource {
             }
             return result;
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed!", pe,
-                    Status.INTERNAL_SERVER_ERROR.getStatusCode());
+            LOGGER.error(DB_ACCESS_FAILED, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILED, pe, Status.INTERNAL_SERVER_ERROR.getStatusCode());
         }
     }
 
@@ -116,8 +123,8 @@ public class TournamentFormatResource {
             }
             return result;
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed!", pe,
-                    Status.INTERNAL_SERVER_ERROR.getStatusCode());
+            LOGGER.error(DB_ACCESS_FAILED, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILED, pe, Status.INTERNAL_SERVER_ERROR.getStatusCode());
         }
     }
 
@@ -135,8 +142,8 @@ public class TournamentFormatResource {
             }
             return result;
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed!", pe,
-                    Status.INTERNAL_SERVER_ERROR.getStatusCode());
+            LOGGER.error(DB_ACCESS_FAILED, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILED, pe, Status.INTERNAL_SERVER_ERROR.getStatusCode());
         }
     }
 }

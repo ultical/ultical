@@ -20,42 +20,42 @@ import io.dropwizard.lifecycle.Managed;
 
 public class MyBatisManager implements Managed, Factory<SqlSession> {
 
-	private SqlSessionFactory sessionFactory;
-	private final DataSource dataSource;
+    private SqlSessionFactory sessionFactory;
+    private final DataSource dataSource;
 
-	public MyBatisManager(final DataSource ds) {
-		this.dataSource = Objects.requireNonNull(ds);
-	}
+    public MyBatisManager(final DataSource ds) {
+        this.dataSource = Objects.requireNonNull(ds);
+    }
 
-	@Override
-	public void start() throws Exception {
-	    try (Reader reader = Resources.getResourceAsReader("mybatis-config.xml")) {
-		Environment iBatisEnv = new Environment("production", new JdbcTransactionFactory(), dataSource);
-		XMLConfigBuilder builder = new XMLConfigBuilder(reader, "production");
-		
-		Configuration iBatisConfig = builder.parse();
-		iBatisConfig.setEnvironment(iBatisEnv);
-		
-		this.sessionFactory = new SqlSessionFactoryBuilder().build(iBatisConfig);
-	    } catch (IOException e) {
-		throw new RuntimeException(e.getMessage());
-	    }
-	}
+    @Override
+    public void start() throws Exception {
+        try (Reader reader = Resources.getResourceAsReader("mybatis-config.xml")) {
+            Environment iBatisEnv = new Environment("production", new JdbcTransactionFactory(), this.dataSource);
+            XMLConfigBuilder builder = new XMLConfigBuilder(reader, "production");
 
-	@Override
-	public void stop() throws Exception {
-		// NOP we don't have to do anything here :)
-	}
+            Configuration iBatisConfig = builder.parse();
+            iBatisConfig.setEnvironment(iBatisEnv);
 
-	@Override
-	public SqlSession provide() {
-		return this.sessionFactory.openSession();
-	}
+            this.sessionFactory = new SqlSessionFactoryBuilder().build(iBatisConfig);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
 
-	@Override
-	public void dispose(SqlSession instance) {
-		instance.close();
+    @Override
+    public void stop() throws Exception {
+        // NOP we don't have to do anything here :)
+    }
 
-	}
+    @Override
+    public SqlSession provide() {
+        return this.sessionFactory.openSession();
+    }
+
+    @Override
+    public void dispose(SqlSession instance) {
+        instance.close();
+
+    }
 
 }
