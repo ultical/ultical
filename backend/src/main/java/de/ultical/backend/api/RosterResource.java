@@ -63,7 +63,7 @@ public class RosterResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Roster addRoster(@Auth @NotNull User currentUser, @NotNull Roster newRoster) {
+    public Roster addRoster(@Auth @NotNull final User currentUser, @NotNull final Roster newRoster) {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
@@ -72,17 +72,16 @@ public class RosterResource {
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             this.validateRoster(newRoster, currentUser);
-
+	    Roster savedRoster;
             try {
-                newRoster = this.dataStore.addNew(newRoster);
+                savedRoster = this.dataStore.addNew(newRoster);
+		newRoster.setVersion(1);
+	    
+		return newRoster;
             } catch (PersistenceException pe) {
                 LOGGER.error(DB_ACCESS_FAILED, pe);
                 throw new WebApplicationException(DB_ACCESS_FAILED, Status.INTERNAL_SERVER_ERROR);
             }
-
-            newRoster.setVersion(1);
-
-            return newRoster;
         }
     }
 
@@ -340,7 +339,7 @@ public class RosterResource {
             Authenticator.assureTeamAdmin(this.dataStore, rosterToDelete.getTeam().getId(), currentUser);
 
             // roster cannot be deleted if registered for an event
-            if (this.dataStore.getTeamRegistrationsByRosters(Collections.singletonList(rosterToDelete)).size() > 0) {
+            if (this.dataStore.getTeamRegistrationsByRosters(Collections.singletonList(rosterToDelete)).isEmpty()) {
                 throw new WebApplicationException("Roster cannot be deleted because it is registered for a tournament.",
                         Status.FORBIDDEN);
             }

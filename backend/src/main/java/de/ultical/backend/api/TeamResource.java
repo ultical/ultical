@@ -109,44 +109,43 @@ public class TeamResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Team add(Team newTeam, @Auth @NotNull User currentUser)  {
+    public Team add(final Team newTeam, @Auth @NotNull User currentUser)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
+	    
+            Team preparedTeam = this.prepareTeam(newTeam);
 
-            newTeam = this.prepareTeam(newTeam);
-
-            if (newTeam.getLocation() == null || newTeam.getLocation().getCity() == null
-                    || newTeam.getLocation().getCity().isEmpty()) {
+            if (preparedTeam.getLocation() == null || preparedTeam.getLocation().getCity() == null
+                    || preparedTeam.getLocation().getCity().isEmpty()) {
                 throw new WebApplicationException("Location must be specified", Status.EXPECTATION_FAILED);
-                // t.setLocation(new Location());
             }
 
             this.dataStore.addNew(newTeam.getLocation());
 
             try {
-                newTeam = this.dataStore.addNew(newTeam);
+                preparedTeam = this.dataStore.addNew(preparedTeam);
             } catch (PersistenceException pe) {
                 LOGGER.error(DB_ACCESS_FAILED, pe);
                 throw new WebApplicationException(pe);
             }
 
             // add admins
-            for (User admin : newTeam.getAdmins()) {
+            for (User admin : preparedTeam.getAdmins()) {
                 try {
-                    this.dataStore.addAdminToTeam(newTeam, admin);
+                    this.dataStore.addAdminToTeam(preparedTeam, admin);
                 } catch (PersistenceException e) {
-                    LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )", newTeam.getName(),
-                            newTeam.getId(), admin.getFullName(), admin.getId());
+                    LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )", preparedTeam.getName(),
+                            preparedTeam.getId(), admin.getFullName(), admin.getId());
                     LOGGER.error("exception:", e);
                 }
             }
 
-            newTeam.setVersion(1);
+            preparedTeam.setVersion(1);
 
-            return newTeam;
+            return preparedTeam;
         }
     }
 

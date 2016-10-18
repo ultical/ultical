@@ -23,6 +23,13 @@ public class MyBatisManager implements Managed, Factory<SqlSession> {
     private SqlSessionFactory sessionFactory;
     private final DataSource dataSource;
 
+    public static class MyBatisInitializationException extends RuntimeException {
+
+	public MyBatisInitializationException(String s, Throwable t) {
+	    super(s, t);
+	}
+    }
+    
     public MyBatisManager(final DataSource ds) {
         this.dataSource = Objects.requireNonNull(ds);
     }
@@ -38,7 +45,7 @@ public class MyBatisManager implements Managed, Factory<SqlSession> {
 
             this.sessionFactory = new SqlSessionFactoryBuilder().build(iBatisConfig);
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new MyBatisInitializationException(e.getMessage(), e);
         }
     }
 

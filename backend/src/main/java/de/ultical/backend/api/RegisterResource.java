@@ -124,7 +124,7 @@ public class RegisterResource {
                     }
                 }
 
-                if (foundPlayers.size() == 0) {
+                if (foundPlayers.isEmpty()) {
                     // none of the found players had an dfv email set
 
                     return new RegisterResponse(RegisterResponseStatus.NO_DFV_EMAIL);

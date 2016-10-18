@@ -44,13 +44,13 @@ public class DfvProfileLoader {
     @Inject
     MailClient mailClient;
 
-    public boolean getDfvMvNames() throws Exception {
+    public boolean getDfvMvNames() {
 
         if (!this.config.getJobs().isDfvMvSyncEnabled()) {
             return false;
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStore.DataStoreCloseable c = this.dataStore.getClosable()) {
 
             WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("profile/sparte/ultimate")
                     .queryParam("token", this.config.getDfvApi().getToken())
