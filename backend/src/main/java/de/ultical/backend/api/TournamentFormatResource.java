@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.exception.AuthorizationException;
 import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.model.User;
@@ -53,9 +54,9 @@ public class TournamentFormatResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public TournamentFormat addNewFormat(TournamentFormat tf, @Auth @NotNull User currentUser) throws Exception {
+    public TournamentFormat addNewFormat(TournamentFormat tf, @Auth @NotNull User currentUser)  {
         this.checkDataStore();
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Authenticator.assureOverallAdmin(currentUser);
             TournamentFormat result = this.dataStore.addNew(tf);
             return result;
@@ -72,9 +73,9 @@ public class TournamentFormatResource {
     @Path("/{formatId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public void updateFormat(@PathParam("formatId") Integer formatId, TournamentFormat updatedFormat,
-            @Auth @NotNull User currentUser) throws Exception {
+            @Auth @NotNull User currentUser)  {
         this.checkDataStore();
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             if (formatId.equals(updatedFormat.getId()) == false) {
                 throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
             }
@@ -112,10 +113,10 @@ public class TournamentFormatResource {
     @GET
     @Path("/event/{eventId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public TournamentFormat getFormatByEvent(@PathParam("eventId") Integer eventId) throws Exception {
+    public TournamentFormat getFormatByEvent(@PathParam("eventId") Integer eventId)  {
         this.checkDataStore();
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             TournamentFormat result = this.dataStore.getFormatByEvent(eventId);
             if (result == null) {
@@ -131,10 +132,10 @@ public class TournamentFormatResource {
     @GET
     @Path("/edition/{editionId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public TournamentFormat getFormatByEdition(@PathParam("editionId") Integer editionId) throws Exception {
+    public TournamentFormat getFormatByEdition(@PathParam("editionId") Integer editionId)  {
         this.checkDataStore();
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             TournamentFormat result = this.dataStore.getFormatByEdition(editionId);
             if (result == null) {

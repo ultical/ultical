@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.TeamRegistration;
@@ -62,7 +63,7 @@ public class DivisionResource {
             }
         }
 
-        try (AutoCloseable c = this.dStore.getClosable()) {
+        try (DataStoreCloseable c = this.dStore.getClosable()) {
             Roster loadedRoster = this.dStore.get(rosterId, Roster.class);
 
             Authenticator.assureTeamAdmin(this.dStore, loadedRoster.getTeam().getId(), currentUser);
@@ -74,8 +75,6 @@ public class DivisionResource {
         } catch (PersistenceException pe) {
             LOG.error(DB_ACCESS_FAILURE, pe);
             throw new WebApplicationException(DB_ACCESS_FAILURE, pe);
-        } catch (Exception e) {
-            // only for the compiler
         }
     }
 
@@ -86,7 +85,7 @@ public class DivisionResource {
         if (this.dStore == null) {
             throw new WebApplicationException(INJECTION_FAILURE);
         }
-        try (AutoCloseable c = this.dStore.getClosable()) {
+        try (DataStoreCloseable c = this.dStore.getClosable()) {
             Roster rosterInDB = this.dStore.get(rosterId, Roster.class);
 
             Authenticator.assureTeamAdmin(this.dStore, rosterInDB.getTeam().getId(), currentUser);
@@ -100,9 +99,6 @@ public class DivisionResource {
         } catch (PersistenceException pe) {
             LOG.error(DB_ACCESS_FAILURE, pe);
             throw new WebApplicationException(DB_ACCESS_FAILURE, pe);
-        } catch (Exception e) {
-            // only for the compiler
-            throw new WebApplicationException(e);
         }
     }
 }

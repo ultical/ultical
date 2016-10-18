@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.Location;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.User;
@@ -50,12 +51,12 @@ public class TeamResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("basics")
-    public List<Team> getBasics() throws Exception {
+    public List<Team> getBasics()  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getTeamBasics();
         }
     }
@@ -63,14 +64,14 @@ public class TeamResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{teamId}")
-    public Team get(@PathParam("teamId") Integer id) throws Exception {
+    public Team get(@PathParam("teamId") Integer id)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
         Team result;
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             result = this.dataStore.get(id, Team.class);
             if (result == null) {
                 throw new WebApplicationException(404);
@@ -82,12 +83,12 @@ public class TeamResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("own")
-    public List<Team> get(@Auth @NotNull User user) throws Exception {
+    public List<Team> get(@Auth @NotNull User user)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getTeamsByUser(user.getId());
         }
     }
@@ -95,12 +96,12 @@ public class TeamResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("own/basics")
-    public List<Team> getBasicsByUser(@Auth @NotNull User user) throws Exception {
+    public List<Team> getBasicsByUser(@Auth @NotNull User user)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getTeamBasicsByUser(user.getId());
         }
     }
@@ -108,12 +109,12 @@ public class TeamResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Team add(Team newTeam, @Auth @NotNull User currentUser) throws Exception {
+    public Team add(Team newTeam, @Auth @NotNull User currentUser)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             newTeam = this.prepareTeam(newTeam);
 
@@ -136,7 +137,7 @@ public class TeamResource {
             for (User admin : newTeam.getAdmins()) {
                 try {
                     this.dataStore.addAdminToTeam(newTeam, admin);
-                } catch (Exception e) {
+                } catch (PersistenceException e) {
                     LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )", newTeam.getName(),
                             newTeam.getId(), admin.getFullName(), admin.getId());
                     LOGGER.error("exception:", e);
@@ -169,12 +170,12 @@ public class TeamResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{teamId}")
     public void update(Team updatedTeam, @PathParam("teamId") Integer teamId, @Auth @NotNull User currentUser)
-            throws Exception {
+             {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
 
@@ -209,7 +210,7 @@ public class TeamResource {
             for (User admin : updatedTeam.getAdmins()) {
                 try {
                     this.dataStore.addAdminToTeam(updatedTeam, admin);
-                } catch (Exception e) {
+                } catch (PersistenceException e) {
                     LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )\ncurrentUser: {}",
                             updatedTeam.getName(), updatedTeam.getId(), admin.getFullName(), admin.getId(),
                             currentUser.getId());
@@ -222,12 +223,12 @@ public class TeamResource {
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{teamId}")
-    public void delete(@PathParam("teamId") Integer teamId, @Auth @NotNull User currentUser) throws Exception {
+    public void delete(@PathParam("teamId") Integer teamId, @Auth @NotNull User currentUser)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
             Team teamToDelete = this.dataStore.get(teamId, Team.class);
             this.dataStore.remove(teamToDelete.getLocation().getId(), Location.class);
@@ -240,11 +241,11 @@ public class TeamResource {
     @POST
     @Path("{teamId}/admin/{userId}")
     public void addAdmin(@Auth @NotNull User currentUser, @PathParam("teamId") Integer teamId,
-            @PathParam("userId") Integer userId) throws Exception {
+            @PathParam("userId") Integer userId)  {
         if (this.dataStore == null) {
             throw new WebApplicationException();
         }
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
             final Team team = new Team();
             team.setId(teamId);
@@ -263,11 +264,11 @@ public class TeamResource {
     @DELETE
     @Path("{teamId}/admin/{userId}")
     public void deleteAdmin(@Auth @NotNull User currentUser, @PathParam("teamId") Integer teamId,
-            @PathParam("userId") Integer userId) throws Exception {
+            @PathParam("userId") Integer userId)  {
         if (this.dataStore == null) {
             throw new WebApplicationException();
         }
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
 

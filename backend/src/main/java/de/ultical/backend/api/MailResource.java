@@ -33,6 +33,7 @@ import de.ultical.backend.app.MailClient.UlticalMessage.UlticalRecipientType;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.app.mail.UserMessage;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.MailCode;
 import de.ultical.backend.model.Team;
@@ -66,9 +67,9 @@ public class MailResource {
     @GET
     @Path("code/{code}")
     @Produces(MediaType.APPLICATION_JSON)
-    public MailCode getMailCode(@PathParam("code") String code) throws Exception {
+    public MailCode getMailCode(@PathParam("code") String code)  {
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             MailCode mailCode = this.dataStore.getMailCode(code);
 
@@ -101,9 +102,9 @@ public class MailResource {
     @Path("code/{code}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public User updatePassword(@PathParam("code") String code, @NotNull User user) throws Exception {
+    public User updatePassword(@PathParam("code") String code, @NotNull User user)  {
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             MailCode mailCode = this.dataStore.getMailCode(code);
 
@@ -131,9 +132,9 @@ public class MailResource {
     @POST
     @Path("user/confirmation/resend")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean resendConfirmation(@NotNull User loginData) throws Exception {
+    public boolean resendConfirmation(@NotNull User loginData)  {
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             User user = this.dataStore.getUserByEmail(loginData.getEmail());
 
@@ -148,9 +149,9 @@ public class MailResource {
     @POST
     @Path("user/optin/resend")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean resendOptIn(@NotNull User loginData) throws Exception {
+    public boolean resendOptIn(@NotNull User loginData)  {
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             User user = this.dataStore.getUserByEmail(loginData.getEmail());
 
@@ -175,9 +176,9 @@ public class MailResource {
     @POST
     @Path("user/password/resend")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean sendForgotPassword(@NotNull User loginData) throws Exception {
+    public boolean sendForgotPassword(@NotNull User loginData)  {
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             User user = this.dataStore.getUserByEmail(loginData.getEmail());
 
@@ -196,14 +197,14 @@ public class MailResource {
     @POST
     @Path("teams")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean sendEmailToTeamsOfEdition(Map<String, Object> emailInfo, @Auth @NotNull User currentUser)
-            throws Exception {
+    public boolean sendEmailToTeamsOfEdition(Map<String, Object> emailInfo, @Auth User currentUser)
+             {
 
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             TournamentEdition edition;
             if (emailInfo.containsKey("editionId")) {
@@ -233,14 +234,18 @@ public class MailResource {
                     recipients.add(new Recipient(admin.getEmail(), admin.getFullName()));
                 }
             }
+	    try {
+		UserMessage message = this.prepareUserMessage(emailInfo, currentUser);
+		message.addRecipients(UlticalRecipientType.BCC, recipients);
 
-            UserMessage message = this.prepareUserMessage(emailInfo, currentUser);
+		if (!this.mailClient.sendMail(message)) {
+		    throw new WebApplicationException("Error sending Mail", Status.INTERNAL_SERVER_ERROR);
+		}
+	    } catch (CaptchaFailedException cfe) {
+		LOG.warn("captcha verification failed", cfe);
+		throw new WebApplicationException("Captcha could not be verified.", Status.BAD_REQUEST);
+	    }
 
-            message.addRecipients(UlticalRecipientType.BCC, recipients);
-
-            if (!this.mailClient.sendMail(message)) {
-                throw new WebApplicationException("Error sending Mail", Status.INTERNAL_SERVER_ERROR);
-            }
         }
         return true;
     }
@@ -253,9 +258,9 @@ public class MailResource {
      * @param currentUser
      *            The user currently logged in
      * @return UserMessage object
-     * @throws Exception
+     * @throws CaptchaFailedException
      */
-    private UserMessage prepareUserMessage(Map<String, Object> emailInfo, User currentUser) throws Exception {
+    private UserMessage prepareUserMessage(Map<String, Object> emailInfo, User currentUser)  throws CaptchaFailedException {
 
         if (currentUser == null && !CaptchaVerifier.getInstance().verifyCaptcha((String) emailInfo.get("captcha"))) {
             throw new CaptchaFailedException();
@@ -287,23 +292,23 @@ public class MailResource {
     @POST
     @Path("team")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean sendEmailToTeam(Map<String, Object> emailInfo, @Auth @NotNull User currentUser) throws Exception {
+    public boolean sendEmailToTeam(Map<String, Object> emailInfo, @Auth @NotNull User currentUser)  {
         return this.sendEmailToTeamHelper(emailInfo, currentUser);
     }
 
     @POST
     @Path("team/ano")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean sendEmailToTeamAno(Map<String, Object> emailInfo) throws Exception {
+    public boolean sendEmailToTeamAno(Map<String, Object> emailInfo)  {
         return this.sendEmailToTeamHelper(emailInfo, null);
     }
 
-    private boolean sendEmailToTeamHelper(Map<String, Object> emailInfo, User currentUser) throws Exception {
+    private boolean sendEmailToTeamHelper(Map<String, Object> emailInfo, User currentUser)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             Team team = this.dataStore.get((Integer) emailInfo.get("teamId"), Team.class);
 
@@ -335,23 +340,23 @@ public class MailResource {
     @POST
     @Path("event")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean sendEmailToEvent(Map<String, Object> emailInfo, @Auth @NotNull User currentUser) throws Exception {
+    public boolean sendEmailToEvent(Map<String, Object> emailInfo, @Auth @NotNull User currentUser)  {
         return this.sendEmailToEventHelper(emailInfo, currentUser);
     }
 
     @POST
     @Path("event/ano")
     @Consumes(MediaType.APPLICATION_JSON)
-    public boolean sendEmailToEventAno(Map<String, Object> emailInfo) throws Exception {
+    public boolean sendEmailToEventAno(Map<String, Object> emailInfo)  {
         return this.sendEmailToEventHelper(emailInfo, null);
     }
 
-    private boolean sendEmailToEventHelper(Map<String, Object> emailInfo, User currentUser) throws Exception {
+    private boolean sendEmailToEventHelper(Map<String, Object> emailInfo, User currentUser)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             Event event = this.dataStore.get((Integer) emailInfo.get("eventId"), Event.class);
 

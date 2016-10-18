@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.Club;
 
 /**
@@ -34,9 +35,9 @@ public class ClubResource {
     @GET
     @Path("all")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Club> getAllClubs() throws Exception {
+    public List<Club> getAllClubs() {
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getAllClubs();
         } catch (PersistenceException pe) {
             LOG.error("accessing database failed", pe);

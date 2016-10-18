@@ -24,10 +24,15 @@ import org.w3c.dom.Element;
 import com.github.slugify.Slugify;
 
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TournamentEdition;
 import de.ultical.backend.model.TournamentFormat;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
+import org.apache.ibatis.exceptions.PersistenceException;
+import javax.xml.parsers.ParserConfigurationException;
 
 @Path("/sitemap.xml")
 public class SitemapResource {
@@ -54,10 +59,14 @@ public class SitemapResource {
         LocalDate halfAYearAgo = LocalDate.now().minusMonths(6);
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("YYYY-MM-dd");
-
-        Slugify slg = this.getSlugify();
-
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+	Slugify slg = null;
+	try {
+	    slg = this.getSlugify();
+	} catch (IOException e) {
+	    LOGGER.error("creating slugify failed",e);
+	    throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+	}
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -125,9 +134,9 @@ public class SitemapResource {
 
             return doc;
 
-        } catch (Exception e) {
+        } catch (PersistenceException | ParserConfigurationException e) {
             LOGGER.error("exception occurred", e);
-        }
+        } 
 
         return null;
 
@@ -205,13 +214,9 @@ public class SitemapResource {
         return url;
     }
 
-    private Slugify getSlugify() {
+    private Slugify getSlugify() throws IOException {
         Slugify slg = null;
-        try {
-            slg = new Slugify();
-        } catch (IOException e) {
-            LOGGER.error("IO-Error", e);
-        }
+	slg = new Slugify();
         Map<String, String> customReplacements = new HashMap<>();
         customReplacements.put("ö", "o");
         customReplacements.put("ä", "a");

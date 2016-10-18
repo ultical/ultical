@@ -26,6 +26,7 @@ import de.ultical.backend.app.EmailCodeService;
 import de.ultical.backend.app.MailClient;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.User;
@@ -53,14 +54,14 @@ public class RegisterResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public RegisterResponse registerRequest(RegisterRequest registerRequest) throws Exception {
+    public RegisterResponse registerRequest(RegisterRequest registerRequest) {
 
         // validate data
         if (registerRequest.getPassword().length() < 10) {
             return new RegisterResponse(RegisterResponseStatus.VALIDATION_ERROR);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             // check if a user with this properties exist in the dfv db
             List<DfvMvName> names = this.dataStore.getDfvNames(registerRequest.getFirstName(),

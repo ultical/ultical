@@ -30,6 +30,7 @@ import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.data.policies.DfvPolicy;
 import de.ultical.backend.data.policies.Policy;
 import de.ultical.backend.model.Club;
@@ -62,13 +63,13 @@ public class RosterResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Roster addRoster(@Auth @NotNull User currentUser, @NotNull Roster newRoster) throws Exception {
+    public Roster addRoster(@Auth @NotNull User currentUser, @NotNull Roster newRoster) {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             this.validateRoster(newRoster, currentUser);
 
@@ -88,13 +89,13 @@ public class RosterResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Roster updateRoster(@Auth @NotNull User currentUser, @NotNull Roster updatedRoster) throws Exception {
+    public Roster updateRoster(@Auth @NotNull User currentUser, @NotNull Roster updatedRoster) {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injection for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             this.validateRoster(updatedRoster, currentUser);
 
@@ -130,7 +131,7 @@ public class RosterResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{rosterId}")
     public Player addPlayerToRoster(@Auth @NotNull User currentUser, @PathParam("rosterId") Integer rosterId,
-            @NotNull DfvMvName dfvMvName) throws Exception {
+            @NotNull DfvMvName dfvMvName) {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injection for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
@@ -142,7 +143,7 @@ public class RosterResource {
                     Status.FORBIDDEN);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             Roster roster = this.dataStore.get(rosterId, Roster.class);
             if (roster == null) {
@@ -274,11 +275,11 @@ public class RosterResource {
     @DELETE
     @Path("{rosterId}/player/{playerId}")
     public void deletePlayerFromRoster(@Auth @NotNull User currentUser, @PathParam("rosterId") int rosterId,
-            @PathParam("playerId") int playerId) throws Exception {
+            @PathParam("playerId") int playerId) {
         if (this.dataStore == null) {
             throw new WebApplicationException();
         }
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Roster roster = this.dataStore.get(rosterId, Roster.class);
 
             Authenticator.assureTeamAdmin(this.dataStore, roster.getTeam().getId(), currentUser);
@@ -329,11 +330,11 @@ public class RosterResource {
 
     @DELETE
     @Path("{rosterId}")
-    public void deleteRoster(@Auth @NotNull User currentUser, @PathParam("rosterId") int rosterId) throws Exception {
+    public void deleteRoster(@Auth @NotNull User currentUser, @PathParam("rosterId") int rosterId) {
         if (this.dataStore == null) {
             throw new WebApplicationException();
         }
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Roster rosterToDelete = this.dataStore.get(rosterId, Roster.class);
 
             Authenticator.assureTeamAdmin(this.dataStore, rosterToDelete.getTeam().getId(), currentUser);
@@ -347,19 +348,19 @@ public class RosterResource {
             this.dataStore.remove(rosterId, Roster.class);
 
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failes!" + pe.getMessage());
+	    LOGGER.error(DB_ACCESS_FAILED, pe);
+            throw new WebApplicationException("Accessing the database failed!", Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GET
     @Path("{rosterId}/blocking")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LocalDate> getBlockingDates(@Auth @NotNull User currentUser, @PathParam("rosterId") int rosterId)
-            throws Exception {
+    public List<LocalDate> getBlockingDates(@Auth @NotNull User currentUser, @PathParam("rosterId") int rosterId) {
         if (this.dataStore == null) {
             throw new WebApplicationException();
         }
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Roster rosterToEdit = this.dataStore.get(rosterId, Roster.class);
 
             Authenticator.assureTeamAdmin(this.dataStore, rosterToEdit.getTeam().getId(), currentUser);
@@ -367,6 +368,7 @@ public class RosterResource {
             try {
                 return this.dataStore.getRosterBlockingDates(rosterId);
             } catch (PersistenceException pe) {
+		LOGGER.error(DB_ACCESS_FAILED, pe);
                 throw new WebApplicationException("Accessing the database failes!");
             }
         }

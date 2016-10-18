@@ -13,6 +13,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import de.ultical.backend.api.transferClasses.AuthResponse;
 import de.ultical.backend.api.transferClasses.AuthResponse.AuthResponseStatus;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.User;
 
 /**
@@ -30,7 +31,7 @@ public class AuthResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public AuthResponse AuthRequest(User requestedUser) throws Exception {
+    public AuthResponse AuthRequest(User requestedUser) {
         if (requestedUser == null) {
             return null;
         }
@@ -38,7 +39,7 @@ public class AuthResource {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             User foundUser = this.dataStore.getUserByEmail(requestedUser.getEmail());
 
