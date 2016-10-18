@@ -215,8 +215,7 @@ public class SitemapResource {
     }
 
     private Slugify getSlugify() throws IOException {
-        Slugify slg = null;
-	slg = new Slugify();
+        final Slugify slg = new Slugify();
         Map<String, String> customReplacements = new HashMap<>();
         customReplacements.put("ö", "o");
         customReplacements.put("ä", "a");
