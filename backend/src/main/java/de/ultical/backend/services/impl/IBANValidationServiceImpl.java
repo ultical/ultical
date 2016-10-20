@@ -2,6 +2,11 @@ package de.ultical.backend.services.impl;
 
 import de.ultical.backend.exception.IBANValidationException;
 import de.ultical.backend.services.IBANValidationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.math.BigDecimal;
+import java.util.stream.Collectors;
+import java.math.BigInteger;
 
 public class IBANValidationServiceImpl implements IBANValidationService {
 
@@ -24,31 +29,60 @@ public class IBANValidationServiceImpl implements IBANValidationService {
 	    return this.length;
 	}
     }
+
+    private static String mapCharToInt(final char c) {
+	String result;
+	if (c >= '0' && c <= '9') {
+	    result = String.valueOf(c);
+	} else if (c >= 'A' && c <= 'Z') {
+	    result = String.valueOf(c - 'A' + 10);
+	} else {
+	    throw new IBANValidationException("invalid character "+c+" in iban");
+	}
+	return result;
+    }
     
-    private final static String IBAN_LENGTH_MISMATCH_MESSAGE = "IBAN-length does not match country code";
+    private static final String IBAN_LENGTH_MISMATCH_MESSAGE = "IBAN-length does not match country code";
+    private static final Logger LOG = LoggerFactory.getLogger(IBANValidationServiceImpl.class);
+    private static final BigInteger IBAN_MOD_CONSTANT = new BigInteger("97");
     
     public void validateIBAN(final String iban) {
 	if (iban == null) {
 	    throw new IBANValidationException("NULL is not a valid IBAN");
 	}
 	this.checkIbanLength(iban);
-	//TODO validate checksum
+	this.checkCheckSum(iban);
     }
 
     private void checkIbanLength(final String iban) {
 	boolean isValid = false;
-	for (IBANCountryEnum country : IBANCountryEnum.values()) {
-	    if (iban.startsWith(country.getCountryCode())) {
-		if( iban.length() != country.getLength()) {
-		    throw new IBANValidationException(IBAN_LENGTH_MISMATCH_MESSAGE);
-		} else {
-		    isValid = true;
-		    break;
-		}
+	if (iban.length() < 2) {
+	    throw new IBANValidationException(IBAN_LENGTH_MISMATCH_MESSAGE);
+	}
+	try {
+	    IBANCountryEnum countryEnum = IBANCountryEnum.valueOf(iban.substring(0,2));
+	    if( iban.length() != countryEnum.getLength()) {
+		throw new IBANValidationException(IBAN_LENGTH_MISMATCH_MESSAGE);
+	    }
+	} catch (IllegalArgumentException iae) {
+	    LOG.debug("received iban with unknown country code.", iae);
+	    if (iban.length() < 15 || iban.length() > 34) {
+		throw new IBANValidationException(IBAN_LENGTH_MISMATCH_MESSAGE);
+	    } else {
+		LOG.debug("IBAN {} does not belong to a known country. It has been 'validated' as the length is in the acceptable range",iban);
 	    }
 	}
-	if (!isValid && iban.length() < 15 || iban.length() > 34) {
-	    throw new IBANValidationException(IBAN_LENGTH_MISMATCH_MESSAGE);
-	} 
+    }
+
+    private void checkCheckSum(final String iban) {
+	final String reorderedIban = iban.substring(4,iban.length()) + iban.substring(0,4);
+	String sb = reorderedIban.chars().mapToObj(i -> (char)i)
+	    .map(c -> IBANValidationServiceImpl.mapCharToInt(c))
+	    .collect(Collectors.joining());
+	final BigInteger bigInt = new BigInteger(sb.toString());
+	final BigInteger result = bigInt.mod(IBAN_MOD_CONSTANT);
+	if (!BigInteger.ONE.equals(result)) {
+	    throw new IBANValidationException("the provided IBAN is invalid");
+	}
     }
 }
