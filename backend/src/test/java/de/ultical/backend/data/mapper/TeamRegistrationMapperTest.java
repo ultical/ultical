@@ -112,6 +112,7 @@ public class TeamRegistrationMapperTest {
         goldfingersRegistration.setComment("the GUC is coming!");
         goldfingersRegistration.setStatus(DivisionRegistrationStatus.WAITING_LIST);
         goldfingersRegistration.setTeamName("Goldfingers");
+
         this.mapper.insert(this.divisionRegOpen.getId(), goldfingersRegistration);
 
         Team gucMixed = new Team();

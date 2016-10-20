@@ -44,7 +44,7 @@ public class AuthResourceTest {
 	/*
 	 * some necessary mocking
 	 */
-	when(this.ds.getClosable()).thenReturn(Mockito.mock(AutoCloseable.class));
+	when(this.ds.getClosable()).thenReturn(Mockito.mock(DataStore.DataStoreCloseable.class));
 	when(this.ds.getUserByEmail(KNOWN_AND_COMPLETELY_REGISTERED_MAIL)).thenReturn(this.registeredUser);
 	when(this.registeredUser.getPassword()).thenReturn(HASHED_TEST_PASSWORD);
 	when(this.registeredUser.isEmailConfirmed()).thenReturn(true);
@@ -82,9 +82,9 @@ public class AuthResourceTest {
 	input.setPassword("test");
 	AuthResponse response = this.resourceUnderTest.AuthRequest(input);
 	Assert.assertNotNull(response);
-	Assert.assertEquals(response.status, AuthResponseStatus.SUCCESS );
-	Assert.assertNotNull(response.user);
-	Assert.assertEquals(response.user.getPassword(), HASHED_TEST_PASSWORD);
+	Assert.assertEquals(response.getStatus(), AuthResponseStatus.SUCCESS );
+	Assert.assertNotNull(response.getUser());
+	Assert.assertEquals(response.getUser().getPassword(), HASHED_TEST_PASSWORD);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class AuthResourceTest {
 	input.setEmail("völlig@unbekannt.de");
 	AuthResponse response = this.resourceUnderTest.AuthRequest(input);
 	Assert.assertNotNull(response);
-	Assert.assertEquals(response.status, AuthResponseStatus.WRONG_CREDENTIALS);
+	Assert.assertEquals(response.getStatus(), AuthResponseStatus.WRONG_CREDENTIALS);
     }
 
     @Test
@@ -101,8 +101,8 @@ public class AuthResourceTest {
 	input.setPassword("tset");
 	AuthResponse response = this.resourceUnderTest.AuthRequest(input);
 	Assert.assertNotNull(response);
-	Assert.assertEquals(response.status, AuthResponseStatus.WRONG_CREDENTIALS);
-	Assert.assertNull(response.user);
+	Assert.assertEquals(response.getStatus(), AuthResponseStatus.WRONG_CREDENTIALS);
+	Assert.assertNull(response.getUser());
     }
 
     @Test
@@ -111,8 +111,8 @@ public class AuthResourceTest {
 	this.input.setPassword("test");
 	AuthResponse response = this.resourceUnderTest.AuthRequest(input);
 	Assert.assertNotNull(response);
-	Assert.assertNull(response.user);
-	Assert.assertEquals(response.status, AuthResponseStatus.EMAIL_NOT_CONFIRMED);
+	Assert.assertNull(response.getUser());
+	Assert.assertEquals(response.getStatus(), AuthResponseStatus.EMAIL_NOT_CONFIRMED);
     }
 
     @Test
@@ -121,7 +121,7 @@ public class AuthResourceTest {
 	this.input.setPassword("test");
 	AuthResponse response = this.resourceUnderTest.AuthRequest(input);
 	Assert.assertNotNull(response);
-	Assert.assertNull(response.user);
-	Assert.assertEquals(response.status, AuthResponseStatus.DFV_EMAIL_NOT_OPT_IN);
+	Assert.assertNull(response.getUser());
+	Assert.assertEquals(response.getStatus(), AuthResponseStatus.DFV_EMAIL_NOT_OPT_IN);
     }
 }

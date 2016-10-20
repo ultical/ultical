@@ -26,7 +26,7 @@ public class ServiceLocatorFeature implements Feature {
 
     @Override
     public boolean configure(FeatureContext context) {
-        ServiceLocatorProvider.INSTANCE.setServiceLocator(this.serviceLocator);
+        ServiceLocatorProvider.getInstance().setServiceLocator(this.serviceLocator);
         boolean result = false;
         try {
             final Scheduler defaultScheduler = StdSchedulerFactory.getDefaultScheduler();

@@ -7,7 +7,7 @@ angular.module('ultical.events', [])
 
   headService.setTitle('event.list.title', {});
 
-	$scope.sortKey = ['startDate', 'name'];
+	$scope.sortKey = ['startDate', 'endDate', 'name'];
 	$scope.sortOrderDesc = false;
 
   if ('year' in $stateParams) {

@@ -21,7 +21,7 @@ public class CaptchaVerifier {
     private UltiCalConfig config;
 
     public static CaptchaVerifier getInstance() {
-        ServiceLocator sl = ServiceLocatorProvider.INSTANCE.getServiceLocator();
+        ServiceLocator sl = ServiceLocatorProvider.getInstance().getServiceLocator();
         return sl.createAndInitialize(CaptchaVerifier.class);
     }
 
