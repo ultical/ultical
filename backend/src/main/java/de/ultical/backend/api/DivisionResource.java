@@ -30,8 +30,6 @@ import java.util.Objects;
 @Path("/divisions")
 public class DivisionResource {
 
-    private static final String INJECTION_FAILURE = "Injection DataStore failed!";
-
     private static final String DB_ACCESS_FAILURE = "Accessing the database failed!";
 
     private static final Logger LOG = LoggerFactory.getLogger(DivisionResource.class);
@@ -50,10 +48,6 @@ public class DivisionResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public void registerTeam(@Auth @NotNull User currentUser, @PathParam("divisionId") Integer divisionId,
             @PathParam("rosterId") Integer rosterId, TeamRegistration teamReg) {
-        if (this.dStore == null) {
-            throw new WebApplicationException(INJECTION_FAILURE);
-        }
-
 	try {
 	    this.validateTeamReg(teamReg, rosterId);
 	} catch (IBANValidationException ive) {
@@ -108,9 +102,6 @@ public class DivisionResource {
     @Path("/{divisionId}/registerTeam/{rosterId}")
     public void unregisterTeam(@Auth @NotNull User currentUser, @PathParam("divisionId") Integer divId,
             @PathParam("rosterId") Integer rosterId) {
-        if (this.dStore == null) {
-            throw new WebApplicationException(INJECTION_FAILURE);
-        }
         try (DataStoreCloseable c = this.dStore.getClosable()) {
             Roster rosterInDB = this.dStore.get(rosterId, Roster.class);
 
