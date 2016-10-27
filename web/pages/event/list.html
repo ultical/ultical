@@ -19,14 +19,16 @@
 			<div ng-if="0" class="row" ng-repeat-start="event in (orderedEvents = (events | filter : eventFilter | orderBy : sortKey : sortOrderDesc))"></div>
 
 			<!-- year -->
-			<div class="row" ng-if="true && ($index == 0 || (((event.startDate | amDateFormat : 'YYYY-MM') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY-MM')) && (event.startDate | amDateFormat : 'M') == '1' ))">
+			<div class="row" ng-class="{'margin-top-big' : $index != 0}" ng-if="$index == 0 || (((event.startDate | amDateFormat : 'YYYY') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY')))">
 				<div class="col-md-9">
 					<h4>{{ event.startDate | amDateFormat : 'YYYY' }}</h4>
 				</div>
 			</div>
 
 			<!-- collapsed months -->
-			<div class="row" ng-if="!show.beginningOfYear && true && ($index == 0 || ((event.startDate | amDateFormat : 'YYYY') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY')))">
+			<div class="row" ng-if="!show.beginningOfYear && $index == 0">
+
+			 <!-- || ((event.startDate | amDateFormat : 'YYYY') == (current.thisYear)))"> -->
 				<div class="col-md-9">
 					<h5><a href="#" ng-click="show.beginningOfYear = true">{{ current.january | amDateFormat : 'MMMM' }}<span ng-if="(current.lastMonth | amDateFormat : 'M') != 1"> - {{ current.lastMonth | amDateFormat : 'MMMM' }}</span></a></h5>
 				</div>
@@ -43,9 +45,9 @@
 			<div ng-repeat-end class="row">
 					<a ui-sref="app.eventShow({eventId: event.id, eventSlug: ((event | eventname) | slugify) })">
 				<div class="col-md-9 col-sm-11 col-xs-12 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != event.startDate || orderedEvents[$index - 1].endDate != event.endDate">
-						<div class="event-list-date event-list-date-left"><span ng-if="event.startDate != event.endDate">{{ showDate ? (event.startDate | amDateFormat : 'D') : '' }}</span></div>
+						<div class="event-list-date event-list-date-left">{{ showDate ? (event.startDate | amDateFormat : 'D') : '' }}</div>
 						<div class="event-list-date event-list-date-dash"><span ng-if="event.startDate != event.endDate">{{ showDate ? '-' : '' }}</span></div>
-						<div class="event-list-date event-list-date-right">{{ showDate ? (event.endDate | amDateFormat : 'D') :'' }}</div>
+						<div class="event-list-date event-list-date-right"><span ng-if="event.startDate != event.endDate">{{ showDate ? (event.endDate | amDateFormat : 'D') :'' }}</span></div>
 						<!-- <span ng-if="(event.startDate | amDateFormat : 'M') != (event.endDate | amDateFormat : 'M')">&nbsp;{{ event.endDate | amDateFormat : 'MMM' }}</span> -->
 
 						<div class="event-list-text">
