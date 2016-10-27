@@ -10,7 +10,7 @@ import de.ultical.backend.api.transferClasses.AuthResponse;
 import de.ultical.backend.api.transferClasses.AuthResponse.AuthResponseStatus;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.User;
-
+import de.ultical.backend.model.DfvPlayer;
 
 public class AuthResourceTest {
 
@@ -18,11 +18,11 @@ public class AuthResourceTest {
     private AuthResource resourceWithoutDS;
 
     private User input;
-    
-    private final static String KNOWN_AND_COMPLETELY_REGISTERED_MAIL = "test@ultical.de";
-    private final static String UNCONFIRMED_EMAIL = "unconfirmed@ultical.de";
-    private final static String NO_OPT_IN_EMAIL = "no_opt_in@ultical.de";
-    private final static String HASHED_TEST_PASSWORD = "$2a$10$QdZ62bMi4Lktyj0gz3cayOMZmWEm4vq3bm4rRz5/T9/amD3tgI/nW";
+    private DfvPlayer p;
+    private static final String KNOWN_AND_COMPLETELY_REGISTERED_MAIL = "test@ultical.de";
+    private static final String UNCONFIRMED_EMAIL = "unconfirmed@ultical.de";
+    private static final String NO_OPT_IN_EMAIL = "no_opt_in@ultical.de";
+    private static final String HASHED_TEST_PASSWORD = "$2a$10$QdZ62bMi4Lktyj0gz3cayOMZmWEm4vq3bm4rRz5/T9/amD3tgI/nW";
     
     @Mock
     private DataStore ds;
