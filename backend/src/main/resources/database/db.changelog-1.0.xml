@@ -1143,6 +1143,13 @@
 	    <column name="travel_fee" type="FLOAT" />
 	  </addColumn>
 	</changeSet>
+	<changeSet id="bb-team-travel-fees-event" author="bb">
+	  <addColumn tableName = "EVENT">
+	    <column name="uses_travel_compensation" type="BOOLEAN" defaultValueBoolean="false">
+	      <constraints nullable="false" />
+	    </column>
+	  </addColumn>
+	</changeSet>
 	<changeSet id="bb-tag-db-reisekosten" author="bb">
 	  <tagDatabase tag="v1.19" />
 	</changeSet>
