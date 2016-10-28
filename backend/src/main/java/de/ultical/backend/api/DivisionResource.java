@@ -26,12 +26,13 @@ import de.ultical.backend.model.User;
 import de.ultical.backend.services.IBANValidationService;
 import io.dropwizard.auth.Auth;
 import java.util.Objects;
+import java.util.regex.Matcher;
 
 @Path("/divisions")
 public class DivisionResource {
 
     private static final String DB_ACCESS_FAILURE = "Accessing the database failed!";
-
+    private static final String IBAN_REPLACE_REGEX = "-|\\.|\\s";
     private static final Logger LOG = LoggerFactory.getLogger(DivisionResource.class);
 
     private final DataStore dStore;
@@ -55,12 +56,16 @@ public class DivisionResource {
 	}
 
         try (DataStoreCloseable c = this.dStore.getClosable()) {
+	    final DivisionRegistrationTeams divisionReg = this.dStore.get(divisionId,DivisionRegistrationTeams.class);
+	    if (divisionReg == null) {
+		throw new WebApplicationException(String.format("Division with id %d could not be found", divisionId), Status.NOT_FOUND);
+	    }
+            
             Roster loadedRoster = this.dStore.get(rosterId, Roster.class);
-
+	    if (loadedRoster == null) {
+		throw new WebApplicationException(String.format("Roster with id %d could not be found.",rosterId),Status.NOT_FOUND);
+	    }
             Authenticator.assureTeamAdmin(this.dStore, loadedRoster.getTeam().getId(), currentUser);
-
-            final DivisionRegistrationTeams divisionReg = new DivisionRegistrationTeams();
-            divisionReg.setId(divisionId);
 
             this.dStore.registerTeamForEdition(divisionReg.getId(), teamReg);
         } catch (PersistenceException pe) {
@@ -91,7 +96,9 @@ public class DivisionResource {
 
 	if (teamReg.getIban() != null) {
 	    final String receivedIban = teamReg.getIban();
-	    teamReg.setIban(receivedIban.toUpperCase());
+	    final String replacedIban = receivedIban.replaceAll(IBAN_REPLACE_REGEX,"").toUpperCase();
+	    teamReg.setIban(replacedIban);
+	    LOG.debug("Replaced the received IBAN {} with the stripped IBAN {}", receivedIban, replacedIban);
 	    this.ibanService.validateIBAN(teamReg.getIban());
 	} else {
 	    throw new WebApplicationException("IBAN must be provided", Status.BAD_REQUEST);
