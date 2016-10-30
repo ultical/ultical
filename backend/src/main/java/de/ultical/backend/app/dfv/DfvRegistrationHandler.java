@@ -63,7 +63,7 @@ public class DfvRegistrationHandler implements RegistrationHandler {
                 DfvMvPlayer player = invocationBuilder.get(DfvMvPlayer.class);
 
                 // find a matching birthday
-                if (player != null && registerUserBirthdayString.equals(player.getGeburtsdatum())) {
+                if (player != null && registerUserBirthdayString.equals(player.getDobString())) {
                     foundPlayers.add(player);
                 }
             }
@@ -115,13 +115,13 @@ public class DfvRegistrationHandler implements RegistrationHandler {
                     if (registerRequest.getClubId() != -1) {
                         if (matchingEmailPlayers.size() > 1) {
                             for (DfvMvPlayer player : matchingEmailPlayers) {
-                                if (player.getVerein() == registerRequest.getClubId()) {
+                                if (player.getClub() == registerRequest.getClubId()) {
                                     playerToRegister = player;
                                 }
                             }
                         } else {
                             for (DfvMvPlayer player : foundPlayers) {
-                                if (player.getVerein() == registerRequest.getClubId()) {
+                                if (player.getClub() == registerRequest.getClubId()) {
                                     playerToRegister = player;
                                 }
                             }
@@ -143,7 +143,7 @@ public class DfvRegistrationHandler implements RegistrationHandler {
                              */
                             // get clubs
                             for (DfvMvPlayer player : matchingEmailPlayers) {
-                                Club club = this.dataStore.getClub(player.getVerein());
+                                Club club = this.dataStore.getClub(player.getClub());
                                 if (club != null) {
                                     clubs.add(club);
                                 }
@@ -155,7 +155,7 @@ public class DfvRegistrationHandler implements RegistrationHandler {
                              * players with matching names and birhdates
                              */
                             for (DfvMvPlayer player : foundPlayers) {
-                                Club club = this.dataStore.getClub(player.getVerein());
+                                Club club = this.dataStore.getClub(player.getClub());
                                 if (club != null) {
                                     clubs.add(club);
                                 }
@@ -177,7 +177,7 @@ public class DfvRegistrationHandler implements RegistrationHandler {
             }
             // check if this dfv-player (dfvNummer) is already registered in our
             // system
-            if (this.dataStore.getUserByDfvNr(playerToRegister.getDfvnr()) != null) {
+            if (this.dataStore.getUserByDfvNr(playerToRegister.getDfvNumber()) != null) {
 
                 throw new RegistrationException("already registered", RegisterResponseStatus.USER_ALREADY_REGISTERED);
             }
@@ -187,7 +187,7 @@ public class DfvRegistrationHandler implements RegistrationHandler {
                 throw new RegistrationException("email already taken", RegisterResponseStatus.EMAIL_ALREADY_TAKEN);
             }
             // check if the corresponding dfv player is already in the db
-            DfvPlayer dfvPlayer = this.dataStore.getDfvPlayerByDfvNumber(playerToRegister.getDfvnr());
+            DfvPlayer dfvPlayer = this.dataStore.getDfvPlayerByDfvNumber(playerToRegister.getDfvNumber());
             boolean playerNewlyCreated = false;
             if (dfvPlayer == null) {
                 playerNewlyCreated = true;
@@ -196,7 +196,7 @@ public class DfvRegistrationHandler implements RegistrationHandler {
                 dfvPlayer.setFirstName(registerRequest.getFirstName());
                 dfvPlayer.setLastName(registerRequest.getLastName());
 
-                Club club = this.dataStore.getClub(playerToRegister.getVerein());
+                Club club = this.dataStore.getClub(playerToRegister.getClub());
                 dfvPlayer.setClub(club);
             }
             dfvPlayer.setEmail(registerRequest.getEmail());
