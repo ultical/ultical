@@ -59,12 +59,12 @@ import de.ultical.backend.model.User;
 public class DataStore {
 
     public class DataStoreCloseable implements AutoCloseable {
-	@Override
-	public void close() {
-	    DataStore.this.closeSession();
-	}
+        @Override
+        public void close() {
+            DataStore.this.closeSession();
+        }
     }
-    
+
     @Inject
     SqlSession sqlSession;
 
@@ -916,6 +916,18 @@ public class DataStore {
         try {
             RosterMapper mapper = this.sqlSession.getMapper(RosterMapper.class);
             return mapper.getRostersForPlayer(player);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public List<Event> getEventsEndedAtDate(final LocalDate endDate) {
+        Objects.requireNonNull(endDate);
+        try {
+            EventMapper mapper = this.sqlSession.getMapper(EventMapper.class);
+            return mapper.getByEndDate(endDate);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();
