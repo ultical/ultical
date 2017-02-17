@@ -109,7 +109,7 @@ public class DfvProfileLoaderTest {
 
         Season season = new Season();
         season.setPlusOneYear(false);
-        season.setYear(2016);
+        season.setYear(LocalDate.now().getYear());
         season.setSurface(Surface.TURF);
 
         User admin = new User();
