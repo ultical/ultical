@@ -236,7 +236,7 @@ app.filter('playername', [function () {
 		}
 
 		if (showClub && player.club != null) {
-			playername += ' (' + player.club.name + ')';
+			playername += '  (' + player.club.name + ')';
 		}
 		return playername;
 	};
