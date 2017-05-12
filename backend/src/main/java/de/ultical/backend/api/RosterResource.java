@@ -169,6 +169,7 @@ public class RosterResource {
                 dfvPlayer.setFirstName(dfvMvName.getFirstName());
                 dfvPlayer.setLastName(dfvMvName.getLastName());
                 dfvPlayer.setEmail(dfvMvPlayer.getEmail());
+                dfvPlayer.setLastModified(dfvMvName.getLastModified());
 
                 Club club = this.dataStore.getClub(dfvMvPlayer.getClub());
                 dfvPlayer.setClub(club);
