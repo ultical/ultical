@@ -45,12 +45,14 @@ public class RosterResourceTest {
     private static final int DFV_NUMBER_MASTER = 1234567;
     private static final int DFV_NUMBER_JUNIOR = 1234568;
     private static final int DFV_NUMBER_WOMAN = 1234569;
+    private static final int DFV_NUMBER_17YO_WOMAN = 1234570;
 
     private final static int ROSTER_ID_MASTER = 123;
     private final static int ROSTER_ID_JUNIOR = 124;
     private final static int ROSTER_ID_WOMEN = 125;
     private final static int ROSTER_ID_OPEN_REG_A = 126;
     private final static int ROSTER_ID_OPEN_REG_B = 127;
+    private final static int ROSTER_ID_OPEN_U17 = 128;
 
     private final static int TEAM_REG_A = 2245;
 
@@ -64,6 +66,8 @@ public class RosterResourceTest {
     Roster rosterOpenRegularA;
     @Mock
     Roster rosterOpenRegularB;
+    @Mock
+    Roster rosterU17Open;
     @Mock
     Team teamA;
     @Mock
@@ -86,6 +90,10 @@ public class RosterResourceTest {
     DfvMvName dfvNameJunior;
     @Mock
     DfvMvName dfvNameWoman;
+    @Mock
+    DfvMvName dfvName17yoWoman;
+    @Mock
+    DfvPlayer player17yoWoman;
     @Mock
     DfvPlayer passivePlayer;
     @Mock
@@ -141,6 +149,14 @@ public class RosterResourceTest {
         when(this.rosterOpenRegularB.getTeam()).thenReturn(this.teamB);
         when(this.rosterOpenRegularB.getContext()).thenReturn(this.dfvContext);
         when(this.rosterOpenRegularB.getNameAddition()).thenReturn("");
+        when(this.rosterU17Open.getId()).thenReturn(ROSTER_ID_OPEN_U17);
+        when(this.rosterU17Open.getDivisionType()).thenReturn(DivisionType.OPEN);
+        when(this.rosterU17Open.getDivisionAge()).thenReturn(DivisionAge.U17);
+        when(this.rosterU17Open.getSeason()).thenReturn(this.season);
+        when(this.rosterU17Open.getContext()).thenReturn(this.dfvContext);
+        when(this.rosterU17Open.getTeam()).thenReturn(this.teamA);
+        when(this.rosterU17Open.getNameAddition()).thenReturn("");
+        when(this.dataStore.get(eq(ROSTER_ID_OPEN_U17), eq(Roster.class))).thenReturn(this.rosterU17Open);
         when(this.dataStore.get(eq(ROSTER_ID_OPEN_REG_A), eq(Roster.class))).thenReturn(this.rosterOpenRegularA);
         when(this.dataStore.get(eq(ROSTER_ID_OPEN_REG_B), eq(Roster.class))).thenReturn(this.rosterOpenRegularB);
         when(this.dataStore.get(eq(TEAM_42), eq(Team.class))).thenReturn(this.teamA);
@@ -179,6 +195,15 @@ public class RosterResourceTest {
         when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_PASSIVE)).thenReturn(this.passivePlayer);
         when(this.dfvNamePassive.getDfvNumber()).thenReturn(DFV_NUMBER_PASSIVE);
         when(this.dfvNamePassive.isDse()).thenReturn(Boolean.TRUE);
+
+        when(this.dfvName17yoWoman.getDfvNumber()).thenReturn(DFV_NUMBER_17YO_WOMAN);
+        when(this.dfvName17yoWoman.isDse()).thenReturn(Boolean.TRUE);
+        when(this.dfvName17yoWoman.isActive()).thenReturn(Boolean.TRUE);
+        when(this.player17yoWoman.getGender()).thenReturn(Gender.FEMALE);
+        when(this.player17yoWoman.isEligible()).thenReturn(Boolean.TRUE);
+        when(this.player17yoWoman.getBirthDate()).thenReturn(LocalDate.of(1999, 5, 6));
+        when(this.dataStore.getPlayerByDfvNumber(eq(DFV_NUMBER_17YO_WOMAN))).thenReturn(this.player17yoWoman);
+
         this.resource = new RosterResource();
         this.resource.dataStore = this.dataStore;
     }
@@ -263,5 +288,11 @@ public class RosterResourceTest {
         verify(this.dataStore).addPlayerToRoster(this.rosterOpenRegularA, this.playerMasters);
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG_A, this.dfvNameWoman);
         verify(this.dataStore).addPlayerToRoster(this.rosterOpenRegularA, this.playerWoman);
+    }
+
+    @Test
+    public void test17yoWomanCanPlayU17() throws Exception {
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_U17, this.dfvName17yoWoman);
+        verify(this.dataStore).addPlayerToRoster(this.rosterU17Open, this.player17yoWoman);
     }
 }
