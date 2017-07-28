@@ -577,6 +577,10 @@ select:not([multiple]) {
 	padding-left: 2px;
 }
 
+.dropdown-caret-padding-right {
+	padding-right: 5px;
+}
+
 #eventpage-title h3 {
 	margin-top: 12px;
 	margin-bottom: 2px;

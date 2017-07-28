@@ -21,6 +21,7 @@
 			<!-- year -->
 			<div class="row" ng-class="{'margin-top-big' : $index != 0}" ng-if="$index == 0 || (((event.startDate | amDateFormat : 'YYYY') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY')))">
 				<div class="col-md-9">
+					<span ng-if="$index == 0"><a href="#" ng-click="show.year[(event.startDate | amDateFormat : 'YYYY') - 1] = true; show.beginningOfYear = true"><i class="fa fa-caret-right dropdown-caret-padding-right"></i>{{ (event.startDate | amDateFormat : 'YYYY') - 1 }}</a></span>
 					<h4>{{ event.startDate | amDateFormat : 'YYYY' }}</h4>
 				</div>
 			</div>
@@ -30,7 +31,7 @@
 
 			 <!-- || ((event.startDate | amDateFormat : 'YYYY') == (current.thisYear)))"> -->
 				<div class="col-md-9">
-					<h5><a href="#" ng-click="show.beginningOfYear = true">{{ current.january | amDateFormat : 'MMMM' }}<span ng-if="(current.lastMonth | amDateFormat : 'M') != 1"> - {{ current.lastMonth | amDateFormat : 'MMMM' }}</span></a></h5>
+					<h5><a href="#" ng-click="show.beginningOfYear = true"><i class="fa fa-caret-right dropdown-caret-padding-right"></i>{{ current.january | amDateFormat : 'MMMM' }}<span ng-if="(current.lastMonth | amDateFormat : 'M') != 1"> - {{ current.lastMonth | amDateFormat : 'MMMM' }}</span></a></h5>
 				</div>
 			</div>
 

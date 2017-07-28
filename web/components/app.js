@@ -46,10 +46,6 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		url: '/calendar',
 		templateUrl: 'pages/event/list.html?v='+version,
 	})
-	.state('app.eventsListYear', {
-		url: '/calendar/{year:int}',
-		templateUrl: 'pages/event/list.html?v='+version,
-	})
 	.state('app.editionEdit', {
 		url: '/tournaments/edit/{editionId}/{eventId}',
 		templateUrl: 'pages/event/edit.html?v='+version,
