@@ -43,11 +43,10 @@ public class EventsResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Event> getAllEvents(@QueryParam("from") Date from, @QueryParam("to") Date to) {
-        // I think we should ignore from and to for the moment ;)
+    public List<Event> getEvents(@QueryParam("from") Date from, @QueryParam("to") Date to) throws Exception {
         this.checkDatatStore();
-        try {
-            return this.dataStore.getAll(Event.class);
+        try (AutoCloseable c = this.dataStore.getClosable()) {
+            return this.dataStore.getEvents(false, from, to);
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing databaes failed", Status.INTERNAL_SERVER_ERROR);
         }
@@ -56,11 +55,10 @@ public class EventsResource {
     @GET
     @Path("/basics")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Event> getAllEventsBasics(@QueryParam("from") Date from, @QueryParam("to") Date to) throws Exception {
-        // I think we should ignore from and to for the moment ;)
+    public List<Event> getEventsBasics(@QueryParam("from") Date from, @QueryParam("to") Date to) throws Exception {
         this.checkDatatStore();
         try (AutoCloseable c = this.dataStore.getClosable()) {
-            return this.dataStore.getEventBasics();
+            return this.dataStore.getEvents(true, from, to);
         } catch (PersistenceException pe) {
             throw new WebApplicationException("Accessing database failed", Status.INTERNAL_SERVER_ERROR);
         }
