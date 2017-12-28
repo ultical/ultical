@@ -85,12 +85,6 @@ button, input, optgroup, select, textarea {
 	}
 }
 
-#nav-logo div {
-    margin-left: 14px;
-    margin-top: 5px;
-    line-height: 100%;
-}
-
 .navbar-header a {
 	color: #777777;
 }
