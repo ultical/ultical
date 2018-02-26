@@ -37,14 +37,13 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 	.state('app', {
 		abstract: true,
 		url: '/{locale:(?:'+availableLocales+')}',
+		params: {
+			locale: 'de',
+		},
 		template: '<ui-view>',
 	})
 	.state('app.eventsList', {
 		url: '/calendar',
-		templateUrl: 'pages/event/list.html?v='+version,
-	})
-	.state('app.eventsListYear', {
-		url: '/calendar/{year:int}',
 		templateUrl: 'pages/event/list.html?v='+version,
 	})
 	.state('app.editionEdit', {

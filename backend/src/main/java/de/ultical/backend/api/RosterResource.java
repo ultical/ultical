@@ -171,6 +171,7 @@ public class RosterResource {
                 dfvPlayer.setFirstName(dfvMvName.getFirstName());
                 dfvPlayer.setLastName(dfvMvName.getLastName());
                 dfvPlayer.setEmail(dfvMvPlayer.getEmail());
+                dfvPlayer.setLastModified(dfvMvName.getLastModified());
 
                 Club club = this.dataStore.getClub(dfvMvPlayer.getClub());
                 dfvPlayer.setClub(club);
@@ -261,6 +262,11 @@ public class RosterResource {
                 // women masters can be 3 years younger than their male
                 // counterparts
                 age += 3;
+            } else if (roster.getDivisionAge() == DivisionAge.U17 && player.getGender() == Gender.FEMALE) {
+                // women are allowed to play U17 one year longer then male
+                // players.
+                // i.e. 18yo women are allowed to play U17
+                age -= 1;
             }
             wrongAge = (roster.getDivisionAge().isHasToBeOlder() && age < roster.getDivisionAge().getAgeDifference())
                     || (!roster.getDivisionAge().isHasToBeOlder() && age > roster.getDivisionAge().getAgeDifference());

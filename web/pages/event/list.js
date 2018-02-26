@@ -10,10 +10,6 @@ angular.module('ultical.events', [])
 	$scope.sortKey = ['startDate', 'endDate', 'name'];
 	$scope.sortOrderDesc = false;
 
-  if ('year' in $stateParams) {
-    // TODO: start with this year
-  }
-
 	storage.getEvents(true, function(data) {
 		$scope.events = data;
 	});
