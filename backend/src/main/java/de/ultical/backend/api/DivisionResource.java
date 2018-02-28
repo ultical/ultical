@@ -44,37 +44,39 @@ public class DivisionResource {
 	this.ibanService = Objects.requireNonNull(ibanSvc);
     }
 
-    @POST
-    @Path("/{divisionId}/registerTeam/{rosterId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void registerTeam(@Auth @NotNull User currentUser, @PathParam("divisionId") Integer divisionId,
-            @PathParam("rosterId") Integer rosterId, TeamRegistration teamReg) {
-	try {
-	    this.validateTeamReg(teamReg, rosterId);
-	} catch (IBANValidationException ive) {
-	    throw new WebApplicationException("Provided IBAN is invalid",ive,Status.BAD_REQUEST);
+	@POST
+	@Path("/{divisionId}/registerTeam/{rosterId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void registerTeam(@Auth @NotNull User currentUser, @PathParam("divisionId") Integer divisionId,
+			@PathParam("rosterId") Integer rosterId, TeamRegistration teamReg) {
+		try {
+			this.validateTeamReg(teamReg, rosterId);
+		} catch (IBANValidationException ive) {
+			throw new WebApplicationException("Provided IBAN is invalid", ive, Status.BAD_REQUEST);
+		}
+
+		try (DataStoreCloseable c = this.dStore.getClosable()) {
+			final DivisionRegistrationTeams divisionReg = this.dStore.get(divisionId, DivisionRegistrationTeams.class);
+			if (divisionReg == null) {
+				throw new WebApplicationException(String.format("Division with id %d could not be found", divisionId),
+						Status.NOT_FOUND);
+			}
+
+			Roster loadedRoster = this.dStore.get(rosterId, Roster.class);
+			if (loadedRoster == null) {
+				throw new WebApplicationException(String.format("Roster with id %d could not be found.", rosterId),
+						Status.NOT_FOUND);
+			}
+			Authenticator.assureTeamAdmin(this.dStore, loadedRoster.getTeam().getId(), currentUser);
+
+			this.dStore.registerTeamForEdition(divisionReg.getId(), teamReg);
+		} catch (PersistenceException pe) {
+			LOG.error(DB_ACCESS_FAILURE, pe);
+			throw new WebApplicationException(DB_ACCESS_FAILURE, pe);
+		}
 	}
 
-        try (DataStoreCloseable c = this.dStore.getClosable()) {
-	    final DivisionRegistrationTeams divisionReg = this.dStore.get(divisionId,DivisionRegistrationTeams.class);
-	    if (divisionReg == null) {
-		throw new WebApplicationException(String.format("Division with id %d could not be found", divisionId), Status.NOT_FOUND);
-	    }
-            
-            Roster loadedRoster = this.dStore.get(rosterId, Roster.class);
-	    if (loadedRoster == null) {
-		throw new WebApplicationException(String.format("Roster with id %d could not be found.",rosterId),Status.NOT_FOUND);
-	    }
-            Authenticator.assureTeamAdmin(this.dStore, loadedRoster.getTeam().getId(), currentUser);
-
-            this.dStore.registerTeamForEdition(divisionReg.getId(), teamReg);
-        } catch (PersistenceException pe) {
-            LOG.error(DB_ACCESS_FAILURE, pe);
-            throw new WebApplicationException(DB_ACCESS_FAILURE, pe);
-        }
-    }
-
-    private void validateTeamReg(final TeamRegistration teamReg, final Integer rosterId) {
+    private void validateTeamReg(final TeamRegistration teamReg, final Integer rosterId) throws IBANValidationException {
 	/*
          * If the client provided a team-instance as part of the
          * payload, then we expect that the provided team's id and the

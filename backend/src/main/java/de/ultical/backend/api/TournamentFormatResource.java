@@ -87,9 +87,6 @@ public class TournamentFormatResource {
         } catch (PersistenceException pe) {
             LOGGER.error(DB_ACCESS_FAILED, pe);
             throw new WebApplicationException(DB_ACCESS_FAILED, pe, Status.INTERNAL_SERVER_ERROR.getStatusCode());
-        } catch (AuthorizationException ae) {
-            LOGGER.warn(UNAUTHORIZED_WARNING, ae);
-            throw new WebApplicationException(LOGIN_MESSAGE, ae, Status.UNAUTHORIZED);
         }
     }
 

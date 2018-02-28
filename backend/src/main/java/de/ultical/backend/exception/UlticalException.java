@@ -5,12 +5,15 @@ package de.ultical.backend.exception;
  * 
  * @author Basil
  */
-public class UlticalException extends RuntimeException {
-    public UlticalException(final String message) {
-	super(message);
-    }
+public class UlticalException extends Exception {
 
-    public UlticalException(final String message, final Throwable t) {
-	super(message, t);
-    }
+	private static final long serialVersionUID = -4584945590554496711L;
+
+	public UlticalException(final String message) {
+		super(message);
+	}
+
+	public UlticalException(final String message, final Throwable t) {
+		super(message, t);
+	}
 }

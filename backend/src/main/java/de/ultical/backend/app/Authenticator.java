@@ -142,7 +142,7 @@ public class Authenticator {
         }
     }
 
-    public static void assureOverallAdmin(final User user) {
+    public static void assureOverallAdmin(final User user) throws AuthorizationException {
         Objects.requireNonNull(user);
         if (Authenticator.overallAdmins == null || !Authenticator.overallAdmins.contains(user.getEmail())) {
             throw new AuthorizationException(

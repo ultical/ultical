@@ -3,6 +3,7 @@ package de.ultical.backend.api;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -16,11 +17,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.DataStore.DataStoreCloseable;
-import de.ultical.backend.exception.AuthorizationException;
 import de.ultical.backend.exception.IBANValidationException;
 import de.ultical.backend.model.DivisionRegistration.DivisionRegistrationStatus;
 import de.ultical.backend.model.TeamRegistration;
@@ -28,11 +30,7 @@ import de.ultical.backend.model.TournamentEdition;
 import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.model.User;
 import de.ultical.backend.services.IBANValidationService;
-
 import io.dropwizard.auth.Auth;
-import javax.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Path("/tournaments")
 public class TournamentResource {
@@ -65,26 +63,28 @@ public class TournamentResource {
 
     }
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public TournamentEdition storeTournament(final @Valid TournamentEdition newEdition, @Auth @NotNull User currentUser) {
-        this.checkDataStore();
-        try (DataStoreCloseable c = this.dataStore.getClosable()) {
-	    final TournamentFormat tf = this.dataStore.get(newEdition.getTournamentFormat().getId(), TournamentFormat.class);
-	    if (tf == null) {
-		throw new WebApplicationException(String.format("TournamentFormat with id: %d could not be found in the database", newEdition.getTournamentFormat().getId()), Status.BAD_REQUEST);
-	    }
-	    Authenticator.assureFormatAdmin(tf, currentUser);
-            TournamentEdition result = this.dataStore.addNew(newEdition);
-            return result;
-        } catch (PersistenceException pe) {
-	    LOG.error("Database access failed", pe);
-            throw new WebApplicationException("Accessing database failed", pe, Status.INTERNAL_SERVER_ERROR);
-        } catch (AuthorizationException ae) {
-	    LOG.warn("authorization issue",ae);
-	    throw new WebApplicationException(Status.UNAUTHORIZED);
-	}
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public TournamentEdition storeTournament(final @Valid TournamentEdition newEdition,
+			@Auth @NotNull User currentUser) {
+		this.checkDataStore();
+		try (DataStoreCloseable c = this.dataStore.getClosable()) {
+			final TournamentFormat tf = this.dataStore.get(newEdition.getTournamentFormat().getId(),
+					TournamentFormat.class);
+			if (tf == null) {
+				throw new WebApplicationException(
+						String.format("TournamentFormat with id: %d could not be found in the database",
+								newEdition.getTournamentFormat().getId()),
+						Status.BAD_REQUEST);
+			}
+			Authenticator.assureFormatAdmin(tf, currentUser);
+			TournamentEdition result = this.dataStore.addNew(newEdition);
+			return result;
+		} catch (PersistenceException pe) {
+			LOG.error("Database access failed", pe);
+			throw new WebApplicationException("Accessing database failed", pe, Status.INTERNAL_SERVER_ERROR);
+		} 
     }
 
     @PUT

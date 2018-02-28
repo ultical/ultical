@@ -569,7 +569,7 @@ public class DataStore {
         EventMapper eventMapper = this.sqlSession.getMapper(EventMapper.class);
 
         if (basicDataOnly) {
-            return eventMapper.getBasics(fromString, toString);
+            return eventMapper.getAllBasics(fromString, toString);
         } else {
             return eventMapper.getFull(fromString, toString);
         }
