@@ -109,7 +109,7 @@ public class MailClient {
             // REPLY TO
             if (m.getRecipients(UlticalRecipientType.REPLY_TO) != null
                     && !m.getRecipients(UlticalRecipientType.REPLY_TO).isEmpty()) {
-                List<InternetAddress> replyTos = new ArrayList<InternetAddress>();
+                List<InternetAddress> replyTos = new ArrayList<>();
 
                 for (Recipient replyTo : m.getRecipients(UlticalRecipientType.REPLY_TO)) {
                     replyTos.add(new InternetAddress(this.getEncodedNameAddress(replyTo)));
@@ -164,7 +164,7 @@ public class MailClient {
             }
             LOGGER.error("ReplyTo: " + replyToString);
 
-            LOGGER.error(me.toString());
+            LOGGER.error("Exception was", me);
 
             return false;
         }

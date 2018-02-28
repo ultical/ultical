@@ -1,6 +1,9 @@
 package de.ultical.backend.app;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
@@ -8,31 +11,26 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.ibatis.exceptions.PersistenceException;
 
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.exception.AuthorizationException;
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.model.User;
-import de.ultical.backend.exception.AuthorizationException;
-
-import java.util.Objects;
-import java.util.Set;
-import java.util.HashSet;
-
 
 public class Authenticator {
 
     private static Set<String> overallAdmins;
 
     public static boolean addAdmin(final String adminEmail) {
-	boolean result = false;
-	if (adminEmail != null) {
-	    if (Authenticator.overallAdmins == null) {
-		Authenticator.overallAdmins = new HashSet<String>();
-	    }
-	    result = Authenticator.overallAdmins.add(adminEmail);
-	}
-	return result;
+        boolean result = false;
+        if (adminEmail != null) {
+            if (Authenticator.overallAdmins == null) {
+                Authenticator.overallAdmins = new HashSet<>();
+            }
+            result = Authenticator.overallAdmins.add(adminEmail);
+        }
+        return result;
     }
 
     public static void assureRosterAdmin(DataStore dataStore, Integer rosterId, User currentUser) {
@@ -40,7 +38,7 @@ public class Authenticator {
         try {
             storedRoster = dataStore.get(rosterId, Roster.class);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failed!", Status.INTERNAL_SERVER_ERROR);
+            throw new WebApplicationException("Accessing the database failed!", pe, Status.INTERNAL_SERVER_ERROR);
         }
         if (storedRoster == null) {
             throw new WebApplicationException(String.format("Roster with id %d does not exist!", rosterId),
@@ -54,7 +52,7 @@ public class Authenticator {
         try {
             storedTeam = dataStore.get(teamId, Team.class);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failed!", Status.INTERNAL_SERVER_ERROR);
+            throw new WebApplicationException("Accessing the database failed!", pe, Status.INTERNAL_SERVER_ERROR);
         }
         if (storedTeam == null) {
             throw new WebApplicationException(String.format("Team with id %d does not exist!", teamId),
@@ -82,7 +80,7 @@ public class Authenticator {
         try {
             storedEvent = dataStore.getEventByDivision(divisionId);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failed!", Status.INTERNAL_SERVER_ERROR);
+            throw new WebApplicationException("Accessing the database failed!", pe, Status.INTERNAL_SERVER_ERROR);
         }
         assureEventAdmin(storedEvent, currentUser);
     }
@@ -92,7 +90,7 @@ public class Authenticator {
         try {
             storedEvent = dataStore.get(eventId, Event.class);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failed!", Status.INTERNAL_SERVER_ERROR);
+            throw new WebApplicationException("Accessing the database failed!", pe, Status.INTERNAL_SERVER_ERROR);
         }
         assureEventAdmin(storedEvent, currentUser);
     }
@@ -121,7 +119,7 @@ public class Authenticator {
         try {
             storedFormat = dataStore.getFormatByEdition(editionId);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failed!", Status.INTERNAL_SERVER_ERROR);
+            throw new WebApplicationException("Accessing the database failed!", pe, Status.INTERNAL_SERVER_ERROR);
         }
         assureFormatAdmin(storedFormat, currentUser);
     }
@@ -140,15 +138,16 @@ public class Authenticator {
         }
         if (!isAdmin) {
             throw new WebApplicationException(String.format("You are not an admin for format %d", storedFormat.getId()),
-                    Status.FORBIDDEN); 
+                    Status.FORBIDDEN);
         }
     }
 
-    public static void assureOverallAdmin(final User user) {
-	Objects.requireNonNull(user);
-	if (Authenticator.overallAdmins == null || !Authenticator.overallAdmins.contains(user.getEmail())) {
-	    throw new AuthorizationException(String.format("User %s (id=%d) is not authorized as overall admin", user.getEmail(), user.getId()));
-	}
-	
+    public static void assureOverallAdmin(final User user) throws AuthorizationException {
+        Objects.requireNonNull(user);
+        if (Authenticator.overallAdmins == null || !Authenticator.overallAdmins.contains(user.getEmail())) {
+            throw new AuthorizationException(
+                    String.format("User %s (id=%d) is not authorized as overall admin", user.getEmail(), user.getId()));
+        }
+
     }
 }

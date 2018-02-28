@@ -32,7 +32,7 @@ public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
                 LocalDateTime dateTime = LocalDateTime.parse(dateString, this.formatter);
                 return dateTime;
             } catch (DateTimeParseException dtpe2) {
-                throw new JsonParseException("Unable to parse text as LocalDateTime", p.getCurrentLocation(), dtpe);
+                throw new JsonParseException("Unable to parse text as LocalDateTime", p.getCurrentLocation(), dtpe2);
             }
         }
     }

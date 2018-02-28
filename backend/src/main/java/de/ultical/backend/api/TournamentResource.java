@@ -3,6 +3,7 @@ package de.ultical.backend.api;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -16,24 +17,32 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
-import de.ultical.backend.exception.AuthorizationException;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
+import de.ultical.backend.exception.IBANValidationException;
 import de.ultical.backend.model.DivisionRegistration.DivisionRegistrationStatus;
 import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.TournamentEdition;
 import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.model.User;
+import de.ultical.backend.services.IBANValidationService;
 import io.dropwizard.auth.Auth;
-import javax.validation.Valid;
 
 @Path("/tournaments")
 public class TournamentResource {
 
+    private static final Logger LOG = LoggerFactory.getLogger(TournamentResource.class);
+    
     @Inject
     DataStore dataStore;
 
+    @Inject
+    IBANValidationService ibanService;
+    
     private void checkDataStore() {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency injection for datastore failed!",
@@ -54,32 +63,36 @@ public class TournamentResource {
 
     }
 
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public TournamentEdition storeTournament(final @Valid TournamentEdition newEdition, @Auth @NotNull User currentUser) throws Exception {
-        this.checkDataStore();
-        try (AutoCloseable c = this.dataStore.getClosable()) {
-	    final TournamentFormat tf = this.dataStore.get(newEdition.getTournamentFormat().getId(), TournamentFormat.class);
-	    if (tf == null) {
-		throw new WebApplicationException(String.format("TournamentFormat with id: %d could not be found in the database", newEdition.getTournamentFormat().getId()), Status.BAD_REQUEST);
-	    }
-	    Authenticator.assureFormatAdmin(tf, currentUser);
-            TournamentEdition result = this.dataStore.addNew(newEdition);
-            return result;
-        } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed", pe, Status.INTERNAL_SERVER_ERROR);
-        } catch (AuthorizationException ae) {
-	    throw new WebApplicationException(Status.UNAUTHORIZED);
-	}
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public TournamentEdition storeTournament(final @Valid TournamentEdition newEdition,
+			@Auth @NotNull User currentUser) {
+		this.checkDataStore();
+		try (DataStoreCloseable c = this.dataStore.getClosable()) {
+			final TournamentFormat tf = this.dataStore.get(newEdition.getTournamentFormat().getId(),
+					TournamentFormat.class);
+			if (tf == null) {
+				throw new WebApplicationException(
+						String.format("TournamentFormat with id: %d could not be found in the database",
+								newEdition.getTournamentFormat().getId()),
+						Status.BAD_REQUEST);
+			}
+			Authenticator.assureFormatAdmin(tf, currentUser);
+			TournamentEdition result = this.dataStore.addNew(newEdition);
+			return result;
+		} catch (PersistenceException pe) {
+			LOG.error("Database access failed", pe);
+			throw new WebApplicationException("Accessing database failed", pe, Status.INTERNAL_SERVER_ERROR);
+		} 
     }
 
     @PUT
     @Path("/{editionId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateTournament(final @PathParam("editionId") Integer editionId, @Valid TournamentEdition edition, @Auth @NotNull User currentUser) throws Exception {
+    public void updateTournament(final @PathParam("editionId") Integer editionId, @Valid TournamentEdition edition, @Auth @NotNull User currentUser) {
         this.checkDataStore();
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 	    Authenticator.assureEditionAdmin(this.dataStore, editionId, currentUser);
             if (editionId.equals(edition.getId()) == false) {
                 throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
@@ -91,6 +104,7 @@ public class TournamentResource {
             }
 
         } catch (PersistenceException pe) {
+	    LOG.error("Database access failed", pe);
             throw new WebApplicationException("Accessing database failed", pe, Status.INTERNAL_SERVER_ERROR);
         }
     }
@@ -103,11 +117,17 @@ public class TournamentResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/division/{divisionRegistrationId}/register/team")
     public TeamRegistration registerTeam(@PathParam("divisionRegistrationId") Integer divisionRegistrationId,
-            TeamRegistration teamRegistration, @Auth @NotNull User currentUser) throws Exception {
+            TeamRegistration teamRegistration, @Auth @NotNull User currentUser) {
 
         this.checkDataStore();
+	final String normalizedIban = this.reformatIBAN(teamRegistration.getIban());
+	try {
+	    this.ibanService.validateIBAN(normalizedIban);
+	} catch (IBANValidationException ive) {
+	    throw new WebApplicationException("IBAN is invalid", Status.BAD_REQUEST);
+	}
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Authenticator.assureRosterAdmin(this.dataStore, teamRegistration.getRoster().getId(), currentUser);
 
             teamRegistration.setPaid(false);
@@ -119,20 +139,30 @@ public class TournamentResource {
 
             return this.dataStore.registerTeamForEdition(divisionRegistrationId, teamRegistration);
         } catch (PersistenceException pe) {
+	    LOG.error("Database access failed", pe);
             throw new WebApplicationException("Probably duplicate entry" + pe.getMessage(), Status.CONFLICT);
         }
     }
+
+	private String reformatIBAN(final String origIban) {
+	    if(origIban == null) {
+		throw new WebApplicationException("IBAN is required", Status.BAD_REQUEST);
+	    }
+	    String formattedIban = origIban.trim();
+	    formattedIban = formattedIban.replace("\\w|\\.|-","");
+	    return formattedIban.toUpperCase();
+	}
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/registration/{eventId}")
     public boolean updateTeamRegistration(@PathParam("eventId") Integer eventId, TeamRegistration teamRegistration,
-            @Auth @NotNull User currentUser) throws Exception {
+            @Auth @NotNull User currentUser) {
 
         this.checkDataStore();
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             TournamentEdition edition = this.dataStore.getEditionByTeamRegistration(teamRegistration.getId());
 
@@ -148,6 +178,7 @@ public class TournamentResource {
             this.dataStore.update(teamRegistration);
 
         } catch (PersistenceException pe) {
+	    LOG.error("Database access failed", pe);
             throw new WebApplicationException("Error writing update" + pe.getMessage(), Status.CONFLICT);
         }
 
@@ -159,11 +190,11 @@ public class TournamentResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/registrations/{eventId}")
     public boolean updateTeamRegistrations(@PathParam("eventId") Integer eventId,
-            List<TeamRegistration> teamRegistrations, @Auth @NotNull User currentUser) throws Exception {
+            List<TeamRegistration> teamRegistrations, @Auth @NotNull User currentUser) {
 
         this.checkDataStore();
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             TournamentEdition edition = this.dataStore.getEditionByTeamRegistration(teamRegistrations.get(0).getId());
 
@@ -179,6 +210,7 @@ public class TournamentResource {
             this.dataStore.updateAll(teamRegistrations);
 
         } catch (PersistenceException pe) {
+	    LOG.error("Database access failed", pe);
             throw new WebApplicationException("Error writing update" + pe.getMessage(), Status.CONFLICT);
         }
 

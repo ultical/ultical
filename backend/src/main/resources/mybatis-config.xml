@@ -67,5 +67,6 @@
 		<mapper class="de.ultical.backend.data.mapper.DivisionConfirmationMapper" />
 		<mapper class="de.ultical.backend.data.mapper.ContextMapper" />
 		<mapper class="de.ultical.backend.data.mapper.ResourceMapper" />
+		<mapper class="de.ultical.backend.data.mapper.EventTravelCompensationMapper" />
 	</mappers>
 </configuration>

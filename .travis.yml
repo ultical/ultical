@@ -1,18 +1,18 @@
 language: java
-
 sudo: false
 
-# change working directory to backend
-# if we at some point in time also want to build the
-# client part, we need some more logic at this place
+#addons:
+#  sonarqube: true
+
 before_install:
   - cd backend
   - cp src/main/resources/jdbc.properties.travis src/main/resources/jdbc.properties
-
-# use caching to speed up build
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=https://sonarqube.com -Dsonar.branch=$TRAVIS_BRANCH
 cache:
   directories:
-    - $HOME/.m2
+  - "$HOME/.m2"
+  - "$HOME/.sonar/cache"
   
 jdk:
   - oraclejdk8
@@ -20,6 +20,10 @@ jdk:
 notifications:
   email:
     recipients:
-      - TEAM_EMAIL
+    - "$TEAM_EMAIL"
     on_success: change
     on_failure: always
+    
+env:
+  global:
+    - secure: "pH4uiXNUpqolyd3pvt2Z5qluYocuutqWLnfrY7U4YiQQv5z6Adt5Exjbi5721OON6TV3IMCGLr4rTqSJRgKH9Hogyc54sSqNLvGT0btcccEmIi1gRa7yl57G/n0FFjD+ep8dxzsKzbvd6jNeq9hJHDtBAPtmKodk7HQUPQC8kMG9UgSEif1amwEwJnRPlHPPdCmP4sjFcEiUqj3S273M0wAsEFRHhVqJ+RmTbGfC819Hs4qAr2P2/x2qc5GvwNjVjn9BP/N3pZPXtcwyTFeWLfFMKP/AdWcb7erQzmWbnejBU+5pKQ/hhdUX2mAKqSuCbzgbdUz42g5l8HKXdRBUe8dI2OMDNpZm5rz0Wnv3OmQlq/XAzm2dCGXsCWsm16rp6HOBJzJNTjCdkAroJEgL32+/F9+z5goyNk6YSLix+10LGOBAZLc7ApnabOy2HOnnTKX5iS97RmtRT5bv/9HCZ4qIdNM56SqxmKUEpzG5t56WAWY/7OB0WbQ90/gyEJA9nRf6xHbHQqvsUx94cIHRmhFYPJIUJH/KPGVwUX6virBA/192Z0r8PGOnOBWS841+RBNzsSmxuVBBeRGTEvpE96pDDdUAPZpYI0hglu2RTAVT8/BwS3gJOtHBMtiMtxMT5Hs2DAV4hicMbd/SvbLWBbf+HpdrKkGM/2XY/Pe0Puc="

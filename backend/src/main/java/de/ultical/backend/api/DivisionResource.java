@@ -12,35 +12,77 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
+import de.ultical.backend.exception.IBANValidationException;
 import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.User;
+import de.ultical.backend.services.IBANValidationService;
 import io.dropwizard.auth.Auth;
+import java.util.Objects;
+import java.util.regex.Matcher;
 
 @Path("/divisions")
 public class DivisionResource {
 
+    private static final String DB_ACCESS_FAILURE = "Accessing the database failed!";
+    private static final String IBAN_REPLACE_REGEX = "-|\\.|\\s";
+    private static final Logger LOG = LoggerFactory.getLogger(DivisionResource.class);
+
+    private final DataStore dStore;
+    private final IBANValidationService ibanService;
+    
     @Inject
-    DataStore dStore;
+    public DivisionResource(final DataStore dataStore, final IBANValidationService ibanSvc) {
+	this.dStore = Objects.requireNonNull(dataStore);
+	this.ibanService = Objects.requireNonNull(ibanSvc);
+    }
 
-    @POST
-    @Path("/{divisionId}/registerTeam/{rosterId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void registerTeam(@Auth @NotNull User currentUser, @PathParam("divisionId") Integer divisionId,
-            @PathParam("rosterId") Integer rosterId, TeamRegistration teamReg) {
-        if (this.dStore == null) {
-            throw new WebApplicationException("Injection DataStore failed!");
-        }
+	@POST
+	@Path("/{divisionId}/registerTeam/{rosterId}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void registerTeam(@Auth @NotNull User currentUser, @PathParam("divisionId") Integer divisionId,
+			@PathParam("rosterId") Integer rosterId, TeamRegistration teamReg) {
+		try {
+			this.validateTeamReg(teamReg, rosterId);
+		} catch (IBANValidationException ive) {
+			throw new WebApplicationException("Provided IBAN is invalid", ive, Status.BAD_REQUEST);
+		}
 
-        /*
-         * If the client provided a team-instance as part of the payload, then
-         * we expect that the provided team's id and the request url's teamId
-         * are equals. If no team is provided, we create a fake team object that
-         * only serves as holder for the id.
+		try (DataStoreCloseable c = this.dStore.getClosable()) {
+			final DivisionRegistrationTeams divisionReg = this.dStore.get(divisionId, DivisionRegistrationTeams.class);
+			if (divisionReg == null) {
+				throw new WebApplicationException(String.format("Division with id %d could not be found", divisionId),
+						Status.NOT_FOUND);
+			}
+
+			Roster loadedRoster = this.dStore.get(rosterId, Roster.class);
+			if (loadedRoster == null) {
+				throw new WebApplicationException(String.format("Roster with id %d could not be found.", rosterId),
+						Status.NOT_FOUND);
+			}
+			Authenticator.assureTeamAdmin(this.dStore, loadedRoster.getTeam().getId(), currentUser);
+
+			this.dStore.registerTeamForEdition(divisionReg.getId(), teamReg);
+		} catch (PersistenceException pe) {
+			LOG.error(DB_ACCESS_FAILURE, pe);
+			throw new WebApplicationException(DB_ACCESS_FAILURE, pe);
+		}
+	}
+
+    private void validateTeamReg(final TeamRegistration teamReg, final Integer rosterId) throws IBANValidationException {
+	/*
+         * If the client provided a team-instance as part of the
+         * payload, then we expect that the provided team's id and the
+         * request url's teamId are equals. If no team is provided, we
+         * create a fake team object that only serves as holder for
+         * the id.
          */
         if (teamReg.getRoster() == null) {
             final Roster fakeRoster = new Roster();
@@ -54,30 +96,22 @@ public class DivisionResource {
             }
         }
 
-        try (AutoCloseable c = this.dStore.getClosable()) {
-            Roster loadedRoster = this.dStore.get(rosterId, Roster.class);
-
-            Authenticator.assureTeamAdmin(this.dStore, loadedRoster.getTeam().getId(), currentUser);
-
-            final DivisionRegistrationTeams divisionReg = new DivisionRegistrationTeams();
-            divisionReg.setId(divisionId);
-
-            this.dStore.registerTeamForEdition(divisionReg.getId(), teamReg);
-        } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failed!", pe);
-        } catch (Exception e) {
-            // only for the compiler
-        }
+	if (teamReg.getIban() != null) {
+	    final String receivedIban = teamReg.getIban();
+	    final String replacedIban = receivedIban.replaceAll(IBAN_REPLACE_REGEX,"").toUpperCase();
+	    teamReg.setIban(replacedIban);
+	    LOG.debug("Replaced the received IBAN {} with the stripped IBAN {}", receivedIban, replacedIban);
+	    this.ibanService.validateIBAN(teamReg.getIban());
+	} else {
+	    throw new WebApplicationException("IBAN must be provided", Status.BAD_REQUEST);
+	}
     }
-
+    
     @DELETE
     @Path("/{divisionId}/registerTeam/{rosterId}")
     public void unregisterTeam(@Auth @NotNull User currentUser, @PathParam("divisionId") Integer divId,
             @PathParam("rosterId") Integer rosterId) {
-        if (this.dStore == null) {
-            throw new WebApplicationException("Injection DataStore failed!");
-        }
-        try (AutoCloseable c = this.dStore.getClosable()) {
+        try (DataStoreCloseable c = this.dStore.getClosable()) {
             Roster rosterInDB = this.dStore.get(rosterId, Roster.class);
 
             Authenticator.assureTeamAdmin(this.dStore, rosterInDB.getTeam().getId(), currentUser);
@@ -89,10 +123,8 @@ public class DivisionResource {
 
             this.dStore.unregisterTeamFromDivision(fakeReg, fakeRoster);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed!", pe);
-        } catch (Exception e) {
-            // only for the compiler
-            throw new WebApplicationException(e);
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, pe);
         }
     }
 }

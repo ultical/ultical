@@ -61,6 +61,13 @@ import de.ultical.backend.model.User;
 @RequestScoped
 public class DataStore {
 
+    public class DataStoreCloseable implements AutoCloseable {
+        @Override
+        public void close() {
+            DataStore.this.closeSession();
+        }
+    }
+
     @Inject
     SqlSession sqlSession;
 
@@ -93,16 +100,9 @@ public class DataStore {
      * @return an instance of <code>AutoCloseable</code> that could be used to
      *         close the DataStore Sql-Connection within a try block.
      */
-    public AutoCloseable getClosable() {
+    public DataStoreCloseable getClosable() {
         this.autoCloseSession = false;
-        return new AutoCloseable() {
-
-            @Override
-            public void close() {
-                DataStore.this.closeSession();
-
-            }
-        };
+        return new DataStoreCloseable();
     }
 
     /**
@@ -523,7 +523,7 @@ public class DataStore {
     public List<DfvPlayer> getPlayersToUpdate() {
         // TODO this task could be solved completely by the database!
         try {
-            List<DfvPlayer> result = null;
+            List<DfvPlayer> result;
             final DfvPlayerMapper playerMapper = this.sqlSession.getMapper(DfvPlayerMapper.class);
             final DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
 
@@ -569,7 +569,7 @@ public class DataStore {
         EventMapper eventMapper = this.sqlSession.getMapper(EventMapper.class);
 
         if (basicDataOnly) {
-            return eventMapper.getBasics(fromString, toString);
+            return eventMapper.getAllBasics(fromString, toString);
         } else {
             return eventMapper.getFull(fromString, toString);
         }
@@ -634,7 +634,7 @@ public class DataStore {
 
             // insert Player with corresponding mapper
             PlayerMapper playerMapper = this.sqlSession.getMapper(PlayerMapper.class);
-            playerMapper.insertPlayer(dfvPlayer, dfvPlayer instanceof DfvPlayer);
+            playerMapper.insertPlayer(dfvPlayer, true);
 
             // insert DfvPlayer
             this.addNew(dfvPlayer);
@@ -938,6 +938,18 @@ public class DataStore {
         try {
             RosterMapper mapper = this.sqlSession.getMapper(RosterMapper.class);
             return mapper.getRostersForPlayer(player);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public List<Event> getEventsEndedAtDate(final LocalDate endDate) {
+        Objects.requireNonNull(endDate);
+        try {
+            EventMapper mapper = this.sqlSession.getMapper(EventMapper.class);
+            return mapper.getByEndDate(endDate);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

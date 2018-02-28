@@ -22,6 +22,7 @@ public class TeamRegistration extends Identifiable {
     private int sequence;
     private Roster roster;
     private String teamName;
+    private String iban;
 
     @Override
     public Class<TeamRegistrationMapper> getMapper() {

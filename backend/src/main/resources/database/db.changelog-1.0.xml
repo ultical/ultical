@@ -1126,4 +1126,65 @@
 			TEAM.id WHERE ROSTER.id = TEAM_REGISTRATION.roster)));
 		</sql>
 	</changeSet>
+	<changeSet id="bb-iban-reisekosten" author="bb">
+		<addColumn tableName="TEAM_REGISTRATION">
+			<column name="iban" type="VARCHAR(29)">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="bb-table-event_travel_compensation" author="bb">
+		<createTable tableName="EVENT_TRAVEL_COMPENSATION">
+			<column name="id" type="BIGINT" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="version" type="BIGINT" defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+			<column name="event" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="roster" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="division_registration" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="distance" type="INTEGER">
+				<constraints nullable="false"></constraints>
+			</column>
+			<column name="fee" type="FLOAT">
+				<constraints nullable="false"></constraints>
+			</column>
+			<column name="paid" type="BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	<changeSet id="bb-travel-compensation-fk-1" author="bb">
+		<addForeignKeyConstraint baseColumnNames="event"
+			baseTableName="EVENT_TRAVEL_COMPENSATION" referencedColumnNames="id"
+			referencedTableName="EVENT" constraintName="fk-travel-compensation-event" />
+	</changeSet>
+	<changeSet id="bb-travel-compensation-fk-2" author="bb">
+		<addForeignKeyConstraint baseColumnNames="roster"
+			baseTableName="EVENT_TRAVEL_COMPENSATION" referencedColumnNames="id"
+			referencedTableName="ROSTER" constraintName="fk-travel-compensation-roster" />
+	</changeSet>
+	<changeSet id="bb-travel-compensation-fk-3" author="bb">
+		<addForeignKeyConstraint baseColumnNames="division_registration"
+			baseTableName="EVENT_TRAVEL_COMPENSATION" referencedColumnNames="id"
+			referencedTableName="DIVISION_REGISTRATION" constraintName="fk-travel-compensation-div_reg"/>
+	</changeSet>
+	<changeSet id="bb-team-travel-fees-event" author="bb">
+		<addColumn tableName="EVENT">
+			<column name="uses_travel_compensation" type="BOOLEAN"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="bb-tag-db-reisekosten" author="bb">
+		<tagDatabase tag="v1.19" />
+	</changeSet>
 </databaseChangeLog>

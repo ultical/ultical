@@ -1,5 +1,6 @@
 package de.ultical.backend.data.mapper;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
@@ -24,8 +25,8 @@ public interface EventMapper extends BaseMapper<Event> {
     // INSERT
     @Override
     @Insert({
-            "INSERT INTO EVENT (matchday_number, tournament_edition, start_date, end_date, local_organizer, info, name) VALUES",
-            "(#{matchdayNumber, jdbcType=INTEGER},#{tournamentEdition.id, jdbcType=INTEGER},#{startDate, jdbcType=DATE},#{endDate, jdbcType=DATE},#{localOrganizer.id, jdbcType=INTEGER}, #{info, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR})" })
+            "INSERT INTO EVENT (matchday_number, tournament_edition, start_date, end_date, local_organizer, info, name, uses_travel_compensation) VALUES",
+            "(#{matchdayNumber, jdbcType=INTEGER},#{tournamentEdition.id, jdbcType=INTEGER},#{startDate, jdbcType=DATE},#{endDate, jdbcType=DATE},#{localOrganizer.id, jdbcType=INTEGER}, #{info, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR}, #{usesTravelCompensation, jdbcType=BOOLEAN})" })
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Event event);
 
@@ -36,7 +37,7 @@ public interface EventMapper extends BaseMapper<Event> {
     @Override
     @Update({ "UPDATE EVENT SET version=version+1, tournament_edition=#{tournamentEdition.id},",
             "start_date=#{startDate}, end_date=#{endDate}, name=#{name, jdbcType=VARCHAR},",
-            "local_organizer=#{localOrganizer.id, jdbcType=INTEGER}, info=#{info, jdbcType=VARCHAR}",
+            "local_organizer=#{localOrganizer.id, jdbcType=INTEGER}, info=#{info, jdbcType=VARCHAR}, uses_travel_compensation=#{usesTravelCompensation, jdbcType=BOOLEAN}",
             "WHERE version=#{version} AND id=#{id}" })
     Integer update(Event entity);
 
@@ -64,7 +65,8 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent")),
             @Result(column = "id", property = "resources", many = @Many(select = "de.ultical.backend.data.mapper.ResourceMapper.getForEvent")),
             @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getByEvent")),
-            @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get"), javaType = Contact.class) })
+            @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get"), javaType = Contact.class),
+            @Result(column = "uses_travel_compensation", property = "usesTravelCompensation") })
     Event get(int id);
 
     @Override
@@ -79,7 +81,8 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent")),
             @Result(column = "id", property = "resources", many = @Many(select = "de.ultical.backend.data.mapper.ResourceMapper.getForEvent")),
             @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getByEvent")),
-            @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get"), javaType = Contact.class) })
+            @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get"), javaType = Contact.class),
+            @Result(column = "uses_travel_compensation", property = "usesTravelCompensation") })
     List<Event> getAll();
 
     @Select("SELECT * FROM EVENT WHERE (start_date >= #{from} AND start_date <= #{to}) OR (end_date >= #{from} AND end_date <= #{to})")
@@ -103,8 +106,10 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "id", property = "locations", many = @Many(select = "de.ultical.backend.data.mapper.LocationMapper.getForEvent")),
             @Result(column = "start_date", property = "startDate"), @Result(column = "end_date", property = "endDate"),
             @Result(column = "info", property = "info"), @Result(column = "name", property = "name"),
-            @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getBasicsByEvent")) })
-    List<Event> getBasics(@Param("from") String fromString, @Param("to") String toString);
+            @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getBasicsByEvent")),
+            @Result(column = "uses_travel_compensation", property = "usesTravelCompensation") })
+    List<Event> getAllBasics(@Param("from") String fromString, @Param("to") String toString);
+
 
     @Select("SELECT * FROM EVENT WHERE tournament_edition=#{editionId}")
     @Results({ @Result(column = "matchday_number", property = "matchdayNumber"),
@@ -116,7 +121,8 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent")),
             @Result(column = "id", property = "resources", many = @Many(select = "de.ultical.backend.data.mapper.ResourceMapper.getForEvent")),
             @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getByEvent")),
-            @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get"), javaType = Contact.class) })
+            @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get"), javaType = Contact.class),
+            @Result(column = "uses_travel_compensation", property = "usesTravelCompensation") })
     List<Event> getEventsForEdition(int editionId);
 
     @Select("SELECT * FROM EVENT e JOIN TOURNAMENT_EDITION te ON te.event = e.id JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = te.id WHERE dr.id=#{divisionId}")
@@ -129,7 +135,8 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent")),
             @Result(column = "id", property = "resources", many = @Many(select = "de.ultical.backend.data.mapper.ResourceMapper.getForEvent")),
             @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getByEvent")),
-            @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get"), javaType = Contact.class) })
+            @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get"), javaType = Contact.class),
+            @Result(column = "uses_travel_compensation", property = "usesTravelCompensation") })
     Event getByDivisionRegistration(@Param("divisionId") int divisionId);
 
     @Select({ "SELECT * FROM EVENT e JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = e.tournament_edition",
@@ -137,4 +144,18 @@ public interface EventMapper extends BaseMapper<Event> {
             "<foreach item='teamReg' index='index' collection='teamRegistrations' open='(' separator=',' close=')'>",
             "#{teamReg.id}", "</foreach>", "</script>" })
     List<Event> getByTeamRegistrations(List<TeamRegistration> teamRegistrations);
+
+    @Select("SELECT * FROM EVENT WHERE end_date = #{end}")
+    @Results({ @Result(column = "matchday_number", property = "matchdayNumber"),
+            @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "id", property = "locations", many = @Many(select = "de.ultical.backend.data.mapper.LocationMapper.getForEvent")),
+            @Result(column = "start_date", property = "startDate"), @Result(column = "end_date", property = "endDate"),
+            @Result(column = "info", property = "info"), @Result(column = "name", property = "name"),
+            @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForEvent")),
+            @Result(column = "id", property = "fees", many = @Many(select = "de.ultical.backend.data.mapper.FeeMapper.getForEvent")),
+            @Result(column = "id", property = "resources", many = @Many(select = "de.ultical.backend.data.mapper.ResourceMapper.getForEvent")),
+            @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getByEvent")),
+            @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get"), javaType = Contact.class),
+            @Result(column = "uses_travel_compensation", property = "usesTravelCompensation") })
+    List<Event> getByEndDate(LocalDate end);
 }

@@ -43,6 +43,8 @@ public class Event extends Identifiable {
 
     private List<Resource> resources;
 
+    private boolean usesTravelCompensation = false;
+    
     @Override
     public Class<EventMapper> getMapper() {
         return EventMapper.class;

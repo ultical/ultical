@@ -38,16 +38,22 @@ public class UltiCalConfig extends Configuration {
     }
 
     @Data
-    public static class ReCaptcha {
+    public static class ExternalService {
         private String url;
         private String secret;
+    }
+    
+    @Data
+    public static class TravelCompensationFees {
+    	private double indoor = 0.75;
+    	private double outdoor = 0.75;
     }
 
     private DfvApiConfig dfvApi;
 
     private DebugMode debugMode;
 
-    private ReCaptcha reCaptcha;
+    private ExternalService reCaptcha;
 
     private JobsConfig jobs;
 
@@ -64,4 +70,8 @@ public class UltiCalConfig extends Configuration {
     private boolean corsFilterEnabled = false;
 
     private List<String> overallAdmins;
+    
+    private ExternalService geocoderConfig;
+    
+    private TravelCompensationFees travelFees = new TravelCompensationFees();
 }

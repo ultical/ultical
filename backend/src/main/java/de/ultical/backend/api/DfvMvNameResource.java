@@ -19,8 +19,10 @@ import org.slf4j.LoggerFactory;
 import de.ultical.backend.api.transferClasses.DfvMvName;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
+import org.apache.ibatis.exceptions.PersistenceException;
 
 @Path("/dfvmvname")
 public class DfvMvNameResource {
@@ -51,9 +53,9 @@ public class DfvMvNameResource {
             searchStrings.add("%" + searchString + "%");
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             result = this.dataStore.findDfvMvName(searchStrings);
-        } catch (Exception pe) {
+        } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
         }

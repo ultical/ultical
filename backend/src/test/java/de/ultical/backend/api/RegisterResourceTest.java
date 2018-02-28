@@ -68,7 +68,7 @@ public class RegisterResourceTest {
 	this.resource.config = this.config;
 		
 	this.resource.dataStore = this.ds;
-	when(this.ds.getClosable()).thenReturn(mock(AutoCloseable.class));
+	when(this.ds.getClosable()).thenReturn(mock(DataStore.DataStoreCloseable.class));
 	when(this.ds.getDfvNames(eq("test"),eq("User"))).thenReturn(Collections.emptyList());
 	when(this.ds.getDfvNames(eq("known"),eq("User"))).thenReturn(Collections.singletonList(this.dfvName));
 	this.resource.client = this.client;
@@ -120,7 +120,7 @@ public class RegisterResourceTest {
 	when(req.getEmail()).thenReturn("registered@ultical.com");
 	RegisterResponse response = this.resource.registerRequest(req);
 	assertNotNull(response);
-	assertEquals(RegisterResponseStatus.SUCCESS, response.status);
+	assertEquals(RegisterResponseStatus.SUCCESS, response.getStatus());
     }
 
     

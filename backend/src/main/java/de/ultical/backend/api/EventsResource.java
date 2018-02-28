@@ -19,9 +19,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.DivisionRegistration;
 import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.Event;
@@ -32,6 +35,8 @@ import io.dropwizard.auth.Auth;
 @Path("/events")
 public class EventsResource {
 
+    private static final String DB_ACCESS_FAILURE = "Accessing database failed";
+    private final static Logger LOG = LoggerFactory.getLogger(EventsResource.class);
     @Inject
     DataStore dataStore;
 
@@ -48,7 +53,8 @@ public class EventsResource {
         try (AutoCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getEvents(false, from, to);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing databaes failed", Status.INTERNAL_SERVER_ERROR);
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -60,7 +66,8 @@ public class EventsResource {
         try (AutoCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getEvents(true, from, to);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed", Status.INTERNAL_SERVER_ERROR);
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -76,7 +83,8 @@ public class EventsResource {
             }
             return result;
         } catch (PersistenceException e) {
-            throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
+            LOG.error(DB_ACCESS_FAILURE, e);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -90,21 +98,21 @@ public class EventsResource {
             Event storedEvent = this.dataStore.addNew(t);
             return storedEvent;
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{eventId}")
-    public void updateEvent(@PathParam("eventId") Integer id, Event event, @Auth @NotNull User currentUser)
-            throws Exception {
+    public void updateEvent(@PathParam("eventId") Integer id, Event event, @Auth @NotNull User currentUser) {
         this.checkDatatStore();
         if (id.equals(event.getId()) == false) {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Authenticator.assureEventAdmin(this.dataStore, event.getId(), currentUser);
             boolean updated = this.dataStore.update(event);
             if (!updated) {
@@ -112,7 +120,8 @@ public class EventsResource {
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
             }
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -124,7 +133,7 @@ public class EventsResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{eventId}/divisions")
     public DivisionRegistration addDivision(@PathParam("eventId") Integer eventId, DivisionRegistration div,
-            @Auth @NotNull User currentUser) throws Exception {
+            @Auth @NotNull User currentUser) {
         this.checkDatatStore();
 
         /*
@@ -135,7 +144,7 @@ public class EventsResource {
         TournamentEdition fakeEdition = new TournamentEdition();
         fakeEdition.setId(eventId);
         DivisionRegistration storedDiv;
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Authenticator.assureEventAdmin(this.dataStore, eventId, currentUser);
             storedDiv = this.dataStore.addDivisionToEdition(fakeEdition, div);
         } catch (PersistenceException pe) {
@@ -148,13 +157,13 @@ public class EventsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{eventId}/divisions/{divisionId}")
     public void updateDivsion(@PathParam("eventId") Integer eventId, DivisionRegistration div,
-            @PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser) throws Exception {
+            @PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser) {
         this.checkDatatStore();
         if (!Integer.valueOf(div.getId()).equals(divId)) {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Authenticator.assureEventAdmin(this.dataStore, eventId, currentUser);
             final boolean updated = this.dataStore.update(div);
             if (!updated) {
@@ -162,22 +171,23 @@ public class EventsResource {
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
             }
         } catch (PersistenceException pe) {
+	    LOG.error(DB_ACCESS_FAILURE, pe);
             throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DELETE
     @Path("/{eventId}/divisions/{divisionId}")
-    public void deleteDivision(@PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser)
-            throws Exception {
+    public void deleteDivision(@PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser) {
         this.checkDatatStore();
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Authenticator.assureEventDivisionAdmin(this.dataStore, divId, currentUser);
 
             DivisionRegistrationTeams fakeDiv = new DivisionRegistrationTeams();
             fakeDiv.setId(divId.intValue());
             this.dataStore.deleteDivision(fakeDiv);
         } catch (PersistenceException pe) {
+	    LOG.error(DB_ACCESS_FAILURE, pe);
             throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
         }
     }
