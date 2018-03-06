@@ -284,7 +284,7 @@
 												<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0 && !hasStandings[division.id]" class="margin-bottom btn btn-primary btn-ultical" ng-click="toggleEditStandings(division)">{{ 'event.teamList.createStandings' | translate }}</div>
 												<div ng-if="editStandings" class="btn btn-primary btn-ultical margin-bottom" ng-click="saveStandings(division)">{{ 'event.teamList.doneEditStandings' | translate }}</div>
 
-												<div ng-if="!eventIsFuture && hasStandings[division.id] && !editStandings" class="margin-bottom-small">
+												<div ng-if="!eventIsFuture && !editStandings" class="margin-bottom-small">
 
 													<div ng-if="show.event && latestEvents[division.id].id != event.id" class="margin-bottom-small">
 														{{ 'event.teamList.standingExplanation' | translate : { eventName : (latestEvents[division.id] | eventname) } }}
@@ -314,9 +314,9 @@
 														<h3 class="panel-title" bs-collapse-toggle>
 
 															<!-- Standings -->
-															<div ng-if="hasStandings[division.id] && !editStandings" class="pull-left margin-right-small">
+															<div ng-if="!editStandings" class="pull-left margin-right-small">
 																<div class="team-list-standing pull-left">
-																	<span class="label-as-badge label label-primary label-ultical" data-title="{{ 'event.teamList.standing' | translate }}" bs-tooltip>{{ regTeam.standing }}</span>
+																	<span class="label-as-badge label label-primary label-ultical" ng-if="hasStandings[division.id]" data-title="{{ 'event.teamList.standing' | translate }}" bs-tooltip>{{ regTeam.standing }}</span>
 																</div>
 																<div class="pull-right spirit-score-label" ng-class="{'has-own-spirit': hasOwnSpiritScores[division.id]}" ng-if="hasSpiritScores[division.id]">
 																	<div ng-class="{satrong: hasOwnSpiritScores[division.id]}" data-title="{{ 'event.teamList.spiritScore' | translate }}" bs-tooltip>{{ regTeam.spiritScore | decimal : 1 | pad : 4 : '&nbsp;' }}</div>
