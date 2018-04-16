@@ -51,7 +51,7 @@ angular.extend(CONFIG_OBJECT, {
 	},
 
 	division: {
-		ages: ['u14', 'u17', 'u20', 'u23', 'regular', 'masters', 'grandmasters'],
+		ages: ['u14', 'u17', 'u20', 'u23', 'regular', 'masters', 'grandmasters', 'greatgrand'],
 		types: ['open', 'women', 'mixed'],
 	},
 

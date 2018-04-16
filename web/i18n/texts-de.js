@@ -116,6 +116,7 @@ TRANSLATIONS['de'] = {
 			regular: 'jedes Alter',
 			masters: 'Masters',
 			grandmasters: 'Grandmasters',
+			greatgrand: 'Great Grandmasters',
 			open: 'Open',
 			women: 'Damen',
 			mixed: 'Mixed',
