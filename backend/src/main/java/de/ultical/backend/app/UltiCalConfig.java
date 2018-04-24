@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import com.google.common.cache.CacheBuilderSpec;
 
+import de.spinscale.dropwizard.jobs.JobConfiguration;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import lombok.Data;
@@ -15,7 +16,7 @@ import lombok.ToString;
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class UltiCalConfig extends Configuration {
+public class UltiCalConfig extends Configuration implements JobConfiguration {
 
     @Data
     public static class MailConfig {
@@ -49,7 +50,7 @@ public class UltiCalConfig extends Configuration {
 
     private ReCaptcha reCaptcha;
 
-    private JobsConfig jobs;
+    private JobsConfig jobsConf;
 
     @NotNull
     private DataSourceFactory database;

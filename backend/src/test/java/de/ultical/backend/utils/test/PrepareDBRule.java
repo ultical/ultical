@@ -19,7 +19,6 @@ import liquibase.Liquibase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.core.DerbyDatabase;
 import liquibase.database.jvm.DerbyConnection;
-import liquibase.logging.LogLevel;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
 public class PrepareDBRule implements TestRule {
@@ -62,7 +61,7 @@ public class PrepareDBRule implements TestRule {
 				derbyDatabase.setConnection(liquibaseConnection);
 				liquibase = new Liquibase(PrepareDBRule.this.changeLogFile, new ClassLoaderResourceAccessor(),
 						derbyDatabase);
-				liquibase.getLog().setLogLevel(LogLevel.WARNING);
+				
 				liquibase.update((Contexts) null);
 			} finally {
 

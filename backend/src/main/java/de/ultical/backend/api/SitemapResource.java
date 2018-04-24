@@ -202,12 +202,7 @@ public class SitemapResource {
     }
 
     private Slugify getSlugify() {
-        Slugify slg = null;
-        try {
-            slg = new Slugify();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Slugify slg = new Slugify();
         Map<String, String> customReplacements = new HashMap<String, String>();
         customReplacements.put("ö", "o");
         customReplacements.put("ä", "a");
@@ -215,7 +210,6 @@ public class SitemapResource {
         customReplacements.put("Ö", "o");
         customReplacements.put("Ä", "a");
         customReplacements.put("Ü", "u");
-        slg.setCustomReplacements(customReplacements);
-        return slg;
+        return slg.withCustomReplacements(customReplacements);
     }
 }

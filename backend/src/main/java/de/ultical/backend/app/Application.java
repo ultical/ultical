@@ -2,6 +2,7 @@ package de.ultical.backend.app;
 
 import java.time.LocalDate;
 import java.util.EnumSet;
+import java.util.Optional;
 
 import javax.mail.Session;
 import javax.servlet.DispatcherType;
@@ -16,7 +17,6 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Optional;
 
 import de.spinscale.dropwizard.jobs.JobsBundle;
 import de.ultical.backend.api.AuthResource;
@@ -38,6 +38,7 @@ import de.ultical.backend.app.logging.UlticalLoggingFilter;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.LocalDateMixIn;
 import de.ultical.backend.data.mapper.UserMapper;
+import de.ultical.backend.jobs.DfvDataSync;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
@@ -69,7 +70,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         // add Jobs bundle to provide schedules tasks
-        bootstrap.addBundle(new JobsBundle("de.ultical.backend.jobs"));
+        bootstrap.addBundle(new JobsBundle(new DfvDataSync()));
     }
 
     @Override
@@ -191,7 +192,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
                     throw new AuthenticationException("Accessing the database failed", pe);
                 }
 
-                Optional<User> result = Optional.absent();
+                Optional<User> result = Optional.empty();
                 if (user != null && user.getPassword().equals(providedPassword)) {
                     result = Optional.of(user);
                 }
