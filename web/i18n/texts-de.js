@@ -369,6 +369,7 @@ TRANSLATIONS['de'] = {
 			gitHubBugText: 'Berichte von Bugs',
 			gitHubText: 'Schau dir den Code an',
 			faqText: 'Häufige Fragen und Antworten',
+			legalNotice: 'Impressum',
 		},
 
 		actionBar: {

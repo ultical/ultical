@@ -61,6 +61,7 @@ angular.extend(CONFIG_OBJECT, {
 		bugLink: 'https://github.com/bastrapp/ultical/issues',
 		codeLink: 'https://github.com/bastrapp/ultical',
 		qaLink: 'http://www.frisbeesportverband.de/index.php/mitgliederservice/qa-dfv-turniere-de/',
+		legalLink: 'http://www.frisbeesportverband.de/index.php/impressum/',
 	},
 
 });
