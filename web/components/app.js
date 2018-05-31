@@ -112,6 +112,10 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		params: {
 			emailCodeType: 'password',
 		},
+	})
+	.state('app.dataPrivacy', {
+		url: '/data-privacy',
+		templateUrl: 'pages/static/data_privacy.html',
 	});
 
 });

@@ -370,6 +370,7 @@ TRANSLATIONS['de'] = {
 			gitHubText: 'Schau dir den Code an',
 			faqText: 'Häufige Fragen und Antworten',
 			legalNotice: 'Impressum',
+			dataPrivacyNotice: 'Datenschutzerklärung',
 		},
 
 		actionBar: {

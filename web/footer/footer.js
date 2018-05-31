@@ -8,5 +8,7 @@ app.controller('FooterCtrl', ['$scope', 'CONFIG',
 	$scope.emailContact = CONFIG.brand.emailContact;
 	$scope.codeLink = CONFIG.brand.codeLink;
 
-  $scope.qaLink = CONFIG.brand.qaLink;
+	$scope.qaLink = CONFIG.brand.qaLink;
+	$scope.legalLink = CONFIG.brand.legalLink;
+	$scope.dataPrivacyLink = CONFIG.brand.dataPrivacyLink;
 }]);
