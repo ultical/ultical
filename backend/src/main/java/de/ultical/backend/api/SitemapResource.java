@@ -107,9 +107,10 @@ public class SitemapResource {
                 String priority = "0.7";
                 String changefreq = "WEEKLY";
                 String lastmod = aWeekAgo.format(dtf);
-
-                String loc = slg.slugify(this.getEditionName(edition)) + "--2" + edition.getId();
-                this.appendUrlElements(urlset, doc, locales, loc, lastmod, priority, changefreq);
+                if (edition != null) {
+                	String loc = slg.slugify(this.getEditionName(edition)) + "--2" + edition.getId();
+                	this.appendUrlElements(urlset, doc, locales, loc, lastmod, priority, changefreq);
+                }
             }
 
             // go through all formats
