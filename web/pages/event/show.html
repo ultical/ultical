@@ -284,7 +284,7 @@
 												<div ng-if="enableTeamStandingManagement && !editStandings && getPlayingTeams(division).length > 0 && !hasStandings[division.id]" class="margin-bottom btn btn-primary btn-ultical" ng-click="toggleEditStandings(division)">{{ 'event.teamList.createStandings' | translate }}</div>
 												<div ng-if="editStandings" class="btn btn-primary btn-ultical margin-bottom" ng-click="saveStandings(division)">{{ 'event.teamList.doneEditStandings' | translate }}</div>
 
-												<div ng-if="!eventIsFuture && hasStandings[division.id] && !editStandings" class="margin-bottom-small">
+												<div ng-if="!eventIsFuture && !editStandings" class="margin-bottom-small">
 
 													<div ng-if="show.event && latestEvents[division.id].id != event.id" class="margin-bottom-small">
 														{{ 'event.teamList.standingExplanation' | translate : { eventName : (latestEvents[division.id] | eventname) } }}
@@ -314,9 +314,9 @@
 														<h3 class="panel-title" bs-collapse-toggle>
 
 															<!-- Standings -->
-															<div ng-if="hasStandings[division.id] && !editStandings" class="pull-left margin-right-small">
+															<div ng-if="!editStandings" class="pull-left margin-right-small">
 																<div class="team-list-standing pull-left">
-																	<span class="label-as-badge label label-primary label-ultical" data-title="{{ 'event.teamList.standing' | translate }}" bs-tooltip>{{ regTeam.standing }}</span>
+																	<span class="label-as-badge label label-primary label-ultical" ng-if="hasStandings[division.id]" data-title="{{ 'event.teamList.standing' | translate }}" bs-tooltip>{{ regTeam.standing }}</span>
 																</div>
 																<div class="pull-right spirit-score-label" ng-class="{'has-own-spirit': hasOwnSpiritScores[division.id]}" ng-if="hasSpiritScores[division.id]">
 																	<div ng-class="{satrong: hasOwnSpiritScores[division.id]}" data-title="{{ 'event.teamList.spiritScore' | translate }}" bs-tooltip>{{ regTeam.spiritScore | decimal : 1 | pad : 4 : '&nbsp;' }}</div>
@@ -374,7 +374,7 @@
 																		<span ng-if="((event | isEmpty) || eventIsFuture) && regTeam.team.x.own">({{ 'event.rosterEditOnTeamPage' | translate }})</span>
 																	</div>
 																	<div class="margin-left-small" ng-if="rosterPlayers.length > 0 && loggedIn()">
-																		<div ng-repeat="rosterPlayer in rosterPlayers | orderBy : 'player.lastName'">{{ rosterPlayer.player | playername : true }}</div>
+																		<div ng-repeat="rosterPlayer in rosterPlayers | orderBy : 'player.lastName'">{{ rosterPlayer.player | playername : true : true }}</div>
 																	</div>
 																	<div ng-if="loggedIn() && rosterPlayers.length == 0">{{ 'team.roster.empty' | translate }}</div>
 																	<div ng-if="!loggedIn()">{{ 'team.roster.notLoggedIn' | translate }}</div>
@@ -410,14 +410,14 @@
 			<div ng-if="show.edition && edition.events.length > 0 && tabs.activeTab == 'events'" class="row margin-top">
 				<div class="col-md-12" id="edition-view-events">
 
-					<div class="row" ng-repeat="listEvent in (orderedEvents = (edition.events | orderBy : ['startDate', 'name']))">
+					<div class="row" ng-repeat="listEvent in (orderedEvents = (edition.events | orderBy : ['startDate', 'endDate', 'name']))">
 						<div class="col-md-12">
 							<a ui-sref="app.eventShow({eventId: listEvent.id, eventSlug: (( listEvent | eventname) | slugify ) })">
 								<div class="col-md-12 event-list-row" ng-init="showDate = orderedEvents[$index - 1].startDate != listEvent.startDate || orderedEvents[$index - 1].endDate != listEvent.endDate">
 
 									<div class="event-list-date event-list-date-left">{{ showDate ? (listEvent.startDate | amDateFormat : 'D') : '' }}</div>
-									<div class="event-list-date event-list-date-dash">{{ showDate ? '-' : '' }}</div>
-									<div class="event-list-date event-list-date-right">{{ showDate ? (listEvent.endDate | amDateFormat : 'D') : '' }}</div>
+									<div class="event-list-date event-list-date-dash"><span ng-if="listEvent.startDate != listEvent.endDate">{{ showDate ? '-' : '' }}</span></div>
+									<div class="event-list-date event-list-date-right"><span ng-if="listEvent.startDate != listEvent.endDate">{{ showDate ? (listEvent.endDate | amDateFormat : 'D') : '' }}</span></div>
 									<div class="event-list-date event-list-date-right-month" ng-class="{'event-list-date-right-monthyear' : showYearSeparator }">{{ showDate ? (listEvent.endDate | amDateFormat : 'MMMM') : '' }} {{ showYearSeparator ? (listEvent.endDate | amDateFormat : 'YY') : '' }}</div>
 
 									<div class="event-list-text">

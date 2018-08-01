@@ -10,10 +10,6 @@ angular.module('ultical.events', [])
 	$scope.sortKey = ['startDate', 'endDate', 'name'];
 	$scope.sortOrderDesc = false;
 
-  if ('year' in $stateParams) {
-    // TODO: start with this year
-  }
-
 	storage.getEvents(true, function(data) {
 		$scope.events = data;
 	});
@@ -26,16 +22,19 @@ angular.module('ultical.events', [])
   $scope.current = {
     january: moment().date(1).month(0),
     now: moment(),
-    nextYear: moment().add(1, 'years').month(0).day(0),
+    thisYear: moment().format('YYYY'),
     lastMonth: moment().date(1).subtract(1, 'months'),
     dayMinus3: moment().subtract(3, 'days'),
   };
 
   $scope.eventFilter = function(event, index, array) {
     var eventStartDate = moment(event.startDate);
-    if (eventStartDate.isSameOrAfter($scope.current.dayMinus3, 'month') && eventStartDate.isBefore($scope.current.nextYear)) {
+    var eventEndDate = moment(event.endDate);
+    // show all events - starting with events this month
+    if (eventStartDate.isSameOrAfter($scope.current.dayMinus3, 'month')) {
         return true;
     }
+    // show all events of this year if the corresponding button is clicked
     if (eventStartDate.isSame($scope.current.now, 'year') && $scope.show.beginningOfYear) {
       return true;
     }

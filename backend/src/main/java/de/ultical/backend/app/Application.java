@@ -14,6 +14,7 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.api.Factory;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 
@@ -65,6 +66,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
         ObjectMapper objectMapper = bootstrap.getObjectMapper();
         objectMapper.addMixIn(LocalDate.class, LocalDateMixIn.class);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         // add Jobs bundle to provide schedules tasks
         bootstrap.addBundle(new JobsBundle("de.ultical.backend.jobs"));
@@ -110,6 +112,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
 
                         if (this.clientInstance == null) {
                             JerseyClientConfiguration conf = new JerseyClientConfiguration();
+
                             conf.setTimeout(Duration.milliseconds(7000));
                             conf.setConnectionTimeout(Duration.milliseconds(7000));
 
@@ -179,16 +182,15 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
             public Optional<User> authenticate(BasicCredentials credentials) throws AuthenticationException {
                 final String providedUserName = credentials.getUsername();
                 final String providedPassword = credentials.getPassword();
-                SqlSession sqlSession = mbm.provide();
                 User user = null;
-                try {
+
+                try (SqlSession sqlSession = mbm.provide()) {
                     UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
                     user = userMapper.getByEmail(providedUserName);
                 } catch (PersistenceException pe) {
                     throw new AuthenticationException("Accessing the database failed", pe);
-                } finally {
-                    sqlSession.close();
                 }
+
                 Optional<User> result = Optional.absent();
                 if (user != null && user.getPassword().equals(providedPassword)) {
                     result = Optional.of(user);
@@ -197,8 +199,8 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
             }
         };
 
-        CachingAuthenticator<BasicCredentials, User> cachingAuthenticator = new CachingAuthenticator<BasicCredentials, User>(
-                env.metrics(), authenticator, config.getAuthenticationCache());
+        CachingAuthenticator<BasicCredentials, User> cachingAuthenticator = new CachingAuthenticator<>(env.metrics(),
+                authenticator, config.getAuthenticationCache());
         env.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
                 .setAuthenticator(cachingAuthenticator).buildAuthFilter()));
         env.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
@@ -213,12 +215,12 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
             this.addCorsFilter(env);
         }
 
-	/*
-	 * add overall admins
-	 */
-	if (config.getOverallAdmins() != null) {
-	    config.getOverallAdmins().stream().forEach(de.ultical.backend.app.Authenticator::addAdmin);
-	}
+        /*
+         * add overall admins
+         */
+        if (config.getOverallAdmins() != null) {
+            config.getOverallAdmins().stream().forEach(de.ultical.backend.app.Authenticator::addAdmin);
+        }
     }
 
     /*

@@ -2,6 +2,7 @@ package de.ultical.backend.api;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -69,7 +70,7 @@ public class RegisterResource {
 
             // now we have zero or more matches
             // get each one's full information
-            List<DfvMvPlayer> foundPlayers = new ArrayList<DfvMvPlayer>();
+            List<DfvMvPlayer> foundPlayers = new ArrayList<>();
 
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
             String registerUserBirthdayString = df.format(registerRequest.getBirthDate());
@@ -107,7 +108,7 @@ public class RegisterResource {
                 // if we encounter more than one entity we check whether the
                 // email
                 // addresses match
-                List<DfvMvPlayer> matchingEmailPlayers = new ArrayList<DfvMvPlayer>();
+                List<DfvMvPlayer> matchingEmailPlayers = new ArrayList<>();
                 Iterator<DfvMvPlayer> playerIterator = foundPlayers.iterator();
 
                 while (playerIterator.hasNext()) {
@@ -156,7 +157,7 @@ public class RegisterResource {
                     } else {
                         // no club chosen, so let her choose one
                         RegisterResponse response;
-                        List<Club> clubs = new ArrayList<Club>();
+                        List<Club> clubs = new ArrayList<>();
 
                         if (matchingEmailPlayers.size() > 1) {
                             /*
@@ -223,7 +224,7 @@ public class RegisterResource {
                 dfvPlayer = new DfvPlayer(playerToRegister);
                 dfvPlayer.setFirstName(registerRequest.getFirstName());
                 dfvPlayer.setLastName(registerRequest.getLastName());
-
+                dfvPlayer.setLastModified(LocalDateTime.now());
                 Club club = this.dataStore.getClub(playerToRegister.getClub());
                 dfvPlayer.setClub(club);
             }

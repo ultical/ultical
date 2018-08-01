@@ -1,6 +1,9 @@
 package de.ultical.backend.data;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -548,9 +551,28 @@ public class DataStore {
         }
     }
 
-    public List<Event> getEventBasics() {
+    public List<Event> getEvents(boolean basicDataOnly, Date from, Date to) {
+        String fromString, toString;
+        if (null == from) {
+            fromString = "1900-01-01";
+        } else {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            fromString = df.format(from);
+        }
+        if (null == to) {
+            toString = "3000-01-01";
+        } else {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            toString = df.format(to);
+        }
+
         EventMapper eventMapper = this.sqlSession.getMapper(EventMapper.class);
-        return eventMapper.getAllBasics();
+
+        if (basicDataOnly) {
+            return eventMapper.getBasics(fromString, toString);
+        } else {
+            return eventMapper.getFull(fromString, toString);
+        }
     }
 
     public List<Team> getTeamBasics() {

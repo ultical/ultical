@@ -116,6 +116,7 @@ TRANSLATIONS['de'] = {
 			regular: 'jedes Alter',
 			masters: 'Masters',
 			grandmasters: 'Grandmasters',
+			greatgrand: 'Great Grandmasters',
 			open: 'Open',
 			women: 'Damen',
 			mixed: 'Mixed',
@@ -368,6 +369,8 @@ TRANSLATIONS['de'] = {
 			gitHubBugText: 'Berichte von Bugs',
 			gitHubText: 'Schau dir den Code an',
 			faqText: 'Häufige Fragen und Antworten',
+			legalNotice: 'Impressum',
+			dataPrivacyNotice: 'Datenschutzerklärung',
 		},
 
 		actionBar: {
