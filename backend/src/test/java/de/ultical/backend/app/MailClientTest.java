@@ -14,6 +14,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -21,6 +22,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit.GreenMailRule;
 import com.icegreen.greenmail.util.ServerSetup;
 
@@ -45,7 +47,8 @@ public class MailClientTest {
     UlticalMessage testMessageTwoRec;
 
     @ClassRule
-    public static GreenMailRule greenMail = new GreenMailRule(new ServerSetup(SMTP_PORT, SMTP_HOST, "smtp"));
+    public static GreenMailRule greenMail = new GreenMailRule(new ServerSetup(SMTP_PORT, SMTP_HOST, "smtp")).withConfiguration(GreenMailConfiguration.aConfig()
+    		.withUser(SMTP_SENDER, SMTP_USER, SMTP_PASSWORD));
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -83,6 +86,8 @@ public class MailClientTest {
                         new Recipient("testtoo@frisbeesportverband.de"))));
         when(this.testMessageTwoRec.getRenderedMessage()).thenReturn("Foo Bar");
         when(this.testMessageTwoRec.getSenderName()).thenReturn("Mrs Frisbee");
+        
+        greenMail.setUser(SMTP_SENDER, SMTP_USER, SMTP_PASSWORD);
     }
 
     @After
@@ -105,7 +110,7 @@ public class MailClientTest {
     @Test
     public void testTwoMessages() throws Exception {
         assertThat(this.testMessage, is(notNullValue()));
-
+        Assume.assumeNotNull(client);
         if (this.client != null) {
             this.client.sendMail(this.testMessageTwoRec);
         }
