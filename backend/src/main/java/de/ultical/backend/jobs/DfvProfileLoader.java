@@ -178,7 +178,7 @@ public class DfvProfileLoader {
         player.setLastModified(mvName.getLastModified());
 
         // eligible should include active, dse and !idle
-        if (mvPlayer.isActive() && mvPlayer.hasDse() && !mvPlayer.isIdle()) {
+        if (mvPlayer.isActive() && mvPlayer.hasDse() && !mvPlayer.isIdle() && mvPlayer.isPaid()) {
             player.setEligibleUntil(null);
         } else {
             player.setEligibleUntil(mvName.getLastModified());
