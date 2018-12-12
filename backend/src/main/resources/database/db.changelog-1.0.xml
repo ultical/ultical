@@ -1126,4 +1126,17 @@
 			TEAM.id WHERE ROSTER.id = TEAM_REGISTRATION.roster)));
 		</sql>
 	</changeSet>
+	<changeSet id="bb-20181212-tagbefore" author="bb">
+		<tagDatabase tag="v1.19"></tagDatabase>
+	</changeSet>
+	<changeSet id="bb-20181212-001" author="bb">
+		<addColumn tableName="DFV_PLAYER">
+			<column name="paid" type="BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="bb-20181212-002" author="bb">
+		<tagDatabase tag="v1.20"></tagDatabase>
+	</changeSet>
 </databaseChangeLog>
