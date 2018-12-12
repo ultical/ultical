@@ -170,7 +170,9 @@ public class RosterResource {
                 dfvPlayer.setLastName(dfvMvName.getLastName());
                 dfvPlayer.setEmail(dfvMvPlayer.getEmail());
                 dfvPlayer.setLastModified(dfvMvName.getLastModified());
-
+                if (dfvMvPlayer.isIdle() || !dfvMvPlayer.isActive() || !dfvMvPlayer.isDse() || !dfvMvPlayer.isPaid()) {
+                	dfvPlayer.setEligibleUntil(dfvMvName.getLastModified());
+                }
                 Club club = this.dataStore.getClub(dfvMvPlayer.getClub());
                 dfvPlayer.setClub(club);
 
