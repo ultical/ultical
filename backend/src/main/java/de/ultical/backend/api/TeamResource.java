@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.Location;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.User;
@@ -29,6 +30,8 @@ import io.dropwizard.auth.Auth;
 
 @Path("/teams")
 public class TeamResource {
+
+    private static final String DB_ACCESS_FAILED = "database access failed";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TeamResource.class);
 
@@ -48,12 +51,12 @@ public class TeamResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("basics")
-    public List<Team> getBasics() throws Exception {
+    public List<Team> getBasics()  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getTeamBasics();
         }
     }
@@ -61,14 +64,14 @@ public class TeamResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{teamId}")
-    public Team get(@PathParam("teamId") Integer id) throws Exception {
+    public Team get(@PathParam("teamId") Integer id)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
         Team result;
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             result = this.dataStore.get(id, Team.class);
             if (result == null) {
                 throw new WebApplicationException(404);
@@ -80,12 +83,12 @@ public class TeamResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("own")
-    public List<Team> get(@Auth @NotNull User user) throws Exception {
+    public List<Team> get(@Auth @NotNull User user)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getTeamsByUser(user.getId());
         }
     }
@@ -93,12 +96,12 @@ public class TeamResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("own/basics")
-    public List<Team> getBasicsByUser(@Auth @NotNull User user) throws Exception {
+    public List<Team> getBasicsByUser(@Auth @NotNull User user)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getTeamBasicsByUser(user.getId());
         }
     }
@@ -106,43 +109,43 @@ public class TeamResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Team add(Team newTeam, @Auth @NotNull User currentUser) throws Exception {
+    public Team add(final Team newTeam, @Auth @NotNull User currentUser)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
+	    
+            Team preparedTeam = this.prepareTeam(newTeam);
 
-            newTeam = this.prepareTeam(newTeam);
-
-            if (newTeam.getLocation() == null || newTeam.getLocation().getCity() == null
-                    || newTeam.getLocation().getCity().isEmpty()) {
+            if (preparedTeam.getLocation() == null || preparedTeam.getLocation().getCity() == null
+                    || preparedTeam.getLocation().getCity().isEmpty()) {
                 throw new WebApplicationException("Location must be specified", Status.EXPECTATION_FAILED);
-                // t.setLocation(new Location());
             }
 
             this.dataStore.addNew(newTeam.getLocation());
 
             try {
-                newTeam = this.dataStore.addNew(newTeam);
+                preparedTeam = this.dataStore.addNew(preparedTeam);
             } catch (PersistenceException pe) {
+                LOGGER.error(DB_ACCESS_FAILED, pe);
                 throw new WebApplicationException(pe);
             }
 
             // add admins
-            for (User admin : newTeam.getAdmins()) {
+            for (User admin : preparedTeam.getAdmins()) {
                 try {
-                    this.dataStore.addAdminToTeam(newTeam, admin);
-                } catch (Exception e) {
-                    LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )", newTeam.getName(),
-                            newTeam.getId(), admin.getFullName(), admin.getId());
+                    this.dataStore.addAdminToTeam(preparedTeam, admin);
+                } catch (PersistenceException e) {
+                    LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )", preparedTeam.getName(),
+                            preparedTeam.getId(), admin.getFullName(), admin.getId());
                     LOGGER.error("exception:", e);
                 }
             }
 
-            newTeam.setVersion(1);
+            preparedTeam.setVersion(1);
 
-            return newTeam;
+            return preparedTeam;
         }
     }
 
@@ -166,12 +169,12 @@ public class TeamResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{teamId}")
     public void update(Team updatedTeam, @PathParam("teamId") Integer teamId, @Auth @NotNull User currentUser)
-            throws Exception {
+             {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
 
@@ -192,6 +195,7 @@ public class TeamResource {
             try {
                 updated = this.dataStore.update(updatedTeam);
             } catch (PersistenceException pe) {
+                LOGGER.error(DB_ACCESS_FAILED, pe);
                 throw new WebApplicationException(pe);
             }
             if (!updated) {
@@ -205,7 +209,7 @@ public class TeamResource {
             for (User admin : updatedTeam.getAdmins()) {
                 try {
                     this.dataStore.addAdminToTeam(updatedTeam, admin);
-                } catch (Exception e) {
+                } catch (PersistenceException e) {
                     LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )\ncurrentUser: {}",
                             updatedTeam.getName(), updatedTeam.getId(), admin.getFullName(), admin.getId(),
                             currentUser.getId());
@@ -218,16 +222,17 @@ public class TeamResource {
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{teamId}")
-    public void delete(@PathParam("teamId") Integer teamId, @Auth @NotNull User currentUser) throws Exception {
+    public void delete(@PathParam("teamId") Integer teamId, @Auth @NotNull User currentUser)  {
         if (this.dataStore == null) {
             throw new WebApplicationException(500);
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
             Team teamToDelete = this.dataStore.get(teamId, Team.class);
             this.dataStore.remove(teamToDelete.getLocation().getId(), Location.class);
         } catch (PersistenceException pe) {
+            LOGGER.error(DB_ACCESS_FAILED, pe);
             throw new WebApplicationException("c17 - Deletion not successful!", Status.CONFLICT);
         }
     }
@@ -235,11 +240,11 @@ public class TeamResource {
     @POST
     @Path("{teamId}/admin/{userId}")
     public void addAdmin(@Auth @NotNull User currentUser, @PathParam("teamId") Integer teamId,
-            @PathParam("userId") Integer userId) throws Exception {
+            @PathParam("userId") Integer userId)  {
         if (this.dataStore == null) {
             throw new WebApplicationException();
         }
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
             final Team team = new Team();
             team.setId(teamId);
@@ -249,7 +254,8 @@ public class TeamResource {
             try {
                 this.dataStore.addAdminToTeam(team, admin);
             } catch (PersistenceException pe) {
-                throw new WebApplicationException("Accessing the database failed!");
+                LOGGER.error(DB_ACCESS_FAILED, pe);
+                throw new WebApplicationException(DB_ACCESS_FAILED);
             }
         }
     }
@@ -257,11 +263,11 @@ public class TeamResource {
     @DELETE
     @Path("{teamId}/admin/{userId}")
     public void deleteAdmin(@Auth @NotNull User currentUser, @PathParam("teamId") Integer teamId,
-            @PathParam("userId") Integer userId) throws Exception {
+            @PathParam("userId") Integer userId)  {
         if (this.dataStore == null) {
             throw new WebApplicationException();
         }
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             Authenticator.assureTeamAdmin(this.dataStore, teamId, currentUser);
 
@@ -273,7 +279,8 @@ public class TeamResource {
 
                 this.dataStore.removeAdminFromTeam(fakeTeam, fakeAdmin);
             } catch (PersistenceException pe) {
-                throw new WebApplicationException("Acessecing the database failes!");
+                LOGGER.error(DB_ACCESS_FAILED, pe);
+                throw new WebApplicationException(DB_ACCESS_FAILED);
             }
         }
     }

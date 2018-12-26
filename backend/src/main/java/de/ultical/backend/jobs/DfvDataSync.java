@@ -28,7 +28,7 @@ public class DfvDataSync extends Job {
     public void doJob(JobExecutionContext ctxt) {
 
         LOGGER.info("Starting to fetch and store from dfv-mv...");
-        ServiceLocator sl = ServiceLocatorProvider.INSTANCE.getServiceLocator();
+        ServiceLocator sl = ServiceLocatorProvider.getInstance().getServiceLocator();
 
         if (sl != null) {
 

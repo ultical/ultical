@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.Season;
 import de.ultical.backend.model.User;
 import de.ultical.backend.app.Authenticator;
@@ -37,13 +38,13 @@ public class SeasonResource {
     @GET
     @Path("/{seasonId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Season getSeasonById(@PathParam("seasonId") Integer id) throws Exception {
+    public Season getSeasonById(@PathParam("seasonId") Integer id) {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
         Season result = null;
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             result = this.dataStore.get(id, Season.class);
         } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);
@@ -57,12 +58,12 @@ public class SeasonResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Season> getAllSeasons() throws Exception {
+    public List<Season> getAllSeasons() {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getAll(Season.class);
         } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);
@@ -73,12 +74,12 @@ public class SeasonResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Season addSeason(@Auth @NotNull User currentUser, Season newSeason) throws Exception {
+    public Season addSeason(@Auth @NotNull User currentUser, Season newSeason) {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 	    Authenticator.assureOverallAdmin(currentUser);
             return this.dataStore.addNew(newSeason);
         } catch (PersistenceException pe) {
@@ -94,14 +95,14 @@ public class SeasonResource {
     @Path("/{seasonId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public void updateSeason(@PathParam("seasonId") Integer id, @NotNull Season updSeason, @Auth @NotNull User currentUser) throws Exception {
+    public void updateSeason(@PathParam("seasonId") Integer id, @NotNull Season updSeason, @Auth @NotNull User currentUser) {
         
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
         boolean success = false;
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 	    Authenticator.assureOverallAdmin(currentUser);
 	    if (updSeason.getId() != id) {
 		// the id of the season passed as parameter and in the request URL

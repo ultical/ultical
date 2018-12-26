@@ -4,10 +4,19 @@ import org.glassfish.hk2.api.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public enum ServiceLocatorProvider {
-    INSTANCE;
+public class ServiceLocatorProvider {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceLocatorProvider.class);
+    private static ServiceLocatorProvider INSTANCE = null;
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(ServiceLocatorProvider.class);
+    private ServiceLocatorProvider() {}
+
+    public static ServiceLocatorProvider getInstance() {
+	if (INSTANCE == null) {
+	    INSTANCE = new ServiceLocatorProvider();
+	}
+	return INSTANCE;
+    }
 
     private ServiceLocator serviceLocator = null;
 

@@ -24,13 +24,13 @@ public class DfvClubLoader {
     @Inject
     private DataStore dataStore;
 
-    public boolean getClubs() throws Exception {
+    public boolean getClubs() {
 
         if (!this.config.getJobsConf().isDfvMvSyncEnabled()) {
             return false;
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStore.DataStoreCloseable c = this.dataStore.getClosable()) {
 
             WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("vereine")
                     .queryParam("token", this.config.getDfvApi().getToken())

@@ -10,8 +10,8 @@ public class AuthResponse {
         WRONG_CREDENTIALS, EMAIL_NOT_CONFIRMED, DFV_EMAIL_NOT_OPT_IN, SUCCESS
     }
 
-    public AuthResponseStatus status;
-    public User user;
+    private AuthResponseStatus status;
+    private User user;
 
     public AuthResponse(AuthResponseStatus status) {
         this.status = status;

@@ -12,9 +12,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.TeamRegistration;
@@ -23,6 +26,12 @@ import io.dropwizard.auth.Auth;
 
 @Path("/divisions")
 public class DivisionResource {
+
+    private static final String INJECTION_FAILURE = "Injection DataStore failed!";
+
+    private static final String DB_ACCESS_FAILURE = "Accessing the database failed!";
+
+    private final static Logger LOG = LoggerFactory.getLogger(DivisionResource.class);
 
     @Inject
     DataStore dStore;
@@ -33,7 +42,7 @@ public class DivisionResource {
     public void registerTeam(@Auth @NotNull User currentUser, @PathParam("divisionId") Integer divisionId,
             @PathParam("rosterId") Integer rosterId, TeamRegistration teamReg) {
         if (this.dStore == null) {
-            throw new WebApplicationException("Injection DataStore failed!");
+            throw new WebApplicationException(INJECTION_FAILURE);
         }
 
         /*
@@ -54,7 +63,7 @@ public class DivisionResource {
             }
         }
 
-        try (AutoCloseable c = this.dStore.getClosable()) {
+        try (DataStoreCloseable c = this.dStore.getClosable()) {
             Roster loadedRoster = this.dStore.get(rosterId, Roster.class);
 
             Authenticator.assureTeamAdmin(this.dStore, loadedRoster.getTeam().getId(), currentUser);
@@ -64,9 +73,8 @@ public class DivisionResource {
 
             this.dStore.registerTeamForEdition(divisionReg.getId(), teamReg);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing the database failed!", pe);
-        } catch (Exception e) {
-            // only for the compiler
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, pe);
         }
     }
 
@@ -75,9 +83,9 @@ public class DivisionResource {
     public void unregisterTeam(@Auth @NotNull User currentUser, @PathParam("divisionId") Integer divId,
             @PathParam("rosterId") Integer rosterId) {
         if (this.dStore == null) {
-            throw new WebApplicationException("Injection DataStore failed!");
+            throw new WebApplicationException(INJECTION_FAILURE);
         }
-        try (AutoCloseable c = this.dStore.getClosable()) {
+        try (DataStoreCloseable c = this.dStore.getClosable()) {
             Roster rosterInDB = this.dStore.get(rosterId, Roster.class);
 
             Authenticator.assureTeamAdmin(this.dStore, rosterInDB.getTeam().getId(), currentUser);
@@ -89,10 +97,8 @@ public class DivisionResource {
 
             this.dStore.unregisterTeamFromDivision(fakeReg, fakeRoster);
         } catch (PersistenceException pe) {
-            throw new WebApplicationException("Accessing database failed!", pe);
-        } catch (Exception e) {
-            // only for the compiler
-            throw new WebApplicationException(e);
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, pe);
         }
     }
 }

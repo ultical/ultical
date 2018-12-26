@@ -68,7 +68,7 @@ public class DfvProfileLoaderTest {
     @Mock
     UltiCalConfig noJobsConfig;
     @Mock
-    AutoCloseable closable;
+    DataStore.DataStoreCloseable closable;
     @Mock
     MailClient mailClient;
 

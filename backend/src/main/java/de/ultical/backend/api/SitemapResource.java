@@ -16,21 +16,30 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.github.slugify.Slugify;
 
 import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.Event;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TournamentEdition;
 import de.ultical.backend.model.TournamentFormat;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
+import org.apache.ibatis.exceptions.PersistenceException;
+import javax.xml.parsers.ParserConfigurationException;
 
 @Path("/sitemap.xml")
 public class SitemapResource {
 
     public static final String DOMAIN_URL = "https://www.dfv-turniere.de";
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(SitemapResource.class);
 
     @Inject
     DataStore dataStore;
@@ -41,7 +50,7 @@ public class SitemapResource {
 
         Document doc;
 
-        List<String> locales = new ArrayList<String>();
+        List<String> locales = new ArrayList<>();
         locales.add("de");
 
         LocalDate today = LocalDate.now();
@@ -50,10 +59,14 @@ public class SitemapResource {
         LocalDate halfAYearAgo = LocalDate.now().minusMonths(6);
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("YYYY-MM-dd");
-
-        Slugify slg = this.getSlugify();
-
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+	Slugify slg = null;
+	try {
+	    slg = this.getSlugify();
+	} catch (IOException e) {
+	    LOGGER.error("creating slugify failed",e);
+	    throw new WebApplicationException(e, Status.INTERNAL_SERVER_ERROR);
+	}
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -94,9 +107,10 @@ public class SitemapResource {
                 String priority = "0.7";
                 String changefreq = "WEEKLY";
                 String lastmod = aWeekAgo.format(dtf);
-
-                String loc = slg.slugify(this.getEditionName(edition)) + "--2" + edition.getId();
-                this.appendUrlElements(urlset, doc, locales, loc, lastmod, priority, changefreq);
+                if (edition != null) {
+                	String loc = slg.slugify(this.getEditionName(edition)) + "--2" + edition.getId();
+                	this.appendUrlElements(urlset, doc, locales, loc, lastmod, priority, changefreq);
+                }
             }
 
             // go through all formats
@@ -121,16 +135,16 @@ public class SitemapResource {
 
             return doc;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (PersistenceException | ParserConfigurationException e) {
+            LOGGER.error("exception occurred", e);
+        } 
 
         return null;
 
     }
 
     private String getEventName(Event event) {
-        String output = "";
+        String output;
 
         if (event.getName().isEmpty()) {
             return this.getEditionName(event.getTournamentEdition());
@@ -201,9 +215,9 @@ public class SitemapResource {
         return url;
     }
 
-    private Slugify getSlugify() {
-        Slugify slg = new Slugify();
-        Map<String, String> customReplacements = new HashMap<String, String>();
+    private Slugify getSlugify() throws IOException {
+        final Slugify slg = new Slugify();
+        Map<String, String> customReplacements = new HashMap<>();
         customReplacements.put("ö", "o");
         customReplacements.put("ä", "a");
         customReplacements.put("ü", "u");

@@ -1,18 +1,21 @@
 language: java
-
 sudo: false
 
-# change working directory to backend
-# if we at some point in time also want to build the
-# client part, we need some more logic at this place
+addons:
+  sonarcloud:
+    organization: "ultical"
+    token:
+      secure: w98fSde7w0Yv9byz/7wNxS4oll39rkGLMm9Bpw6wlQohq57gnRSG7ULhLp0/QtkzKWpaYfzVhVLZjNJXAO28BNlA6OzSmu1yTRb0SvnLztTz3mk5pndRMkIwz7vnjPVMYLSyAWIFoOd8BwVq0/TBbLV+b8tn2uSrOlso1B/wBei+U3YweK1S2ZCz0vY5SuY19sJSWmsUmt2QtbNKZ5ilTnk67BdBX4+zwhBkQEpOg4kLuzKeSu2LEQfvM8fMBK3dR/4C8epiYatdCEefnPmyigJSBAnS3x2SdroD6iYBnKuj+xsuW4RjUlO4V1HKZT/ueyafiP50cxf3h2fLOqvGxGRZfu/cV/Ov5DqBZEkY/ZXwzcjZvd6VASP0YqwmA3jj4BKllj+RsN4MWOU5arLPYKcPoX/yAgHf+FyHispMJDOD/PG3hcIc3xUoJlHbZz/TeEuPgiWFnMRzvrOtP8SI7xnI9/ejoQmszY1m3nlHSOf5xqT/ICtDfQjOCsQruUlpD9BKblu3XYiZkoZX38fDw+nP9wq1bitH/enkPLHuJQbiYzWSuYul04HizV1gNF7NCjG0GdueBKIx/25ZE+O69RwjxARowSexdHqxtpuN2Jhl3PKn1vm0re4hyj4CAIXzyANuSHs0VMM8UoWx69/f0RZkaN9GXyCUPxgvxpkpleI=
+
 before_install:
   - cd backend
   - cp src/main/resources/jdbc.properties.travis src/main/resources/jdbc.properties
-
-# use caching to speed up build
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test sonar:sonar -Dsonar.projectKey=ultical-backend -Dsonar.branch=$TRAVIS_BRANCH
 cache:
   directories:
-    - $HOME/.m2
+  - "$HOME/.m2"
+  - "$HOME/.sonar/cache"
   
 jdk:
   - oraclejdk8
@@ -20,6 +23,10 @@ jdk:
 notifications:
   email:
     recipients:
-      - TEAM_EMAIL
+    - "$TEAM_EMAIL"
     on_success: change
     on_failure: always
+    
+env:
+  global:
+    - secure: "pH4uiXNUpqolyd3pvt2Z5qluYocuutqWLnfrY7U4YiQQv5z6Adt5Exjbi5721OON6TV3IMCGLr4rTqSJRgKH9Hogyc54sSqNLvGT0btcccEmIi1gRa7yl57G/n0FFjD+ep8dxzsKzbvd6jNeq9hJHDtBAPtmKodk7HQUPQC8kMG9UgSEif1amwEwJnRPlHPPdCmP4sjFcEiUqj3S273M0wAsEFRHhVqJ+RmTbGfC819Hs4qAr2P2/x2qc5GvwNjVjn9BP/N3pZPXtcwyTFeWLfFMKP/AdWcb7erQzmWbnejBU+5pKQ/hhdUX2mAKqSuCbzgbdUz42g5l8HKXdRBUe8dI2OMDNpZm5rz0Wnv3OmQlq/XAzm2dCGXsCWsm16rp6HOBJzJNTjCdkAroJEgL32+/F9+z5goyNk6YSLix+10LGOBAZLc7ApnabOy2HOnnTKX5iS97RmtRT5bv/9HCZ4qIdNM56SqxmKUEpzG5t56WAWY/7OB0WbQ90/gyEJA9nRf6xHbHQqvsUx94cIHRmhFYPJIUJH/KPGVwUX6virBA/192Z0r8PGOnOBWS841+RBNzsSmxuVBBeRGTEvpE96pDDdUAPZpYI0hglu2RTAVT8/BwS3gJOtHBMtiMtxMT5Hs2DAV4hicMbd/SvbLWBbf+HpdrKkGM/2XY/Pe0Puc="

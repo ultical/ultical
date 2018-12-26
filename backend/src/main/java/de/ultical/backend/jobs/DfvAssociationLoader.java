@@ -24,13 +24,13 @@ public class DfvAssociationLoader {
     @Inject
     private DataStore dataStore;
 
-    public boolean getAssociations() throws Exception {
+    public boolean getAssociations() {
 
         if (!this.config.getJobsConf().isDfvMvSyncEnabled()) {
             return false;
         }
 
-        try (AutoCloseable c = this.dataStore.getClosable()) {
+        try (DataStore.DataStoreCloseable c = this.dataStore.getClosable()) {
 
             WebTarget target = this.client.target(this.config.getDfvApi().getUrl()).path("verbaende")
                     .queryParam("token", this.config.getDfvApi().getToken())
