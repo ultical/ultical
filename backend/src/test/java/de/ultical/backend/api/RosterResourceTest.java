@@ -8,9 +8,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 
 import org.junit.After;
 import org.junit.Before;
@@ -18,9 +23,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
+import de.ultical.backend.api.transferClasses.DfvMvPlayer;
+import de.ultical.backend.app.DfvApiConfig;
+import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.Context;
 import de.ultical.backend.model.DfvPlayer;
@@ -98,6 +107,8 @@ public class RosterResourceTest {
     DfvPlayer passivePlayer;
     @Mock
     DfvMvName dfvNamePassive;
+    @Mock
+    DfvMvName dfvUnpaidPlayer;
 
     private RosterResource resource;
 
@@ -203,9 +214,44 @@ public class RosterResourceTest {
         when(this.player17yoWoman.isEligible()).thenReturn(Boolean.TRUE);
         when(this.player17yoWoman.getBirthDate()).thenReturn(LocalDate.of(1999, 5, 6));
         when(this.dataStore.getPlayerByDfvNumber(eq(DFV_NUMBER_17YO_WOMAN))).thenReturn(this.player17yoWoman);
+        
+        when(this.dfvUnpaidPlayer.getDfvNumber()).thenReturn(56789);
+        when(this.dfvUnpaidPlayer.isDse()).thenReturn(true);
+        when(this.dfvUnpaidPlayer.isActive()).thenReturn(true);
+        when(this.dfvUnpaidPlayer.getLastModified()).thenReturn(LocalDateTime.of(2018, 12, 27, 13,14,15));
+        
+        DfvMvPlayer unpaidPlayer = new DfvMvPlayer();
+        unpaidPlayer.setDse(true);
+        unpaidPlayer.setActive(true);
+        unpaidPlayer.setDfvnr(567890);
+        unpaidPlayer.setGender("männlich");
+        unpaidPlayer.setEmail("test");
+        unpaidPlayer.setIdle(false);
+        unpaidPlayer.setPaid(false);
+        unpaidPlayer.setDobString("1981-02-03");
+        when(this.dfvUnpaidPlayer.getDfvNumber()).thenReturn(567890);
+        
+        Invocation.Builder builder = Mockito.mock(Invocation.Builder.class);
+        when(builder.get(DfvMvPlayer.class)).thenReturn(unpaidPlayer);
+        WebTarget target = Mockito.mock(WebTarget.class);
+        when(target.path(Mockito.anyString())).thenReturn(target);
+        when(target.queryParam(Mockito.anyString(), Mockito.any())).thenReturn(target);
+        when(target.path(Mockito.anyString())).thenReturn(target);
+        when(target.request(Mockito.eq(MediaType.APPLICATION_JSON))).thenReturn(builder);
+        Client client = Mockito.mock(Client.class);
+        when(client.target(Mockito.anyString())).thenReturn(target);
+        
+        UltiCalConfig conf = new UltiCalConfig();
+        DfvApiConfig dfvApi = new DfvApiConfig();
+        dfvApi.setUrl("dfdf");
+        dfvApi.setToken("dfdf");
+        dfvApi.setSecret("dfdfd");
+		conf.setDfvApi(dfvApi);
 
         this.resource = new RosterResource();
         this.resource.dataStore = this.dataStore;
+        this.resource.client = client;
+        this.resource.config = conf;
     }
 
     @After
@@ -294,5 +340,10 @@ public class RosterResourceTest {
     public void test17yoWomanCanPlayU17() throws Exception {
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_U17, this.dfvName17yoWoman);
         verify(this.dataStore).addPlayerToRoster(this.rosterU17Open, this.player17yoWoman);
+    }
+    
+    @Test(expected = WebApplicationException.class)
+    public void testUnpaidPlayerCannotPlay() throws Exception {
+    	this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG_A, this.dfvUnpaidPlayer);
     }
 }
