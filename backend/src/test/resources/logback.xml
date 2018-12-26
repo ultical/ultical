@@ -1,0 +1,21 @@
+<configuration>
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener"
+                  />
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%level - %message{short}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name= "ASYNCSTDOUT"
+            class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="STDOUT" />
+  </appender>
+            
+  <logger name="liquibase" level="WARN" />
+  <logger name="de.ultical.backend.data.mapper" level="INFO" />
+
+  <root level="DEBUG">
+    <appender-ref ref="ASYNCSTDOUT" />
+  </root>
+</configuration>
