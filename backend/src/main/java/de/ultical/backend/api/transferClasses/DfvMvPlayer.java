@@ -1,5 +1,7 @@
 package de.ultical.backend.api.transferClasses;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 import lombok.Data;
 
 @Data
@@ -12,6 +14,9 @@ public class DfvMvPlayer {
     private String gender;
     private boolean dse;
     private String email;
+    
+    @JsonAlias("beitrag_bezahlt")
+    private boolean paid;
 
     public void setGeburtsdatum(String dobString) {
         this.dobString = dobString;

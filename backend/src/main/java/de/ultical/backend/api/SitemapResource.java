@@ -224,7 +224,6 @@ public class SitemapResource {
         customReplacements.put("Ö", "o");
         customReplacements.put("Ä", "a");
         customReplacements.put("Ü", "u");
-        slg.setCustomReplacements(customReplacements);
-        return slg;
+        return slg.withCustomReplacements(customReplacements);
     }
 }

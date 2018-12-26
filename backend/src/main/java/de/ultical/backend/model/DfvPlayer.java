@@ -61,6 +61,8 @@ public class DfvPlayer extends Player {
     public boolean isEligible() {
         return this.eligibleUntil == null;
     }
+    
+    private boolean paid;
 
     @Override
     public Class<DfvPlayerMapper> getMapper() {

@@ -26,7 +26,7 @@ public class DfvClubLoader {
 
     public boolean getClubs() {
 
-        if (!this.config.getJobs().isDfvMvSyncEnabled()) {
+        if (!this.config.getJobsConf().isDfvMvSyncEnabled()) {
             return false;
         }
 

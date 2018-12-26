@@ -26,7 +26,7 @@ public class DfvAssociationLoader {
 
     public boolean getAssociations() {
 
-        if (!this.config.getJobs().isDfvMvSyncEnabled()) {
+        if (!this.config.getJobsConf().isDfvMvSyncEnabled()) {
             return false;
         }
 

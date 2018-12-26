@@ -1,6 +1,7 @@
 package de.ultical.backend.jobs;
 
 import org.glassfish.hk2.api.ServiceLocator;
+import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,7 @@ public class DfvDataSync extends Job {
     private final static Logger LOGGER = LoggerFactory.getLogger(DfvDataSync.class);
 
     @Override
-    public void doJob() {
+    public void doJob(JobExecutionContext ctxt) {
 
         LOGGER.info("Starting to fetch and store from dfv-mv...");
         ServiceLocator sl = ServiceLocatorProvider.getInstance().getServiceLocator();

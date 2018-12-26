@@ -80,7 +80,7 @@ public class DfvProfileLoaderTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        when(this.config.getJobs()).thenReturn(this.jobs);
+        when(this.config.getJobsConf()).thenReturn(this.jobs);
         when(this.jobs.isDfvMvSyncEnabled()).thenReturn(Boolean.TRUE);
         when(this.config.getDfvApi()).thenReturn(this.apiConfig);
         when(this.apiConfig.getSecret()).thenReturn(SECRET);
@@ -105,7 +105,7 @@ public class DfvProfileLoaderTest {
 
         JobsConfig noDfvSync = Mockito.mock(JobsConfig.class);
         when(noDfvSync.isDfvMvSyncEnabled()).thenReturn(Boolean.FALSE);
-        when(this.noJobsConfig.getJobs()).thenReturn(noDfvSync);
+        when(this.noJobsConfig.getJobsConf()).thenReturn(noDfvSync);
 
         Season season = new Season();
         season.setPlusOneYear(false);
