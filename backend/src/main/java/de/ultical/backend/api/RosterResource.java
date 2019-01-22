@@ -72,12 +72,11 @@ public class RosterResource {
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
             this.validateRoster(newRoster, currentUser);
-	    Roster savedRoster;
             try {
-                savedRoster = this.dataStore.addNew(newRoster);
-		newRoster.setVersion(1);
+                this.dataStore.addNew(newRoster);
+                newRoster.setVersion(1);
 	    
-		return newRoster;
+                return newRoster;
             } catch (PersistenceException pe) {
                 LOGGER.error(DB_ACCESS_FAILED, pe);
                 throw new WebApplicationException(DB_ACCESS_FAILED, Status.INTERNAL_SERVER_ERROR);
@@ -172,6 +171,7 @@ public class RosterResource {
                 dfvPlayer.setLastName(dfvMvName.getLastName());
                 dfvPlayer.setEmail(dfvMvPlayer.getEmail());
                 dfvPlayer.setLastModified(dfvMvName.getLastModified());
+                dfvPlayer.setPaid(dfvMvPlayer.isPaid());
                 if (dfvMvPlayer.isIdle() || !dfvMvPlayer.isActive() || !dfvMvPlayer.isDse() || !dfvMvPlayer.isPaid()) {
                 	dfvPlayer.setEligibleUntil(dfvMvName.getLastModified());
                 }
