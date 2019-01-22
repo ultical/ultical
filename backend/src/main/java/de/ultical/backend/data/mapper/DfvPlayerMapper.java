@@ -18,12 +18,12 @@ public interface DfvPlayerMapper extends BaseMapper<DfvPlayer> {
 
     // INSERT
     @Override
-    @Insert("INSERT INTO DFV_PLAYER (player_id, dfv_number, birth_date, club, eligible_until, last_modified, paid) VALUES (#{id},#{dfvNumber, jdbcType=VARCHAR},#{birthDate},#{club.id, jdbcType=INTEGER}, #{eligibleUntil, jdbcType=TIMESTAMP}, #{lastModified, jdbcType=TIMESTAMP}, #{paid})")
+    @Insert("INSERT INTO DFV_PLAYER (player_id, dfv_number, birth_date, club, eligible_until, last_modified, paid) VALUES (#{id},#{dfvNumber, jdbcType=VARCHAR},#{birthDate},#{club.id, jdbcType=INTEGER}, #{eligibleUntil, jdbcType=TIMESTAMP}, #{lastModified, jdbcType=TIMESTAMP}, #{paid, jdbcType=BOOLEAN})")
     Integer insert(DfvPlayer entity);
 
     // UPDATE
     @Override
-    @Update("UPDATE DFV_PLAYER SET dfv_number = #{dfvNumber}, birth_date = #{birthDate}, club = #{club.id, jdbcType=INTEGER}, eligible_until = #{eligibleUntil, jdbcType=TIMESTAMP}, last_modified=#{lastModified, jdbcType=TIMESTAMP}, paid=#{paid} WHERE player_id = #{id}")
+    @Update("UPDATE DFV_PLAYER SET dfv_number = #{dfvNumber}, birth_date = #{birthDate}, club = #{club.id, jdbcType=INTEGER}, eligible_until = #{eligibleUntil, jdbcType=TIMESTAMP}, last_modified=#{lastModified, jdbcType=TIMESTAMP}, paid=#{paid, jdbcType=BOOLEAN} WHERE player_id = #{id}")
     Integer update(DfvPlayer entity);
 
     // SELECT

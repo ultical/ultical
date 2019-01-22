@@ -1,6 +1,7 @@
 package de.ultical.backend.data.mapper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -66,11 +67,11 @@ public class DfvPlayerMapperTest {
         assertEquals(this.dfvPlayer.getBirthDate(), foundPlayer.getBirthDate());
         assertEquals(this.dfvPlayer.getFirstName(), foundPlayer.getFirstName());
         assertEquals(this.dfvPlayer.getLastName(), foundPlayer.getLastName());
-
+        assertFalse(foundPlayer.isPaid());
         /*
          * test update of players
          */
-
+        foundPlayer.setPaid(true);
         Integer shouldBeOne = playerMapper.update(foundPlayer);
         mapper.update(foundPlayer);
         assertEquals(Integer.valueOf(1), shouldBeOne);
@@ -95,6 +96,7 @@ public class DfvPlayerMapperTest {
         assertEquals(this.dfvPlayer.getBirthDate(), updatedPlayer.getBirthDate());
         assertEquals(this.dfvPlayer.getFirstName(), updatedPlayer.getFirstName());
         assertEquals(this.dfvPlayer.getLastName(), updatedPlayer.getLastName());
+        assertTrue(updatedPlayer.isPaid());
     }
 
 }
