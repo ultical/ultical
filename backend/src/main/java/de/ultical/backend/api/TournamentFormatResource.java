@@ -1,5 +1,6 @@
 package de.ultical.backend.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -23,6 +24,8 @@ import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.exception.AuthorizationException;
+import de.ultical.backend.model.Event;
+import de.ultical.backend.model.TournamentEdition;
 import de.ultical.backend.model.TournamentFormat;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
@@ -117,12 +120,20 @@ public class TournamentFormatResource {
         this.checkDataStore();
 
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
-
-            TournamentFormat result = this.dataStore.getFormatByEvent(eventId);
-            if (result == null) {
-                throw new WebApplicationException(Status.NOT_FOUND);
-            }
-            return result;
+        	Event event = this.dataStore.get(eventId, de.ultical.backend.model.Event.class);
+        	if(event == null) {
+        		throw new WebApplicationException(Status.NOT_FOUND);
+        	}
+        	TournamentEdition edition = event.getTournamentEdition();
+        	TournamentFormat format = edition.getTournamentFormat();
+        	List<Event> eventList = new ArrayList<Event>();
+        	eventList.add(event);
+        	edition.setEvents(eventList);
+        	List<TournamentEdition> editionList = new ArrayList<TournamentEdition>();
+        	editionList.add(edition);
+        	format.setEditions(editionList);
+            
+            return format;
         } catch (PersistenceException pe) {
             LOGGER.error(DB_ACCESS_FAILED, pe);
             throw new WebApplicationException(DB_ACCESS_FAILED, pe, Status.INTERNAL_SERVER_ERROR.getStatusCode());
