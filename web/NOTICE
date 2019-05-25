@@ -1,0 +1,147 @@
+{
+  "angular-filter@undefined": {
+    "licenses": [
+      "MIT"
+    ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/a8m/angular-filter.git"
+    }
+  },
+  "angular-translate@2.12.1": {
+    "licenses": [
+      "MIT"
+    ]
+  },
+  "angular-ui-router@0.3.1": {
+    "licenses": [
+      "MIT"
+    ]
+  },
+  "font-awesome@undefined": {
+    "licenses": [
+      "OFL-1.1",
+      "MIT",
+      "CC-BY-3.0"
+    ],
+    "homepage": "http://fontawesome.io"
+  },
+  "jquery@undefined": {
+    "licenses": [
+      "MIT"
+    ]
+  },
+  "messageformat@undefined": {
+    "licenses": [
+      "To use or fork, MIT License. To contribute back, Dojo CLA",
+      "MIT*"
+    ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/SlexAxton/messageformat.js.git"
+    },
+    "homepage": "https://messageformat.github.io/"
+  },
+  "moment@undefined": {
+    "licenses": [
+      "MIT"
+    ]
+  },
+  "angular@1.5.8": {
+    "licenses": [
+      "MIT"
+    ],
+    "repository": "https://github.com/angular/angular.js"
+  },
+  "angular-recaptcha@3.0.4": {
+    "licenses": [
+      "MIT"
+    ],
+    "repository": "https://github.com/vividcortex/angular-recaptcha"
+  },
+  "angular-sanitize@1.5.8": {
+    "licenses": [
+      "MIT"
+    ],
+    "repository": "https://github.com/angular/angular.js"
+  },
+  "angular-moment@1.0.0-beta.6": {
+    "licenses": [
+      "MIT"
+    ],
+    "repository": "https://github.com/urish/angular-moment",
+    "homepage": "http://github.com/urish/angular-moment"
+  },
+  "angular-motion@0.4.4": {
+    "licenses": [
+      "MIT"
+    ],
+    "repository": "https://github.com/mgcrea/angular-motion",
+    "homepage": "https://github.com/mgcrea/angular-motion"
+  },
+  "angular-bootstrap@2.1.4": {
+    "licenses": [
+      "MIT"
+    ],
+    "repository": "https://github.com/angular-ui/bootstrap"
+  },
+  "angular-translate-interpolation-messageformat@2.12.1": {
+    "licenses": [
+      "MIT"
+    ],
+    "repository": "https://github.com/angular-translate/bower-angular-translate-interpolation-messageformat"
+  },
+  "jsog@1.0.7": {
+    "licenses": [
+      "MIT"
+    ],
+    "homepage": "https://github.com/jsog/jsog",
+    "repository": "https://github.com/jsog/jsog"
+  },
+  "angular-animate@1.5.8": {
+    "licenses": [
+      "MIT"
+    ],
+    "repository": "https://github.com/angular/angular.js"
+  },
+  "ng-device-detector@2.0.4": {
+    "licenses": [
+      "MIT"
+    ],
+    "homepage": "https://github.com/srfrnk/ng-device-detector",
+    "repository": "https://github.com/srfrnk/ng-device-detector"
+  },
+  "re-tree@0.0.2": {
+    "licenses": [
+      "MIT"
+    ],
+    "homepage": "https://github.com/srfrnk/re-tree",
+    "repository": "https://github.com/srfrnk/re-tree"
+  },
+  "respond@1.4.2": {
+    "licenses": [
+      "MIT"
+    ],
+    "repository": "https://github.com/scottjehl/Respond"
+  },
+  "bootstrap@3.3.7": {
+    "licenses": [
+      "MIT"
+    ],
+    "homepage": "http://getbootstrap.com",
+    "repository": "https://github.com/twbs/bootstrap"
+  },
+  "angular-strap@2.3.9": {
+    "licenses": [
+      "MIT"
+    ],
+    "repository": "https://github.com/mgcrea/angular-strap",
+    "homepage": "http://mgcrea.github.io/angular-strap"
+  },
+  "angular-slugify@1.0.1": {
+    "licenses": [
+      "MIT"
+    ],
+    "repository": "https://github.com/paulsmith/angular-slugify"
+  }
+}
