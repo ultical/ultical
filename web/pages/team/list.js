@@ -5,6 +5,7 @@ angular.module('ultical.team', [])
 .controller('TeamListCtrl', ['CONFIG', '$scope', '$stateParams', 'storage', '$state', 'headService', 'authorizer', 'actionBar',
   function(CONFIG, $scope, $stateParams, storage, $state, headService, authorizer, actionBar) {
 
+    actionBar.clearActions();
 
     $scope.bigButtons = CONFIG.general.actionButtonsBig;
 

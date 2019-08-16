@@ -2,8 +2,10 @@
 
 angular.module('ultical.events', [])
 
-.controller('EventListCtrl', ['$scope', 'storage', '$state', '$filter', 'headService', 'moment', '$stateParams',
-                              function($scope, storage, $state, $filter, headService, moment, $stateParams) {
+.controller('EventListCtrl', ['$scope', 'storage', '$state', '$filter', 'headService', 'moment', '$stateParams', 'actionBar',
+                              function($scope, storage, $state, $filter, headService, moment, $stateParams, actionBar) {
+
+  actionBar.clearActions();
 
   headService.setTitle('event.list.title', {});
 

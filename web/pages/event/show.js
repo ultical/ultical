@@ -27,7 +27,7 @@ angular.module('ultical.events')
     $scope.ownTeams = storage.getOwnTeamsCache(function(cachedOwnTeams) {
       // only called if own teams were not cached
       $scope.ownTeams = cachedOwnTeams;
-      addActions();
+      updateActions();
     });
   }
 
@@ -234,10 +234,10 @@ angular.module('ultical.events')
       showEventInfo: $scope.show.eventInfo && !isEmpty($scope.event.info),
     };
 
-    addActions();
+    updateActions();
   };
 
-  function addActions() {
+  function updateActions() {
     actionBar.clearActions();
     // Action bar actions
     if ($scope.show.registration && !$scope.show.format && $scope.edition.x && $scope.edition.x.registrationIsOpen) {
@@ -298,7 +298,7 @@ angular.module('ultical.events')
         separator: true,
       });
     }
-    if ($scope.format.x.own || ($scope.show.event && $scope.event.x.own)) {
+    if (!$scope.show.format && ($scope.format.x.own || ($scope.show.event && $scope.event.x.own))) {
       actionBar.addAction({
         group: 'event-admin',
         needLogIn: true,
@@ -310,6 +310,23 @@ angular.module('ultical.events')
         },
       });
     }
+    if ($scope.show.event && ($scope.format.x.own || $scope.event.x.own)) {
+      actionBar.addAction({
+        group: 'event-admin',
+        needLogIn: true,
+        button: {
+            text: 'event.edit.buttonLabel',
+            click: function() {
+              $scope.editEvent();
+            },
+        },
+      });
+    }
+  }
+
+  $scope.editEvent = function() {
+    console.log("i try to go");
+    $state.go('app.eventEdit', {eventId: $scope.event.id});
   }
 
   $scope.openRegistrationModal = function() {

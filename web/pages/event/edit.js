@@ -5,6 +5,7 @@ angular.module('ultical.events')
 .controller('EventEditCtrl', ['$scope', 'storage', '$stateParams',
                       	  function($scope, storage, $stateParams) {
 
+
 	// if format(s) exist - create select field to choose from - else create new
 //	$scope.formats = getUsersFormats...
 	
