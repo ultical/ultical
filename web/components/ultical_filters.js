@@ -318,6 +318,8 @@ app.filter('season', ['$translate', function($translate) {
 		var seasonString = '';
 		if (season.surface == 'GYM') {
 			seasonString += $translate.instant(fullName ? 'season.indoorFullName' : 'season.indoor');
+		} else if (season.surface == 'BEACH') {
+		  seasonString += $translate.instant(fullName ? 'season.beachFullName' : 'season.beach');
 		} else {
 			seasonString += $translate.instant(fullName ? 'season.outdoorFullName' : 'season.outdoor');
 		}

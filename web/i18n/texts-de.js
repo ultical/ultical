@@ -106,6 +106,8 @@ TRANSLATIONS['de'] = {
 			indoorFullName: 'Indoor',
 			outdoor: '',
 			outdoorFullName: 'Outdoor',
+			beach: 'Beach',
+			beachFullName: 'Beach',
 		},
 
 		division: {
