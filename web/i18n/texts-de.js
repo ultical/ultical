@@ -41,6 +41,9 @@ TRANSLATIONS['de'] = {
 			selectOverflow: 'ausgewählt',
 			selectPlaceholder: 'Bitte auswählen',
 			error: 'Fehler!',
+      event: 'Turnier',
+      tournamentEdition: 'Turnier-Edition',
+      tournamentFormat: 'Turnier-Format',
 		},
 
 		email: {
@@ -283,6 +286,20 @@ TRANSLATIONS['de'] = {
 			},
 			edit: {
 			    buttonLabel: 'Turnier bearbeiten',
+			    nameLabel: 'Name',
+			    formatDescriptionLabel: 'Beschreibung',
+			    formatUrlLabel: 'Webseite',
+			    associationLabel: 'Organisation',
+			    registrationPeriodLabel : 'Registrierungszeitraum',
+          alternativeMatchdayNameLabel: 'Bez. mehrere Termine',
+          contextLabel: 'Spielberechtigungskontext',
+          eventDateLabel: 'Datum',
+          numberOfDaysLabel: 'Anzahl Tage',
+          locationLabel: 'Veranstaltungsort(e)',
+          divisionRegistrationLabel: 'Divisionen',
+          adminLabel: 'Admins',
+          descriptionLabel: 'Infos',
+          attachmentLabel: 'Dokumente',
 			},
 		},
 

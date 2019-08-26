@@ -127,7 +127,7 @@
 					<div class="strong">{{ 'event.localOrganizer' | translate }}</div>
 					<div>
 						<span>{{ event.localOrganizer.name }}&nbsp;&nbsp;</span>
-						<span class="cursor-pointer" ng-if="event.admins | notEmpty">
+						<span class="cursor-pointer" ng-if="event.localOrganizer.email | notEmpty">
 							<i ng-click="openEmailToEventModal()" class="fa fa-envelope-o"></i>
 						</span>
 						<span ng-if="event.localOrganizer.phone | notEmpty">

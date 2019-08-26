@@ -75,6 +75,7 @@ angular.module('ultical.events')
 
   // init function
   function init(format) {
+  console.log("format", format);
 		$scope.format = format;
 
     angular.forEach(format.editions, function(edition) {
