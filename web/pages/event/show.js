@@ -112,6 +112,16 @@ angular.module('ultical.events')
       }
     }
 
+    $scope.getNumberOfConfirmedOrPendingTeams = function(division) {
+      var numberOfConfirmedOrPendingTeams = 0;
+      angular.forEach(division.playingTeams, function(team) {
+        if (team.status == 'CONFIRMED' || team.status == 'PENDING') {
+          numberOfConfirmedOrPendingTeams++;
+        }
+      });
+      return numberOfConfirmedOrPendingTeams;
+    }
+
     if ($scope.show.event) {
       headService.setTitle($filter('eventname')($scope.event), {});
       // define which divisions to show
