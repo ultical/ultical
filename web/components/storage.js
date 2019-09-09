@@ -426,6 +426,31 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
           callback(savedTeam);
 				}, errorCallback);
 			},
+
+			saveEvent: function(event, callback, errorCallback) {
+        var that = this;
+        var oldEvent;
+        if (event.id == -1) {
+          oldEvent = null;
+        } else {
+          oldEvent = event;
+          if (!angular.isObject(event.locations[0])) {
+            event.locations[0] = {
+                id: oldEvent.locations[0].id,
+                version: oldEvent.locations[0].version,
+            }
+          }
+        }
+        serverApi.saveEvent(event, oldEvent, function(savedEvent) {
+          console.log("got back the saved event", savedEvent);
+          //that.eventIndexed[event.id] = savedEvent;
+          that.events.push(savedEvent);
+
+          storeEvent(savedEvent, newLoopIndex());
+
+          callback(savedEvent);
+        }, errorCallback);
+      },
 	}
 
 	function newLoopIndex() {

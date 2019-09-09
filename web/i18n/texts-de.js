@@ -300,6 +300,7 @@ TRANSLATIONS['de'] = {
           adminLabel: 'Admins',
           descriptionLabel: 'Infos',
           attachmentLabel: 'Dokumente',
+          save: 'Speichern',
 			},
 		},
 

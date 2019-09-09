@@ -669,3 +669,19 @@ footer {
 .team-list-location {
 	font-weight: 300;
 }
+
+#slim-edit-1,
+.slim-edit {
+  padding: 0 2px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  border-radius: 0px;
+}
+
+.slim-edit.short {
+  width: 100px;
+}
+
+textarea.resizable {
+  resize: vertical;
+}

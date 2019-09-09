@@ -210,6 +210,36 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			}
 		},
 
+    saveEvent: function(event, oldEvent, callback, errorCallback) {
+			var eventToSend = angular.copy(event);
+
+			// prevent bad requests if the backend tries to parse a string into a location objects
+			if (!angular.isObject(event.locations[0])) {
+				eventToSend.locations[0] = null;
+			} else {
+			}
+
+			angular.forEach(eventToSend.admins, function(admin, idx) {
+				eventToSend.admins[idx] = { id: admin.id };
+			});
+
+			var that = this;
+
+			// delete properties added for frontend
+			delete(eventToSend.x);
+
+			if (eventToSend.id == -1) {
+				// this is an event newly created
+				post('events', eventToSend, function(newEvent) {
+					that.getEvent(newEvent.id, callback, errorCallback);
+				});
+			} else {
+				put('events/' + eventToSend.id, eventToSend, function() {
+					that.getEvent(eventToSend.id, callback, errorCallback);
+				});
+			}
+		},
+
 		registerUser: function(user, callback) {
 			post('command/register', user, callback);
 		},

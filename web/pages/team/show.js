@@ -292,12 +292,12 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
       angular.forEach(locations, function(location) {
         location.mapBoxId = location.id;
         if ($scope.locationToEdit) {
-        location.id = $scope.locationToEdit.id;
-        location.version = $scope.locationToEdit.version;
-      } else {
-        location.id = 0;
-        location.version = 0;
-      }
+          location.id = $scope.locationToEdit.id;
+          location.version = $scope.locationToEdit.version;
+        } else {
+          location.id = 0;
+          location.version = 0;
+        }
       });
       $scope.oldLocations = locations;
       return locations;

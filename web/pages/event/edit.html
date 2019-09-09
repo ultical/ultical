@@ -170,7 +170,8 @@
 					<span class="strong">{{ 'event.edit.nameLabel' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<span>{{ event.name }}</span>
+					<span ng-if="!format.x.own">{{ event.name }}</span>
+					<span ng-if="format.x.own"><input ng-model="event.name" class="slim-edit"></span>
 				</div>
 			</div>
 		</div>
@@ -184,7 +185,8 @@
 					<span class="strong">{{ 'event.edit.eventDateLabel' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<span>{{ event.startDate | amDateFormat : ('general.amDateFormat' | translate) }}</span>
+					<span ng-if="!format.x.own">{{ event.startDate | amDateFormat : ('general.amDateFormat' | translate) }}</span>
+					<span ng-if="format.x.own"><input ng-model="event.startDate" class="slim-edit short" data-date-type="string" data-model-date-format="yyyy-MM-dd" data-date-format="dd.MM.yyyy" data-autoclose="1" bs-datepicker></span>
 				</div>
 			</div>
 		</div>
@@ -197,7 +199,12 @@
 					<span class="strong">{{ 'event.edit.numberOfDaysLabel' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<span>{{ eventNumOfDays }}</span>
+					<span ng-if="!format.x.own">{{ event.x.eventNumOfDays }}</span>
+					<div ng-if="format.x.own">
+						<select id="slim-edit-1" class="slim-edit short" class="form-control" ng-model="event.x.eventNumOfDays">
+							<option ng-repeat="i in [] | range : 14" value="{{ i + 1 }}">{{ i + 1 }}</option>
+						</select>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -211,6 +218,12 @@
 					<span class="strong">{{ 'event.edit.locationLabel' | translate }}</span>
 				</div>
 				<div class="col-md-10">
+					<div>
+						<input class="slim-edit" typeahead-min-length="3" typeahead-wait-ms="400" name="location" required="required" type="text" id="tteCity" class="form-control" ng-model="locationToEdit" typeahead-select-on-blur="true" typeahead-select-on-exact="true"
+							   uib-typeahead="location | locationObject as location | location for location in getLocations($viewValue)" typeahead-wait-ms="300" placeholder="{{ 'event.edit.locationLabel' | translate }}" />
+						<span ng-show="locationToEdit.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
+						<span ng-if="(inputForm.location.$touched && (locationToEdit.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'team.edit.locationMissing' | translate }}</span>
+					</div>
 					<div ng-repeat="location in event.locations | orderBy : ['-main', 'title']">
 						<div ng-class="{'strong': location.main }" ng-if="location.title | notEmpty">
 							<span>{{ location.title }}</span>
@@ -286,7 +299,8 @@
 					<span class="strong">{{ 'event.edit.descriptionLabel' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<span>{{ event.description }}</span>
+					<span ng-if="!event.x.own && !format.x.own">{{ event.info }}</span>
+					<span ng-if="event.x.own || format.x.own"><textarea rows="5" class="resizable" ng-model="event.info" class="slim-edit"></textarea></span>
 				</div>
 			</div>
 		</div>
@@ -300,7 +314,19 @@
 					<span class="strong">{{ 'event.fee.label' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<span>{{ event.fees }}</span>
+					<table>
+						<tbody ng-repeat="fee in event.fees | filter : { tournamentEdition: null}">
+							<tr>
+								<td class="padding-right">
+									<span ng-if="fee.multiple">{{ 'event.fee.perUnit' | translate }}</span>
+									<span ng-if="fee.type != 'OTHER'">{{ ('event.fee.' + (fee.type | lowercase)) | translate }}</span>
+									<span ng-if="fee.type == 'OTHER'">{{ fee.otherName }}</span>
+								</td>
+								<td class="pull-right padding-right-small">{{ fee.currency | money : fee.amount }}</td>
+								<td class="mega-wide" ng-if="fee.perPerson">{{ 'event.fee.perPerson' | translate }}</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
@@ -315,6 +341,18 @@
 				</div>
 				<div class="col-md-10">
 					<span>{{ event.attachments }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row" ng-if="format.x.own || event.x.own">
+		<div class="col-md-12">
+			<div class="row">
+				<div class="col-md-2">
+				</div>
+				<div class="col-md-10">
+					<button ng-click="saveEvent(event)" class="btn btn-primary btn-ultical">{{ 'event.edit.save' | translate }}</button>
 				</div>
 			</div>
 		</div>
