@@ -2,8 +2,10 @@
 
 angular.module('ultical.events')
 
-.controller('EventEditCtrl', ['$scope', 'storage', '$stateParams', '$filter', '$state', 'mapService', 'alerter',
-                      	  function($scope, storage, $stateParams, $filter, $state, mapService, alerter) {
+.controller('EventEditCtrl', ['$scope', 'storage', '$stateParams', '$filter', '$state', 'mapService', 'alerter', 'serverApi',
+                      	  function($scope, storage, $stateParams, $filter, $state, mapService, alerter, serverApi) {
+
+  $scope.newAdmin = {obj:""};
 
   storage.getEvent($stateParams.eventId, function(event) {
     prepareDateDiff(event);
@@ -61,7 +63,6 @@ angular.module('ultical.events')
           location.id = 0;
           location.version = 0;
         }
-        console.log("setting version", location.id, location.version);
       });
       $scope.oldLocations = locations;
       return locations;
@@ -90,10 +91,68 @@ angular.module('ultical.events')
       prepareDateDiff(newEvent);
       $scope.event = newEvent;
     }, function() {
-      console.log("ERRORROROROROR");
     });
 
 
 	}
+
+  $scope.addAdmin = function(newAdmin) {
+    if (isEmpty(newAdmin)) {
+      return;
+    }
+
+    if (!angular.isObject(newAdmin)) {
+      return;
+    }
+
+    if (newAdmin.obj == "") {
+      return;
+    }
+
+    // check if admin is already in the list
+    var alreadyAdmin = false;
+    angular.forEach($scope.event.admins, function(admin) {
+      if (admin.id == newAdmin.id) {
+        alreadyAdmin = true;
+      }
+    });
+
+    if (!alreadyAdmin) {
+      $scope.event.admins.push(newAdmin);
+    }
+
+    $scope.newAdmin.obj = "";
+  }
+
+  // return user proposals
+  $scope.getUsers = function(userName) {
+    if (userName.length < 4) {
+      return [];
+    }
+
+    return serverApi.getUserProposals(userName, function(result) {
+      angular.forEach(result, function(user) {
+        if (angular.isObject(user.dfvPlayer)) {
+          user.fullName = user.dfvPlayer.firstName + ' ' + user.dfvPlayer.lastName;
+        } else {
+          user.fullName = user.email;
+        }
+      });
+      return result;
+    });
+  };
+
+  $scope.removeAdmin = function(adminId) {
+    var indexToRemove = -1;
+    angular.forEach($scope.event.admins, function(admin, idx) {
+      if (admin.id == adminId) {
+        indexToRemove = idx;
+      }
+    });
+
+    if (indexToRemove >= 0) {
+      $scope.event.admins.splice(indexToRemove, 1);
+    }
+  };
 
 }]);

@@ -153,6 +153,21 @@
 		</div>
 	</div>
 
+	<!-- division-registration/confirmation - edit (only TF admin) -->
+	<div class="row">
+		<div class="col-md-12">
+			<div class="row">
+				<div class="col-md-2">
+					<span class="strong">{{ 'event.edit.divisionRegistrationLabel' | translate }}</span>
+				</div>
+				<div class="col-md-10">
+					<div ng-repeat="division in edition.divisionRegistrations | orderBy : divisionOrder">
+						<span>{{ division | division }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 	<!-- event -->
@@ -171,7 +186,7 @@
 				</div>
 				<div class="col-md-10">
 					<span ng-if="!format.x.own">{{ event.name }}</span>
-					<span ng-if="format.x.own"><input ng-model="event.name" class="slim-edit"></span>
+					<span ng-if="format.x.own"><input ng-model="event.name" class="form-control"></span>
 				</div>
 			</div>
 		</div>
@@ -186,7 +201,7 @@
 				</div>
 				<div class="col-md-10">
 					<span ng-if="!format.x.own">{{ event.startDate | amDateFormat : ('general.amDateFormat' | translate) }}</span>
-					<span ng-if="format.x.own"><input ng-model="event.startDate" class="slim-edit short" data-date-type="string" data-model-date-format="yyyy-MM-dd" data-date-format="dd.MM.yyyy" data-autoclose="1" bs-datepicker></span>
+					<span ng-if="format.x.own"><input ng-model="event.startDate" class="form-control short" data-date-type="string" data-model-date-format="yyyy-MM-dd" data-date-format="dd.MM.yyyy" data-autoclose="1" bs-datepicker></span>
 				</div>
 			</div>
 		</div>
@@ -201,7 +216,7 @@
 				<div class="col-md-10">
 					<span ng-if="!format.x.own">{{ event.x.eventNumOfDays }}</span>
 					<div ng-if="format.x.own">
-						<select id="slim-edit-1" class="slim-edit short" class="form-control" ng-model="event.x.eventNumOfDays">
+						<select id="slim-edit-1" class="form-control short" class="form-control" ng-model="event.x.eventNumOfDays">
 							<option ng-repeat="i in [] | range : 14" value="{{ i + 1 }}">{{ i + 1 }}</option>
 						</select>
 					</div>
@@ -219,7 +234,7 @@
 				</div>
 				<div class="col-md-10">
 					<div>
-						<input class="slim-edit" typeahead-min-length="3" typeahead-wait-ms="400" name="location" required="required" type="text" id="tteCity" class="form-control" ng-model="locationToEdit" typeahead-select-on-blur="true" typeahead-select-on-exact="true"
+						<input class="form-control" typeahead-min-length="3" typeahead-wait-ms="400" name="location" required="required" type="text" id="tteCity" class="form-control" ng-model="locationToEdit" typeahead-select-on-blur="true" typeahead-select-on-exact="true"
 							   uib-typeahead="location | locationObject as location | location for location in getLocations($viewValue)" typeahead-wait-ms="300" placeholder="{{ 'event.edit.locationLabel' | translate }}" />
 						<span ng-show="locationToEdit.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
 						<span ng-if="(inputForm.location.$touched && (locationToEdit.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'team.edit.locationMissing' | translate }}</span>
@@ -269,8 +284,33 @@
 					<span class="strong">{{ 'event.edit.adminLabel' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<div ng-repeat="admin in event.admins | orderBy : admin.fullName">
-						<span>{{ admin.fullName }} ({{ admin.email }})</span>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="input-group input-group-colored col-md-6">
+								<span ng-click="addAdmin(newAdmin)" class="cursor-pointer input-group-addon">
+									<span class="glyphicon glyphicon-plus"></span>
+								</span>
+								<input typeahead-min-length="3" type="text" id="tteAdmins" class="form-control"
+								   ng-model="newAdmin.obj" typeahead-select-on-blur="true" typeahead-wait-ms="400"
+								   uib-typeahead="user as user.fullName for user in getUsers($viewValue)"
+								   placeholder="{{ 'team.edit.adminsPlaceholder' | translate }}"
+								   typeahead-on-select="addAdmin($item)" />
+							</div>
+						</div>
+					</div>
+					<div class="row margin-top">
+						<div class="col-md-12">
+							<div class="form-control-static">
+								<div class="editable-list" ng-repeat="admin in event.admins">
+									<div class="editable-list-item" ng-class="{'no-remove': (admin.id == activeUserId && event.id == -1) || (event.admins.length < 2) }">{{ admin.dfvPlayer != null ? admin.dfvPlayer.firstName + ' ' + admin.dfvPlayer.lastName : admin.email }}</div>
+									<div ng-hide="(admin.id == activeUserId && event.id == -1) || (event.admins.length < 2)" ng-click="removeAdmin(admin.id)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'team.edit.adminsRemoveTooltip' | translate }}" bs-tooltip>
+										<span class="fa-stack fa-lg">
+											<i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -300,7 +340,7 @@
 				</div>
 				<div class="col-md-10">
 					<span ng-if="!event.x.own && !format.x.own">{{ event.info }}</span>
-					<span ng-if="event.x.own || format.x.own"><textarea rows="5" class="resizable" ng-model="event.info" class="slim-edit"></textarea></span>
+					<span ng-if="event.x.own || format.x.own"><textarea rows="5" class="resizable form-control" ng-model="event.info"></textarea></span>
 				</div>
 			</div>
 		</div>

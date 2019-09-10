@@ -37,6 +37,7 @@ public class TournamentEdition extends Identifiable {
     private List<Fee> fees;
     private Contact organizer;
 
+    @JsonDeserialize(contentAs = DivisionRegistrationTeams.class)
     private List<DivisionRegistration> divisionRegistrations;
 
     private List<Event> events;

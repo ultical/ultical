@@ -20,6 +20,8 @@ import java.util.List;
 @Path("/events")
 public class EventsResource {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventsResource.class);
+
     private static final String DB_ACCESS_FAILURE = "Accessing database failed";
     private final static Logger LOG = LoggerFactory.getLogger(EventsResource.class);
     @Inject
@@ -113,6 +115,21 @@ public class EventsResource {
             if (!updated) {
                 throw new WebApplicationException(
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
+            }
+
+            // create the admin mapping
+            // first delete the old mapping
+            this.dataStore.removeAllAdminsFromEvent(updatedEvent);
+
+            for (User admin : updatedEvent.getAdmins()) {
+                try {
+                    this.dataStore.addAdminToEvent(updatedEvent, admin);
+                } catch (PersistenceException e) {
+                    LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )\ncurrentUser: {}",
+                            updatedEvent.getName(), updatedEvent.getId(), admin.getFullName(), admin.getId(),
+                            currentUser.getId());
+                    LOGGER.error("exception:", e);
+                }
             }
         } catch (PersistenceException pe) {
             LOG.error(DB_ACCESS_FAILURE, pe);

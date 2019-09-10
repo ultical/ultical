@@ -1,16 +1,15 @@
 package de.ultical.backend.model;
 
-import java.time.LocalDate;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import de.ultical.backend.app.LocalDateDeserializer;
 import de.ultical.backend.app.LocalDateSerializer;
 import de.ultical.backend.data.mapper.EventMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

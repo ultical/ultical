@@ -1,25 +1,5 @@
 package de.ultical.backend.api;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.ibatis.exceptions.PersistenceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.DataStore.DataStoreCloseable;
@@ -27,6 +7,16 @@ import de.ultical.backend.model.Location;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
+import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
+import java.util.List;
 
 @Path("/teams")
 public class TeamResource {
@@ -276,7 +266,6 @@ public class TeamResource {
             final User fakeAdmin = new User();
             fakeAdmin.setId(userId);
             try {
-
                 this.dataStore.removeAdminFromTeam(fakeTeam, fakeAdmin);
             } catch (PersistenceException pe) {
                 LOGGER.error(DB_ACCESS_FAILED, pe);

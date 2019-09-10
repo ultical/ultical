@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 
+import de.ultical.backend.model.*;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
 import org.glassfish.jersey.process.internal.RequestScoped;
@@ -35,22 +36,6 @@ import de.ultical.backend.data.mapper.TeamRegistrationMapper;
 import de.ultical.backend.data.mapper.TournamentEditionMapper;
 import de.ultical.backend.data.mapper.TournamentFormatMapper;
 import de.ultical.backend.data.mapper.UserMapper;
-import de.ultical.backend.model.Association;
-import de.ultical.backend.model.Club;
-import de.ultical.backend.model.DfvPlayer;
-import de.ultical.backend.model.DivisionRegistration;
-import de.ultical.backend.model.DivisionRegistrationPlayers;
-import de.ultical.backend.model.DivisionRegistrationTeams;
-import de.ultical.backend.model.Event;
-import de.ultical.backend.model.Identifiable;
-import de.ultical.backend.model.MailCode;
-import de.ultical.backend.model.Player;
-import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.Team;
-import de.ultical.backend.model.TeamRegistration;
-import de.ultical.backend.model.TournamentEdition;
-import de.ultical.backend.model.TournamentFormat;
-import de.ultical.backend.model.User;
 
 /**
  * the cloud
@@ -897,7 +882,21 @@ public class DataStore {
             final TeamMapper mapper = this.sqlSession.getMapper(t.getMapper());
             mapper.addAdmin(t, a);
         });
+    }
 
+    public void addAdminToEvent(Event event, User admin) {
+        // try-finally block is inside modifyTeamAdmin
+        this.modifyEventAdmin(event, admin, (e, a) -> {
+            final EventMapper mapper = this.sqlSession.getMapper(e.getMapper());
+            mapper.addAdmin(e, a);
+        });
+    }
+
+    public void removeAdminFromEvent(Event event, User admin) {
+        this.modifyEventAdmin(event, admin, (e, a) -> {
+            final EventMapper mapper = this.sqlSession.getMapper(e.getMapper());
+            mapper.removeAdmin(e, a);
+        });
     }
 
     public void removeAdminFromTeam(Team team, User admin) {
@@ -911,10 +910,35 @@ public class DataStore {
 
     public void removeAllAdminsFromTeam(Team team) {
         // try-finally block is inside modifyTeamAdmin
-        TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+
+        TeamMapper teamMapper = this.sqlSession.getMapper(team.getMapper());
         teamMapper.removeAllAdmins(team);
         this.sqlSession.commit();
 
+    }
+
+    public void removeAllAdminsFromEvent(Event event) {
+        // try-finally block is inside modifyTeamAdmin
+
+        EventMapper eventMapper = this.sqlSession.getMapper(event.getMapper());
+        eventMapper.removeAllAdmins(event);
+        this.sqlSession.commit();
+    }
+
+    private void modifyEventAdmin(Event event, User admin, BiConsumer<Event, User> dbAction) {
+        Objects.requireNonNull(event);
+        Objects.requireNonNull(admin);
+        try {
+            dbAction.accept(event, admin);
+            this.sqlSession.commit();
+        } catch (PersistenceException pe) {
+            this.sqlSession.rollback();
+            throw pe;
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 
     private void modifyTeamAdmin(Team team, User admin, BiConsumer<Team, User> dbAction) {

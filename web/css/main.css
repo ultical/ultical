@@ -670,16 +670,19 @@ footer {
 	font-weight: 300;
 }
 
-#slim-edit-1,
-.slim-edit {
-  padding: 0 2px;
-  padding-top: 1px;
-  padding-bottom: 1px;
+#slim-edit-1 {
+  #padding: 0 2px;
+  #padding-top: 1px;
+  #padding-bottom: 1px;
   border-radius: 0px;
 }
 
-.slim-edit.short {
+.form-control.short {
   width: 100px;
+}
+
+select.form-control {
+  padding-left: 1em;
 }
 
 textarea.resizable {

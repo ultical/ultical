@@ -15,7 +15,6 @@ import org.apache.ibatis.annotations.Update;
 
 import de.ultical.backend.model.Contact;
 import de.ultical.backend.model.Event;
-import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.User;
 
@@ -32,7 +31,7 @@ public interface EventMapper extends BaseMapper<Event> {
     Integer insert(Event event);
 
     @Insert("INSERT INTO EVENT_ULTICAL_USERS (event, admin) VALUES (#{event.id},#{user.id})")
-    public Integer insertAdmin(@Param("event") Event event, @Param("user") User user);
+    public Integer addAdmin(@Param("event") Event event, @Param("user") User user);
 
     // UPDATE
     @Override
@@ -48,10 +47,10 @@ public interface EventMapper extends BaseMapper<Event> {
     void delete(Event entity);
 
     @Delete("DELETE FROM EVENT_ULTICAL_USERS WHERE event=#{event.id} AND admin=#{user.id}")
-    public void deleteAdmin(@Param("event") Event event, @Param("user") User user);
+    public void removeAdmin(@Param("event") Event event, @Param("user") User user);
 
     @Delete("DELETE FROM EVENT_ULTICAL_USERS WHERE event = #{event.id}")
-    void removeAllAdmins(@Param("event") Team event);
+    void removeAllAdmins(@Param("event") Event event);
 
     // SELECT
     @Override
