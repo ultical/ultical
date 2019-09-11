@@ -584,6 +584,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 		// assign the divisions (and maybe teams) that play this event
 		event.x.divisions = [];
+		event.x.divisionIds = [];
 
 		if ('divisionConfirmations' in event && !isEmpty(event.divisionConfirmations)) {
       event.x.usesDivisionConfirmations = true;
@@ -598,6 +599,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 					division.playingTeams = division.registeredTeams;
 				}
 				event.x.divisions.push(angular.copy(division));
+				event.x.divisionIds.push(division.id);
 			});
 		} else {
 			// this event gets all divisions and teams from the edition
@@ -608,6 +610,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				event.x.divisions = angular.copy(event.tournamentEdition.divisionRegistrations);
 				angular.forEach(event.x.divisions, function(division) {
 					division.playingTeams = division.registeredTeams;
+          event.x.divisionIds.push(division.id);
 				});
 
 			}

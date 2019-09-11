@@ -14,28 +14,13 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 
+import de.ultical.backend.data.mapper.*;
 import de.ultical.backend.model.*;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
-import de.ultical.backend.data.mapper.AssociationMapper;
-import de.ultical.backend.data.mapper.BaseMapper;
-import de.ultical.backend.data.mapper.ClubMapper;
-import de.ultical.backend.data.mapper.DfvMvNameMapper;
-import de.ultical.backend.data.mapper.DfvPlayerMapper;
-import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
-import de.ultical.backend.data.mapper.EventMapper;
-import de.ultical.backend.data.mapper.MailCodeMapper;
-import de.ultical.backend.data.mapper.PlayerMapper;
-import de.ultical.backend.data.mapper.RosterMapper;
-import de.ultical.backend.data.mapper.RosterPlayerMapper;
-import de.ultical.backend.data.mapper.TeamMapper;
-import de.ultical.backend.data.mapper.TeamRegistrationMapper;
-import de.ultical.backend.data.mapper.TournamentEditionMapper;
-import de.ultical.backend.data.mapper.TournamentFormatMapper;
-import de.ultical.backend.data.mapper.UserMapper;
 
 /**
  * the cloud
@@ -219,6 +204,29 @@ public class DataStore {
                 this.sqlSession.close();
             }
         }
+    }
+
+    public DivisionConfirmation addDivisionConfirmationToEvent(final Event event, final DivisionConfirmation division) {
+        Objects.requireNonNull(division);
+        Objects.requireNonNull(event);
+        try {
+            DivisionConfirmationMapper divisionConfirmationMapper = this.sqlSession.getMapper(DivisionConfirmationMapper.class);
+            divisionConfirmationMapper.insert(event.getId(), division.getDivisionRegistration().getId(), division.isIndividualAssignment());
+            return division;
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public void removeAllDivisionConfirmationsFromEvent(Event event) {
+        // try-finally block is inside modifyTeamAdmin
+
+        DivisionConfirmationMapper divisionConfirmationMapper = this.sqlSession.getMapper(DivisionConfirmationMapper.class);
+        divisionConfirmationMapper.removeAllForEvent(event);
+        this.sqlSession.commit();
+
     }
 
     public DivisionRegistration addDivisionToEdition(final TournamentEdition edition,

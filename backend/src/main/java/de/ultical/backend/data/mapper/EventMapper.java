@@ -37,7 +37,8 @@ public interface EventMapper extends BaseMapper<Event> {
     @Override
     @Update({ "UPDATE EVENT SET version=version+1, tournament_edition=#{tournamentEdition.id},",
             "start_date=#{startDate}, end_date=#{endDate}, name=#{name, jdbcType=VARCHAR},",
-            "local_organizer=#{localOrganizer.id, jdbcType=INTEGER}, info=#{info, jdbcType=VARCHAR}",
+            "local_organizer=#{localOrganizer.id, jdbcType=INTEGER}, info=#{info, jdbcType=VARCHAR},",
+            "matchday_number=#{matchdayNumber, jdbcType=INTEGER}",
             "WHERE version=#{version} AND id=#{id}" })
     Integer update(Event entity);
 

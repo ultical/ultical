@@ -199,6 +199,7 @@ TRANSLATIONS['de'] = {
 				statusDECLINED: 'Abgelehnt',
 				statusCANCELLED: 'Abgesagt',
 			},
+			singleEvent: 'Alleiniger Spieltag',
 			contactButton: 'Veranstalter kontaktieren',
 			matchday: 'Spieltag',
 			registration: 'Anmeldung',
@@ -301,6 +302,7 @@ TRANSLATIONS['de'] = {
           descriptionLabel: 'Infos',
           attachmentLabel: 'Dokumente',
           save: 'Speichern',
+          matchdayLabel: 'Spieltag',
 			},
 		},
 

@@ -670,7 +670,8 @@ footer {
 	font-weight: 300;
 }
 
-#slim-edit-1 {
+#slim-edit-1,
+#slim-edit-2 {
   #padding: 0 2px;
   #padding-top: 1px;
   #padding-bottom: 1px;
@@ -678,7 +679,7 @@ footer {
 }
 
 .form-control.short {
-  width: 100px;
+  width: 150px;
 }
 
 select.form-control {

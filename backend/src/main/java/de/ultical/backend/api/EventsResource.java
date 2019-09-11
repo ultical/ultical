@@ -117,6 +117,19 @@ public class EventsResource {
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
             }
 
+
+            // create division confirmation mapping
+            // first delete the old mapping
+            this.dataStore.removeAllDivisionConfirmationsFromEvent(updatedEvent);
+
+            for (DivisionConfirmation divCon : updatedEvent.getDivisionConfirmations()) {
+                try {
+                    this.dataStore.addDivisionConfirmationToEvent(updatedEvent, divCon);
+                } catch (PersistenceException e) {
+                    LOGGER.error("exception:", e);
+                }
+            }
+
             // create the admin mapping
             // first delete the old mapping
             this.dataStore.removeAllAdminsFromEvent(updatedEvent);
@@ -131,6 +144,7 @@ public class EventsResource {
                     LOGGER.error("exception:", e);
                 }
             }
+
         } catch (PersistenceException pe) {
             LOG.error(DB_ACCESS_FAILURE, pe);
             throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);

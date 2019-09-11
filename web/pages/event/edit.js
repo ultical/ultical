@@ -11,7 +11,7 @@ angular.module('ultical.events')
     prepareDateDiff(event);
     $scope.locationClone = angular.copy(event.locations[0]);
     $scope.locationToEdit = angular.copy(event.locations[0]);
-
+    event.matchdayNumber += '';
     $scope.event = event;
     $scope.edition = event.tournamentEdition;
     $scope.format = event.tournamentEdition.tournamentFormat;
@@ -83,6 +83,8 @@ angular.module('ultical.events')
     }
     event.locations[0] = $scope.locationToEdit;
 
+    event.divisionConfirmations = event.x.divisionIds;
+
     // calculate end-date from start-date
     var endDateMoment = moment(event.startDate).add(event.x.eventNumOfDays - 1, 'days');
     event.endDate = endDateMoment.format('YYYY-MM-DD');
@@ -92,8 +94,6 @@ angular.module('ultical.events')
       $scope.event = newEvent;
     }, function() {
     });
-
-
 	}
 
   $scope.addAdmin = function(newAdmin) {
