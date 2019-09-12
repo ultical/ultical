@@ -303,6 +303,9 @@ TRANSLATIONS['de'] = {
           attachmentLabel: 'Dokumente',
           save: 'Speichern',
           matchdayLabel: 'Spieltag',
+          localOrganizerNameLabel: 'Name',
+          localOrganizerEmailLabel: 'Email-Adresse',
+          localOrganizerPhoneLabel: 'Telefonnr. (optional)',
 			},
 		},
 

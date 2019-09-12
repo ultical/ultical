@@ -111,6 +111,15 @@ public class EventsResource {
 
             this.dataStore.update(updatedEvent.getLocations().get(0));
 
+            if (updatedEvent.getLocalOrganizer() != null) {
+                if (updatedEvent.getLocalOrganizer().getId() == 0) {
+                    Contact contact = this.dataStore.addNew(updatedEvent.getLocalOrganizer());
+                    updatedEvent.setLocalOrganizer(contact);
+                } else {
+                    this.dataStore.update(updatedEvent.getLocalOrganizer());
+                }
+            }
+
             boolean updated = this.dataStore.update(updatedEvent);
             if (!updated) {
                 throw new WebApplicationException(
