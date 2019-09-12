@@ -117,7 +117,6 @@ public class EventsResource {
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
             }
 
-
             // create division confirmation mapping
             // first delete the old mapping
             this.dataStore.removeAllDivisionConfirmationsFromEvent(updatedEvent);

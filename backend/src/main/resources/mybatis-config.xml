@@ -6,6 +6,7 @@
 	<properties resource="jdbc.properties" />
 	<settings>
 		<setting name="jdbcTypeForNull" value="NULL" />
+		<setting name="logImpl" value="LOG4J"/>
 	</settings>
 	<typeHandlers>
 		<typeHandler handler="de.ultical.backend.data.mapper.LocalDateTypeHandler" javaType="java.time.LocalDate"/>

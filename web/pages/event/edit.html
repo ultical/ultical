@@ -258,20 +258,21 @@
 						<span ng-show="locationToEdit.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
 						<span ng-if="(inputForm.location.$touched && (locationToEdit.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'team.edit.locationMissing' | translate }}</span>
 					</div>
-					<div ng-repeat="location in event.locations | orderBy : ['-main', 'title']">
-						<div ng-class="{'strong': location.main }" ng-if="location.title | notEmpty">
-							<span>{{ location.title }}</span>
+					<div>
+<!--					<div ng-repeat="location in event.locations | orderBy : ['-main', 'title']">-->
+						<div ng-class="{'strong': locationToEdit.main }" ng-if="locationToEdit.title | notEmpty">
+							<span>{{ locationToEdit.title }}</span>
 						</div>
-						<div ng-class="{'strong': location.main }" ng-if="location.street | notEmpty">
-							<span>{{ location.street }}</span>
+						<div ng-class="{'strong': locationToEdit.main }" ng-if="locationToEdit.street | notEmpty">
+							<span>{{ locationToEdit.street }}</span>
 						</div>
-						<div ng-class="{'strong': location.main }" ng-if="(location.zipCode | notEmpty) || (location.city | notEmpty)">
-							<span ng-show="location.zipCode | notEmpty">{{ location.zipCode }}</span>
-							<span ng-show="location.city | notEmpty">{{ location.city }}</span>
+						<div ng-class="{'strong': locationToEdit.main }" ng-if="(locationToEdit.zipCode | notEmpty) || (locationToEdit.city | notEmpty)">
+							<span ng-show="locationToEdit.zipCode | notEmpty">{{ locationToEdit.zipCode }}</span>
+							<span ng-show="locationToEdit.city | notEmpty">{{ locationToEdit.city }}</span>
 						</div>
-						<div ng-class="{'strong': location.main }" ng-if="location.country | notEmpty">{{ location | countryname }}</div>
+						<div ng-class="{'strong': locationToEdit.main }" ng-if="locationToEdit.country | notEmpty">{{ locationToEdit | countryname }}</div>
 
-						<div ng-if="location.additionalInfo | notEmpty" class="margin-top-small">{{ location.additionalInfo }}</div>
+						<div ng-if="locationToEdit.additionalInfo | notEmpty" class="margin-top-small">{{ locationToEdit.additionalInfo }}</div>
 						<div ng-if="!$last" class="margin-bottom"></div>
 					</div>
 				</div>

@@ -12,6 +12,7 @@ angular.module('ultical.events')
     $scope.locationClone = angular.copy(event.locations[0]);
     $scope.locationToEdit = angular.copy(event.locations[0]);
     event.matchdayNumber += '';
+
     $scope.event = event;
     $scope.edition = event.tournamentEdition;
     $scope.format = event.tournamentEdition.tournamentFormat;
@@ -91,6 +92,7 @@ angular.module('ultical.events')
 
     storage.saveEvent(event, function(newEvent) {
       prepareDateDiff(newEvent);
+      newEvent.matchdayNumber += '';
       $scope.event = newEvent;
     }, function() {
     });
