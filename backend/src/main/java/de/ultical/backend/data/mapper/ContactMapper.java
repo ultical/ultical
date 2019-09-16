@@ -22,7 +22,8 @@ public interface ContactMapper extends BaseMapper<Contact> {
 
     // UPDATE
     @Override
-    @Update("UPDATE CONTACT SET version=version+1, email=#{email, jdbcType=VARCHAR}, name=#{name, jdbcType=VARCHAR}, phone=#{phone, jdbcType=VARCHAR}")
+    @Update({"UPDATE CONTACT SET version=version+1, email=#{email, jdbcType=VARCHAR}, name=#{name, jdbcType=VARCHAR}, phone=#{phone, jdbcType=VARCHAR}",
+            "WHERE id=#{id}"})
     Integer update(Contact entity);
 
     // DELETE

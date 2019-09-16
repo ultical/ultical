@@ -158,6 +158,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
         get('format/' + formatId, callback);
     },
 
+    getAllFormats: function(callback) {
+        get('format/own', callback);
+    },
+
     getFormatByEdition: function(editionId, callback) {
       get('format/edition/' + editionId, callback);
     },
@@ -165,6 +169,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		getFormatByEvent: function(eventId, callback) {
 			get('format/event/' + eventId, callback);
 		},
+
+    getEditionListingByFormat: function(formatId, callback) {
+      get('edition/format/' + formatId,  callback);
+    },
 
     saveTeam: function(team, oldTeam, callback, errorCallback) {
 			var teamToSend = angular.copy(team);

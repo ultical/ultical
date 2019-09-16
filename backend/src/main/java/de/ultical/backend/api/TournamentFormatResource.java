@@ -16,6 +16,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+import de.ultical.backend.data.mapper.TournamentFormatMapper;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,15 @@ public class TournamentFormatResource {
     public List<TournamentFormat> getAll() {
         this.checkDataStore();
         List<TournamentFormat> result = this.dataStore.getAll(TournamentFormat.class);
+        return result;
+    }
+
+    @GET
+    @Path("/own")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TournamentFormat> getByOwner(@Auth @NotNull User currentUser) {
+        this.checkDataStore();
+        List<TournamentFormat> result = this.dataStore.getFormatByOwner(currentUser.getId());
         return result;
     }
 

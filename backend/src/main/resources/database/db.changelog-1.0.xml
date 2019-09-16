@@ -1139,19 +1139,4 @@
 	<changeSet id="bb-20181212-002" author="bb">
 		<tagDatabase tag="v1.20"></tagDatabase>
 	</changeSet>
-	<changeSet author="bas" id="bas-event-visible-1">
-		<addColumn tableName="EVENT">
-			<column name="visible" type="BOOLEAN" defaultValueBoolean="false">
-				<constraints nullable="false" />
-			</column>
-		</addColumn>
-	</changeSet>
-	<changeSet id="bas-event-visible-2" author="bas">
-		<sql dbms="mysql" endDelimiter=";">
-			UPDATE EVENT SET visible = true;
-		</sql>
-	</changeSet>
-	<changeSet id="bas-20190902-001" author="bas">
-		<tagDatabase tag="v1.21"></tagDatabase>
-	</changeSet>
 </databaseChangeLog>

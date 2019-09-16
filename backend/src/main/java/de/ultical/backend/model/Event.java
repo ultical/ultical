@@ -44,8 +44,6 @@ public class Event extends Identifiable {
 
     private List<Resource> resources;
 
-    private boolean visible;
-
     @Override
     public Class<EventMapper> getMapper() {
         return EventMapper.class;

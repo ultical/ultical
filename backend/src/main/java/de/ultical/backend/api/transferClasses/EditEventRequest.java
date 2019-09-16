@@ -41,6 +41,4 @@ public class EditEventRequest {
   private String info;
 
   private List<Resource> resources;
-
-  private boolean visible;
 }

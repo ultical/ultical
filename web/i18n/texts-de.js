@@ -287,6 +287,9 @@ TRANSLATIONS['de'] = {
 			},
 			edit: {
 			    buttonLabel: 'Turnier bearbeiten',
+			    createButtonLabel: 'Turnier erstellen',
+			    chooseFormat: 'Turnierformat wählen',
+			    chooseEdition: 'Turnieredition wählen',
 			    nameLabel: 'Name',
 			    formatDescriptionLabel: 'Beschreibung',
 			    formatUrlLabel: 'Webseite',
@@ -296,7 +299,7 @@ TRANSLATIONS['de'] = {
           contextLabel: 'Spielberechtigungskontext',
           eventDateLabel: 'Datum',
           numberOfDaysLabel: 'Anzahl Tage',
-          locationLabel: 'Veranstaltungsort(e)',
+          locationLabel: 'Veranstaltungsort',
           divisionRegistrationLabel: 'Divisionen',
           adminLabel: 'Admins',
           descriptionLabel: 'Infos',
@@ -306,6 +309,8 @@ TRANSLATIONS['de'] = {
           localOrganizerNameLabel: 'Name',
           localOrganizerEmailLabel: 'Email-Adresse',
           localOrganizerPhoneLabel: 'Telefonnr. (optional)',
+          eventDisplayName: 'Angezeigter Name',
+          locationMissing: 'Bitte gib mindestens eine Stadt, besser noch die genaue Adresse des Turniers ein',
 			},
 		},
 

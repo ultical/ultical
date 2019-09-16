@@ -10,8 +10,7 @@ public interface DivisionConfirmationMapper extends BaseMapper<DivisionConfirmat
 
     final String divisionSelect = "SELECT dc.id, dc.version, dc.division_registration, dc.event,dc.individual_assignment, dr.is_player_registration FROM DIVISION_CONFIRMATION dc LEFT JOIN DIVISION_REGISTRATION dr ON dr.id = dc.division_registration";
 
-    @Insert("INSERT INTO DIVISION_CONFIRMATION (division_registration, event, individual_assignment) " +
-            "VALUES (#{divisionRegistrationId}, #{eventId}, #{isIndividualAssignment})")
+    @Insert("INSERT INTO DIVISION_CONFIRMATION (division_registration, event, individual_assignment) " + "VALUES (#{divisionRegistrationId}, #{eventId}, #{isIndividualAssignment})")
     Integer insert(@Param("eventId") int eventId,
                    @Param("divisionRegistrationId") int divisionRegistrationId,
                    @Param("isIndividualAssignment") boolean isIndividualAssignment);

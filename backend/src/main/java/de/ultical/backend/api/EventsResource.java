@@ -81,12 +81,51 @@ public class EventsResource {
     public Event createNewEvent(Event event, @Auth @NotNull User currentUser) {
         // TODO check authorisation
         this.checkDatatStore();
-        try {
-            Event storedEvent = this.dataStore.addNew(event);
-            return storedEvent;
-        } catch (PersistenceException pe) {
-            LOG.error(DB_ACCESS_FAILURE, pe);
-            throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
+
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
+
+            if (event.getLocations() == null
+                    || event.getLocations().get(0) == null
+                    || event.getLocations().get(0).getCity() == null
+                    || event.getLocations().get(0).getCity().isEmpty()) {
+                throw new WebApplicationException("Location must be specified", Status.EXPECTATION_FAILED);
+            }
+
+            if (event.getLocalOrganizer() != null) {
+                Contact localOrganizer = this.dataStore.addNew(event.getLocalOrganizer());
+                event.setLocalOrganizer(localOrganizer);
+            }
+
+            try {
+                event = this.dataStore.addNew(event);
+            } catch (PersistenceException pe) {
+                LOG.error(DB_ACCESS_FAILURE, pe);
+                throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
+            }
+
+            Location location = this.dataStore.addNew(event.getLocations().get(0));
+            event.getLocations().set(0, location);
+
+            dataStore.addLocationToEvent(event, location);
+
+            Event finalEvent = event;
+            event.getDivisionConfirmations()
+                    .forEach(division -> this.dataStore.addDivisionConfirmationToEvent(finalEvent, division));
+
+            // add admins
+            for (User admin : event.getAdmins()) {
+                try {
+                    this.dataStore.addAdminToEvent(event, admin);
+                } catch (PersistenceException e) {
+                    LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )", event.getName(),
+                            event.getId(), admin.getFullName(), admin.getId());
+                    LOGGER.error("exception:", e);
+                }
+            }
+
+            event.setVersion(1);
+
+            return event;
         }
     }
 
@@ -95,6 +134,7 @@ public class EventsResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{eventId}")
     public void updateEvent(@PathParam("eventId") Integer id, Event updatedEvent, @Auth @NotNull User currentUser) {
+        // TODO check authorisation
         this.checkDatatStore();
         if (!id.equals(updatedEvent.getId())) {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);

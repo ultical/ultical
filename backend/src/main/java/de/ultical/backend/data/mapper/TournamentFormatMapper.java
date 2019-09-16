@@ -71,6 +71,14 @@ public interface TournamentFormatMapper extends BaseMapper<TournamentFormat> {
             @Result(column = "id", property = "editions", many = @Many(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.getEditionsForFormat", fetchType = FetchType.EAGER) ) })
     public List<TournamentFormat> getAll();
 
+    @Select({ "SELECT id, version, association, name, description, url", "FROM TOURNAMENT_FORMAT tf",
+            "LEFT JOIN TOURNAMENT_FORMAT_ULTICAL_USERS tfuc ON tfuc.tournament_format = tf.id", "WHERE tfuc.admin = #{userId}" })
+    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "name", property = "name"), @Result(column = "url", property = "url"),
+            @Result(column = "description", property = "description"),
+            @Result(column = "association", property = "association", one = @One(select = "de.ultical.backend.data.mapper.AssociationMapper.getBasic") )})
+    public List<TournamentFormat> getAllByOwner(@Param("userId") int userId);
+
     /*
      * get format by edition id
      */

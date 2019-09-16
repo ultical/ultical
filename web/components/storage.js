@@ -300,6 +300,16 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
           });
       },
 
+      getFormatList: function(callback) {
+        var that = this;
+        serverApi.getAllFormats(function(formats) {
+          angular.forEach(formats, function(format) {
+            that.addFormat(that, format, function(x) {});
+          });
+          callback(formats);
+        });
+      },
+
       addFormat: function(that, data, callback) {
         storeTournamentFormat(data, newLoopIndex());
         var formatToReplace = -1;
@@ -313,6 +323,17 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
         }
         that.formats.push(data);
         callback(data);
+      },
+
+      getEditionListingForFormat: function(formatId, callback) {
+        var that = this;
+
+        serverApi.getEditionListingByFormat(formatId, function(editions) {
+          angular.forEach(editions, function(edition) {
+            storeTournamentEdition(edition, newLoopIndex());
+          });
+          callback(editions);
+        });
       },
 
 			getEvent: function(eventId, callback) {
@@ -702,17 +723,19 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 	function createEmptyEvent() {
 		return {
-			matchdayNumber: -1,
-			location: {},
-			startDate: '2016-01-01',
-			endDate: '2016-01-03',
-			fees: {},
+		  id: -1,
+			matchdayNumber: '-1',
+			locations: [],
+			startDate: moment().format('YYYY-MM-DD'),
+			endDate:  moment().add(1,'days'),
+			fees: [],
 			admins: [],
-			localOrganizerName: '',
-			localOrganizerEmail: '',
-			localOrganizerPhone: '',
-			divisionConfirmations: {},
+			divisionConfirmations: [],
 			tournamentEdition: {},
+			info: '',
+			name: '',
+			visible: true,
+			x: { eventNumOfDays: '2' },
 		};
 	}
 

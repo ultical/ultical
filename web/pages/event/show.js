@@ -333,10 +333,24 @@ angular.module('ultical.events')
         },
       });
     }
+
+    if ($scope.show.event && $scope.format.x.own) {
+          actionBar.addAction({
+            group: 'event-new',
+            needLogIn: true,
+            button: {
+              text: 'event.edit.createButtonLabel',
+              click: function() {
+                $scope.event.id = 'new';
+                $scope.editEvent();
+              }
+            },
+            separator: true,
+          });
+        }
   }
 
   $scope.editEvent = function() {
-    console.log("i try to go");
     $state.go('app.eventEdit', {eventId: $scope.event.id});
   }
 

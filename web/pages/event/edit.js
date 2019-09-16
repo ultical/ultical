@@ -2,29 +2,93 @@
 
 angular.module('ultical.events')
 
-.controller('EventEditCtrl', ['$scope', 'storage', '$stateParams', '$filter', '$state', 'mapService', 'alerter', 'serverApi',
-                      	  function($scope, storage, $stateParams, $filter, $state, mapService, alerter, serverApi) {
+.controller('EventEditCtrl', ['$scope', 'storage', '$stateParams', '$filter', '$state', 'mapService', 'alerter', 'serverApi', 'authorizer',
+                      	  function($scope, storage, $stateParams, $filter, $state, mapService, alerter, serverApi, authorizer) {
 
   $scope.newAdmin = {obj:""};
+  $scope.loaded = false;
 
-  storage.getEvent($stateParams.eventId, function(event) {
-    prepareDateDiff(event);
-    $scope.locationClone = angular.copy(event.locations[0]);
-    $scope.locationToEdit = angular.copy(event.locations[0]);
-    event.matchdayNumber += '';
+  $scope.createEvent = false;
 
-    $scope.event = event;
-    $scope.edition = event.tournamentEdition;
-    $scope.format = event.tournamentEdition.tournamentFormat;
-    console.log("event", event);
-    console.log("edition", $scope.edition);
-    console.log("format", $scope.format);
+  $scope.action = {
+    formatIdChosen: -1,
+    editionIdChosen: -1,
+    locationToEdit: {},
+  };
 
-    if (!$scope.event.x.own || !$scope.format.x.own) {
-      // TODO - $state.go('app.eventShow', {eventId: $scope.event.id, eventSlug: 'slug'});
-    }
+  if (!authorizer.loggedIn() || (isNaN($stateParams.eventId) && $stateParams.eventId != 'new')) {
+    $state.go('app.eventsList');
+    return;
+  }
 
-  });
+  if ($stateParams.eventId == 'new') {
+    $scope.event = storage.getEmptyEvent();
+    $scope.edition = {};
+    $scope.format = {};
+    $scope.editionChosen = false;
+    $scope.formatChosen = false;
+
+    storage.getFormatList(function(formats) {
+      $scope.formatList = formats;
+      $scope.loaded = true;
+      $scope.createEvent = true;
+    });
+  } else {
+    storage.getEvent($stateParams.eventId, function(event) {
+      prepareDateDiff(event);
+      $scope.locationClone = angular.copy(event.locations[0]);
+      $scope.action.locationToEdit = angular.copy(event.locations[0]);
+      event.matchdayNumber += '';
+
+      $scope.event = event;
+      $scope.edition = event.tournamentEdition;
+      $scope.format = event.tournamentEdition.tournamentFormat;
+      console.log("event", event);
+      console.log("edition", $scope.edition);
+      console.log("format", $scope.format);
+
+      $scope.editionChosen = true;
+      $scope.formatChosen = true;
+      $scope.loaded = true;
+
+      if (!$scope.event.x.own || !$scope.format.x.own) {
+        // TODO - $state.go('app.eventShow', {eventId: $scope.event.id, eventSlug: 'slug'});
+      }
+    });
+  }
+
+  $scope.chooseFormat = function() {
+    angular.forEach($scope.formatList, function(format) {
+      if (format.id == $scope.action.formatIdChosen) {
+        format.x.own = true;
+        $scope.format = format;
+      }
+    });
+    storage.getEditionListingForFormat($scope.format.id, function(editions) {
+      $scope.editionList = editions;
+      $scope.formatChosen = true;
+    });
+  }
+
+  $scope.chooseEdition = function() {
+    angular.forEach($scope.editionList, function(edition) {
+      if (edition.id == $scope.action.editionIdChosen) {
+        edition.tournamentFormat = $scope.format;
+        $scope.edition = edition;
+        $scope.event.tournamentEdition = $scope.edition;
+
+        console.log("NOW WE HAVE");
+        console.log("format", $scope.format);
+        console.log("edition", $scope.edition);
+        console.log("event", $scope.event);
+      }
+    });
+    $scope.editionChosen = true;
+  }
+
+  function isNumber(input) {
+      return typeof input === 'number' || Object.prototype.toString.call(input) === '[object Number]';
+  }
 
   var prepareDateDiff = function(event) {
       var timeDiff = moment.duration(moment(event.endDate).diff(moment(event.startDate)));
@@ -35,15 +99,6 @@ angular.module('ultical.events')
 	$scope.divisionOrder = function(division) {
 		return $filter('division')(division);
 	}
-
-	// if format(s) exist - create select field to choose from - else create new
-//	$scope.formats = getUsersFormats...
-	
-	
-//	if ($stateParams.formatId == 'new') {
-//		$scope.edit = {format = storage.getEmptyEvent();
-//	}
-//	$scope.edition = 
 
   // return location-proposals from mapbox api
   $scope.getLocations = function(locationName) {
@@ -66,6 +121,7 @@ angular.module('ultical.events')
         }
       });
       $scope.oldLocations = locations;
+      console.log("locations", locations);
       return locations;
     });
   };
@@ -73,16 +129,21 @@ angular.module('ultical.events')
 
 	$scope.saveEvent = function(event) {
 	  console.log("Saving event", event);
+console.log("locationToEdit", $scope.action.locationToEdit);
 
-    if (!angular.isObject($scope.locationToEdit) || isEmpty($scope.locationToEdit)) {
+    if (isEmpty(event.localOrganizer) || isEmpty(event.localOrganizer.name)) {
+      event.localOrganizer = null;
+    }
+
+    if (!angular.isObject($scope.action.locationToEdit) || isEmpty($scope.action.locationToEdit)) {
       $scope.locationIsMissing = true;
-      alerter.error('', 'team.edit.locationMissing', {
-        container: '#team-edit-error' + team.id,
+      alerter.error('', 'event.edit.locationMissing', {
+        container: '#team-edit-error' + event.id,
         duration: 10
       });
       return;
     }
-    event.locations[0] = $scope.locationToEdit;
+    event.locations[0] = $scope.action.locationToEdit;
 
     event.divisionConfirmations = event.x.divisionIds;
 
@@ -90,13 +151,16 @@ angular.module('ultical.events')
     var endDateMoment = moment(event.startDate).add(event.x.eventNumOfDays - 1, 'days');
     event.endDate = endDateMoment.format('YYYY-MM-DD');
 
+    event.tournamentEdition = { id: event.tournamentEdition.id };
     storage.saveEvent(event, function(newEvent) {
-      prepareDateDiff(newEvent);
-      newEvent.matchdayNumber += '';
-      $scope.event = newEvent;
+      $scope.showEvent(newEvent);
     }, function() {
     });
 	}
+
+  $scope.showEvent = function(event) {
+    $state.go('app.eventShow', {eventId: event.id, eventSlug: 'slug'});
+  }
 
   $scope.addAdmin = function(newAdmin) {
     if (isEmpty(newAdmin)) {

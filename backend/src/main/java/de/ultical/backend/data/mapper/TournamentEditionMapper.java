@@ -116,6 +116,19 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
             @Result(column = "id", property = "divisionRegistrations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.getRegistrationsForEdition")) })
     List<TournamentEdition> getEditionsForFormat(int formatId);
 
+    @Select({ editionSelectBase, "WHERE tournament_format = #{formatId}" })
+    @Results({ @Result(column = "alternative_matchday_name", property = "alternativeMatchdayName"),
+            @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "name", property = "name"),
+            @Result(column = "season", property = "season", javaType = Season.class, one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get")),
+            @Result(column = "registration_start", property = "registrationStart"),
+            @Result(column = "registration_end", property = "registrationEnd"),
+            @Result(column = "hashtag", property = "hashtag"),
+            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get")),
+            @Result(column = "allow_event_team_reg_management", property = "allowEventTeamRegManagement"),
+            @Result(column = "id", property = "divisionRegistrations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.getBasicRegistrationsForEdition")) })
+    List<TournamentEdition> getEditionListingByFormat(int formatId);
+
     @Override
     @Select(editionSelectBase)
     @Results({ @Result(column = "alternative_matchday_name", property = "alternativeMatchdayName"),

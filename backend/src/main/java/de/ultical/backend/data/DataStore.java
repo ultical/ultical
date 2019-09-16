@@ -32,12 +32,13 @@ import de.ultical.backend.api.transferClasses.DfvMvName;
 public class DataStore {
 
     public class DataStoreCloseable implements AutoCloseable {
-	@Override
-	public void close() {
-	    DataStore.this.closeSession();
-	}
+
+        @Override
+        public void close() {
+            DataStore.this.closeSession();
+        }
     }
-    
+
     @Inject
     SqlSession sqlSession;
 
@@ -816,6 +817,17 @@ public class DataStore {
         }
     }
 
+    public List<TournamentFormat> getFormatByOwner(final int userId) {
+      try {
+        TournamentFormatMapper tfMapper = this.sqlSession.getMapper(TournamentFormatMapper.class);
+        return tfMapper.getAllByOwner(userId);
+      } finally {
+        if (this.autoCloseSession) {
+          this.sqlSession.close();
+        }
+      }
+    }
+
     public TournamentFormat getFormatByEdition(int editionId) {
         try {
             TournamentFormatMapper tfMapper = this.sqlSession.getMapper(TournamentFormatMapper.class);
@@ -970,6 +982,31 @@ public class DataStore {
         try {
             RosterMapper mapper = this.sqlSession.getMapper(RosterMapper.class);
             return mapper.getRostersForPlayer(player);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public List<TournamentEdition> getEditionListingByFormat(Integer formatId) {
+        Objects.requireNonNull(formatId);
+        try {
+            TournamentEditionMapper mapper = this.sqlSession.getMapper(TournamentEditionMapper.class);
+            return mapper.getEditionListingByFormat(formatId);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public void addLocationToEvent(final Event event, final Location location) {
+        Objects.requireNonNull(event);
+        Objects.requireNonNull(location);
+        try {
+            LocationMapper mapper = this.sqlSession.getMapper(LocationMapper.class);
+            mapper.addToEvent(event.getId(), location.getId());
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

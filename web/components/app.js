@@ -55,7 +55,7 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		templateUrl: 'pages/event/show.html?v='+version,
 	})
 	.state('app.eventEdit', {
-		url: '/event/edit/{eventId:int}',
+		url: '/event/edit/{eventId}',
 		templateUrl: 'pages/event/edit.html?v='+version,
 	})
 	.state('app.editionShow', {
