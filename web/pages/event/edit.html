@@ -235,27 +235,29 @@
 					<span class="strong ">{{ 'event.edit.locationLabel' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<div>
-						<input class="form-control" typeahead-min-length="3" typeahead-wait-ms="400" name="location" required="required" type="text" id="tteCity" class="form-control" ng-model="action.locationToEdit" typeahead-select-on-blur="true" typeahead-select-on-exact="true"
+<!--					<div>-->
+					<div class="form-group has-feedback" ng-class="{'has-error': (inputForm.location.$touched && (action.locationToEdit.city | isEmpty)) || locationIsMissing}">
+
+					<input class="form-control" typeahead-min-length="3" typeahead-wait-ms="400" name="location" required="required" type="text" id="tteCity" class="form-control" ng-model="action.locationToEdit" typeahead-select-on-blur="true" typeahead-select-on-exact="true"
 							   uib-typeahead="location | locationObject as location | location for location in getLocations($viewValue)" typeahead-wait-ms="300" placeholder="{{ 'event.edit.locationLabel' | translate }}" />
-						<span ng-show="locationToEdit.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
-						<span ng-if="(inputForm.location.$touched && (locationToEdit.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'event.edit.locationMissing' | translate }}</span>
+						<span ng-show="action.locationToEdit.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
+						<span ng-if="(inputForm.location.$touched && (action.locationToEdit.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'event.edit.locationMissing' | translate }}</span>
 					</div>
 					<div>
 		<!--					<div ng-repeat="location in event.locations | orderBy : ['-main', 'title']">-->
-						<div ng-class="{'strong': locationToEdit.main }" ng-if="locationToEdit.title | notEmpty">
-							<span>{{ locationToEdit.title }}</span>
+						<div ng-class="{'strong': action.locationToEdit.main }" ng-if="action.locationToEdit.title | notEmpty">
+							<span>{{ action.locationToEdit.title }}</span>
 						</div>
-						<div ng-class="{'strong': locationToEdit.main }" ng-if="locationToEdit.street | notEmpty">
-							<span>{{ locationToEdit.street }}</span>
+						<div ng-class="{'strong': action.locationToEdit.main }" ng-if="action.locationToEdit.street | notEmpty">
+							<span>{{ action.locationToEdit.street }}</span>
 						</div>
-						<div ng-class="{'strong': locationToEdit.main }" ng-if="(locationToEdit.zipCode | notEmpty) || (locationToEdit.city | notEmpty)">
-							<span ng-show="locationToEdit.zipCode | notEmpty">{{ locationToEdit.zipCode }}</span>
-							<span ng-show="locationToEdit.city | notEmpty">{{ locationToEdit.city }}</span>
+						<div ng-class="{'strong': action.locationToEdit.main }" ng-if="(action.locationToEdit.zipCode | notEmpty) || (action.locationToEdit.city | notEmpty)">
+							<span ng-show="action.locationToEdit.zipCode | notEmpty">{{ action.locationToEdit.zipCode }}</span>
+							<span ng-show="action.locationToEdit.city | notEmpty">{{ action.locationToEdit.city }}</span>
 						</div>
-						<div ng-class="{'strong': locationToEdit.main }" ng-if="locationToEdit.country | notEmpty">{{ locationToEdit | countryname }}</div>
+						<div ng-class="{'strong': action.locationToEdit.main }" ng-if="action.locationToEdit.country | notEmpty">{{ action.locationToEdit | countryname }}</div>
 
-						<div ng-if="locationToEdit.additionalInfo | notEmpty" class="margin-top-small">{{ locationToEdit.additionalInfo }}</div>
+						<div ng-if="action.locationToEdit.additionalInfo | notEmpty" class="margin-top-small">{{ action.locationToEdit.additionalInfo }}</div>
 						<div ng-if="!$last" class="margin-bottom"></div>
 					</div>
 				</div>

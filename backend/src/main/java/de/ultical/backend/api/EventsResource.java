@@ -79,8 +79,10 @@ public class EventsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Event createNewEvent(Event event, @Auth @NotNull User currentUser) {
-        // TODO check authorisation
         this.checkDatatStore();
+
+        TournamentFormat format = dataStore.getFormatByEdition(event.getTournamentEdition().getId());
+        Authenticator.assureFormatAdmin(format, currentUser);
 
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
 
@@ -134,14 +136,14 @@ public class EventsResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{eventId}")
     public void updateEvent(@PathParam("eventId") Integer id, Event updatedEvent, @Auth @NotNull User currentUser) {
-        // TODO check authorisation
         this.checkDatatStore();
         if (!id.equals(updatedEvent.getId())) {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
         }
 
+
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
-            Authenticator.assureEventAdmin(this.dataStore, updatedEvent.getId(), currentUser);
+            Authenticator.assureEventOrFormatAdmin(dataStore, updatedEvent.getId(), currentUser);
 
             if (updatedEvent.getLocations() == null || updatedEvent.getLocations().get(0) == null
                     || updatedEvent.getLocations().get(0).getCity() == null

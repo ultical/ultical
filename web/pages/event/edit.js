@@ -2,8 +2,8 @@
 
 angular.module('ultical.events')
 
-.controller('EventEditCtrl', ['$scope', 'storage', '$stateParams', '$filter', '$state', 'mapService', 'alerter', 'serverApi', 'authorizer',
-                      	  function($scope, storage, $stateParams, $filter, $state, mapService, alerter, serverApi, authorizer) {
+.controller('EventEditCtrl', ['$scope', 'storage', '$stateParams', '$filter', '$state', 'mapService', 'alerter', 'serverApi', 'authorizer', 'headService',
+                      	  function($scope, storage, $stateParams, $filter, $state, mapService, alerter, serverApi, authorizer, headService) {
 
   $scope.newAdmin = {obj:""};
   $scope.loaded = false;
@@ -22,6 +22,7 @@ angular.module('ultical.events')
   }
 
   if ($stateParams.eventId == 'new') {
+    headService.setTitle('event.edit.createTitle');
     $scope.event = storage.getEmptyEvent();
     $scope.edition = {};
     $scope.format = {};
@@ -35,6 +36,7 @@ angular.module('ultical.events')
     });
   } else {
     storage.getEvent($stateParams.eventId, function(event) {
+      headService.setTitle('event.edit.editTitle' + event.name);
       prepareDateDiff(event);
       $scope.locationClone = angular.copy(event.locations[0]);
       $scope.action.locationToEdit = angular.copy(event.locations[0]);
@@ -43,16 +45,13 @@ angular.module('ultical.events')
       $scope.event = event;
       $scope.edition = event.tournamentEdition;
       $scope.format = event.tournamentEdition.tournamentFormat;
-      console.log("event", event);
-      console.log("edition", $scope.edition);
-      console.log("format", $scope.format);
 
       $scope.editionChosen = true;
       $scope.formatChosen = true;
       $scope.loaded = true;
 
-      if (!$scope.event.x.own || !$scope.format.x.own) {
-        // TODO - $state.go('app.eventShow', {eventId: $scope.event.id, eventSlug: 'slug'});
+      if (!$scope.event.x.own && !$scope.format.x.own) {
+        $state.go('app.eventShow', {eventId: $scope.event.id, eventSlug: 'slug'});
       }
     });
   }
@@ -76,11 +75,6 @@ angular.module('ultical.events')
         edition.tournamentFormat = $scope.format;
         $scope.edition = edition;
         $scope.event.tournamentEdition = $scope.edition;
-
-        console.log("NOW WE HAVE");
-        console.log("format", $scope.format);
-        console.log("edition", $scope.edition);
-        console.log("event", $scope.event);
       }
     });
     $scope.editionChosen = true;
@@ -121,16 +115,12 @@ angular.module('ultical.events')
         }
       });
       $scope.oldLocations = locations;
-      console.log("locations", locations);
       return locations;
     });
   };
 
 
 	$scope.saveEvent = function(event) {
-	  console.log("Saving event", event);
-console.log("locationToEdit", $scope.action.locationToEdit);
-
     if (isEmpty(event.localOrganizer) || isEmpty(event.localOrganizer.name)) {
       event.localOrganizer = null;
     }

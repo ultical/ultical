@@ -267,6 +267,17 @@ public class DataStore {
         }
     }
 
+    public Event getEvent(int eventId) {
+        try {
+            EventMapper eventMapper = this.sqlSession.getMapper(EventMapper.class);
+            return eventMapper.get(eventId);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public List<TeamRegistration> getTeamRegistrationsByRosters(List<Roster> rosters) {
         try {
             TeamRegistrationMapper trMapper = this.sqlSession.getMapper(TeamRegistrationMapper.class);

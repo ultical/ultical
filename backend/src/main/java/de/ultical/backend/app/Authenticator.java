@@ -99,6 +99,15 @@ public class Authenticator {
         if (storedEvent == null) {
             throw new WebApplicationException("Event does not exist!", Status.NOT_FOUND);
         }
+        boolean isAdmin = isEventAdmin(storedEvent, currentUser);
+
+        if (!isAdmin) {
+            throw new WebApplicationException(String.format("You are not an admin for event %d", storedEvent.getId()),
+                    Status.FORBIDDEN);
+        }
+    }
+
+    public static boolean isEventAdmin(Event storedEvent, User currentUser) {
         List<User> admins = storedEvent.getAdmins();
         admins.addAll(storedEvent.getTournamentEdition().getTournamentFormat().getAdmins());
         boolean isAdmin = false;
@@ -108,8 +117,21 @@ public class Authenticator {
                 break;
             }
         }
-        if (!isAdmin) {
-            throw new WebApplicationException(String.format("You are not an admin for event %d", storedEvent.getId()),
+        return isAdmin;
+    }
+
+    public static void assureEventOrFormatAdmin(DataStore dataStore, int eventId, User user) {
+        //TournamentFormat format = dataStore.getFormatByEvent(eventId);
+        Event event = dataStore.getEvent(eventId);
+
+        boolean isEventAdmin = isEventAdmin(event, user);
+
+        TournamentFormat format = event.getTournamentEdition().getTournamentFormat();
+        boolean isFormatAdmin = isFormatAdmin(format, user);
+
+        if (!isEventAdmin && !isFormatAdmin) {
+            throw new WebApplicationException(
+                    String.format("You are neither an admin for format %d, nor for event %d", format.getId(), event.getId()),
                     Status.FORBIDDEN);
         }
     }
@@ -128,6 +150,15 @@ public class Authenticator {
         if (storedFormat == null) {
             throw new WebApplicationException("Format does not exist!", Status.NOT_FOUND);
         }
+        boolean isAdmin = isFormatAdmin(storedFormat, currentUser);
+
+        if (!isAdmin) {
+            throw new WebApplicationException(String.format("You are not an admin for format %d", storedFormat.getId()),
+                    Status.FORBIDDEN);
+        }
+    }
+
+    public static boolean isFormatAdmin(TournamentFormat storedFormat, User currentUser) {
         List<User> admins = storedFormat.getAdmins();
         boolean isAdmin = false;
         for (User admin : admins) {
@@ -136,10 +167,7 @@ public class Authenticator {
                 break;
             }
         }
-        if (!isAdmin) {
-            throw new WebApplicationException(String.format("You are not an admin for format %d", storedFormat.getId()),
-                    Status.FORBIDDEN);
-        }
+        return isAdmin;
     }
 
     public static void assureOverallAdmin(final User user) {
