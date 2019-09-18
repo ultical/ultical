@@ -279,7 +279,7 @@ angular.module('ultical.events')
       }
     }
 
-    if ($scope.show.event && ($scope.event.admins.length > 0 || ($scope.event.localOrganizer != null && $scope.event.localOrganizer.email != null))) {
+    if ($scope.show.event && (($scope.event.admins && $scope.event.admins.length > 0) || ($scope.event.localOrganizer != null && $scope.event.localOrganizer.email != null))) {
       actionBar.addAction({
         group: 'contact-event',
         needLogIn: null,

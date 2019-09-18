@@ -2,8 +2,8 @@
 
 angular.module('ultical.events')
 
-.controller('EventEditCtrl', ['$scope', 'storage', '$stateParams', '$filter', '$state', 'mapService', 'alerter', 'serverApi', 'authorizer', 'headService',
-                      	  function($scope, storage, $stateParams, $filter, $state, mapService, alerter, serverApi, authorizer, headService) {
+.controller('EventEditCtrl', ['$scope', 'storage', '$stateParams', '$filter', '$state', 'mapService', 'alerter', 'serverApi', 'authorizer', 'headService', '$translate',
+                      	  function($scope, storage, $stateParams, $filter, $state, mapService, alerter, serverApi, authorizer, headService, $translate) {
 
   $scope.newAdmin = {obj:""};
   $scope.loaded = false;
@@ -15,6 +15,17 @@ angular.module('ultical.events')
     editionIdChosen: -1,
     locationToEdit: { city: ''},
   };
+
+  function clearNewDivision() {
+    $scope.newDivision = {
+      divisionType: 'open',
+      divisionAge: 'regular',
+      divisionIdentifier: '',
+      numberSpots: '0',
+    }
+  }
+
+  clearNewDivision();
 
   if (!authorizer.loggedIn() || (isNaN($stateParams.eventId) && $stateParams.eventId != 'new')) {
     $state.go('app.eventsList');
@@ -36,7 +47,7 @@ angular.module('ultical.events')
     });
   } else {
     storage.getEvent($stateParams.eventId, function(event) {
-      headService.setTitle('event.edit.editTitle' + event.name);
+      headService.setTitle($translate.instant('event.edit.editTitle') + event.name);
       prepareDateDiff(event);
       $scope.locationClone = angular.copy(event.locations[0]);
       $scope.action.locationToEdit = angular.copy(event.locations[0]);
@@ -223,6 +234,21 @@ angular.module('ultical.events')
     if (indexToRemove >= 0) {
       $scope.event.admins.splice(indexToRemove, 1);
     }
+  };
+
+  $scope.addDivision = function(newDivision) {
+    storage.createDivisionRegistration(newDivision, $scope.edition.id, function(createdDivision) {
+      $scope.edition.divisionRegistrations.push(createdDivision);
+      clearNewDivision();
+    });
+  };
+
+  $scope.getDivisionTypes = function() {
+    return ['open', 'women', 'mixed'];
+  };
+
+  $scope.getDivisionAges = function() {
+    return ['u14', 'u17', 'u20', 'u23', 'regular', 'masters', 'grandmasters', 'greatgrand'];
   };
 
 }]);

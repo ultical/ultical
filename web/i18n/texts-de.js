@@ -117,7 +117,7 @@ TRANSLATIONS['de'] = {
 			u14: 'U14',
 			u17: 'U17',
 			u20: 'Juniors',
-			u23: 'U23',
+			u23: 'U24',
 			regular: 'jedes Alter',
 			masters: 'Masters',
 			grandmasters: 'Grandmasters',
@@ -125,6 +125,8 @@ TRANSLATIONS['de'] = {
 			open: 'Open',
 			women: 'Damen',
 			mixed: 'Mixed',
+			numberOfSpotsUndefined: 'Undefiniert',
+			numberOfSpots: 'Startplätze',
 		},
 
 		start: {
@@ -315,6 +317,8 @@ TRANSLATIONS['de'] = {
           locationMissing: 'Bitte gib mindestens eine Stadt, besser noch die genaue Adresse des Turniers ein',
           titleMissing: 'Bitte gib einen Namen für dieses Turnier ein',
           divisionsMissing: 'Bitte gib mindestens eine Division ein, die auf diesem Turnier gespielt wird',
+          divisionRemoveTooltip: 'Division entfernen',
+			    divisionIdentifierPlaceholder: 'Bezeichnung (optional)',
 			},
 		},
 
