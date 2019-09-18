@@ -27,7 +27,8 @@ public interface DivisionRegistrationMapper extends BaseMapper<DivisionRegistrat
     // INSERT
     @Insert({ "INSERT INTO DIVISION_REGISTRATION",
             "(tournament_edition, division_type, division_age, number_of_spots, is_player_registration, division_identifier)",
-            "VALUES (#{edition.id}, #{divReg.divisionType}, #{divReg.divisionAge}, #{divReg.numberSpots}, #{isPlayerRegistration}, #{divReg.divisionIdentifier, jdbcType=VARCHAR})" })
+            "VALUES (#{edition.id}, #{divReg.divisionType}, #{divReg.divisionAge}, #{divReg.numberSpots}, #{isPlayerRegistration},",
+            "#{divReg.divisionIdentifier, jdbcType=VARCHAR})" })
     @Options(keyProperty = "divReg.id", useGeneratedKeys = true)
     Integer insert(@Param("divReg") DivisionRegistration entity, @Param("edition") TournamentEdition edition,
             @Param("isPlayerRegistration") boolean isPlayerRegistration);
