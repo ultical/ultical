@@ -20,6 +20,8 @@ cache:
 jdk:
   - oraclejdk8
 
+dist: trusty
+
 notifications:
   email:
     recipients:
