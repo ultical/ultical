@@ -21,6 +21,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * the cloud
@@ -38,6 +40,8 @@ public class DataStore {
             DataStore.this.closeSession();
         }
     }
+
+    Logger logger = LoggerFactory.getLogger(DataStore.class);
 
     @Inject
     SqlSession sqlSession;
@@ -154,6 +158,7 @@ public class DataStore {
             this.sqlSession.commit();
             return updateCount == 1;
         } catch (PersistenceException pe) {
+            logger.error(pe.getCause().getMessage());
             this.sqlSession.rollback();
             throw pe;
         } finally {

@@ -20,8 +20,6 @@ import java.util.List;
 @Path("/events")
 public class EventsResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventsResource.class);
-
     private static final String DB_ACCESS_FAILURE = "Accessing database failed";
     private final static Logger LOG = LoggerFactory.getLogger(EventsResource.class);
     @Inject
@@ -81,22 +79,13 @@ public class EventsResource {
     public Event createNewEvent(Event event, @Auth @NotNull User currentUser) {
         this.checkDatatStore();
 
-        TournamentFormat format = dataStore.getFormatByEdition(event.getTournamentEdition().getId());
-        Authenticator.assureFormatAdmin(format, currentUser);
+        assureCompleteEventInformation(event);
 
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
+            TournamentFormat format = dataStore.getFormatByEdition(event.getTournamentEdition().getId());
+            Authenticator.assureFormatAdmin(format, currentUser);
 
-            if (event.getLocations() == null
-                    || event.getLocations().get(0) == null
-                    || event.getLocations().get(0).getCity() == null
-                    || event.getLocations().get(0).getCity().isEmpty()) {
-                throw new WebApplicationException("Location must be specified", Status.EXPECTATION_FAILED);
-            }
-
-            if (event.getLocalOrganizer() != null) {
-                Contact localOrganizer = this.dataStore.addNew(event.getLocalOrganizer());
-                event.setLocalOrganizer(localOrganizer);
-            }
+            processPreSaveEventDependencies(event);
 
             try {
                 event = this.dataStore.addNew(event);
@@ -107,23 +96,9 @@ public class EventsResource {
 
             Location location = this.dataStore.addNew(event.getLocations().get(0));
             event.getLocations().set(0, location);
-
             dataStore.addLocationToEvent(event, location);
 
-            Event finalEvent = event;
-            event.getDivisionConfirmations()
-                    .forEach(division -> this.dataStore.addDivisionConfirmationToEvent(finalEvent, division));
-
-            // add admins
-            for (User admin : event.getAdmins()) {
-                try {
-                    this.dataStore.addAdminToEvent(event, admin);
-                } catch (PersistenceException e) {
-                    LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )", event.getName(),
-                            event.getId(), admin.getFullName(), admin.getId());
-                    LOGGER.error("exception:", e);
-                }
-            }
+            processPostSaveEventDependencies(event);
 
             event.setVersion(1);
 
@@ -141,26 +116,12 @@ public class EventsResource {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
         }
 
+        assureCompleteEventInformation(updatedEvent);
 
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
             Authenticator.assureEventOrFormatAdmin(dataStore, updatedEvent.getId(), currentUser);
 
-            if (updatedEvent.getLocations() == null || updatedEvent.getLocations().get(0) == null
-                    || updatedEvent.getLocations().get(0).getCity() == null
-                    || updatedEvent.getLocations().get(0).getCity().isEmpty()) {
-                throw new WebApplicationException(Status.EXPECTATION_FAILED);
-            }
-
-            this.dataStore.update(updatedEvent.getLocations().get(0));
-
-            if (updatedEvent.getLocalOrganizer() != null) {
-                if (updatedEvent.getLocalOrganizer().getId() == 0) {
-                    Contact contact = this.dataStore.addNew(updatedEvent.getLocalOrganizer());
-                    updatedEvent.setLocalOrganizer(contact);
-                } else {
-                    this.dataStore.update(updatedEvent.getLocalOrganizer());
-                }
-            }
+            processPreSaveEventDependencies(updatedEvent);
 
             boolean updated = this.dataStore.update(updatedEvent);
             if (!updated) {
@@ -168,36 +129,81 @@ public class EventsResource {
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
             }
 
-            // create division confirmation mapping
-            // first delete the old mapping
-            this.dataStore.removeAllDivisionConfirmationsFromEvent(updatedEvent);
+            this.dataStore.update(updatedEvent.getLocations().get(0));
 
-            for (DivisionConfirmation divCon : updatedEvent.getDivisionConfirmations()) {
-                try {
-                    this.dataStore.addDivisionConfirmationToEvent(updatedEvent, divCon);
-                } catch (PersistenceException e) {
-                    LOGGER.error("exception:", e);
-                }
-            }
-
-            // create the admin mapping
-            // first delete the old mapping
-            this.dataStore.removeAllAdminsFromEvent(updatedEvent);
-
-            for (User admin : updatedEvent.getAdmins()) {
-                try {
-                    this.dataStore.addAdminToEvent(updatedEvent, admin);
-                } catch (PersistenceException e) {
-                    LOGGER.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )\ncurrentUser: {}",
-                            updatedEvent.getName(), updatedEvent.getId(), admin.getFullName(), admin.getId(),
-                            currentUser.getId());
-                    LOGGER.error("exception:", e);
-                }
-            }
-
+            processPostSaveEventDependencies(updatedEvent);
         } catch (PersistenceException pe) {
             LOG.error(DB_ACCESS_FAILURE, pe);
             throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void processPreSaveEventDependencies(Event event) {
+        if (event.getLocalOrganizer() != null) {
+            if (event.getLocalOrganizer().getId() == 0) {
+                Contact contact = this.dataStore.addNew(event.getLocalOrganizer());
+                event.setLocalOrganizer(contact);
+            } else {
+                this.dataStore.update(event.getLocalOrganizer());
+            }
+        }
+    }
+
+    private void processPostSaveEventDependencies(Event event) {
+        // create division confirmation mapping
+        // first delete the old mapping
+        this.dataStore.removeAllDivisionConfirmationsFromEvent(event);
+
+        for (DivisionConfirmation divCon : event.getDivisionConfirmations()) {
+            try {
+                this.dataStore.addDivisionConfirmationToEvent(event, divCon);
+            } catch (PersistenceException e) {
+                LOG.error("exception:", e);
+            }
+        }
+
+        // create the admin mapping
+        // first delete the old mapping
+        this.dataStore.removeAllAdminsFromEvent(event);
+
+        for (User admin : event.getAdmins()) {
+            try {
+                this.dataStore.addAdminToEvent(event, admin);
+            } catch (PersistenceException e) {
+                LOG.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )\n",
+                        event.getName(), event.getId(), admin.getFullName(), admin.getId());
+                LOG.error("exception:", e);
+            }
+        }
+    }
+
+    private void assureCompleteEventInformation(Event event) {
+        assureNotEmpty(event.getName(), "name");
+        assureNotEmpty(event.getStartDate(), "start_date");
+        assureNotEmpty(event.getEndDate(), "end_date");
+        assureNotEmpty(event.getMatchdayNumber(), "matchday_number");
+        assureNotEmpty(event.getLocations(), "location");
+        assureNotEmpty(event.getLocations().get(0), "location");
+        assureNotEmpty(event.getLocations().get(0).getCity(), "location");
+        assureNotEmpty(event.getDivisionConfirmations(), "divisions");
+    }
+
+    private void assureNotEmpty(Object obj, String name) {
+        boolean empty = false;
+
+        if (obj != null) {
+            if (obj instanceof String) {
+                empty = ((String) obj).isEmpty();
+            } else if (obj instanceof Location) {
+                assureNotEmpty(((Location) obj).getCity(), name);
+            } else if (obj instanceof List) {
+                empty = ((List) obj).isEmpty();
+            }
+        } else {
+            empty = true;
+        }
+        if (empty) {
+            throw new WebApplicationException("Missing event parameters: " + name, Status.EXPECTATION_FAILED);
         }
     }
 
