@@ -464,7 +464,6 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
         }
         serverApi.saveEvent(event, oldEvent, function(savedEvent) {
           console.log("got back the saved event", savedEvent);
-          //that.eventIndexed[event.id] = savedEvent;
           that.events.push(savedEvent);
 
           storeEvent(savedEvent, newLoopIndex());

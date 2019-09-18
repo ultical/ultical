@@ -289,7 +289,7 @@ TRANSLATIONS['de'] = {
 			    createTitle: 'Neues Turnier erstellen',
 			    editTitle: 'Bearbeite: ',
 			    buttonLabel: 'Turnier bearbeiten',
-			    createButtonLabel: 'Turnier erstellen',
+			    createButtonLabel: 'Neues Turnier erstellen',
 			    chooseFormat: 'Turnierformat wählen',
 			    chooseEdition: 'Turnieredition wählen',
 			    nameLabel: 'Name',
@@ -313,6 +313,8 @@ TRANSLATIONS['de'] = {
           localOrganizerPhoneLabel: 'Telefonnr. (optional)',
           eventDisplayName: 'Angezeigter Name',
           locationMissing: 'Bitte gib mindestens eine Stadt, besser noch die genaue Adresse des Turniers ein',
+          titleMissing: 'Bitte gib einen Namen für dieses Turnier ein',
+          divisionsMissing: 'Bitte gib mindestens eine Division ein, die auf diesem Turnier gespielt wird',
 			},
 		},
 

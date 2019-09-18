@@ -13,7 +13,7 @@ angular.module('ultical.events')
   $scope.action = {
     formatIdChosen: -1,
     editionIdChosen: -1,
-    locationToEdit: {},
+    locationToEdit: { city: ''},
   };
 
   if (!authorizer.loggedIn() || (isNaN($stateParams.eventId) && $stateParams.eventId != 'new')) {
@@ -121,19 +121,33 @@ angular.module('ultical.events')
 
 
 	$scope.saveEvent = function(event) {
+    if (isEmpty(event.name)) {
+      alerter.error('', 'event.edit.titleMissing', {
+              container: '#event-edit-error',
+              duration: 10
+            });
+      return;
+    }
+    if (isEmpty(event.x.divisionIds)) {
+      alerter.error('', 'event.edit.DivisionsMissing', {
+              container: '#event-edit-error',
+              duration: 10
+            });
+      return;
+    }
+    if (!angular.isObject($scope.action.locationToEdit) || isEmpty($scope.action.locationToEdit)) {
+      alerter.error('', 'event.edit.locationMissing', {
+              container: '#event-edit-error',
+              duration: 10
+            });
+      return;
+    }
+
+    event.locations[0] = $scope.action.locationToEdit;
+
     if (isEmpty(event.localOrganizer) || isEmpty(event.localOrganizer.name)) {
       event.localOrganizer = null;
     }
-
-    if (!angular.isObject($scope.action.locationToEdit) || isEmpty($scope.action.locationToEdit)) {
-      $scope.locationIsMissing = true;
-      alerter.error('', 'event.edit.locationMissing', {
-        container: '#team-edit-error' + event.id,
-        duration: 10
-      });
-      return;
-    }
-    event.locations[0] = $scope.action.locationToEdit;
 
     event.divisionConfirmations = event.x.divisionIds;
 

@@ -186,6 +186,9 @@ app.filter('location', ['CONFIG', '$translate', 'locationObjectFilter', 'country
 			locationString = 'https://www.google.com/maps/place/' + locationString.split(' ').join('+');
 		}
 
+    if (isEmpty(locationString)) {
+      locationString = ' ';
+    }
 		return locationString;
 	}
 }]);
