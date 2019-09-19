@@ -1,13 +1,11 @@
 package de.ultical.backend.app;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.ibatis.exceptions.PersistenceException;
 
 import de.ultical.backend.data.DataStore;
@@ -108,7 +106,7 @@ public class Authenticator {
     }
 
     public static boolean isEventAdmin(Event storedEvent, User currentUser) {
-        List<User> admins = storedEvent.getAdmins();
+        List<User> admins = new ArrayList<>(storedEvent.getAdmins());
         admins.addAll(storedEvent.getTournamentEdition().getTournamentFormat().getAdmins());
         boolean isAdmin = false;
         for (User admin : admins) {

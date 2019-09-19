@@ -253,7 +253,7 @@ public class EventsResource {
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
             }
         } catch (PersistenceException pe) {
-	    LOG.error(DB_ACCESS_FAILURE, pe);
+	          LOG.error(DB_ACCESS_FAILURE, pe);
             throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
         }
     }
