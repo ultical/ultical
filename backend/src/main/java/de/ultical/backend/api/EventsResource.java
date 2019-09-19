@@ -171,7 +171,7 @@ public class EventsResource {
                 this.dataStore.addAdminToEvent(event, admin);
             } catch (PersistenceException e) {
                 LOG.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )\n",
-                        event.getName(), event.getId(), admin.getFullName(), admin.getId());
+                        event.getName(), event.getId(), admin.getFullName(), admin.getId(), e);
                 
             }
         }
