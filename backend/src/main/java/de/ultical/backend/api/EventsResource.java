@@ -172,7 +172,7 @@ public class EventsResource {
             } catch (PersistenceException e) {
                 LOG.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )\n",
                         event.getName(), event.getId(), admin.getFullName(), admin.getId());
-                LOG.error("exception:", e);
+                
             }
         }
     }
