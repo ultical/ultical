@@ -86,7 +86,7 @@
 					<button type="button" class="btn btn-default" ng-model="action.editionIdChosen"
 							data-multiple="0" data-animation="am-flip-x" data-max-length="1"
 							ng-change="chooseEdition()"
-							bs-options="edition.id as (edition.season | season : true) + ' - ' + edition.name for edition in editionList"
+							bs-options="edition.id as (edition.season | season : true) + ' - ' + edition.name for edition in editionList | orderBy : ['-season.year', '-season.plusOneYear', 'name']"
 							bs-select></button>
 				</div>
 			</div>
