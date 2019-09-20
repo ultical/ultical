@@ -126,6 +126,7 @@ public interface TournamentEditionMapper extends BaseMapper<TournamentEdition> {
             @Result(column = "hashtag", property = "hashtag"),
             @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get")),
             @Result(column = "allow_event_team_reg_management", property = "allowEventTeamRegManagement"),
+            @Result(column = "organizer", property = "organizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get")),
             @Result(column = "id", property = "divisionRegistrations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionRegistrationMapper.getBasicRegistrationsForEdition")) })
     List<TournamentEdition> getEditionListingByFormat(int formatId);
 
