@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
 @Path("/events")
 public class EventsResource {
@@ -179,30 +180,36 @@ public class EventsResource {
 
     private void assureCompleteEventInformation(Event event) {
         assureNotEmpty(event.getName(), "name");
-        assureNotEmpty(event.getStartDate(), "start_date");
-        assureNotEmpty(event.getEndDate(), "end_date");
-        assureNotEmpty(event.getMatchdayNumber(), "matchday_number");
+        assureNotNull(event.getStartDate(), "start_date");
+        assureNotNull(event.getEndDate(), "end_date");
+        assureNotNull(event.getMatchdayNumber(), "matchday_number");
         assureNotEmpty(event.getLocations(), "location");
         assureNotEmpty(event.getLocations().get(0), "location");
         assureNotEmpty(event.getLocations().get(0).getCity(), "location");
         assureNotEmpty(event.getDivisionConfirmations(), "divisions");
     }
 
-    private void assureNotEmpty(Object obj, String name) {
-        boolean empty = false;
+    private void assureNotEmpty(String str, String name) {
+        assureNotNull(str, name);
+        assureNotEmpty(str.isEmpty(), name);
+    }
 
-        if (obj != null) {
-            if (obj instanceof String) {
-                empty = ((String) obj).isEmpty();
-            } else if (obj instanceof Location) {
-                assureNotEmpty(((Location) obj).getCity(), name);
-            } else if (obj instanceof List) {
-                empty = ((List) obj).isEmpty();
-            }
-        } else {
-            empty = true;
-        }
-        if (empty) {
+    private void assureNotEmpty(Location location, String name) {
+        assureNotNull(location, name);
+        assureNotEmpty(location.getCity(), name);
+    }
+
+    private void assureNotEmpty(List list, String name) {
+        assureNotNull(list, name);
+        assureNotEmpty(list.isEmpty(), name);
+    }
+
+    private void assureNotNull(Object obj, String name) {
+        assureNotEmpty(obj == null, name);
+    }
+
+    private void assureNotEmpty(boolean isEmpty, String name) {
+        if (isEmpty) {
             throw new WebApplicationException("Missing event parameters: " + name, Status.EXPECTATION_FAILED);
         }
     }

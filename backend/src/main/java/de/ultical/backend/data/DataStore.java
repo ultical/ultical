@@ -968,7 +968,7 @@ public class DataStore {
             dbAction.accept(event, admin);
             this.sqlSession.commit();
         } catch (PersistenceException pe) {
-            logger.error(pe.getCause().getMessage);
+            logger.error(pe.getCause().getMessage());
             this.sqlSession.rollback();
             throw pe;
         } finally {
