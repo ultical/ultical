@@ -14,43 +14,15 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 
+import de.ultical.backend.data.mapper.*;
+import de.ultical.backend.model.*;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import de.ultical.backend.api.transferClasses.DfvMvName;
-import de.ultical.backend.data.mapper.AssociationMapper;
-import de.ultical.backend.data.mapper.BaseMapper;
-import de.ultical.backend.data.mapper.ClubMapper;
-import de.ultical.backend.data.mapper.DfvMvNameMapper;
-import de.ultical.backend.data.mapper.DfvPlayerMapper;
-import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
-import de.ultical.backend.data.mapper.EventMapper;
-import de.ultical.backend.data.mapper.MailCodeMapper;
-import de.ultical.backend.data.mapper.PlayerMapper;
-import de.ultical.backend.data.mapper.RosterMapper;
-import de.ultical.backend.data.mapper.RosterPlayerMapper;
-import de.ultical.backend.data.mapper.TeamMapper;
-import de.ultical.backend.data.mapper.TeamRegistrationMapper;
-import de.ultical.backend.data.mapper.TournamentEditionMapper;
-import de.ultical.backend.data.mapper.TournamentFormatMapper;
-import de.ultical.backend.data.mapper.UserMapper;
-import de.ultical.backend.model.Association;
-import de.ultical.backend.model.Club;
-import de.ultical.backend.model.DfvPlayer;
-import de.ultical.backend.model.DivisionRegistration;
-import de.ultical.backend.model.DivisionRegistrationPlayers;
-import de.ultical.backend.model.DivisionRegistrationTeams;
-import de.ultical.backend.model.Event;
-import de.ultical.backend.model.Identifiable;
-import de.ultical.backend.model.MailCode;
-import de.ultical.backend.model.Player;
-import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.Team;
-import de.ultical.backend.model.TeamRegistration;
-import de.ultical.backend.model.TournamentEdition;
-import de.ultical.backend.model.TournamentFormat;
-import de.ultical.backend.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * the cloud
@@ -62,12 +34,15 @@ import de.ultical.backend.model.User;
 public class DataStore {
 
     public class DataStoreCloseable implements AutoCloseable {
-	@Override
-	public void close() {
-	    DataStore.this.closeSession();
-	}
+
+        @Override
+        public void close() {
+            DataStore.this.closeSession();
+        }
     }
-    
+
+    Logger logger = LoggerFactory.getLogger(DataStore.class);
+
     @Inject
     SqlSession sqlSession;
 
@@ -183,6 +158,7 @@ public class DataStore {
             this.sqlSession.commit();
             return updateCount == 1;
         } catch (PersistenceException pe) {
+            logger.error(pe.getCause().getMessage());
             this.sqlSession.rollback();
             throw pe;
         } finally {
@@ -236,6 +212,29 @@ public class DataStore {
         }
     }
 
+    public DivisionConfirmation addDivisionConfirmationToEvent(final Event event, final DivisionConfirmation division) {
+        Objects.requireNonNull(division);
+        Objects.requireNonNull(event);
+        try {
+            DivisionConfirmationMapper divisionConfirmationMapper = this.sqlSession.getMapper(DivisionConfirmationMapper.class);
+            divisionConfirmationMapper.insert(event.getId(), division.getDivisionRegistration().getId(), division.isIndividualAssignment());
+            return division;
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public void removeAllDivisionConfirmationsFromEvent(Event event) {
+        // try-finally block is inside modifyTeamAdmin
+
+        DivisionConfirmationMapper divisionConfirmationMapper = this.sqlSession.getMapper(DivisionConfirmationMapper.class);
+        divisionConfirmationMapper.removeAllForEvent(event);
+        this.sqlSession.commit();
+
+    }
+
     public DivisionRegistration addDivisionToEdition(final TournamentEdition edition,
             final DivisionRegistration division) {
         Objects.requireNonNull(division);
@@ -266,6 +265,17 @@ public class DataStore {
         try {
             EventMapper eventMapper = this.sqlSession.getMapper(EventMapper.class);
             return eventMapper.getByTeamRegistrations(teamRegistrations);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public Event getEvent(int eventId) {
+        try {
+            EventMapper eventMapper = this.sqlSession.getMapper(EventMapper.class);
+            return eventMapper.get(eventId);
         } finally {
             if (this.sqlSession != null && this.autoCloseSession) {
                 this.sqlSession.close();
@@ -823,6 +833,17 @@ public class DataStore {
         }
     }
 
+    public List<TournamentFormat> getFormatByOwner(final int userId) {
+      try {
+        TournamentFormatMapper tfMapper = this.sqlSession.getMapper(TournamentFormatMapper.class);
+        return tfMapper.getAllByOwner(userId);
+      } finally {
+        if (this.autoCloseSession) {
+          this.sqlSession.close();
+        }
+      }
+    }
+
     public TournamentFormat getFormatByEdition(int editionId) {
         try {
             TournamentFormatMapper tfMapper = this.sqlSession.getMapper(TournamentFormatMapper.class);
@@ -897,7 +918,21 @@ public class DataStore {
             final TeamMapper mapper = this.sqlSession.getMapper(t.getMapper());
             mapper.addAdmin(t, a);
         });
+    }
 
+    public void addAdminToEvent(Event event, User admin) {
+        // try-finally block is inside modifyTeamAdmin
+        this.modifyEventAdmin(event, admin, (e, a) -> {
+            final EventMapper mapper = this.sqlSession.getMapper(e.getMapper());
+            mapper.addAdmin(e, a);
+        });
+    }
+
+    public void removeAdminFromEvent(Event event, User admin) {
+        this.modifyEventAdmin(event, admin, (e, a) -> {
+            final EventMapper mapper = this.sqlSession.getMapper(e.getMapper());
+            mapper.removeAdmin(e, a);
+        });
     }
 
     public void removeAdminFromTeam(Team team, User admin) {
@@ -911,10 +946,36 @@ public class DataStore {
 
     public void removeAllAdminsFromTeam(Team team) {
         // try-finally block is inside modifyTeamAdmin
-        TeamMapper teamMapper = this.sqlSession.getMapper(TeamMapper.class);
+
+        TeamMapper teamMapper = this.sqlSession.getMapper(team.getMapper());
         teamMapper.removeAllAdmins(team);
         this.sqlSession.commit();
 
+    }
+
+    public void removeAllAdminsFromEvent(Event event) {
+        // try-finally block is inside modifyTeamAdmin
+
+        EventMapper eventMapper = this.sqlSession.getMapper(event.getMapper());
+        eventMapper.removeAllAdmins(event);
+        this.sqlSession.commit();
+    }
+
+    private void modifyEventAdmin(Event event, User admin, BiConsumer<Event, User> dbAction) {
+        Objects.requireNonNull(event);
+        Objects.requireNonNull(admin);
+        try {
+            dbAction.accept(event, admin);
+            this.sqlSession.commit();
+        } catch (PersistenceException pe) {
+            logger.error(pe.getCause().getMessage());
+            this.sqlSession.rollback();
+            throw pe;
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
     }
 
     private void modifyTeamAdmin(Team team, User admin, BiConsumer<Team, User> dbAction) {
@@ -938,6 +999,31 @@ public class DataStore {
         try {
             RosterMapper mapper = this.sqlSession.getMapper(RosterMapper.class);
             return mapper.getRostersForPlayer(player);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public List<TournamentEdition> getEditionListingByFormat(Integer formatId) {
+        Objects.requireNonNull(formatId);
+        try {
+            TournamentEditionMapper mapper = this.sqlSession.getMapper(TournamentEditionMapper.class);
+            return mapper.getEditionListingByFormat(formatId);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public void addLocationToEvent(final Event event, final Location location) {
+        Objects.requireNonNull(event);
+        Objects.requireNonNull(location);
+        try {
+            LocationMapper mapper = this.sqlSession.getMapper(LocationMapper.class);
+            mapper.addToEvent(event.getId(), location.getId());
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

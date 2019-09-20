@@ -300,6 +300,16 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
           });
       },
 
+      getFormatList: function(callback) {
+        var that = this;
+        serverApi.getAllFormats(function(formats) {
+          angular.forEach(formats, function(format) {
+            that.addFormat(that, format, function(x) {});
+          });
+          callback(formats);
+        });
+      },
+
       addFormat: function(that, data, callback) {
         storeTournamentFormat(data, newLoopIndex());
         var formatToReplace = -1;
@@ -313,6 +323,17 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
         }
         that.formats.push(data);
         callback(data);
+      },
+
+      getEditionListingForFormat: function(formatId, callback) {
+        var that = this;
+
+        serverApi.getEditionListingByFormat(formatId, function(editions) {
+          angular.forEach(editions, function(edition) {
+            storeTournamentEdition(edition, newLoopIndex());
+          });
+          callback(editions);
+        });
       },
 
 			getEvent: function(eventId, callback) {
@@ -426,6 +447,30 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
           callback(savedTeam);
 				}, errorCallback);
 			},
+
+			saveEvent: function(event, callback, errorCallback) {
+        var that = this;
+        var oldEvent;
+        if (event.id == -1) {
+          oldEvent = null;
+        } else {
+          oldEvent = event;
+          if (!angular.isObject(event.locations[0])) {
+            event.locations[0] = {
+                id: oldEvent.locations[0].id,
+                version: oldEvent.locations[0].version,
+            }
+          }
+        }
+        serverApi.saveEvent(event, oldEvent, function(savedEvent) {
+          console.log("got back the saved event", savedEvent);
+          that.events.push(savedEvent);
+
+          storeEvent(savedEvent, newLoopIndex());
+
+          callback(savedEvent);
+        }, errorCallback);
+      },
 	}
 
 	function newLoopIndex() {
@@ -559,6 +604,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 		// assign the divisions (and maybe teams) that play this event
 		event.x.divisions = [];
+		event.x.divisionIds = [];
 
 		if ('divisionConfirmations' in event && !isEmpty(event.divisionConfirmations)) {
       event.x.usesDivisionConfirmations = true;
@@ -573,6 +619,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 					division.playingTeams = division.registeredTeams;
 				}
 				event.x.divisions.push(angular.copy(division));
+				event.x.divisionIds.push(division.id);
 			});
 		} else {
 			// this event gets all divisions and teams from the edition
@@ -583,6 +630,7 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				event.x.divisions = angular.copy(event.tournamentEdition.divisionRegistrations);
 				angular.forEach(event.x.divisions, function(division) {
 					division.playingTeams = division.registeredTeams;
+          event.x.divisionIds.push(division.id);
 				});
 
 			}
@@ -674,17 +722,19 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 
 	function createEmptyEvent() {
 		return {
-			matchdayNumber: -1,
-			location: {},
-			startDate: '2016-01-01',
-			endDate: '2016-01-03',
-			fees: {},
+		  id: -1,
+			matchdayNumber: '-1',
+			locations: [],
+			startDate: moment().format('YYYY-MM-DD'),
+			endDate:  moment().add(1,'days'),
+			fees: [],
 			admins: [],
-			localOrganizerName: '',
-			localOrganizerEmail: '',
-			localOrganizerPhone: '',
-			divisionConfirmations: {},
+			divisionConfirmations: [],
 			tournamentEdition: {},
+			info: '',
+			name: '',
+			visible: true,
+			x: { eventNumOfDays: '2' },
 		};
 	}
 

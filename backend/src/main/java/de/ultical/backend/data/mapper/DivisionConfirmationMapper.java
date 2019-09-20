@@ -2,35 +2,26 @@ package de.ultical.backend.data.mapper;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Case;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Many;
-import org.apache.ibatis.annotations.One;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.TypeDiscriminator;
+import de.ultical.backend.model.*;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
-
-import de.ultical.backend.model.DivisionConfirmation;
-import de.ultical.backend.model.DivisionConfirmationPlayers;
-import de.ultical.backend.model.DivisionConfirmationTeams;
-import de.ultical.backend.model.DivisionRegistration;
 
 public interface DivisionConfirmationMapper extends BaseMapper<DivisionConfirmation> {
 
     final String divisionSelect = "SELECT dc.id, dc.version, dc.division_registration, dc.event,dc.individual_assignment, dr.is_player_registration FROM DIVISION_CONFIRMATION dc LEFT JOIN DIVISION_REGISTRATION dr ON dr.id = dc.division_registration";
 
-    // INSERT
-    @Override
-    @Insert("INSERT INTO DIVISION_CONFIRMATION (division_registration, event, individual_assignment) VALUES (#{divisionRegistration.id}, #{event.id}, #{individualAssignment})")
-    Integer insert(DivisionConfirmation entity);
+    @Insert("INSERT INTO DIVISION_CONFIRMATION (division_registration, event, individual_assignment) " + "VALUES (#{divisionRegistrationId}, #{eventId}, #{isIndividualAssignment})")
+    Integer insert(@Param("eventId") int eventId,
+                   @Param("divisionRegistrationId") int divisionRegistrationId,
+                   @Param("isIndividualAssignment") boolean isIndividualAssignment);
 
     // DELETE
     @Override
     @Delete("DELETE FROM DIVISION_CONFIRMATION WHERE id=#{id}")
     void delete(DivisionConfirmation entity);
+
+    @Delete("DELETE FROM DIVISION_CONFIRMATION WHERE event=#{event.id}")
+    void removeAllForEvent(@Param("event") Event event);
 
     // SELECT
     @Override

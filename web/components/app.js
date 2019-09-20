@@ -54,24 +54,16 @@ app.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 		url: '/{eventSlug}--3{eventId:int}',
 		templateUrl: 'pages/event/show.html?v='+version,
 	})
+	.state('app.eventEdit', {
+		url: '/event/edit/{eventId}',
+		templateUrl: 'pages/event/edit.html?v='+version,
+	})
 	.state('app.editionShow', {
 		url: '/{editionSlug}--2{editionId:int}',
 		templateUrl: 'pages/event/show.html?v='+version,
 	})
 	.state('app.formatShow', {
 		url: '/{formatSlug}--4{formatId:int}',
-		templateUrl: 'pages/event/show.html?v='+version,
-	})
-	.state('app.eventShowOld', {
-		url: '/{eventSlug}--t{eventId:int}',
-		templateUrl: 'pages/event/show.html?v='+version,
-	})
-	.state('app.editionShowOld', {
-		url: '/{editionSlug}--e{editionId:int}',
-		templateUrl: 'pages/event/show.html?v='+version,
-	})
-	.state('app.formatShowOld', {
-		url: '/{formatSlug}--f{formatId:int}',
 		templateUrl: 'pages/event/show.html?v='+version,
 	})
 	.state('app.teamsList', {

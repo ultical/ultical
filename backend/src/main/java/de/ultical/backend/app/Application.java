@@ -9,6 +9,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.ws.rs.client.Client;
 
+import de.ultical.backend.api.*;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.SqlSession;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -19,21 +20,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.spinscale.dropwizard.jobs.JobsBundle;
-import de.ultical.backend.api.AuthResource;
-import de.ultical.backend.api.ClubResource;
-import de.ultical.backend.api.ContextResource;
-import de.ultical.backend.api.DfvMvNameResource;
-import de.ultical.backend.api.DivisionResource;
-import de.ultical.backend.api.EventsResource;
-import de.ultical.backend.api.MailResource;
-import de.ultical.backend.api.RegisterResource;
-import de.ultical.backend.api.RosterResource;
-import de.ultical.backend.api.SeasonResource;
-import de.ultical.backend.api.SitemapResource;
-import de.ultical.backend.api.TeamResource;
-import de.ultical.backend.api.TournamentFormatResource;
-import de.ultical.backend.api.TournamentResource;
-import de.ultical.backend.api.UserResource;
 import de.ultical.backend.app.logging.UlticalLoggingFilter;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.LocalDateMixIn;
@@ -150,6 +136,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         env.jersey().register(TournamentResource.class);
         env.jersey().register(SeasonResource.class);
         env.jersey().register(TournamentFormatResource.class);
+        env.jersey().register(TournamentEditionResource.class);
         env.jersey().register(TeamResource.class);
         env.jersey().register(RegisterResource.class);
         env.jersey().register(AuthResource.class);

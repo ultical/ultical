@@ -2,17 +2,51 @@
 
 angular.module('ultical.events', [])
 
-.controller('EventListCtrl', ['$scope', 'storage', '$state', '$filter', 'headService', 'moment', '$stateParams',
-                              function($scope, storage, $state, $filter, headService, moment, $stateParams) {
+.controller('EventListCtrl', ['$scope', 'storage', '$state', '$filter', 'headService', 'moment', '$stateParams', 'actionBar', 'authorizer',
+                              function($scope, storage, $state, $filter, headService, moment, $stateParams, actionBar, authorizer) {
+
+  actionBar.clearActions();
 
   headService.setTitle('event.list.title', {});
 
 	$scope.sortKey = ['startDate', 'endDate', 'name'];
 	$scope.sortOrderDesc = false;
 
-	storage.getEvents(true, function(data) {
+  storage.getEvents(true, function(data) {
+    actionBar.clearActions();
 		$scope.events = data;
+
+    if (authorizer.loggedIn()) {
+    	var isFormatAdmin = false;
+      var loggedInUserId = authorizer.getUser().id;
+
+      angular.forEach($scope.events, function(event) {
+        angular.forEach(event.tournamentEdition.tournamentFormat.admins, function(admin) {
+          if (admin.id == loggedInUserId) {
+            isFormatAdmin = true;
+          }
+        });
+      });
+
+      if (isFormatAdmin) {
+        actionBar.addAction({
+          group: 'event-new',
+          needLogIn: true,
+          button: {
+            text: 'event.edit.createButtonLabel',
+            click: function() {
+              $scope.createEvent();
+            }
+          },
+          separator: true,
+        });
+      }
+    }
 	});
+
+  $scope.createEvent = function() {
+    $state.go('app.eventEdit', {eventId: 'new'});
+  }
 
   $scope.show = {
     beginningOfYear: false,

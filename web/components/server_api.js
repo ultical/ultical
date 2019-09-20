@@ -158,6 +158,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
         get('format/' + formatId, callback);
     },
 
+    getAllFormats: function(callback) {
+        get('format/own', callback);
+    },
+
     getFormatByEdition: function(editionId, callback) {
       get('format/edition/' + editionId, callback);
     },
@@ -165,6 +169,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		getFormatByEvent: function(eventId, callback) {
 			get('format/event/' + eventId, callback);
 		},
+
+    getEditionListingByFormat: function(formatId, callback) {
+      get('edition/format/' + formatId,  callback);
+    },
 
     saveTeam: function(team, oldTeam, callback, errorCallback) {
 			var teamToSend = angular.copy(team);
@@ -206,6 +214,36 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			} else {
 				put('teams/' + teamToSend.id, teamToSend, function() {
 					that.getTeam(teamToSend.id, callback, errorCallback);
+				});
+			}
+		},
+
+    saveEvent: function(event, oldEvent, callback, errorCallback) {
+			var eventToSend = angular.copy(event);
+
+			// prevent bad requests if the backend tries to parse a string into a location objects
+			if (!angular.isObject(event.locations[0])) {
+				eventToSend.locations[0] = null;
+			} else {
+			}
+
+			angular.forEach(eventToSend.admins, function(admin, idx) {
+				eventToSend.admins[idx] = { id: admin.id };
+			});
+
+			var that = this;
+
+			// delete properties added for frontend
+			delete(eventToSend.x);
+
+			if (eventToSend.id == -1) {
+				// this is an event newly created
+				post('events', eventToSend, function(newEvent) {
+					that.getEvent(newEvent.id, callback, errorCallback);
+				});
+			} else {
+				put('events/' + eventToSend.id, eventToSend, function() {
+					that.getEvent(eventToSend.id, callback, errorCallback);
 				});
 			}
 		},

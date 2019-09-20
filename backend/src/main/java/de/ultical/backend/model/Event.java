@@ -1,16 +1,16 @@
 package de.ultical.backend.model;
 
-import java.time.LocalDate;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
+import de.ultical.backend.app.DivisionConfirmationDeserializer;
 import de.ultical.backend.app.LocalDateDeserializer;
 import de.ultical.backend.app.LocalDateSerializer;
 import de.ultical.backend.data.mapper.EventMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -25,6 +25,7 @@ public class Event extends Identifiable {
     private List<Location> locations;
 
     // subset of the tournaments divisions and participants
+    @JsonDeserialize(using = DivisionConfirmationDeserializer.class)
     private List<DivisionConfirmation> divisionConfirmations;
 
     @JsonSerialize(using = LocalDateSerializer.class)

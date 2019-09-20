@@ -186,6 +186,9 @@ app.filter('location', ['CONFIG', '$translate', 'locationObjectFilter', 'country
 			locationString = 'https://www.google.com/maps/place/' + locationString.split(' ').join('+');
 		}
 
+    if (isEmpty(locationString)) {
+      locationString = ' ';
+    }
 		return locationString;
 	}
 }]);
@@ -384,6 +387,24 @@ app.filter('divisions', ['divisionFilter', function(divisionFilter) {
 
 		return resultString.substring(0, resultString.length - 2);
 	}
+}]);
 
+app.filter('contact', ['$translate', function($translate) {
+	return function(contactObject) {
+		if (isEmpty(contactObject) || isEmpty(contactObject.name)) {
+			return '';
+		}
 
+    var contactString = contactObject.name;
+
+    if (!isEmpty(contactObject.email)) {
+      contactString += " - " + contactObject.email;
+    }
+
+    if (!isEmpty(contactObject.phone)) {
+      contactString += " - " + contactObject.phone;
+    }
+
+		return contactString;
+	}
 }]);

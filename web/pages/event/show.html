@@ -127,7 +127,7 @@
 					<div class="strong">{{ 'event.localOrganizer' | translate }}</div>
 					<div>
 						<span>{{ event.localOrganizer.name }}&nbsp;&nbsp;</span>
-						<span class="cursor-pointer" ng-if="event.admins | notEmpty">
+						<span class="cursor-pointer" ng-if="event.localOrganizer.email | notEmpty">
 							<i ng-click="openEmailToEventModal()" class="fa fa-envelope-o"></i>
 						</span>
 						<span ng-if="event.localOrganizer.phone | notEmpty">
@@ -259,7 +259,7 @@
 							<div class="panel-heading cursor-pointer" role="tab">
 								<h3 class="panel-title" bs-collapse-toggle>
 									<span>{{ division | division }}</span>
-									<span ng-if="!division.registrationComplete && division.numberSpots != 0" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numberSpots }} {{ 'event.spotsAvailable' | translate }}</span><span class="panel-title-addon" ng-if="!division.registrationComplete && getPlayingTeams(division).length > 0"> - {{ 'event.spotsApplied' | translate : {numApplications: getPlayingTeams(division).length }: 'messageformat' }}</span>
+									<span ng-if="!division.registrationComplete && division.numberSpots != 0" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numberSpots }} {{ 'event.spotsAvailable' | translate }}</span><span class="panel-title-addon" ng-if="!division.registrationComplete && getPlayingTeams(division).length > 0"> - {{ 'event.spotsApplied' | translate : {numApplications: getNumberOfConfirmedOrPendingTeams(division) }: 'messageformat' }}</span>
 									<span ng-if="division.registrationComplete" class="panel-title-addon">&nbsp;&nbsp;&nbsp;{{ division.numTeamsConfirmed }} {{ 'general.teams' | translate }} &nbsp;</span>
 								</h3>
 							</div>

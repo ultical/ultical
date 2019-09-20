@@ -27,7 +27,7 @@ angular.module('ultical.events')
     $scope.ownTeams = storage.getOwnTeamsCache(function(cachedOwnTeams) {
       // only called if own teams were not cached
       $scope.ownTeams = cachedOwnTeams;
-      addActions();
+      updateActions();
     });
   }
 
@@ -109,6 +109,16 @@ angular.module('ultical.events')
       if ($stateParams.formatSlug != shouldBeFormatSlug || $state.current.name != 'app.formatShow') {
         $state.go('app.formatShow', {formatSlug: shouldBeFormatSlug, formatId: $scope.format.id }, {notify: false});
       }
+    }
+
+    $scope.getNumberOfConfirmedOrPendingTeams = function(division) {
+      var numberOfConfirmedOrPendingTeams = 0;
+      angular.forEach(division.playingTeams, function(team) {
+        if (team.status == 'CONFIRMED' || team.status == 'PENDING') {
+          numberOfConfirmedOrPendingTeams++;
+        }
+      });
+      return numberOfConfirmedOrPendingTeams;
     }
 
     if ($scope.show.event) {
@@ -234,10 +244,10 @@ angular.module('ultical.events')
       showEventInfo: $scope.show.eventInfo && !isEmpty($scope.event.info),
     };
 
-    addActions();
+    updateActions();
   };
 
-  function addActions() {
+  function updateActions() {
     actionBar.clearActions();
     // Action bar actions
     if ($scope.show.registration && !$scope.show.format && $scope.edition.x && $scope.edition.x.registrationIsOpen) {
@@ -298,7 +308,7 @@ angular.module('ultical.events')
         separator: true,
       });
     }
-    if ($scope.format.x.own || ($scope.show.event && $scope.event.x.own)) {
+    if (!$scope.show.format && ($scope.format.x.own || ($scope.show.event && $scope.event.x.own))) {
       actionBar.addAction({
         group: 'event-admin',
         needLogIn: true,
@@ -310,6 +320,37 @@ angular.module('ultical.events')
         },
       });
     }
+    if ($scope.show.event && ($scope.format.x.own || $scope.event.x.own)) {
+      actionBar.addAction({
+        group: 'event-admin',
+        needLogIn: true,
+        button: {
+            text: 'event.edit.buttonLabel',
+            click: function() {
+              $scope.editEvent();
+            },
+        },
+      });
+    }
+
+    if ($scope.show.event && $scope.format.x.own) {
+          actionBar.addAction({
+            group: 'event-new',
+            needLogIn: true,
+            button: {
+              text: 'event.edit.createButtonLabel',
+              click: function() {
+                $scope.event.id = 'new';
+                $scope.editEvent();
+              }
+            },
+            separator: true,
+          });
+        }
+  }
+
+  $scope.editEvent = function() {
+    $state.go('app.eventEdit', {eventId: $scope.event.id});
   }
 
   $scope.openRegistrationModal = function() {

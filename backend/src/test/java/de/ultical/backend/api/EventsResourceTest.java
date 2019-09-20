@@ -1,15 +1,19 @@
 package de.ultical.backend.api;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 
+import de.ultical.backend.app.Authenticator;
+import de.ultical.backend.data.mapper.BaseMapper;
+import de.ultical.backend.model.*;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,11 +22,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import de.ultical.backend.data.DataStore;
-import de.ultical.backend.model.DivisionRegistration;
-import de.ultical.backend.model.Event;
-import de.ultical.backend.model.TournamentEdition;
-import de.ultical.backend.model.TournamentFormat;
-import de.ultical.backend.model.User;
 
 public class EventsResourceTest {
 
@@ -51,6 +50,8 @@ public class EventsResourceTest {
     private DivisionRegistration updateDiv;
     @Mock
     private DivisionRegistration nonUpdateDiv;
+    @Mock
+    private TournamentFormat format;
 
     @Before
     public void setUp() throws Exception {
@@ -58,6 +59,7 @@ public class EventsResourceTest {
         this.resource = new EventsResource();
         this.resource.dataStore = this.ds;
         when(this.ds.getEvents(false, null, null)).thenReturn(Arrays.asList(this.event1, this.event2, this.event3));
+        when(this.ds.getEvent(anyInt())).thenReturn(event1);
         when(this.ds.get(KNOWN_EVENT_ID, Event.class)).thenReturn(this.event1);
         when(this.ds.get(UNKNOWN_EVENT_ID, Event.class)).thenReturn(null);
         when(this.ds.get(EXCEPTION_EVENT_ID, Event.class)).thenThrow(new PersistenceException());
@@ -70,12 +72,25 @@ public class EventsResourceTest {
         when(this.user.getId()).thenReturn(USER_ID);
         TournamentEdition te = mock(TournamentEdition.class);
         when(this.event1.getTournamentEdition()).thenReturn(te);
-        TournamentFormat tf = mock(TournamentFormat.class);
-        when(te.getTournamentFormat()).thenReturn(tf);
-        when(tf.getAdmins()).thenReturn(Collections.emptyList());
+        when(te.getTournamentFormat()).thenReturn(format);
+        when(format.getAdmins()).thenReturn(Collections.singletonList(this.user));
+        when(this.event1.getName()).thenReturn("Turnier");
+        when(this.event1.getStartDate()).thenReturn(LocalDate.now());
+        when(this.event1.getEndDate()).thenReturn(LocalDate.now());
+
+        Location location = new Location();
+        location.setCity("Emden");
+        List<Location> locationList = new ArrayList<>();
+        locationList.add(location);
+        when(this.event1.getLocations()).thenReturn(locationList);
+
+        when(this.event1.getDivisionConfirmations()).thenReturn(Collections.singletonList(new DivisionConfirmationTeams()));
 
         when(this.ds.addDivisionToEdition(any(TournamentEdition.class), any(DivisionRegistration.class)))
                 .thenReturn(this.storedDiv);
+
+        when(this.event1.getAdmins()).thenReturn(Collections.singletonList(this.user));
+        when(this.ds.getFormatByEdition(anyInt())).thenReturn(format);
 
         when(this.updateDiv.getId()).thenReturn(UPDATEABLE_DIV_ID);
         when(this.nonUpdateDiv.getId()).thenReturn(NON_UPDATEABLE_DIV_ID);

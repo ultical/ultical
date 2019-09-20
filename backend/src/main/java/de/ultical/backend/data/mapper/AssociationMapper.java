@@ -45,6 +45,13 @@ public interface AssociationMapper extends BaseMapper<Association> {
             @Result(column = "contact", property = "contact", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") ) })
     Association get(@Param("id") int id);
 
+    @Select({ "SELECT id, name, acronym, contact FROM ASSOCIATION", "WHERE id=#{id}" })
+    @Results({ @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, javaType = Integer.class),
+            @Result(column = "name", property = "name", jdbcType = JdbcType.VARCHAR, javaType = String.class),
+            @Result(column = "acronym", property = "acronym", jdbcType = JdbcType.VARCHAR, javaType = String.class),
+            @Result(column = "contact", property = "contact", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get") ) })
+    Association getBasic(@Param("id") int id);
+
     @Override
     @Select("SELECT id, name, contact FROM ASSOCIATION")
     @Results({ @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, javaType = Integer.class),

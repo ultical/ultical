@@ -15,7 +15,6 @@ import org.apache.ibatis.annotations.Update;
 
 import de.ultical.backend.model.Contact;
 import de.ultical.backend.model.Event;
-import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.User;
 
@@ -25,18 +24,21 @@ public interface EventMapper extends BaseMapper<Event> {
     @Override
     @Insert({
             "INSERT INTO EVENT (matchday_number, tournament_edition, start_date, end_date, local_organizer, info, name) VALUES",
-            "(#{matchdayNumber, jdbcType=INTEGER},#{tournamentEdition.id, jdbcType=INTEGER},#{startDate, jdbcType=DATE},#{endDate, jdbcType=DATE},#{localOrganizer.id, jdbcType=INTEGER}, #{info, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR})" })
+            "(#{matchdayNumber, jdbcType=INTEGER},#{tournamentEdition.id, jdbcType=INTEGER},#{startDate, jdbcType=DATE},",
+            "#{endDate, jdbcType=DATE},#{localOrganizer.id, jdbcType=INTEGER}, #{info, jdbcType=VARCHAR},",
+            "#{name, jdbcType=VARCHAR})" })
     @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insert(Event event);
 
     @Insert("INSERT INTO EVENT_ULTICAL_USERS (event, admin) VALUES (#{event.id},#{user.id})")
-    public Integer insertAdmin(@Param("event") Event event, @Param("user") User user);
+    public Integer addAdmin(@Param("event") Event event, @Param("user") User user);
 
     // UPDATE
     @Override
     @Update({ "UPDATE EVENT SET version=version+1, tournament_edition=#{tournamentEdition.id},",
             "start_date=#{startDate}, end_date=#{endDate}, name=#{name, jdbcType=VARCHAR},",
-            "local_organizer=#{localOrganizer.id, jdbcType=INTEGER}, info=#{info, jdbcType=VARCHAR}",
+            "local_organizer=#{localOrganizer.id, jdbcType=INTEGER}, info=#{info, jdbcType=VARCHAR},",
+            "matchday_number=#{matchdayNumber, jdbcType=INTEGER}",
             "WHERE version=#{version} AND id=#{id}" })
     Integer update(Event entity);
 
@@ -46,10 +48,10 @@ public interface EventMapper extends BaseMapper<Event> {
     void delete(Event entity);
 
     @Delete("DELETE FROM EVENT_ULTICAL_USERS WHERE event=#{event.id} AND admin=#{user.id}")
-    public void deleteAdmin(@Param("event") Event event, @Param("user") User user);
+    public void removeAdmin(@Param("event") Event event, @Param("user") User user);
 
     @Delete("DELETE FROM EVENT_ULTICAL_USERS WHERE event = #{event.id}")
-    void removeAllAdmins(@Param("event") Team event);
+    void removeAllAdmins(@Param("event") Event event);
 
     // SELECT
     @Override
@@ -68,7 +70,7 @@ public interface EventMapper extends BaseMapper<Event> {
     Event get(int id);
 
     @Override
-    @Select("SELECT * FROM EVENT")
+    @Select("SELECT * FROM EVENT e")
     @Results({ @Result(column = "matchday_number", property = "matchdayNumber"),
             @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "tournament_edition", property = "tournamentEdition", one = @One(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.getForEvent")),
@@ -82,7 +84,7 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get"), javaType = Contact.class) })
     List<Event> getAll();
 
-    @Select("SELECT * FROM EVENT WHERE (start_date >= #{from} AND start_date <= #{to}) OR (end_date >= #{from} AND end_date <= #{to})")
+    @Select("SELECT * FROM EVENT e WHERE ((start_date >= #{from} AND start_date <= #{to}) OR (end_date >= #{from} AND end_date <= #{to}))")
     @Results({ @Result(column = "matchday_number", property = "matchdayNumber"),
             @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "tournament_edition", property = "tournamentEdition", one = @One(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.getForEvent")),
@@ -96,7 +98,7 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "local_organizer", property = "localOrganizer", one = @One(select = "de.ultical.backend.data.mapper.ContactMapper.get"), javaType = Contact.class) })
     List<Event> getFull(@Param("from") String fromString, @Param("to") String toString);
 
-    @Select("SELECT * FROM EVENT WHERE (start_date >= #{from} AND start_date <= #{to}) OR (end_date >= #{from} AND end_date <= #{to})")
+    @Select("SELECT * FROM EVENT e WHERE ((start_date >= #{from} AND start_date <= #{to}) OR (end_date >= #{from} AND end_date <= #{to}))")
     @Results({ @Result(column = "matchday_number", property = "matchdayNumber"),
             @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "tournament_edition", property = "tournamentEdition", one = @One(select = "de.ultical.backend.data.mapper.TournamentEditionMapper.getBasicForEvent")),
@@ -106,7 +108,7 @@ public interface EventMapper extends BaseMapper<Event> {
             @Result(column = "id", property = "divisionConfirmations", many = @Many(select = "de.ultical.backend.data.mapper.DivisionConfirmationMapper.getBasicsByEvent")) })
     List<Event> getBasics(@Param("from") String fromString, @Param("to") String toString);
 
-    @Select("SELECT * FROM EVENT WHERE tournament_edition=#{editionId}")
+    @Select("SELECT * FROM EVENT e WHERE tournament_edition=#{editionId}")
     @Results({ @Result(column = "matchday_number", property = "matchdayNumber"),
             @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
             @Result(column = "id", property = "locations", many = @Many(select = "de.ultical.backend.data.mapper.LocationMapper.getForEvent")),
