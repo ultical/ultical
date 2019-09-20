@@ -78,11 +78,11 @@ public class EventsResourceTest {
         when(this.event1.getStartDate()).thenReturn(LocalDate.now());
         when(this.event1.getEndDate()).thenReturn(LocalDate.now());
 
-        Location location = new Location();
-        location.setCity("Emden");
-        List<Location> locationList = new ArrayList<>();
-        locationList.add(location);
-        when(this.event1.getLocations()).thenReturn(locationList);
+//        Location location = new Location();
+//        location.setCity("Emden");
+//        List<Location> locationList = new ArrayList<>();
+//        locationList.add(location);
+//        when(this.event1.getLocations()).thenReturn(locationList);
 
         when(this.event1.getDivisionConfirmations()).thenReturn(Collections.singletonList(new DivisionConfirmationTeams()));
 

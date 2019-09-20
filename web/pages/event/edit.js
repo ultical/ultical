@@ -140,21 +140,19 @@ angular.module('ultical.events')
       return;
     }
     if (isEmpty(event.x.divisionIds)) {
-      alerter.error('', 'event.edit.DivisionsMissing', {
+      alerter.error('', 'event.edit.divisionsMissing', {
               container: '#event-edit-error',
               duration: 10
             });
       return;
     }
     if (!angular.isObject($scope.action.locationToEdit) || isEmpty($scope.action.locationToEdit)) {
-      alerter.error('', 'event.edit.locationMissing', {
-              container: '#event-edit-error',
-              duration: 10
-            });
-      return;
+      console.log("location is empty");
+      event.locations = null;
+    } else {
+    console.log("location is NOT empty");
+      event.locations[0] = $scope.action.locationToEdit;
     }
-
-    event.locations[0] = $scope.action.locationToEdit;
 
     if (isEmpty(event.localOrganizer) || isEmpty(event.localOrganizer.name)) {
       event.localOrganizer = null;

@@ -1025,6 +1025,7 @@ public class DataStore {
         try {
             LocationMapper mapper = this.sqlSession.getMapper(LocationMapper.class);
             mapper.addToEvent(event.getId(), location.getId());
+            this.sqlSession.commit();
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

@@ -95,10 +95,6 @@ public class EventsResource {
                 throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
             }
 
-            Location location = this.dataStore.addNew(event.getLocations().get(0));
-            event.getLocations().set(0, location);
-            dataStore.addLocationToEvent(event, location);
-
             processPostSaveEventDependencies(event);
 
             event.setVersion(1);
@@ -129,8 +125,6 @@ public class EventsResource {
                 throw new WebApplicationException(
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
             }
-
-            this.dataStore.update(updatedEvent.getLocations().get(0));
 
             processPostSaveEventDependencies(updatedEvent);
         } catch (PersistenceException pe) {
@@ -176,6 +170,18 @@ public class EventsResource {
                 
             }
         }
+
+        Location location = event.getLocations().get(0);
+
+        if (location.getCity() != null && !location.getCity().isEmpty()) {
+            if (location.getId() == 0) {
+                location = this.dataStore.addNew(event.getLocations().get(0));
+                event.getLocations().set(0, location);
+                dataStore.addLocationToEvent(event, location);
+            } else {
+                this.dataStore.update(event.getLocations().get(0));
+            }
+        }
     }
 
     private void assureCompleteEventInformation(Event event) {
@@ -183,20 +189,12 @@ public class EventsResource {
         assureNotNull(event.getStartDate(), "start_date");
         assureNotNull(event.getEndDate(), "end_date");
         assureNotNull(event.getMatchdayNumber(), "matchday_number");
-        assureNotEmpty(event.getLocations(), "location");
-        assureNotEmpty(event.getLocations().get(0), "location");
-        assureNotEmpty(event.getLocations().get(0).getCity(), "location");
         assureNotEmpty(event.getDivisionConfirmations(), "divisions");
     }
 
     private void assureNotEmpty(String str, String name) {
         assureNotNull(str, name);
         assureNotEmpty(str.isEmpty(), name);
-    }
-
-    private void assureNotEmpty(Location location, String name) {
-        assureNotNull(location, name);
-        assureNotEmpty(location.getCity(), name);
     }
 
     private void assureNotEmpty(List list, String name) {

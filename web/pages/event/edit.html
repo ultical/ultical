@@ -270,7 +270,7 @@
 					<div class="form-group has-feedback" ng-class="{'has-error': (inputForm.location.$touched && (action.locationToEdit.city | isEmpty)) || locationIsMissing}">
 
 					<input class="form-control" typeahead-min-length="3" typeahead-wait-ms="400" name="location" required="required" type="text" id="tteCity" class="form-control" ng-model="action.locationToEdit" typeahead-select-on-blur="true" typeahead-select-on-exact="true"
-							   uib-typeahead="location | locationObject as location | location for location in getLocations($viewValue)" typeahead-wait-ms="300" placeholder="{{ 'event.edit.locationLabel' | translate }}" />
+							   autocomplete="off" uib-typeahead="location | locationObject as location | location for location in getLocations($viewValue)" typeahead-wait-ms="300" placeholder="{{ 'event.edit.locationLabel' | translate }}" />
 						<span ng-show="action.locationToEdit.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
 						<span ng-if="(inputForm.location.$touched && (action.locationToEdit.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'event.edit.locationMissing' | translate }}</span>
 					</div>
@@ -323,7 +323,7 @@
 								</span>
 								<input typeahead-min-length="3" type="text" id="tteAdmins" class="form-control"
 								   ng-model="newAdmin.obj" typeahead-select-on-blur="true" typeahead-wait-ms="400"
-								   uib-typeahead="user as user.fullName for user in getUsers($viewValue)"
+								   autocomplete="off" uib-typeahead="user as user.fullName for user in getUsers($viewValue)"
 								   placeholder="{{ 'team.edit.adminsPlaceholder' | translate }}"
 								   typeahead-on-select="addAdmin($item)" />
 							</div>
