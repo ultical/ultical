@@ -152,9 +152,41 @@
 				<div class="col-md-2">
 					<span class="strong ">{{ 'event.edit.divisionRegistrationLabel' | translate }}</span>
 				</div>
+
 				<div class="col-md-10">
-					<div ng-repeat="division in edition.divisionRegistrations | orderBy : divisionOrder">
-						<span>{{ division | division }}</span>
+					<div class="row" ng-if="format.x.own">
+						<div class="col-md-12">
+							<div class="input-group input-group-colored">
+								<span ng-click="addDivision(newDivision)" class="cursor-pointer input-group-addon">
+									<span class="glyphicon glyphicon-plus"></span>
+								</span>
+								<input class="form-control short" ng-model="newDivision.divisionIdentifier" placeholder="{{ 'event.edit.divisionIdentifierPlaceholder' | translate }}">
+								<select class="form-control short" ng-model="newDivision.divisionType">
+									<option ng-repeat="type in getDivisionTypes()" value="{{ type }}">{{ 'division.' + type | translate }}</option>
+								</select>
+								<select class="form-control short" ng-model="newDivision.divisionAge">
+									<option ng-repeat="age in getDivisionAges()" value="{{ age }}">{{ 'division.' + age | translate }}</option>
+								</select>
+								<select class="form-control short" ng-model="newDivision.numberSpots">
+									<option value="0">{{ 'division.numberOfSpotsUndefined' | translate }}</option>
+									<option ng-repeat="i in [] | range : 48" value="{{ i + 2}}">{{ i + 2}} {{ 'division.numberOfSpots' | translate }}</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row margin-top">
+						<div class="col-md-12">
+							<div class="form-control-static">
+								<div class="editable-list" ng-repeat="division in edition.divisionRegistrations | orderBy : divisionOrder">
+									<div class="editable-list-item no-remove">{{ division | division }}</div>
+<!--									<div ng-if="format.x.own" ng-click="removeDivision(division.id)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'event.edit.divisionRemoveTooltip' | translate }}" bs-tooltip>-->
+<!--										<span class="fa-stack fa-lg">-->
+<!--											<i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x fa-inverse"></i>-->
+<!--										</span>-->
+<!--									</div>-->
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -185,7 +217,7 @@
 				</div>
 				<div class="col-md-10">
 					<div ng-if="format.x.own">
-						<select id="slim-edit-2" class="form-control short" class="form-control" ng-model="event.matchdayNumber">
+						<select id="slim-edit-2" class="form-control short" ng-model="event.matchdayNumber">
 							<option value="-1">{{ 'event.singleEvent' | translate }}</option>
 							<option ng-repeat="i in [] | range : 14" value="{{ i + 1}}">{{ i + 1}}. {{ event | matchdayname }}</option>
 						</select>
@@ -300,9 +332,9 @@
 					<div class="row margin-top">
 						<div class="col-md-12">
 							<div class="form-control-static">
-								<div class="editable-list" ng-repeat="admin in event.admins">
-									<div class="editable-list-item" ng-class="{'no-remove': (admin.id == activeUserId && event.id == -1) || (event.admins.length < 2) }">{{ admin.dfvPlayer != null ? admin.dfvPlayer.firstName + ' ' + admin.dfvPlayer.lastName : admin.email }}</div>
-									<div ng-hide="(admin.id == activeUserId && event.id == -1) || (event.admins.length < 2)" ng-click="removeAdmin(admin.id)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'team.edit.adminsRemoveTooltip' | translate }}" bs-tooltip>
+								<div class="editable-list" ng-repeat="admin in event.admins | orderBy : ['dfvPlayer.lastName']">
+									<div class="editable-list-item">{{ admin.dfvPlayer != null ? admin.dfvPlayer.firstName + ' ' + admin.dfvPlayer.lastName : admin.email }}</div>
+									<div ng-click="removeAdmin(admin.id)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'team.edit.adminsRemoveTooltip' | translate }}" bs-tooltip>
 										<span class="fa-stack fa-lg">
 											<i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x fa-inverse"></i>
 										</span>

@@ -315,6 +315,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			return post('tournaments/division/' + divisionRegistration.id + '/register/team', registration, callback, errorCallback);
 		},
 
+    createDivisionRegistration: function(division, editionId, callback) {
+      return post('divisions/edition/' + editionId, division, callback);
+    },
+
     updateTeamRegistration: function(eventId, teamRegistration, callback, errorCallback) {
       var teamRegToSend = angular.copy(teamRegistration);
       teamRegToSend.roster = null;

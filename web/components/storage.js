@@ -470,6 +470,12 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
           callback(savedEvent);
         }, errorCallback);
       },
+
+      createDivisionRegistration: function(division, editionId, callback) {
+        serverApi.createDivisionRegistration(division, editionId, function(savedDivision) {
+          callback(savedDivision);
+        });
+      },
 	}
 
 	function newLoopIndex() {

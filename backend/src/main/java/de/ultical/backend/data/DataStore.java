@@ -220,7 +220,7 @@ public class DataStore {
             divisionConfirmationMapper.insert(event.getId(), division.getDivisionRegistration().getId(), division.isIndividualAssignment());
             return division;
         } finally {
-            if (this.autoCloseSession) {
+            if (this.sqlSession != null && this.autoCloseSession) {
                 this.sqlSession.close();
             }
         }
@@ -242,9 +242,10 @@ public class DataStore {
         try {
             DivisionRegistrationMapper drm = this.sqlSession.getMapper(DivisionRegistrationMapper.class);
             drm.insert(division, edition, division instanceof DivisionRegistrationPlayers);
+            sqlSession.commit();
             return division;
         } finally {
-            if (this.autoCloseSession) {
+            if (this.sqlSession != null && this.autoCloseSession) {
                 this.sqlSession.close();
             }
         }

@@ -2,15 +2,11 @@ package de.ultical.backend.api;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
+import de.ultical.backend.model.*;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +14,6 @@ import org.slf4j.LoggerFactory;
 import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.DataStore.DataStoreCloseable;
-import de.ultical.backend.model.DivisionRegistrationTeams;
-import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.TeamRegistration;
-import de.ultical.backend.model.User;
 import io.dropwizard.auth.Auth;
 
 @Path("/divisions")
@@ -35,6 +27,26 @@ public class DivisionResource {
 
     @Inject
     DataStore dStore;
+
+    @POST
+    @Path("/edition/{editionId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public DivisionRegistration createDivisionRegistration(@PathParam("editionId") int editionId, DivisionRegistrationTeams division, @Auth @NotNull User currentUser) {
+        if (this.dStore == null) {
+            throw new WebApplicationException(INJECTION_FAILURE);
+        }
+
+        try (DataStoreCloseable c = this.dStore.getClosable()) {
+            TournamentEdition edition = dStore.get(editionId, TournamentEdition.class);
+            Authenticator.assureFormatAdmin( edition.getTournamentFormat(), currentUser);
+
+            return dStore.addDivisionToEdition(edition, division);
+        } catch (PersistenceException pe) {
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, pe);
+        }
+    }
 
     @POST
     @Path("/{divisionId}/registerTeam/{rosterId}")
