@@ -64,14 +64,17 @@
 			</div>
 
 			<!-- LOCATION -->
-			<div class="row" ng-if="show.location && !(event.locations | emptyLocation)">
-				<div class="col-md-12 page-sub-title">
+			<div class="row">
+				<div ng-if="show.location && !(event.locations | emptyLocation)" class="col-md-12 page-sub-title">
 					<span class="dropdown-caret-fixed-width cursor-pointer" ng-click="toggleLocationPanel()">
 						<i ng-if="panels.activeLocationPanel != 0" class="fa fa-caret-right dropdown-caret-padding"></i><i ng-if="panels.activeLocationPanel == 0" class="fa fa-caret-down"></i>
 					</span>
 					<span class="cursor-pointer" ng-click="toggleLocationPanel()">{{ event.locations | location : 'city' }}</span>
 
 					<!-- TODO add options to look for an organizer -->
+				</div>
+				<div ng-if="show.location && (event.locations | emptyLocation)" class="col-md-12 page-sub-title">
+					<span class="margin-right" ng-if="listEvent.x.mainLocation | isEmpty"><span class="strong">{{ 'event.noLocationHint' | translate }}.</span> <span><a target="_blank" href="{{ applyForEventOrganisation }}">{{ 'event.noLocationLinkLabel' | translate }}</a></span></span>
 				</div>
 			</div>
 

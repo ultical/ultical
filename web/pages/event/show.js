@@ -2,8 +2,8 @@
 
 angular.module('ultical.events')
 
-.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout', 'headService', 'actionBar', '$modal',
-                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout, headService, actionBar, $modal) {
+.controller('EventShowCtrl', ['$scope', '$stateParams', 'storage', '$state', '$filter', 'moment', 'authorizer', '$window', '$timeout', 'headService', 'actionBar', '$modal', 'CONFIG',
+                              function($scope, $stateParams, storage, $state, $filter, moment, authorizer, $window, $timeout, headService, actionBar, $modal, CONFIG) {
 
 	$scope.event = {};
   $scope.edition = {};
@@ -12,6 +12,8 @@ angular.module('ultical.events')
 	$scope.now = new Date();
 
   $scope.editStandings = false;
+
+  $scope.applyForEventOrganisation = CONFIG.brand.applyForEventOrganisation;
 
 	$scope.loggedIn = function() {
 		return authorizer.loggedIn();

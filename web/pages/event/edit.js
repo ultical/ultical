@@ -249,4 +249,12 @@ angular.module('ultical.events')
     return ['u14', 'u17', 'u20', 'u23', 'regular', 'masters', 'grandmasters', 'greatgrand'];
   };
 
+  $scope.cancel = function() {
+    if ($scope.event.id == -1) {
+      $state.go('app.eventsList');
+    } else {
+      $state.go('app.eventShow', {eventId: $scope.event.id, eventSlug: 'slug'});
+    }
+  }
+
 }]);

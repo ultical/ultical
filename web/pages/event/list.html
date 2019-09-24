@@ -57,6 +57,7 @@
 								<span class="margin-right-small" ng-if="event.x.divisions | notEmpty">{{ event.x.divisions | divisions : 'basic' }}</span>
 									<!-- 								<i class="fa fa-venus-mars"></i> -->
 								<span class="margin-right" ng-if="event.x.mainLocation | notEmpty"><i class="fa fa-map-marker"></i> {{ event.x.mainLocation | location : 'city' }}</span>
+								<span class="margin-right" ng-if="event.x.mainLocation | isEmpty"><i class="fa fa-question"></i></span>
 							</div>
 						</div>
 				</div>

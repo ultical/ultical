@@ -154,7 +154,7 @@
 				</div>
 
 				<div class="col-md-10">
-					<div class="row" ng-if="format.x.own">
+					<div class="row margin-bottom" ng-if="format.x.own">
 						<div class="col-md-12">
 							<div class="input-group input-group-colored">
 								<span ng-click="addDivision(newDivision)" class="cursor-pointer input-group-addon">
@@ -174,7 +174,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="row margin-top">
+					<div class="row margin-bottom">
 						<div class="col-md-12">
 							<div class="form-control-static">
 								<div class="editable-list" ng-repeat="division in edition.divisionRegistrations | orderBy : divisionOrder">
@@ -428,6 +428,7 @@
 						</div>
 						<div class="col-md-10">
 							<button ng-click="saveEvent(event)" class="btn btn-primary btn-ultical">{{ 'event.edit.save' | translate }}</button>
+							<button ng-click="cancel()" class="btn btn-default btn-ultical margin-left-small">{{ 'general.cancel' | translate }}</button>
 						</div>
 					</div>
 				</div>

@@ -234,6 +234,8 @@ TRANSLATIONS['de'] = {
 			noDivisions: 'Es sind noch keine Divisionen festgelegt',
 			organizer: 'Ausrichter',
 			localOrganizer: 'Veranstalter vor Ort',
+			noLocationHint: 'Es gibt noch keinen Ausrichter',
+			noLocationLinkLabel: 'Bewerbt euch!',
 			linkToMaps: 'Google Maps Link',
 			spotsAvailable: 'Plätze',
 			spotsApplied: '{numApplications, plural, =0{Keine Anmeldungen} 	one{Eine Anmeldung} other{# Anmeldungen}}',
