@@ -16,7 +16,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Function;
 
 @Path("/events")
 public class EventsResource {
@@ -95,10 +94,6 @@ public class EventsResource {
                 throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
             }
 
-            Location location = this.dataStore.addNew(event.getLocations().get(0));
-            event.getLocations().set(0, location);
-            dataStore.addLocationToEvent(event, location);
-
             processPostSaveEventDependencies(event);
 
             event.setVersion(1);
@@ -129,8 +124,6 @@ public class EventsResource {
                 throw new WebApplicationException(
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
             }
-
-            this.dataStore.update(updatedEvent.getLocations().get(0));
 
             processPostSaveEventDependencies(updatedEvent);
         } catch (PersistenceException pe) {
@@ -173,7 +166,20 @@ public class EventsResource {
             } catch (PersistenceException e) {
                 LOG.error("Error adding Admin:\nTeam: {} ( {} )\nUser: {} ( {} )\n",
                         event.getName(), event.getId(), admin.getFullName(), admin.getId(), e);
-                
+            }
+        }
+
+        if (event.getLocations() != null && !event.getLocations().isEmpty()) {
+            Location location = event.getLocations().get(0);
+
+            if (location.getCity() != null && !location.getCity().isEmpty()) {
+                if (location.getId() == 0) {
+                    location = this.dataStore.addNew(event.getLocations().get(0));
+                    event.getLocations().set(0, location);
+                    dataStore.addLocationToEvent(event, location);
+                } else {
+                    this.dataStore.update(event.getLocations().get(0));
+                }
             }
         }
     }
@@ -183,20 +189,12 @@ public class EventsResource {
         assureNotNull(event.getStartDate(), "start_date");
         assureNotNull(event.getEndDate(), "end_date");
         assureNotNull(event.getMatchdayNumber(), "matchday_number");
-        assureNotEmpty(event.getLocations(), "location");
-        assureNotEmpty(event.getLocations().get(0), "location");
-        assureNotEmpty(event.getLocations().get(0).getCity(), "location");
         assureNotEmpty(event.getDivisionConfirmations(), "divisions");
     }
 
     private void assureNotEmpty(String str, String name) {
         assureNotNull(str, name);
         assureNotEmpty(str.isEmpty(), name);
-    }
-
-    private void assureNotEmpty(Location location, String name) {
-        assureNotNull(location, name);
-        assureNotEmpty(location.getCity(), name);
     }
 
     private void assureNotEmpty(List list, String name) {
@@ -222,7 +220,7 @@ public class EventsResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{eventId}/divisions")
     public DivisionRegistration addDivision(@PathParam("eventId") Integer eventId, DivisionRegistration div,
-            @Auth @NotNull User currentUser) {
+                                            @Auth @NotNull User currentUser) {
         this.checkDatatStore();
 
         /*
@@ -246,7 +244,7 @@ public class EventsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{eventId}/divisions/{divisionId}")
     public void updateDivsion(@PathParam("eventId") Integer eventId, DivisionRegistration div,
-            @PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser) {
+                              @PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser) {
         this.checkDatatStore();
         if (!Integer.valueOf(div.getId()).equals(divId)) {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
@@ -260,7 +258,7 @@ public class EventsResource {
                         "Update failed, eventually someone else update the resource before you", Status.CONFLICT);
             }
         } catch (PersistenceException pe) {
-	          LOG.error(DB_ACCESS_FAILURE, pe);
+            LOG.error(DB_ACCESS_FAILURE, pe);
             throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
         }
     }
@@ -276,7 +274,7 @@ public class EventsResource {
             fakeDiv.setId(divId.intValue());
             this.dataStore.deleteDivision(fakeDiv);
         } catch (PersistenceException pe) {
-	    LOG.error(DB_ACCESS_FAILURE, pe);
+            LOG.error(DB_ACCESS_FAILURE, pe);
             throw new WebApplicationException("Accessing database failed!", Status.INTERNAL_SERVER_ERROR);
         }
     }

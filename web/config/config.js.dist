@@ -63,6 +63,7 @@ angular.extend(CONFIG_OBJECT, {
 		qaLink: 'http://www.frisbeesportverband.de/index.php/mitgliederservice/qa-dfv-turniere-de/',
 		legalLink: 'http://www.frisbeesportverband.de/index.php/impressum/',
 		dataPrivacyLink: '/de/data-privacy',
+		applyForEventOrganisation: 'https://docs.google.com/forms/d/e/1FAIpQLSf2y9NyQ7lP2gq3Vl3_ux_v47OvtP0xHIO-lRxB8i1e5oqKvw/viewform',
 	},
 
 });
