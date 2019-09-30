@@ -116,7 +116,7 @@ TRANSLATIONS['de'] = {
 		division: {
 			u14: 'U14',
 			u17: 'U17',
-			u20: 'Juniors',
+			u20: 'U20',
 			u23: 'U24',
 			regular: 'jedes Alter',
 			masters: 'Masters',

@@ -142,6 +142,13 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
         }, errorCallback);
       },
 
+      deleteEvent: function(event, callback, errorCallback) {
+        var that = this;
+        serverApi.deleteEvent(event.id, function() {
+          callback();
+        }, errorCallback);
+      },
+
 			saveRoster: function(roster, team, callback, errorCallback) {
         if (roster.id != -1) {
           var rosterToSend = angular.copy(roster);

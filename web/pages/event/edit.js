@@ -257,4 +257,26 @@ angular.module('ultical.events')
     }
   }
 
+  $scope.canBeDeleted = function() {
+    var numRegisteredTeams = 0;
+    var divisionRegistrations = $scope.event.tournamentEdition.divisionRegistrations;
+
+    angular.forEach(divisionRegistrations, function(div) {
+      numRegisteredTeams += div.registeredTeams.length;
+    });
+
+    if ($scope.event.id > 0 && numRegisteredTeams == 0) {
+      return true;
+    }
+    return false;
+  }
+
+  $scope.delete = function() {
+    if ($scope.event.id == -1) return;
+
+    storage.deleteEvent($scope.event, function() {
+      $state.go('app.eventsList');
+    });
+  }
+
 }]);
