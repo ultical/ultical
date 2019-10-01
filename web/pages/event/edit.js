@@ -61,6 +61,8 @@ angular.module('ultical.events')
       $scope.formatChosen = true;
       $scope.loaded = true;
 
+      countNumberOfRegisteredTeams();
+
       if (!$scope.event.x.own && !$scope.format.x.own) {
         $state.go('app.eventShow', {eventId: $scope.event.id, eventSlug: 'slug'});
       }
@@ -255,6 +257,36 @@ angular.module('ultical.events')
     } else {
       $state.go('app.eventShow', {eventId: $scope.event.id, eventSlug: 'slug'});
     }
+  }
+
+  var numberOfRegisteredTeams = 0;
+
+  function countNumberOfRegisteredTeams() {
+    var divisionRegistrations = $scope.event.tournamentEdition.divisionRegistrations;
+
+    angular.forEach(divisionRegistrations, function(div) {
+      numberOfRegisteredTeams += div.registeredTeams.length;
+    });
+  }
+
+  $scope.checkDelete = function() {
+    var alertText = $translate.instant('event.edit.confirmDelete');
+    if (numberOfRegisteredTeams > 0) {
+      alertText += "\n\n" + $translate.instant('event.edit.confirmDeleteRegisteredTeams', {numRegisteredTeams : numberOfRegisteredTeams});
+    }
+    alerter.confirm(alertText, function(shouldBeDeleted) {
+      if (shouldBeDeleted) {
+        deleteEvent();
+      }
+    });
+  }
+
+  function deleteEvent() {
+    if ($scope.event.id == -1) return;
+
+    storage.deleteEvent($scope.event, function() {
+      $state.go('app.eventsList');
+    });
   }
 
 }]);

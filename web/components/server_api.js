@@ -154,6 +154,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
         del('teams/' + teamId, callback, errCallback);
     },
 
+    deleteEvent: function(eventId, callback, errCallback) {
+        del('events/' + eventId, callback, errCallback);
+    },
+
     getFormat: function(formatId, callback) {
         get('format/' + formatId, callback);
     },

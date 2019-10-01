@@ -132,6 +132,29 @@ public class EventsResource {
         }
     }
 
+    @DELETE
+    @Path("/{eventId}")
+    public void deleteEvent(@PathParam("eventId") Integer eventId, @Auth @NotNull User currentUser) {
+        this.checkDatatStore();
+
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
+            Event event = dataStore.getEvent(eventId);
+            TournamentFormat format = event.getTournamentEdition().getTournamentFormat();
+            Authenticator.assureFormatAdmin(format, currentUser);
+
+            dataStore.removeAllDivisionConfirmationsFromEvent(event);
+
+            dataStore.remove(eventId, Event.class);
+
+            for (Location location : event.getLocations()) {
+                dataStore.remove(location.getId(), Location.class);
+            }
+        } catch (PersistenceException pe) {
+            LOG.error(DB_ACCESS_FAILURE, pe);
+            throw new WebApplicationException(DB_ACCESS_FAILURE, Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     private void processPreSaveEventDependencies(Event event) {
         if (event.getLocalOrganizer() != null) {
             if (event.getLocalOrganizer().getId() == 0) {
