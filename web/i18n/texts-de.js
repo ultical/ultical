@@ -320,6 +320,8 @@ TRANSLATIONS['de'] = {
           titleMissing: 'Bitte gib einen Namen für dieses Turnier ein',
           divisionRemoveTooltip: 'Division entfernen',
 			    divisionIdentifierPlaceholder: 'Bezeichnung (optional)',
+			    confirmDelete: 'Möchtest du dieses Turnier wirklich löschen?',
+			    confirmDeleteRegisteredTeams: 'Es haben sich {{ numRegisteredTeams }} Teams bereits angemeldet. Sie werden nicht über das Löschen informiert und bleiben auch weiterhin in der Division gemeldet.',
 			},
 		},
 
