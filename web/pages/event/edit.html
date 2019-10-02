@@ -431,7 +431,7 @@
 							<button ng-click="cancel()" class="btn btn-default btn-ultical margin-left-small">{{ 'general.cancel' | translate }}</button>
 						</div>
 						<div class="col-md-5">
-							<button ng-click="checkDelete()" class="pull-right btn btn-danger btn-ultical margin-left-small">{{ 'general.delete' | translate }}</button>
+							<button ng-if="event.id > 0" ng-click="checkDelete()" class="pull-right btn btn-danger btn-ultical margin-left-small">{{ 'general.delete' | translate }}</button>
 						</div>
 					</div>
 				</div>
