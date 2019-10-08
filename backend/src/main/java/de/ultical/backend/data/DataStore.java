@@ -962,6 +962,12 @@ public class DataStore {
         this.sqlSession.commit();
     }
 
+    public void removeAllFeesFromEvent(Event event) {
+        FeeMapper feeMapper = this.sqlSession.getMapper(FeeMapper.class);
+        feeMapper.deleteAllForEvent(event.getId());
+        this.sqlSession.commit();
+    }
+
     private void modifyEventAdmin(Event event, User admin, BiConsumer<Event, User> dbAction) {
         Objects.requireNonNull(event);
         Objects.requireNonNull(admin);

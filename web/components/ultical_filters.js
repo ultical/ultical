@@ -408,3 +408,42 @@ app.filter('contact', ['$translate', function($translate) {
 		return contactString;
 	}
 }]);
+
+app.filter('fee', ['$translate', 'moneyFilter', '$sce', function($translate, moneyFilter, $sce) {
+  var feeOut = '';
+  var feeOutHtml = '';
+
+  function addToFeeString(text) {
+    feeOut += text;
+    feeOutHtml += text;
+  }
+  return function(fee, html = false) {
+    if (isEmpty(fee)) {
+      return '';
+    }
+    feeOut = '';
+    feeOutHtml = '<td class="padding-right"><span>';
+  	if (fee.multiple == true || fee.multiple == '1') {
+  	  addToFeeString($translate.instant('event.fee.perUnit') + ' ');
+      feeOutHtml += '</span><span>';
+    }
+    if (fee.type != 'OTHER') {
+  	  addToFeeString($translate.instant('event.fee.' + fee.type.toLowerCase()) + ' ');
+  	} else if (fee.type == 'OTHER') {
+  	  addToFeeString(fee.otherName + ' ');
+  	}
+    feeOutHtml += '</span></td><td class="pull-right padding-right-small">';
+
+  	addToFeeString(moneyFilter(fee.currency, fee.amount) + ' ');
+  	if (fee.perPerson == true || fee.perPerson == '1') {
+     feeOutHtml += '</td><td class="mega-wide" ng-if="fee.perPerson">';
+     addToFeeString($translate.instant('event.fee.perPerson'));
+  	}
+  	if (html) {
+  	  feeOutHtml += "</td>";
+      return $sce.trustAsHtml(feeOutHtml);
+  	}
+  	return feeOut;
+  }
+}]);
+

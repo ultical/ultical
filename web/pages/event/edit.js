@@ -16,6 +16,22 @@ angular.module('ultical.events')
     locationToEdit: { city: ''},
   };
 
+  var feeIdCounter = 0;
+
+  function initNewFee() {
+    feeIdCounter--;
+    $scope.newFee = {
+      id: feeIdCounter,
+      multiple: '0',
+      type: 'PLAYER',
+      amount: 0,
+      currency: 'EUR',
+      perPerson: '0',
+      tournamentEdition: null,
+    };
+  }
+  initNewFee();
+
   function clearNewDivision() {
     $scope.newDivision = {
       divisionType: 'open',
@@ -149,16 +165,16 @@ angular.module('ultical.events')
       return;
     }
     if (!angular.isObject($scope.action.locationToEdit) || isEmpty($scope.action.locationToEdit)) {
-      console.log("location is empty");
       event.locations = null;
     } else {
-    console.log("location is NOT empty");
       event.locations[0] = $scope.action.locationToEdit;
     }
 
     if (isEmpty(event.localOrganizer) || isEmpty(event.localOrganizer.name)) {
       event.localOrganizer = null;
     }
+
+    $scope.addFee($scope.newFee);
 
     event.divisionConfirmations = event.x.divisionIds;
 
@@ -287,6 +303,35 @@ angular.module('ultical.events')
     storage.deleteEvent($scope.event, function() {
       $state.go('app.eventsList');
     });
+  }
+
+  $scope.addFee = function(newFee) {
+    if (newFee.amount == 0) {
+      return;
+    }
+
+    newFee.multiple = newFee.multiple == '1';
+    newFee.perPerson = newFee.perPerson == '1';
+
+    $scope.event.fees.push(newFee);
+
+    initNewFee();
+  }
+
+  $scope.removeFee = function(feeIdToDelete) {
+    var feeIndexToDelete = 0;
+    angular.forEach($scope.event.fees, function(fee, idx) {
+      if (fee.id == feeIdToDelete) {
+        feeIndexToDelete = idx;
+      }
+    });
+    if (feeIndexToDelete >= 0) {
+      $scope.event.fees.splice(feeIndexToDelete, 1);
+    }
+  };
+
+  $scope.getFeeTypes = function() {
+    return ['PLAYER', 'GUEST', 'TEAM', 'BREAKFAST', 'LUNCH', 'DINNER', 'NIGHT', 'OTHER'];
   }
 
 }]);
