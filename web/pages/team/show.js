@@ -371,31 +371,37 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
       $scope.newPlayer = {};
       $scope.editRosterBlock = false;
     }, function(errorResponse) {
-      if (errorResponse.status = 409) {
+      if (errorResponse.code == 409 || errorResponse.code == 417) {
         var errorParts = errorResponse.message.split('-');
-        switch (errorParts[0]) {
-        case 'e101':
-          // this player is already part of another roster in this season and division
-          alerter.error('', 'team.roster.playerAlreadyInRoster', {
-            container: '#add-player-error',
-            duration: 10,
-            teamName: errorParts[1],
-          });
-          break;
-        case 'e102':
-          // this player has the wrong gender
-          alerter.error('', 'team.roster.playerWrongGender', {
-            container: '#add-player-error',
-            duration: 10
-          });
-          break;
-        case 'e103':
-          // this player has not the right age for this division
-          alerter.error('', 'team.roster.playerWrongAge', {
-            container: '#add-player-error',
-            duration: 10
-          });
-          break;
+        switch (errorParts[0].trim()) {
+          case 'e101':
+            // this player is already part of another roster in this season and division
+            alerter.error('', 'team.roster.playerAlreadyInRoster', {
+              container: '#add-player-error',
+              duration: 10,
+              teamName: errorParts[1],
+            });
+            break;
+          case 'e102':
+            // this player has the wrong gender
+            alerter.error('', 'team.roster.playerWrongGender', {
+              container: '#add-player-error',
+              duration: 10
+            });
+            break;
+          case 'e103':
+            // this player has not the right age for this division
+            alerter.error('', 'team.roster.playerWrongAge', {
+              container: '#add-player-error',
+              duration: 10
+            });
+            break;
+          case 'e104':
+            alerter.error('', 'team.roster.playerNotEligible', {
+              container: '#add-player-error',
+              duration: 10
+            });
+            break;
         }
       }
       $scope.editRosterBlock = false;

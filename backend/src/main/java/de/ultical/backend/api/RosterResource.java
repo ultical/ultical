@@ -135,13 +135,15 @@ public class RosterResource {
                     Status.INTERNAL_SERVER_ERROR);
         }
 
-        // Validation
-        if (!dfvMvName.isDse()) {
-            throw new WebApplicationException("User did not agree to publish his data on the web (no DSE present)",
-                    Status.FORBIDDEN);
-        }
-
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
+
+            // Validation
+             dfvMvName = this.dataStore.getDfvMvName(dfvMvName.getDfvNumber());
+
+            if (!dfvMvName.isDse()) {
+                throw new WebApplicationException("User did not agree to publish his data on the web (no DSE present)",
+                        Status.FORBIDDEN);
+            }
 
             Roster roster = this.dataStore.get(rosterId, Roster.class);
             if (roster == null) {
@@ -189,7 +191,7 @@ public class RosterResource {
              */
             if (!player.isEligible()) {
                 throw new WebApplicationException(
-                        "e102 - Player is registered as a passive player. Passive players are not allowed to participate in tournaments.",
+                        "e104 - Player is not eligible to participate in tournaments. She is either registered as a passive player, doesn't have her DSE signed or the yearly fees for her have not been sent by her club.",
                         Status.EXPECTATION_FAILED);
             }
 

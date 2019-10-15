@@ -362,6 +362,7 @@ TRANSLATIONS['de'] = {
 				playerWrongAge: 'Dieser Spieler ist aufgrund seines Alters in dieser Division in diesem Jahr nicht spielberechtigt. Ist diese Information fehlerhaft, wende dich an euren Vereinsadmin, um die Angabe beim DFV zu korrigieren.',
 				playerBlocked: 'Dieser Spieler war Teil dieses Rosters während eines offiziellen Turniers. Er ist für diese Saison festgespielt und kann nicht entfernt werden.',
 				rosterBlocked: 'Das Team ist über dieses Roster bei einem oder mehreren Turnieren gemeldet, daher kann es nicht gelöscht werden.',
+				playerNotEligible: 'Dieser Spieler ist nicht spielberechtigt. Das kann daran liegen, dass nur eine passiv-Meldung vorliegt, dass die Datenschutzerklärung nicht unterzeichnet wurde oder dass die Meldegebühren von Seiten des Vereins nicht bezahlt wurden.',
 				rosterDuplicated: 'Es existiert bereits ein Roster für die gleiche Saison und Division mit der gleichen Ergänzung zum Teamnamen und mit überlappenden Gültigkeitsbereichen.',
 				removePlayerTooltip: 'Spieler aus Roster entfernen',
 				player: 'Spieler',
