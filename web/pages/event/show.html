@@ -189,15 +189,7 @@
 							<tr ng-if="editionFeeEndIndex == $index && $index > 0 && show.eventFees && show.feesLabel">
 								<td colspan="4" class="margin-top-small">{{ 'event.fee.matchdayLabel' | translate }}:</td>
 							</tr>
-							<tr ng-if="(show.editionFees && fee.x.fromEdition) || (show.eventFees && !fee.x.fromEdition)">
-								<td ng-if="editionFeeEndIndex > 0" class="padding-right">&nbsp;</td>
-								<td class="padding-right">
-									<span ng-if="fee.multiple">{{ 'event.fee.perUnit' | translate }}</span>
-									<span ng-if="fee.type != 'OTHER'">{{ ('event.fee.' + (fee.type | lowercase)) | translate }}</span>
-									<span ng-if="fee.type == 'OTHER'">{{ fee.otherName }}</span>
-								</td>
-								<td class="pull-right padding-right-small">{{ fee.currency | money : fee.amount }}</td>
-								<td class="mega-wide" ng-if="fee.perPerson">{{ 'event.fee.perPerson' | translate }}</td>
+							<tr ng-if="(show.editionFees && fee.x.fromEdition) || (show.eventFees && !fee.x.fromEdition)" ng-bind-html="fee | fee : true">
 							</tr>
 						</tbody>
 					</table>

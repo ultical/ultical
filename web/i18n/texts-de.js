@@ -44,6 +44,7 @@ TRANSLATIONS['de'] = {
       event: 'Turnier',
       tournamentEdition: 'Turnier-Edition',
       tournamentFormat: 'Turnier-Format',
+      display: 'Anzeige',
 		},
 
 		email: {
@@ -248,6 +249,7 @@ TRANSLATIONS['de'] = {
 				lunch: 'Mittagessen',
 				dinner: 'Abendessen',
 				night: 'Nacht',
+				other: 'Eigener Text',
 				perUnit: 'pro',
 				perPerson: 'p.P.',
 				editionLabel: 'Für alle Termine von',
@@ -322,7 +324,12 @@ TRANSLATIONS['de'] = {
 			    divisionIdentifierPlaceholder: 'Bezeichnung (optional)',
 			    confirmDelete: 'Möchtest du dieses Turnier wirklich löschen?',
 			    confirmDeleteRegisteredTeams: 'Es haben sich {{ numRegisteredTeams }} Teams bereits angemeldet. Sie werden nicht über das Löschen informiert und bleiben auch weiterhin in der Division gemeldet.',
-			},
+          feeMultiple: 'jeweils',
+          feeNotMultiple: 'einmalig',
+          feePerPerson: 'pro Person',
+          feeNotPerPerson: 'pauschal',
+          feeFor: 'für',
+ 			},
 		},
 
 		team: {
@@ -383,6 +390,7 @@ TRANSLATIONS['de'] = {
 				adminsPlaceholder: 'Name des Benutzers',
 				adminsHelp: 'Nur registrierte Benutzer dieser Seite können Admins werden',
 				adminsRemoveTooltip: 'Benutzer entfernen',
+				feeRemoveTooltip: 'Fee entfernen',
 				emailsLabel: 'Zusätzliche Emailadressen',
 				emailsPlaceholder: 'Email',
 				emailsRemoveTooltip: 'Email entfernen',

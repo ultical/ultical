@@ -28,6 +28,9 @@ public interface FeeMapper extends BaseMapper<Fee> {
     @Delete("DELETE FROM FEE WHERE id=#{id}")
     void delete(int id);
 
+    @Delete("DELETE FROM FEE WHERE event=#{eventId}")
+    void deleteAllForEvent(int eventId);
+
     // SELECT
     @Override
     @Select({ SELECT_STMT, "WHERE id=#{id}" })

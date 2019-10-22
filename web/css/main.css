@@ -678,8 +678,20 @@ footer {
   border-radius: 0px;
 }
 
+.form-control.normal {
+  width: 255px;
+}
+
 .form-control.short {
   width: 165px;
+}
+
+.form-control.very-short {
+  width: 128px;
+}
+
+.form-control.extra-short {
+  width: 64px;
 }
 
 select.form-control {

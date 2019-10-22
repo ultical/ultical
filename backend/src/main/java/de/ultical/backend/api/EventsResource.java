@@ -205,6 +205,18 @@ public class EventsResource {
                 }
             }
         }
+
+        // create list of fees
+        this.dataStore.removeAllFeesFromEvent(event);
+
+        for (Fee fee : event.getFees()) {
+            fee.setEvent(event);
+            try {
+                this.dataStore.addNew(fee);
+            } catch (PersistenceException e) {
+                LOG.error("exception:", e);
+            }
+        }
     }
 
     private void assureCompleteEventInformation(Event event) {
