@@ -2,13 +2,17 @@
 
 angular.module('ultical.events')
 
-.controller('EventEditCtrl', ['$scope', 'storage', '$stateParams', '$filter', '$state', 'mapService', 'alerter', 'serverApi', 'authorizer', 'headService', '$translate',
-                      	  function($scope, storage, $stateParams, $filter, $state, mapService, alerter, serverApi, authorizer, headService, $translate) {
+.controller('EventEditCtrl', ['$scope', 'storage', '$stateParams', '$filter', '$state', 'mapService', 'alerter', 'serverApi', 'authorizer', 'headService', '$translate', 'moment',
+                      	  function($scope, storage, $stateParams, $filter, $state, mapService, alerter, serverApi, authorizer, headService, $translate, moment) {
 
   $scope.newAdmin = {obj:""};
   $scope.loaded = false;
 
   $scope.createEvent = false;
+
+  storage.getSeasons(function(seasons) {
+    $scope.seasons = seasons;
+  });
 
   $scope.action = {
     formatIdChosen: -1,
@@ -32,6 +36,22 @@ angular.module('ultical.events')
   }
   initNewFee();
 
+  function initNewEdition() {
+    $scope.newEdition = {
+      id: -1,
+      alternativeMatchdayName: '',
+      context: null,
+      divisionRegistrations: [],
+      fees: [],
+      name: '',
+      organizer: {},
+      registrationStart: moment().format('YYYY-MM-DD'),
+      registrationEnd: moment().add(1, 'months').format('YYYY-MM-DD'),
+      season: {},
+      tournamentFormat: $scope.format,
+    };
+  }
+
   function clearNewDivision() {
     $scope.newDivision = {
       divisionType: 'open',
@@ -54,6 +74,8 @@ angular.module('ultical.events')
     $scope.edition = {};
     $scope.format = {};
     $scope.editionChosen = false;
+    $scope.editionCreate = false;
+    $scope.seasonCreate = false;
     $scope.formatChosen = false;
 
     storage.getFormatList(function(formats) {
@@ -93,10 +115,11 @@ angular.module('ultical.events')
       }
     });
     storage.getEditionListingForFormat($scope.format.id, function(editions) {
+      initNewEdition();
       $scope.editionList = editions;
       $scope.formatChosen = true;
     });
-  }
+  };
 
   $scope.chooseEdition = function() {
     angular.forEach($scope.editionList, function(edition) {
@@ -107,7 +130,49 @@ angular.module('ultical.events')
       }
     });
     $scope.editionChosen = true;
-  }
+  };
+
+  $scope.createEdition = function() {
+    $scope.editionCreate = true;
+  };
+
+  $scope.createSeason = function() {
+    $scope.seasonCreate = true;
+    $scope.newSeason = {
+      surface: 'TURF',
+      yearObject: $scope.getSeasonYears()[2],
+    };
+  };
+
+  $scope.getSeasonSurfaces = function() {
+    return ['TURF', 'GYM', 'BEACH'];
+  };
+
+  $scope.getSeasonYears = function() {
+    var lastYear = parseInt(moment().subtract(1, 'years').format('YYYY'));
+    var listOfYearObjects = [];
+
+    for (var year = lastYear; year < lastYear + 5; year++) {
+      var yearString = year + '';
+    	listOfYearObjects.push({year: year, plusOneYear: false, yearString: yearString});
+    	var yearPlusString = '' + (year + 1);
+      var yearPlusString = '/' + yearPlusString.substring(2,4);
+    	listOfYearObjects.push({year: year, plusOneYear: true, yearString: yearPlusString});
+    }
+    return listOfYearObjects;
+  };
+
+  $scope.addSeason = function(createdSeason) {
+    console.log("adding", createdSeason);
+
+    var newSeason = {
+      year: createdSeason.yearObject.year,
+      plusOneYear: createdSeason.yearObject.plusOneYear,
+      surface: createSeason.surface,
+    };
+    $scope.edition.season = newSeason;
+    $scope.seasonCreate = false;
+  };
 
   function isNumber(input) {
       return typeof input === 'number' || Object.prototype.toString.call(input) === '[object Number]';

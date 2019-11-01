@@ -112,6 +112,11 @@ TRANSLATIONS['de'] = {
 			outdoorFullName: 'Outdoor',
 			beach: 'Beach',
 			beachFullName: 'Beach',
+			surface: {
+			  'TURF': 'Outdoor',
+			  'GYM': 'Indoor',
+			  'BEACH': 'Beach',
+			},
 		},
 
 		division: {
@@ -329,6 +334,8 @@ TRANSLATIONS['de'] = {
           feePerPerson: 'pro Person',
           feeNotPerPerson: 'pauschal',
           feeFor: 'für',
+          createNewEdition: 'Neue Turnier-Edition erstellen',
+          createNewSeason: 'Neue Saison erstellen',
  			},
 		},
 

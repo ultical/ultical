@@ -77,37 +77,84 @@
 			</div>
 		</div>
 
-		<div ng-if="formatChosen && !editionChosen">
+		<!-- Choose edition -->
+		<div ng-if="formatChosen && !editionChosen && !editionCreate">
+
 			<div class="row margin-bottom">
 				<div class="col-md-2">
 					<span class="strong ">{{ 'event.edit.chooseEdition' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<button type="button" class="btn btn-default" ng-model="action.editionIdChosen"
-							data-multiple="0" data-animation="am-flip-x" data-max-length="1"
-							ng-change="chooseEdition()"
-							bs-options="edition.id as (edition.season | season : true) + ' - ' + edition.name for edition in editionList | orderBy : ['-season.year', '-season.plusOneYear', 'name']"
-							bs-select></button>
+					<div class="row">
+						<div class="col-md-12">
+							<button type="button" class="btn btn-default" ng-model="action.editionIdChosen"
+								data-multiple="0" data-animation="am-flip-x" data-max-length="1"
+								ng-change="chooseEdition()"
+								bs-options="edition.id as (edition.season | season : true) + ' - ' + edition.name for edition in editionList | orderBy : ['-season.year', '-season.plusOneYear', 'name']"
+								bs-select></button>
+						</div>
+					</div>
+					<div class="row margin-top-small">
+						<div class="col-md-12">
+							<button type="button" ng-click="createEdition()" class="btn btn-primary btn-ultical">{{ 'event.edit.createNewEdition' | translate }}</button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<div ng-if="editionChosen">
+		<div ng-if="editionChosen || editionCreate">
+
+			<!-- edition name - always edit (only TF admin) -->
 			<div class="row margin-bottom">
 				<div class="col-md-2">
 					<span class="strong ">{{ 'event.edit.nameLabel' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<span>{{ edition.name }}</span>
+					<span ng-if="!format.x.own">>{{ edition.name }}</span>
+					<span ng-if="format.x.own"><input ng-model="edition.name" class="form-control"></span>
 				</div>
 			</div>
 
+			<!-- edition season - edit on create (only TF admin) -->
 			<div class="row margin-bottom">
 				<div class="col-md-2">
 					<span class="strong ">{{ 'season.season' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<span>{{ edition.season | season : true}}</span>
+					<div class="row" ng-if="!format.x.own">
+						<div class="col-md-12">
+							<span>{{ edition.season | season : true}}</span>
+						</div>
+					</div>
+					<div class="row" ng-if="format.x.own && editionCreate && !seasonCreate">
+						<div class="col-md-12">
+							<button type="button" class="btn btn-default" ng-model="edition.season"
+									data-multiple="1" data-animation="am-flip-x" data-max-length="16" data-order="divisionOrder"
+									bs-options="season.id as season | season : true for season in seasons | orderBy : ['-year', '-plusOneYear']" bs-select>
+							</button>
+						</div>
+					</div>
+					<div class="row margin-top-small" ng-if="format.x.own && editionCreate && !seasonCreate">
+						<div class="col-md-12">
+							<button type="button" ng-click="createSeason()" class="btn btn-primary btn-ultical">{{ 'event.edit.createNewSeason' | translate }}</button>
+						</div>
+					</div>
+					<div class="row" ng-if="format.x.own && editionCreate && seasonCreate">
+						<div class="col-md-12">
+							<div class="input-group input-group-colored">
+								<span ng-click="addSeason(newSeason)" class="cursor-pointer input-group-addon">
+									<span class="glyphicon glyphicon-plus"></span>
+								</span>
+								<select class="form-control short" ng-model="newSeason.yearObject">
+									<option ng-repeat="yearObject in getSeasonYears()" value="{{ yearObject }}">{{ yearObject.yearString }}</option>
+								</select>
+								<select class="form-control short" ng-model="newSeason.surface">
+									<option ng-repeat="surface in getSeasonSurfaces()" value="{{ surface }}">{{ 'season.surface.' + surface | translate }}</option>
+								</select>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 
