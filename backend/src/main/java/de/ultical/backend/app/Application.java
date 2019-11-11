@@ -100,8 +100,8 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
                         if (this.clientInstance == null) {
                             JerseyClientConfiguration conf = new JerseyClientConfiguration();
 
-                            conf.setTimeout(Duration.milliseconds(7000));
-                            conf.setConnectionTimeout(Duration.milliseconds(7000));
+                            conf.setTimeout(Duration.milliseconds(20000));
+                            conf.setConnectionTimeout(Duration.milliseconds(20000));
 
                             this.clientInstance = new JerseyClientBuilder(env).using(conf).using(env).build("dfvApi");
                         }
