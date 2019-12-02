@@ -10,6 +10,7 @@ public class Contact extends Identifiable {
     private String email;
     private String name;
     private String phone;
+    private ContactType type = ContactType.EVENT;
 
     @Override
     public Class<ContactMapper> getMapper() {

@@ -1038,4 +1038,15 @@ public class DataStore {
             }
         }
     }
+
+    public List<Contact> getContactsBy(ContactType type) {
+        try {
+            ContactMapper mapper = this.sqlSession.getMapper(ContactMapper.class);
+            return mapper.getBy(type);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
 }

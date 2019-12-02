@@ -9,6 +9,8 @@ angular.module('ultical.events')
   $scope.loaded = false;
 
   $scope.createEvent = false;
+  $scope.editionContacts = [];
+  $scope.allContexts = [];
 
   storage.getSeasons(function(seasons) {
     $scope.seasons = seasons;
@@ -75,7 +77,6 @@ angular.module('ultical.events')
     $scope.format = {};
     $scope.editionChosen = false;
     $scope.editionCreate = false;
-    $scope.seasonCreate = false;
     $scope.formatChosen = false;
 
     storage.getFormatList(function(formats) {
@@ -134,21 +135,36 @@ angular.module('ultical.events')
 
   $scope.createEdition = function() {
     $scope.editionCreate = true;
-  };
-
-  $scope.createSeason = function() {
-    $scope.seasonCreate = true;
-    $scope.newSeason = {
+    $scope.season = {
       surface: 'TURF',
-      yearObject: $scope.getSeasonYears()[2],
+      yearObject: $scope.seasonYears[2],
     };
+
+    $scope.edition.registrationStart = moment().format('DD-MM-YYYY');
+    $scope.edition.registrationEnd = moment().add(2, 'month').format('DD-MM-YYYY');
+
+    var newOrganizer = {id:-1, name: $translate.instant('event.edit.createNewEditionOrganizer'), phone: '', email: ''};
+    $scope.editionContacts.push(newOrganizer);
+    $scope.edition.organizer = newOrganizer;
+
+    storage.getContactsForEdition(function(contacts) {
+      angular.forEach(contacts, function(contact) {
+        $scope.editionContacts.push(contact);
+      });
+    });
+
+    storage.getContexts(function(contexts) {
+      $scope.allContexts = contexts;
+      $scope.edition.context = contexts[0];
+    });
   };
 
   $scope.getSeasonSurfaces = function() {
     return ['TURF', 'GYM', 'BEACH'];
   };
 
-  $scope.getSeasonYears = function() {
+  $scope.seasonYears = getSeasonYears();
+  function getSeasonYears() {
     var lastYear = parseInt(moment().subtract(1, 'years').format('YYYY'));
     var listOfYearObjects = [];
 
@@ -156,22 +172,10 @@ angular.module('ultical.events')
       var yearString = year + '';
     	listOfYearObjects.push({year: year, plusOneYear: false, yearString: yearString});
     	var yearPlusString = '' + (year + 1);
-      var yearPlusString = '/' + yearPlusString.substring(2,4);
+      yearPlusString = yearString + '/' + yearPlusString.substring(2,4);
     	listOfYearObjects.push({year: year, plusOneYear: true, yearString: yearPlusString});
     }
     return listOfYearObjects;
-  };
-
-  $scope.addSeason = function(createdSeason) {
-    console.log("adding", createdSeason);
-
-    var newSeason = {
-      year: createdSeason.yearObject.year,
-      plusOneYear: createdSeason.yearObject.plusOneYear,
-      surface: createSeason.surface,
-    };
-    $scope.edition.season = newSeason;
-    $scope.seasonCreate = false;
   };
 
   function isNumber(input) {
@@ -397,6 +401,18 @@ angular.module('ultical.events')
 
   $scope.getFeeTypes = function() {
     return ['PLAYER', 'GUEST', 'TEAM', 'BREAKFAST', 'LUNCH', 'DINNER', 'NIGHT', 'OTHER'];
+  }
+
+  $scope.saveEdition = function() {
+    $scope.edition.season = {
+      year: $scope.season.yearObject.year,
+      plusOneYear: $scope.season.yearObject.plusOneYear,
+      surface: $scope.season.surface,
+    }
+
+
+
+
   }
 
 }]);

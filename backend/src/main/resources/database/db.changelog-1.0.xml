@@ -1139,4 +1139,14 @@
 	<changeSet id="bb-20181212-002" author="bb">
 		<tagDatabase tag="v1.20"></tagDatabase>
 	</changeSet>
+	<changeSet id="bas-20191122-001" author="bas">
+		<addColumn tableName="CONTACT">
+			<column name="type" type="VARCHAR(24)" defaultValue="EVENT">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="bas-20191122-002" author="bas">
+		<tagDatabase tag="v1.21"></tagDatabase>
+	</changeSet>
 </databaseChangeLog>

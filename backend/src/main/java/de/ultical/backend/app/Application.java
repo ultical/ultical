@@ -148,6 +148,7 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
         env.jersey().register(ClubResource.class);
         env.jersey().register(ContextResource.class);
         env.jersey().register(SitemapResource.class);
+        env.jersey().register(ContactResource.class);
 
         env.jersey().register(UlticalLoggingFilter.class);
 

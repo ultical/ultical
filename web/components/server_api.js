@@ -108,6 +108,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
       get('context', callback);
     },
 
+    getContactsForEdition: function(callback) {
+      get('contact/TOURNAMENT_EDITION', callback);
+    },
+
 		postRoster: function(roster, teamId, callback, errorCallback) {
 			roster.team = { id: teamId };
 			post('roster', roster, callback, errorCallback);

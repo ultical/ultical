@@ -266,6 +266,11 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 					return callback(this.clubs);
 				}
 			},
+
+			getContactsForEdition: function(callback) {
+				serverApi.getContactsForEdition(callback);
+			},
+
       getFormatForEdition: function(editionId, callback) {
         var that = this;
 
