@@ -79,7 +79,7 @@
 									<label for="user-input-club" class="col-sm-3 control-label">{{ 'user.club' | translate }}</label>
 									<div class="col-sm-8">
 										<select class="form-control" ng-model="user.clubId">
-											<option ng-repeat="club in clubs" value="{{ club.id }}">{{ club.name }}</option>
+											<option ng-repeat="club in clubs track by $index" value="{{ club.id }}">{{ club.name }}</option>
 										</select>
 									</div>
 								</div>
