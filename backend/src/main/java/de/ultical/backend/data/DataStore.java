@@ -226,6 +226,16 @@ public class DataStore {
         }
     }
 
+    public Season getOrCreateSeason(Season season) {
+        SeasonMapper seasonMapper = this.sqlSession.getMapper(SeasonMapper.class);
+        Season foundSeason = seasonMapper.getByProperties(season);
+
+        if (foundSeason == null) {
+            foundSeason = addNew(season);
+        }
+        return foundSeason;
+    }
+
     public void removeAllDivisionConfirmationsFromEvent(Event event) {
         // try-finally block is inside modifyTeamAdmin
 

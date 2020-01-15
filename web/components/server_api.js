@@ -256,6 +256,19 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			}
 		},
 
+    saveTournamentEdition: function(edition, callback, errorCallback) {
+			var eventToSend = angular.copy(event);
+
+			// delete properties added for frontend
+			delete(edition.x);
+
+			if (edition.id == -1) {
+				post('edition', edition, callback);
+			} else {
+				put('edition/' + edition.id, edition, callback);
+			}
+		},
+
 		registerUser: function(user, callback) {
 			post('command/register', user, callback);
 		},

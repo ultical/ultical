@@ -143,18 +143,18 @@
 				<div class="col-md-10" ng-if="format.x.own">
 					<div class="row">
 						<div class="col-md-9">
-							<select class="form-control" ng-model="edition.organizer" ng-options="contact as contact | contact for contact in editionContacts"></select>
+							<select class="form-control" ng-model="edition.organizer" ng-options="contact as contact | contact for contact in editionContacts track by contact.id"></select>
 						</div>
 					</div>
 					<div class="row margin-top" ng-if="edition.organizer.id == -1">
 						<div class="col-md-4">
-							<input class="form-control" ng-model="newEditionOrganizer.name" placeholder="{{ 'event.edit.localOrganizerNameLabel' | translate }}">
+							<input class="form-control" ng-model="newOrganizer.name" placeholder="{{ 'event.edit.localOrganizerNameLabel' | translate }}">
 						</div>
 						<div class="col-md-3">
-							<input class="form-control" ng-model="newEditionOrganizer.email" placeholder="{{ 'event.edit.localOrganizerEmailLabel' | translate }}">
+							<input class="form-control" ng-model="newOrganizer.email" placeholder="{{ 'event.edit.localOrganizerEmailLabel' | translate }}">
 						</div>
 						<div class="col-md-2">
-							<input class="form-control" ng-model="newEditionOrganizer.phone" placeholder="{{ 'event.edit.localOrganizerPhoneLabel' | translate }}">
+							<input class="form-control" ng-model="newOrganizer.phone" placeholder="{{ 'event.edit.localOrganizerPhoneLabel' | translate }}">
 						</div>
 					</div>
 				</div>
@@ -198,31 +198,47 @@
 				</div>
 			</div>
 
+			<!-- save button -->
+			<div class="row margin-top margin-bottom" ng-if="format.x.own || event.x.own || editionCreate">
+				<div class="col-md-12">
+					<div class="row">
+						<div class="col-md-2">
+						</div>
+						<div class="col-md-5">
+							<button ng-click="saveEdition()" class="btn btn-primary btn-ultical">
+								<span ng-if="edition.id == -1">{{ 'general.save' | translate }}</span>
+								<span ng-if="edition.id != -1">{{ 'general.saveEdits' | translate }}</span>
+							</button>
+							<button ng-if="edition.id == -1" ng-click="cancelNewEdition()" class="btn btn-default btn-ultical margin-left-small">{{ 'general.cancel' | translate }}</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<!-- division-registration/confirmation - always edit (only TF admin) -->
-			<div class="row margin-bottom">
+			<div class="row margin-top margin-bottom">
 				<div class="col-md-2">
 					<span class="strong ">{{ 'event.edit.divisionRegistrationLabel' | translate }}</span>
 				</div>
 
 				<div class="col-md-10">
 					<div class="row margin-bottom" ng-if="format.x.own">
-						<div class="col-md-12">
+						<div class="col-md-3">
 							<div class="input-group input-group-colored">
 								<span ng-click="addDivision(newDivision)" class="cursor-pointer input-group-addon">
 									<span class="glyphicon glyphicon-plus"></span>
 								</span>
-								<input class="form-control short" ng-model="newDivision.divisionIdentifier" placeholder="{{ 'event.edit.divisionIdentifierPlaceholder' | translate }}">
-								<select class="form-control short" ng-model="newDivision.divisionType">
-									<option ng-repeat="type in getDivisionTypes()" value="{{ type }}">{{ 'division.' + type | translate }}</option>
-								</select>
-								<select class="form-control short" ng-model="newDivision.divisionAge">
-									<option ng-repeat="age in getDivisionAges()" value="{{ age }}">{{ 'division.' + age | translate }}</option>
-								</select>
-								<select class="form-control short" ng-model="newDivision.numberSpots">
-									<option value="0">{{ 'division.numberOfSpotsUndefined' | translate }}</option>
-									<option ng-repeat="i in [] | range : 48" value="{{ i + 2}}">{{ i + 2}} {{ 'division.numberOfSpots' | translate }}</option>
-								</select>
+								<input class="form-control" ng-disabled="editionCreate" ng-model="newDivision.divisionIdentifier" placeholder="{{ 'event.edit.divisionIdentifierPlaceholder' | translate }}">
 							</div>
+						</div>
+						<div class="col-md-2">
+							<select class="form-control" ng-disabled="editionCreate" ng-model="newDivision.divisionType" ng-options="type as 'division.' + type | translate for type in getDivisionTypes()"></select>
+						</div>
+						<div class="col-md-2">
+							<select class="form-control" ng-disabled="editionCreate" ng-model="newDivision.divisionAge" ng-options="age as 'division.' + age | translate for age in getDivisionAges()"></select>
+						</div>
+						<div class="col-md-2">
+							<select class="form-control" ng-disabled="editionCreate" ng-model="newDivision.numberSpots" ng-options="spot.value as spot.name for spot in selectNumberOfSpots"></select>
 						</div>
 					</div>
 					<div class="row margin-bottom">
@@ -507,7 +523,7 @@
 						<div class="col-md-2">
 						</div>
 						<div class="col-md-5">
-							<button ng-click="saveEvent(event)" class="btn btn-primary btn-ultical">{{ 'event.edit.save' | translate }}</button>
+							<button ng-click="saveEvent(event)" class="btn btn-primary btn-ultical">{{ 'general.save' | translate }}</button>
 							<button ng-click="cancel()" class="btn btn-default btn-ultical margin-left-small">{{ 'general.cancel' | translate }}</button>
 						</div>
 						<div class="col-md-5">

@@ -80,15 +80,15 @@ public class SeasonResource {
                     Status.INTERNAL_SERVER_ERROR);
         }
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
-	    Authenticator.assureOverallAdmin(currentUser);
+	        Authenticator.assureOverallAdmin(currentUser);
             return this.dataStore.addNew(newSeason);
         } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
         } catch (AuthorizationException ae) {
-	    LOGGER.warn(String.format("Authorization Issue: User %s (id=%d) tried to create a new season",currentUser.getEmail(), currentUser.getId()), ae);
-	    throw new WebApplicationException(Status.UNAUTHORIZED);
-	}
+	        LOGGER.warn(String.format("Authorization Issue: User %s (id=%d) tried to create a new season",currentUser.getEmail(), currentUser.getId()), ae);
+	        throw new WebApplicationException(Status.UNAUTHORIZED);
+	    }
     }
 
     @PUT
@@ -105,18 +105,18 @@ public class SeasonResource {
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
 	    Authenticator.assureOverallAdmin(currentUser);
 	    if (updSeason.getId() != id) {
-		// the id of the season passed as parameter and in the request URL
-		// do not match. Evil ...
-		throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
+            // the id of the season passed as parameter and in the request URL
+            // do not match. Evil ...
+            throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);
 	    }
             success = this.dataStore.update(updSeason);
         } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
         } catch (AuthorizationException ae) {
-	    LOGGER.warn(String.format("Authorization Issue: User %s (id=%d) tried to update season", currentUser.getEmail(), currentUser.getId()),ae);
-	    throw new WebApplicationException(Status.UNAUTHORIZED);
-	}
+            LOGGER.warn(String.format("Authorization Issue: User %s (id=%d) tried to update season", currentUser.getEmail(), currentUser.getId()),ae);
+            throw new WebApplicationException(Status.UNAUTHORIZED);
+	    }
         if (!success) {
             throw new WebApplicationException("Update failed, eventually someone else update the resource before you",
                     Status.CONFLICT);

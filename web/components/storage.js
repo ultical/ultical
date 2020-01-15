@@ -460,6 +460,13 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				}, errorCallback);
 			},
 
+      saveTournamentEdition: function(edition, callback, errorCallback) {
+				serverApi.saveTournamentEdition(edition, function(savedEdition) {
+          storeTournamentEdition(savedEdition, newLoopIndex());
+				  callback(savedEdition);
+        });
+      },
+
 			saveEvent: function(event, callback, errorCallback) {
         var that = this;
         var oldEvent;
