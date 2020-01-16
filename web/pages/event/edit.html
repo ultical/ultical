@@ -29,8 +29,8 @@
 				</div>
 			</div>
 		</div>
-		<div ng-if="formatChosen">
 
+		<div ng-if="formatChosen">
 			<div class="row margin-bottom">
 				<div class="col-md-2">
 					<span class="strong ">{{ 'event.edit.nameLabel' | translate }}</span>
@@ -72,13 +72,13 @@
 		<div ng-if="formatChosen">
 			<div class="row margin-bottom">
 				<div class="col-md-12">
-					<h3>{{ 'general.tournamentEdition' | translate }}</h3>
+					<h3>{{ 'general.tournamentEdition' | translate }}<a href="#" class="edit-in-title" ng-click="editEdition()" ng-show="format.x.own && !editionEdit && edition.id > 0">{{ 'event.edit.editEdition' | translate }}</a></h3>
 				</div>
 			</div>
 		</div>
 
 		<!-- Choose edition -->
-		<div ng-if="formatChosen && !editionChosen && !editionCreate">
+		<div ng-if="formatChosen && !editionChosen && !editionEdit">
 
 			<div class="row margin-bottom">
 				<div class="col-md-2">
@@ -103,7 +103,7 @@
 			</div>
 		</div>
 
-		<div ng-if="editionChosen || editionCreate">
+		<div ng-if="editionChosen || editionEdit">
 
 			<!-- edition name - always edit (only TF admin) -->
 			<div class="row margin-bottom">
@@ -111,8 +111,8 @@
 					<span class="strong ">{{ 'event.edit.nameLabel' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<span ng-if="!format.x.own">>{{ edition.name }}</span>
-					<span ng-if="format.x.own"><input ng-model="edition.name" class="form-control"></span>
+					<span ng-if="!format.x.own || !editionEdit">{{ edition.name }}</span>
+					<span ng-if="format.x.own && editionEdit"><input ng-model="edition.name" class="form-control"></span>
 				</div>
 			</div>
 
@@ -121,13 +121,13 @@
 				<div class="col-md-2">
 					<span class="strong ">{{ 'season.season' | translate }}</span>
 				</div>
-				<div class="col-md-10" ng-if="!format.x.own || !editionCreate">
+				<div class="col-md-10" ng-if="!format.x.own || !editionEdit || edition.id != -1">
 					<span>{{ edition.season | season : true}}</span>
 				</div>
-				<div class="col-md-2" ng-if="format.x.own && editionCreate">
+				<div class="col-md-2" ng-if="format.x.own && editionEdit && edition.id == -1">
 					<select class="form-control short margin-right" ng-model="season.surface" ng-options="surface as ('season.surface.' + surface | translate) for surface in getSeasonSurfaces()"></select>
 				</div>
-				<div class="col-md-2" ng-if="format.x.own && editionCreate">
+				<div class="col-md-2" ng-if="format.x.own && editionEdit && edition.id == -1">
 					<select class="form-control short" ng-model="season.yearObject" ng-options="year as year.yearString for year in seasonYears"></select>
 				</div>
 			</div>
@@ -137,10 +137,10 @@
 				<div class="col-md-2">
 					<span class="strong ">{{ 'event.organizer' | translate }}</span>
 				</div>
-				<div class="col-md-10" ng-if="!format.x.own">
+				<div class="col-md-10" ng-if="!format.x.own || !editionEdit">
 					<span>{{ edition.organizer | contact }}</span>
 				</div>
-				<div class="col-md-10" ng-if="format.x.own">
+				<div class="col-md-10" ng-if="format.x.own && editionEdit">
 					<div class="row">
 						<div class="col-md-9">
 							<select class="form-control" ng-model="edition.organizer" ng-options="contact as contact | contact for contact in editionContacts track by contact.id"></select>
@@ -165,13 +165,13 @@
 				<div class="col-md-2">
 					<span class="strong ">{{ 'event.edit.registrationPeriodLabel' | translate }}</span>
 				</div>
-				<div class="col-md-10" ng-if="!format.x.own">
+				<div class="col-md-10" ng-if="!format.x.own || !editionEdit">
 					<span>{{ edition.registrationStart | amDateFormat : ('general.amDateFormat' | translate) }} - {{ edition.registrationEnd | amDateFormat : ('general.amDateFormat' | translate) }}</span>
 				</div>
-				<div class="col-md-2" ng-if="format.x.own">
+				<div class="col-md-2" ng-if="format.x.own && editionEdit">
 					<input ng-model="edition.registrationStart" class="form-control short" data-date-type="string" data-model-date-format="yyyy-MM-dd" data-date-format="dd.MM.yyyy" data-autoclose="1" bs-datepicker data-container="#registrationdatepicker" />
 				</div>
-				<div class="col-md-8" ng-if="format.x.own">
+				<div class="col-md-8" ng-if="format.x.own && editionEdit">
 					<input ng-model="edition.registrationEnd" class="form-control short" data-date-type="string" data-model-date-format="yyyy-MM-dd" data-date-format="dd.MM.yyyy" data-autoclose="1" bs-datepicker data-container="#registrationdatepicker" />
 				</div>
 			</div>
@@ -182,8 +182,8 @@
 					<span class="strong ">{{ 'event.edit.alternativeMatchdayNameLabel' | translate }}</span>
 				</div>
 				<div class="col-md-2">
-					<span ng-if="!format.x.own">{{ event | matchdayname }}</span>
-					<span ng-if="format.x.own"><input ng-model="edition.alternativeMatchdayName" class="form-control" placeholder="{{ 'event.matchday' | translate }}"></span>
+					<span ng-if="!format.x.own || !editionEdit">{{ event | matchdayname }}</span>
+					<span ng-if="format.x.own && editionEdit"><input ng-model="edition.alternativeMatchdayName" class="form-control" placeholder="{{ 'event.matchday' | translate }}"></span>
 				</div>
 			</div>
 
@@ -193,23 +193,23 @@
 					<span class="strong ">{{ 'event.edit.contextLabel' | translate }}</span>
 				</div>
 				<div class="col-md-4">
-					<span ng-if="!format.x.own || !editionCreate">{{ edition.context.acronym }} - {{ edition.context.name }}</span>
-					<select ng-if="format.x.own && editionCreate" class="form-control" ng-model="edition.context" ng-options="context as context.name + ' (' + context.acronym + ')' for context in allContexts"></select>
+					<span ng-if="!format.x.own || !editionEdit || edition.id != -1">{{ edition.context.acronym }} - {{ edition.context.name }}</span>
+					<select ng-if="format.x.own && editionEdit && edition.id == -1" class="form-control" ng-model="edition.context" ng-options="context as context.name + ' (' + context.acronym + ')' for context in allContexts"></select>
 				</div>
 			</div>
 
 			<!-- save button -->
-			<div class="row margin-top margin-bottom" ng-if="format.x.own || event.x.own || editionCreate">
+			<div class="row margin-top margin-bottom" ng-if="format.x.own || event.x.own">
 				<div class="col-md-12">
 					<div class="row">
 						<div class="col-md-2">
 						</div>
-						<div class="col-md-5">
+						<div class="col-md-5" ng-if="editionEdit">
 							<button ng-click="saveEdition()" class="btn btn-primary btn-ultical">
 								<span ng-if="edition.id == -1">{{ 'general.save' | translate }}</span>
 								<span ng-if="edition.id != -1">{{ 'general.saveEdits' | translate }}</span>
 							</button>
-							<button ng-if="edition.id == -1" ng-click="cancelNewEdition()" class="btn btn-default btn-ultical margin-left-small">{{ 'general.cancel' | translate }}</button>
+							<button ng-click="cancelNewEdition()" class="btn btn-default btn-ultical margin-left-small">{{ 'general.cancel' | translate }}</button>
 						</div>
 					</div>
 				</div>
@@ -228,17 +228,17 @@
 								<span ng-click="addDivision(newDivision)" class="cursor-pointer input-group-addon">
 									<span class="glyphicon glyphicon-plus"></span>
 								</span>
-								<input class="form-control" ng-disabled="editionCreate" ng-model="newDivision.divisionIdentifier" placeholder="{{ 'event.edit.divisionIdentifierPlaceholder' | translate }}">
+								<input class="form-control" ng-disabled="editionEdit" ng-model="newDivision.divisionIdentifier" placeholder="{{ 'event.edit.divisionIdentifierPlaceholder' | translate }}">
 							</div>
 						</div>
 						<div class="col-md-2">
-							<select class="form-control" ng-disabled="editionCreate" ng-model="newDivision.divisionType" ng-options="type as 'division.' + type | translate for type in getDivisionTypes()"></select>
+							<select class="form-control" ng-disabled="editionEdit" ng-model="newDivision.divisionType" ng-options="type as 'division.' + type | translate for type in getDivisionTypes()"></select>
 						</div>
 						<div class="col-md-2">
-							<select class="form-control" ng-disabled="editionCreate" ng-model="newDivision.divisionAge" ng-options="age as 'division.' + age | translate for age in getDivisionAges()"></select>
+							<select class="form-control" ng-disabled="editionEdit" ng-model="newDivision.divisionAge" ng-options="age as 'division.' + age | translate for age in getDivisionAges()"></select>
 						</div>
 						<div class="col-md-2">
-							<select class="form-control" ng-disabled="editionCreate" ng-model="newDivision.numberSpots" ng-options="spot.value as spot.name for spot in selectNumberOfSpots"></select>
+							<select class="form-control" ng-disabled="editionEdit" ng-model="newDivision.numberSpots" ng-options="spot.value as spot.name for spot in selectNumberOfSpots"></select>
 						</div>
 					</div>
 					<div class="row margin-bottom">
@@ -260,7 +260,7 @@
 		</div>
 
 		<!-- event -->
-		<div ng-if="formatChosen && editionChosen">
+		<div ng-if="formatChosen && editionChosen && !editionEdit">
 			<div class="row margin-bottom">
 				<div class="col-md-12">
 					<h3>{{ 'general.event' | translate }}</h3>
@@ -526,7 +526,7 @@
 							<button ng-click="saveEvent(event)" class="btn btn-primary btn-ultical">{{ 'general.save' | translate }}</button>
 							<button ng-click="cancel()" class="btn btn-default btn-ultical margin-left-small">{{ 'general.cancel' | translate }}</button>
 						</div>
-						<div class="col-md-5">
+						<div class="col-md-5" ng-if="format.x.own">
 							<button ng-if="event.id > 0" ng-click="checkDelete()" class="pull-right btn btn-danger btn-ultical margin-left-small">{{ 'general.delete' | translate }}</button>
 						</div>
 					</div>

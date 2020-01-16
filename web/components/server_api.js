@@ -257,15 +257,18 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 		},
 
     saveTournamentEdition: function(edition, callback, errorCallback) {
-			var eventToSend = angular.copy(event);
+			var editionToSend = angular.copy(edition);
 
 			// delete properties added for frontend
-			delete(edition.x);
+			delete(editionToSend.x);
 
-			if (edition.id == -1) {
-				post('edition', edition, callback);
+			editionToSend.divisionRegistrations = [];
+      editionToSend.tournamentFormat = {id: editionToSend.tournamentFormat.id};
+
+			if (editionToSend.id == -1) {
+				post('edition', editionToSend, callback);
 			} else {
-				put('edition/' + edition.id, edition, callback);
+				put('edition/' + editionToSend.id, editionToSend, callback);
 			}
 		},
 

@@ -98,7 +98,7 @@ angular.module('ultical.events')
     $scope.edition = {};
     $scope.format = {};
     $scope.editionChosen = false;
-    $scope.editionCreate = false;
+    $scope.editionEdit = false;
     $scope.formatChosen = false;
 
     storage.getFormatList(function(formats) {
@@ -155,7 +155,7 @@ angular.module('ultical.events')
   };
 
   $scope.createEdition = function() {
-    $scope.editionCreate = true;
+    $scope.editionEdit = true;
     initNewEdition();
     $scope.edition.organizer = {id:-1};
 
@@ -349,7 +349,7 @@ angular.module('ultical.events')
   };
 
   $scope.addDivision = function(newDivision) {
-    if ($scope.editionCreate) return;
+    if ($scope.editionEdit) return;
     storage.createDivisionRegistration(newDivision, $scope.edition.id, function(createdDivision) {
       $scope.edition.divisionRegistrations.push(createdDivision);
       clearNewDivision();
@@ -432,8 +432,12 @@ angular.module('ultical.events')
   }
 
   $scope.cancelNewEdition = function() {
-    $scope.editionCreate = false;
+    $scope.editionEdit = false;
   };
+
+  $scope.editEdition = function() {
+    $scope.editionEdit = true;
+  }
 
   $scope.saveEdition = function() {
     if ($scope.edition.id == -1) {
@@ -456,8 +460,9 @@ angular.module('ultical.events')
       $scope.edition = newEdition;
       $scope.event.tournamentEdition = newEdition;
       $scope.editionChosen = true;
-      $scope.editionCreate = false;
-
+      $scope.editionEdit = false;
+// zwei save buttons (edition und event)
+// anmeldungsfrist wird nicht angezeigt initial
       clearNewOrganizer();
     });
   };

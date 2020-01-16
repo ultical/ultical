@@ -666,12 +666,12 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			return;
 		}
 
+		storeTournamentFormat(edition.tournamentFormat, loopIndex);
+
 		angular.forEach(edition.events, function(event, idx) {
 			event.tournamentEdition = edition;
 			storeEvent(event, loopIndex);
 		});
-
-		storeTournamentFormat(edition.tournamentFormat, loopIndex);
 
 		storeContact(edition.organizer, loopIndex);
 

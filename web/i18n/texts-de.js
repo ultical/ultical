@@ -304,6 +304,7 @@ TRANSLATIONS['de'] = {
         createButtonLabel: 'Neues Turnier erstellen',
         chooseFormat: 'Turnierformat wählen',
         chooseEdition: 'Turnieredition wählen',
+        editEdition: 'Bearbeiten',
         nameLabel: 'Name',
         formatDescriptionLabel: 'Beschreibung',
         formatUrlLabel: 'Webseite',
