@@ -55,6 +55,7 @@ public class RosterResourceTest {
     private static final int DFV_NUMBER_JUNIOR = 1234568;
     private static final int DFV_NUMBER_WOMAN = 1234569;
     private static final int DFV_NUMBER_17YO_WOMAN = 1234570;
+    private static final int DFV_NUMBER_UNPAID_PLAYER = 567890;
 
     private final static int ROSTER_ID_MASTER = 123;
     private final static int ROSTER_ID_JUNIOR = 124;
@@ -176,6 +177,7 @@ public class RosterResourceTest {
         when(this.rosterJunior.getTeam()).thenReturn(this.teamA);
         when(this.dfvNameMaster.getDfvNumber()).thenReturn(Integer.valueOf(DFV_NUMBER_MASTER));
         when(this.dfvNameMaster.isDse()).thenReturn(Boolean.TRUE);
+        when(this.dataStore.getDfvMvName(DFV_NUMBER_MASTER)).thenReturn(dfvNameMaster);
         when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_MASTER)).thenReturn(this.playerMasters);
         when(this.playerMasters.getBirthDate()).thenReturn(LocalDate.of(1983, 12, 31));
         when(this.playerMasters.getGender()).thenReturn(Gender.MALE);
@@ -188,16 +190,18 @@ public class RosterResourceTest {
 
         when(this.dfvNameJunior.getDfvNumber()).thenReturn(Integer.valueOf(DFV_NUMBER_JUNIOR));
         when(this.dfvNameJunior.isDse()).thenReturn(Boolean.TRUE);
+        when(this.dataStore.getDfvMvName(DFV_NUMBER_JUNIOR)).thenReturn(this.dfvNameJunior);
         when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_JUNIOR)).thenReturn(this.playerJuniors);
         when(this.playerJuniors.getBirthDate()).thenReturn(LocalDate.of(1995, 5, 1));
         when(this.playerJuniors.isEligible()).thenReturn(Boolean.TRUE);
 
         when(this.dfvNameWoman.getDfvNumber()).thenReturn(Integer.valueOf(DFV_NUMBER_WOMAN));
         when(this.dfvNameWoman.isDse()).thenReturn(Boolean.TRUE);
-        when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_WOMAN)).thenReturn(this.playerWoman);
         when(this.playerWoman.getGender()).thenReturn(Gender.FEMALE);
         when(this.playerWoman.getBirthDate()).thenReturn(LocalDate.of(1991, 3, 20));
         when(this.playerWoman.isEligible()).thenReturn(Boolean.TRUE);
+        when(this.dataStore.getDfvMvName(DFV_NUMBER_WOMAN)).thenReturn(dfvNameWoman);
+        when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_WOMAN)).thenReturn(this.playerWoman);
 
         when(this.teamRegA.getId()).thenReturn(TEAM_REG_A);
         when(this.teamRegA.getRoster()).thenReturn(this.rosterOpenRegularA);
@@ -206,6 +210,7 @@ public class RosterResourceTest {
         when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_PASSIVE)).thenReturn(this.passivePlayer);
         when(this.dfvNamePassive.getDfvNumber()).thenReturn(DFV_NUMBER_PASSIVE);
         when(this.dfvNamePassive.isDse()).thenReturn(Boolean.TRUE);
+        when(this.dataStore.getDfvMvName(DFV_NUMBER_PASSIVE)).thenReturn(dfvNamePassive);
 
         when(this.dfvName17yoWoman.getDfvNumber()).thenReturn(DFV_NUMBER_17YO_WOMAN);
         when(this.dfvName17yoWoman.isDse()).thenReturn(Boolean.TRUE);
@@ -213,24 +218,25 @@ public class RosterResourceTest {
         when(this.player17yoWoman.getGender()).thenReturn(Gender.FEMALE);
         when(this.player17yoWoman.isEligible()).thenReturn(Boolean.TRUE);
         when(this.player17yoWoman.getBirthDate()).thenReturn(LocalDate.of(1999, 5, 6));
+        when(this.dataStore.getDfvMvName(DFV_NUMBER_17YO_WOMAN)).thenReturn(dfvName17yoWoman);
         when(this.dataStore.getPlayerByDfvNumber(eq(DFV_NUMBER_17YO_WOMAN))).thenReturn(this.player17yoWoman);
         
-        when(this.dfvUnpaidPlayer.getDfvNumber()).thenReturn(56789);
+        when(this.dfvUnpaidPlayer.getDfvNumber()).thenReturn(DFV_NUMBER_UNPAID_PLAYER);
         when(this.dfvUnpaidPlayer.isDse()).thenReturn(true);
         when(this.dfvUnpaidPlayer.isActive()).thenReturn(true);
         when(this.dfvUnpaidPlayer.getLastModified()).thenReturn(LocalDateTime.of(2018, 12, 27, 13,14,15));
-        
+        when(this.dataStore.getDfvMvName(DFV_NUMBER_UNPAID_PLAYER)).thenReturn(dfvUnpaidPlayer);
+
         DfvMvPlayer unpaidPlayer = new DfvMvPlayer();
         unpaidPlayer.setDse(true);
         unpaidPlayer.setActive(true);
-        unpaidPlayer.setDfvnr(567890);
+        unpaidPlayer.setDfvnr(DFV_NUMBER_UNPAID_PLAYER);
         unpaidPlayer.setGender("männlich");
         unpaidPlayer.setEmail("test");
         unpaidPlayer.setIdle(false);
         unpaidPlayer.setPaid(false);
         unpaidPlayer.setDobString("1981-02-03");
-        when(this.dfvUnpaidPlayer.getDfvNumber()).thenReturn(567890);
-        
+
         Invocation.Builder builder = Mockito.mock(Invocation.Builder.class);
         when(builder.get(DfvMvPlayer.class)).thenReturn(unpaidPlayer);
         WebTarget target = Mockito.mock(WebTarget.class);
@@ -323,6 +329,8 @@ public class RosterResourceTest {
     public void testNoDse() throws Exception {
         final DfvMvName noDseMVName = new DfvMvName();
         noDseMVName.setDse(false);
+        noDseMVName.setDfvnr(191919);
+        when(this.dataStore.getDfvMvName(191919)).thenReturn(noDseMVName);
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG_A, noDseMVName);
     }
 
