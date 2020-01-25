@@ -39,7 +39,7 @@ public class DivisionResource {
 
         try (DataStoreCloseable c = this.dStore.getClosable()) {
             TournamentEdition edition = dStore.get(editionId, TournamentEdition.class);
-            Authenticator.assureFormatAdmin( edition.getTournamentFormat(), currentUser);
+            Authenticator.assureFormatAdmin(edition.getTournamentFormat(), currentUser);
 
             return dStore.addDivisionToEdition(edition, division);
         } catch (PersistenceException pe) {

@@ -701,3 +701,9 @@ select.form-control {
 textarea.resizable {
   resize: vertical;
 }
+
+.edit-in-title {
+  font-size: 12px;
+  margin-left: 10px;
+  font-weight: 100;
+}

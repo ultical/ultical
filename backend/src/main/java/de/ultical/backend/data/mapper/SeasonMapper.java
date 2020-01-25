@@ -28,6 +28,12 @@ public interface SeasonMapper extends BaseMapper<Season> {
 			@Result(column = "plusOneYear", property = "plusOneYear") })
 	List<Season> getAll();
 
+	@Select("SELECT * FROM season WHERE surface=#{surface} AND season_year=#{year} AND plusOneYear=#{plusOneYear}")
+	@Results({ @Result(property = "id", column = "id"), @Result(column = "version", property = "version"),
+			@Result(column = "surface", property = "surface"), @Result(column = "season_year", property = "year"),
+			@Result(column = "plusOneYear", property = "plusOneYear") })
+	Season getByProperties(Season season);
+
 	@Override
     @Insert({"INSERT INTO SEASON (surface, season_year, plusOneYear)",
 		"VALUES (#{surface},#{year},#{plusOneYear})"})

@@ -26,10 +26,6 @@ app.controller('NavBarCtrl', ['$scope', 'CONFIG', '$filter', '$translate', '$sta
 		return authorizer.getUser();
 	}
 
-	$scope.createEvent = function() {
-		console.log("Create an event");
-	};
-
 	$scope.logOut = function() {
 		authorizer.logOut();
     storage.resetUserSpecifics();

@@ -50,7 +50,7 @@ public class ContextResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Context> getAllSeasons() {
+    public List<Context> getAllContexts() {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency Injectino for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);

@@ -266,6 +266,11 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 					return callback(this.clubs);
 				}
 			},
+
+			getContactsForEdition: function(callback) {
+				serverApi.getContactsForEdition(callback);
+			},
+
       getFormatForEdition: function(editionId, callback) {
         var that = this;
 
@@ -454,6 +459,13 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
           callback(savedTeam);
 				}, errorCallback);
 			},
+
+      saveTournamentEdition: function(edition, callback, errorCallback) {
+				serverApi.saveTournamentEdition(edition, function(savedEdition) {
+          storeTournamentEdition(savedEdition, newLoopIndex());
+				  callback(savedEdition);
+        });
+      },
 
 			saveEvent: function(event, callback, errorCallback) {
         var that = this;
@@ -654,12 +666,12 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 			return;
 		}
 
+		storeTournamentFormat(edition.tournamentFormat, loopIndex);
+
 		angular.forEach(edition.events, function(event, idx) {
 			event.tournamentEdition = edition;
 			storeEvent(event, loopIndex);
 		});
-
-		storeTournamentFormat(edition.tournamentFormat, loopIndex);
 
 		storeContact(edition.organizer, loopIndex);
 

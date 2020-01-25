@@ -226,6 +226,16 @@ public class DataStore {
         }
     }
 
+    public Season getOrCreateSeason(Season season) {
+        SeasonMapper seasonMapper = this.sqlSession.getMapper(SeasonMapper.class);
+        Season foundSeason = seasonMapper.getByProperties(season);
+
+        if (foundSeason == null) {
+            foundSeason = addNew(season);
+        }
+        return foundSeason;
+    }
+
     public void removeAllDivisionConfirmationsFromEvent(Event event) {
         // try-finally block is inside modifyTeamAdmin
 
@@ -1032,6 +1042,17 @@ public class DataStore {
             LocationMapper mapper = this.sqlSession.getMapper(LocationMapper.class);
             mapper.addToEvent(event.getId(), location.getId());
             this.sqlSession.commit();
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public List<Contact> getContactsBy(ContactType type) {
+        try {
+            ContactMapper mapper = this.sqlSession.getMapper(ContactMapper.class);
+            return mapper.getBy(type);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

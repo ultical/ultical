@@ -108,6 +108,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
       get('context', callback);
     },
 
+    getContactsForEdition: function(callback) {
+      get('contact/TOURNAMENT_EDITION', callback);
+    },
+
 		postRoster: function(roster, teamId, callback, errorCallback) {
 			roster.team = { id: teamId };
 			post('roster', roster, callback, errorCallback);
@@ -249,6 +253,22 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 				put('events/' + eventToSend.id, eventToSend, function() {
 					that.getEvent(eventToSend.id, callback, errorCallback);
 				});
+			}
+		},
+
+    saveTournamentEdition: function(edition, callback, errorCallback) {
+			var editionToSend = angular.copy(edition);
+
+			// delete properties added for frontend
+			delete(editionToSend.x);
+
+			editionToSend.divisionRegistrations = [];
+      editionToSend.tournamentFormat = {id: editionToSend.tournamentFormat.id};
+
+			if (editionToSend.id == -1) {
+				post('edition', editionToSend, callback);
+			} else {
+				put('edition/' + editionToSend.id, editionToSend, callback);
 			}
 		},
 

@@ -2,13 +2,42 @@
 
 angular.module('ultical.events')
 
-.controller('EventEditCtrl', ['$scope', 'storage', '$stateParams', '$filter', '$state', 'mapService', 'alerter', 'serverApi', 'authorizer', 'headService', '$translate',
-                      	  function($scope, storage, $stateParams, $filter, $state, mapService, alerter, serverApi, authorizer, headService, $translate) {
+.controller('EventEditCtrl', ['$scope', 'storage', '$stateParams', '$filter', '$state', 'mapService', 'alerter', 'serverApi', 'authorizer', 'headService', '$translate', 'moment',
+                      	  function($scope, storage, $stateParams, $filter, $state, mapService, alerter, serverApi, authorizer, headService, $translate, moment) {
 
   $scope.newAdmin = {obj:""};
   $scope.loaded = false;
 
   $scope.createEvent = false;
+  $scope.editionContacts = [];
+  $scope.allContexts = [];
+  $scope.selectNumberOfSpots = [];
+  clearNewOrganizer();
+  initializeContactList();
+
+  function clearNewOrganizer() {
+    $scope.newOrganizer = {
+      id: -1,
+      name: '',
+      email: '',
+      phone: ''
+    };
+  }
+
+  function initializeContactList() {
+    var newOrganizer = {id:-1, name: $translate.instant('event.edit.createNewEditionOrganizer'), phone: '', email: ''};
+    $scope.editionContacts.push(newOrganizer);
+
+    storage.getContactsForEdition(function(contacts) {
+      angular.forEach(contacts, function(contact) {
+        $scope.editionContacts.push(contact);
+      });
+    });
+  }
+
+  storage.getSeasons(function(seasons) {
+    $scope.seasons = seasons;
+  });
 
   $scope.action = {
     formatIdChosen: -1,
@@ -32,16 +61,31 @@ angular.module('ultical.events')
   }
   initNewFee();
 
+  function createNumberOfSpotsSelect() {
+    $scope.selectNumberOfSpots.push({
+      value: 0,
+      name: $translate.instant('division.numberOfSpotsUndefined')
+    });
+    var numberOfSpotsText = $translate.instant('division.numberOfSpots');
+    for(var i = 1; i < 31; i++) {
+      $scope.selectNumberOfSpots.push({
+        value: i,
+        name: i + ' ' + numberOfSpotsText
+      });
+    }
+  }
+
   function clearNewDivision() {
     $scope.newDivision = {
       divisionType: 'open',
       divisionAge: 'regular',
       divisionIdentifier: '',
-      numberSpots: '0',
+      numberSpots: 0,
     }
   }
 
   clearNewDivision();
+  createNumberOfSpotsSelect();
 
   if (!authorizer.loggedIn() || (isNaN($stateParams.eventId) && $stateParams.eventId != 'new')) {
     $state.go('app.eventsList');
@@ -54,6 +98,7 @@ angular.module('ultical.events')
     $scope.edition = {};
     $scope.format = {};
     $scope.editionChosen = false;
+    $scope.editionEdit = false;
     $scope.formatChosen = false;
 
     storage.getFormatList(function(formats) {
@@ -96,7 +141,7 @@ angular.module('ultical.events')
       $scope.editionList = editions;
       $scope.formatChosen = true;
     });
-  }
+  };
 
   $scope.chooseEdition = function() {
     angular.forEach($scope.editionList, function(edition) {
@@ -107,7 +152,58 @@ angular.module('ultical.events')
       }
     });
     $scope.editionChosen = true;
+  };
+
+  $scope.createEdition = function() {
+    $scope.editionEdit = true;
+    initNewEdition();
+    $scope.edition.organizer = {id:-1};
+
+    $scope.season = {
+      surface: 'TURF',
+      yearObject: $scope.seasonYears[2],
+    };
+
+    storage.getContexts(function(contexts) {
+      $scope.allContexts = contexts;
+      $scope.edition.context = contexts[0];
+    });
+  };
+
+  function initNewEdition() {
+    $scope.edition = {
+      id: -1,
+      alternativeMatchdayName: '',
+      context: {},
+      divisionRegistrations: [],
+      fees: [],
+      name: '',
+      organizer: {},
+      registrationStart: moment().format('YYYY-MM-DD'),
+      registrationEnd: moment().add(2, 'months').format('YYYY-MM-DD'),
+      season: {},
+      tournamentFormat: $scope.format,
+    };
   }
+
+  $scope.getSeasonSurfaces = function() {
+    return ['TURF', 'GYM', 'BEACH'];
+  };
+
+  $scope.seasonYears = getSeasonYears();
+  function getSeasonYears() {
+    var lastYear = parseInt(moment().subtract(1, 'years').format('YYYY'));
+    var listOfYearObjects = [];
+
+    for (var year = lastYear; year < lastYear + 5; year++) {
+      var yearString = year + '';
+    	listOfYearObjects.push({year: year, plusOneYear: false, yearString: yearString});
+    	var yearPlusString = '' + (year + 1);
+      yearPlusString = yearString + '/' + yearPlusString.substring(2,4);
+    	listOfYearObjects.push({year: year, plusOneYear: true, yearString: yearPlusString});
+    }
+    return listOfYearObjects;
+  };
 
   function isNumber(input) {
       return typeof input === 'number' || Object.prototype.toString.call(input) === '[object Number]';
@@ -253,6 +349,7 @@ angular.module('ultical.events')
   };
 
   $scope.addDivision = function(newDivision) {
+    if ($scope.editionEdit) return;
     storage.createDivisionRegistration(newDivision, $scope.edition.id, function(createdDivision) {
       $scope.edition.divisionRegistrations.push(createdDivision);
       clearNewDivision();
@@ -333,5 +430,41 @@ angular.module('ultical.events')
   $scope.getFeeTypes = function() {
     return ['PLAYER', 'GUEST', 'TEAM', 'BREAKFAST', 'LUNCH', 'DINNER', 'NIGHT', 'OTHER'];
   }
+
+  $scope.cancelNewEdition = function() {
+    $scope.editionEdit = false;
+  };
+
+  $scope.editEdition = function() {
+    $scope.editionEdit = true;
+  }
+
+  $scope.saveEdition = function() {
+    if ($scope.edition.id == -1) {
+      $scope.edition.season = {
+        year: $scope.season.yearObject.year,
+        plusOneYear: $scope.season.yearObject.plusOneYear,
+        surface: $scope.season.surface,
+      };
+    }
+
+    if ($scope.edition.organizer.id == -1) {
+      $scope.edition.organizer = $scope.newOrganizer;
+    }
+
+    storage.saveTournamentEdition($scope.edition, function(newEdition) {
+      if ($scope.edition.organizer.id == -1) {
+        $scope.editionContacts.push(newEdition.organizer);
+      }
+
+      $scope.edition = newEdition;
+      $scope.event.tournamentEdition = newEdition;
+      $scope.editionChosen = true;
+      $scope.editionEdit = false;
+// zwei save buttons (edition und event)
+// anmeldungsfrist wird nicht angezeigt initial
+      clearNewOrganizer();
+    });
+  };
 
 }]);

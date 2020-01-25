@@ -7,7 +7,7 @@ UltiCal is being developed as a free and open source team and tournament managem
 
 ## Requirements
 
-* Java 1.8
+* Java 8
 * Maven
 * MySQL
 * Bower
