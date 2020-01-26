@@ -22,13 +22,13 @@ public interface SeasonMapper extends BaseMapper<Season> {
 	Season get(int id);
 
 	@Override
-    @Select("SELECT * from SEASON")
+    @Select("SELECT * FROM SEASON")
 	@Results({ @Result(property = "id", column = "id"), @Result(column = "version", property = "version"),
 			@Result(column = "surface", property = "surface"), @Result(column = "season_year", property = "year"),
 			@Result(column = "plusOneYear", property = "plusOneYear") })
 	List<Season> getAll();
 
-	@Select("SELECT * FROM season WHERE surface=#{surface} AND season_year=#{year} AND plusOneYear=#{plusOneYear}")
+	@Select("SELECT * FROM SEASON WHERE surface=#{surface} AND season_year=#{year} AND plusOneYear=#{plusOneYear}")
 	@Results({ @Result(property = "id", column = "id"), @Result(column = "version", property = "version"),
 			@Result(column = "surface", property = "surface"), @Result(column = "season_year", property = "year"),
 			@Result(column = "plusOneYear", property = "plusOneYear") })
