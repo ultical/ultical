@@ -349,7 +349,7 @@ public class RosterResource {
             Authenticator.assureTeamAdmin(this.dataStore, rosterToDelete.getTeam().getId(), currentUser);
 
             // roster cannot be deleted if registered for an event
-            if (this.dataStore.getTeamRegistrationsByRosters(Collections.singletonList(rosterToDelete)).isEmpty()) {
+            if (!this.dataStore.getTeamRegistrationsByRosters(Collections.singletonList(rosterToDelete)).isEmpty()) {
                 throw new WebApplicationException("Roster cannot be deleted because it is registered for a tournament.",
                         Status.FORBIDDEN);
             }
