@@ -397,7 +397,31 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
             });
             break;
           case 'e104':
-            alerter.error('', 'team.roster.playerNotEligible', {
+            alerter.error('', 'team.roster.playerNotEligible.general', {
+              container: '#add-player-error',
+              duration: 10
+            });
+            break;
+          case 'e105':
+            alerter.error('', 'team.roster.playerNotEligible.notPaid', {
+              container: '#add-player-error',
+              duration: 10
+            });
+            break;
+          case 'e106':
+            alerter.error('', 'team.roster.playerNotEligible.noDse', {
+              container: '#add-player-error',
+              duration: 10
+            });
+            break;
+          case 'e107':
+            alerter.error('', 'team.roster.playerNotEligible.notActive', {
+              container: '#add-player-error',
+              duration: 10
+            });
+            break;
+          case 'e108':
+            alerter.error('', 'team.roster.playerNotEligible.idle', {
               container: '#add-player-error',
               duration: 10
             });

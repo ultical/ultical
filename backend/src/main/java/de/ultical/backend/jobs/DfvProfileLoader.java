@@ -12,6 +12,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 
+import de.ultical.backend.data.policies.Policy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,12 +178,13 @@ public class DfvProfileLoader {
         player.setLastName(mvName.getLastName());
         player.setLastModified(mvName.getLastModified());
         player.setPaid(mvPlayer.isPaid());
-        
-        // eligible should include active, dse and !idle
-        if (mvPlayer.isActive() && mvPlayer.hasDse() && !mvPlayer.isIdle() && mvPlayer.isPaid()) {
-            player.setEligibleUntil(null);
+
+        Policy policy = Policy.getPolicy("DFV", dataStore);
+
+        if (policy.getPlayerEligibility(mvPlayer) == Policy.Eligibility.ELIGIBLE) {
+             player.setEligibleUntil(null);
         } else {
-            player.setEligibleUntil(mvName.getLastModified());
+             player.setEligibleUntil(mvName.getLastModified());
         }
 
         player.setGender(Gender.robustValueOf(mvPlayer.getGender()));

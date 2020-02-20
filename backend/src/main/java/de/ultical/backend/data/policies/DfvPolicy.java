@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.Roster;
@@ -65,6 +66,21 @@ public class DfvPolicy implements Policy {
     public int registerRosterToEdition(Roster roster, TournamentEdition tournamentEdition) {
         // TODO Auto-generated method stub
         return Policy.OK;
+    }
+
+    @Override
+    public Eligibility getPlayerEligibility(DfvMvPlayer player) {
+        if (!player.isActive()) {
+            return Eligibility.NOT_ACTIVE;
+        } else if (!player.hasDse()) {
+            return Eligibility.NO_DSE;
+        } else if (player.isIdle()) {
+            return Eligibility.IDLE;
+        } else if (!player.isPaid()) {
+            return Eligibility.NOT_PAID;
+        } else {
+            return Eligibility.ELIGIBLE;
+        }
     }
 
     @Override

@@ -31,7 +31,6 @@ import de.ultical.backend.app.Authenticator;
 import de.ultical.backend.app.UltiCalConfig;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.DataStore.DataStoreCloseable;
-import de.ultical.backend.data.policies.DfvPolicy;
 import de.ultical.backend.data.policies.Policy;
 import de.ultical.backend.model.Club;
 import de.ultical.backend.model.DfvPlayer;
@@ -155,6 +154,9 @@ public class RosterResource {
             // get player if exists
             DfvPlayer player = this.dataStore.getPlayerByDfvNumber(dfvMvName.getDfvNumber());
 
+            Policy policy = Policy.getPolicy(roster.getContext(), this.dataStore);
+            Policy.Eligibility eligibility = null;
+
             if (player == null) {
                 // a new player
 
@@ -174,8 +176,9 @@ public class RosterResource {
                 dfvPlayer.setEmail(dfvMvPlayer.getEmail());
                 dfvPlayer.setLastModified(dfvMvName.getLastModified());
                 dfvPlayer.setPaid(dfvMvPlayer.isPaid());
-                if (dfvMvPlayer.isIdle() || !dfvMvPlayer.isActive() || !dfvMvPlayer.isDse() || !dfvMvPlayer.isPaid()) {
-                	dfvPlayer.setEligibleUntil(dfvMvName.getLastModified());
+                eligibility = policy.getPlayerEligibility(dfvMvPlayer);
+                if (eligibility == Policy.Eligibility.ELIGIBLE) {
+                 	dfvPlayer.setEligibleUntil(dfvMvName.getLastModified());
                 }
                 Club club = this.dataStore.getClub(dfvMvPlayer.getClub());
                 dfvPlayer.setClub(club);
@@ -190,23 +193,34 @@ public class RosterResource {
              * player is passive, an addition to an roster is not allowed.
              */
             if (!player.isEligible()) {
+                if (eligibility == null)
                 throw new WebApplicationException(
                         "e104 - Player is not eligible to participate in tournaments. She is either registered as a passive player, doesn't have her DSE signed or the yearly fees for her have not been sent by her club.",
                         Status.EXPECTATION_FAILED);
+                switch (eligibility) {
+                    case NOT_PAID:
+                        throw new WebApplicationException(
+                                "e105 - Player is not eligible to participate in tournaments. The yearly fees for her have not been paid by her club.",
+                                Status.EXPECTATION_FAILED);
+                    case NO_DSE:
+                        throw new WebApplicationException(
+                                "e106 - Player is not eligible to participate in tournaments. She doesn't have her DSE signed.",
+                                Status.EXPECTATION_FAILED);
+                    case NOT_ACTIVE:
+                        throw new WebApplicationException(
+                                "e107 - Player is not eligible to participate in tournaments. She is registered as a passive player.",
+                                Status.EXPECTATION_FAILED);
+                    case IDLE:
+                        throw new WebApplicationException(
+                                "e108 - Player is not eligible to participate in tournaments. She is registered as an idle player.",
+                                Status.EXPECTATION_FAILED);
+                }
             }
 
             this.checkPlayerEligibility(roster, player);
 
-            // do policy check
-            Policy policy;
+            // do policy check if context exists
             if (roster.getContext() != null) {
-                switch (roster.getContext().getAcronym().toUpperCase()) {
-                case "DFV":
-                default:
-                    policy = new DfvPolicy(this.dataStore);
-                    break;
-                }
-
                 switch (policy.addPlayerToRoster(player, roster)) {
                 case Policy.ALREADY_IN_DIFFERENT_ROSTER:
                     String differentTeamName = "";
