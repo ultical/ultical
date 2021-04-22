@@ -31,7 +31,7 @@
       <groupId>org.mybatis</groupId>
       <artifactId>mybatis</artifactId>
       <!--  starting with 3.4.3 the tests start to fail for no reason (that's what I say now) -->
-      <version>3.4.2</version>
+      <version>3.5.6</version>
     </dependency>
     <dependency>
       <groupId>io.dropwizard</groupId>
