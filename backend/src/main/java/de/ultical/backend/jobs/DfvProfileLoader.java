@@ -1,8 +1,15 @@
 package de.ultical.backend.jobs;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+import de.ultical.backend.api.transferClasses.DfvMvName;
+import de.ultical.backend.api.transferClasses.DfvMvPlayer;
+import de.ultical.backend.app.MailClient;
+import de.ultical.backend.app.UltiCalConfig;
+import de.ultical.backend.app.mail.SystemMessage;
+import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.policies.Policy;
+import de.ultical.backend.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -11,23 +18,12 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-
-import de.ultical.backend.data.policies.Policy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.ultical.backend.api.transferClasses.DfvMvName;
-import de.ultical.backend.api.transferClasses.DfvMvPlayer;
-import de.ultical.backend.app.MailClient;
-import de.ultical.backend.app.UltiCalConfig;
-import de.ultical.backend.app.mail.SystemMessage;
-import de.ultical.backend.data.DataStore;
-import de.ultical.backend.model.Club;
-import de.ultical.backend.model.DfvPlayer;
-import de.ultical.backend.model.DivisionAge;
-import de.ultical.backend.model.Gender;
-import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.User;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DfvProfileLoader {
 
@@ -63,10 +59,23 @@ public class DfvProfileLoader {
             });
 
             if (response != null) {
+                Set<DfvMvName> nullNames = new HashSet<>();
+
                 response.forEach(dfvMvName -> {
-                    dfvMvName.setFirstName(dfvMvName.getFirstName().trim());
-                    dfvMvName.setLastName(dfvMvName.getLastName().trim());
+                    if (dfvMvName.getFirstName() == null || dfvMvName.getLastName() == null) {
+                        nullNames.add(dfvMvName);
+                    } else {
+                        dfvMvName.setFirstName(dfvMvName.getFirstName().trim());
+                        dfvMvName.setLastName(dfvMvName.getLastName().trim());
+                    }
                 });
+
+                if (nullNames.size() > 0)
+                    LOGGER.warn("Found null entries in dfv-mv data: " +
+                            nullNames.stream()
+                                    .map(DfvMvName::getDfvNumber)
+                                    .map(String::valueOf)
+                                    .collect(Collectors.joining(", ")));
 
                 this.dataStore.refreshDfvNames(response);
                 List<DfvPlayer> playersToUpdate = this.dataStore.getPlayersToUpdate();
@@ -182,9 +191,9 @@ public class DfvProfileLoader {
         Policy policy = Policy.getPolicy("DFV", dataStore);
 
         if (policy.getPlayerEligibility(mvPlayer) == Policy.Eligibility.ELIGIBLE) {
-             player.setEligibleUntil(null);
+            player.setEligibleUntil(null);
         } else {
-             player.setEligibleUntil(mvName.getLastModified());
+            player.setEligibleUntil(mvName.getLastModified());
         }
 
         player.setGender(Gender.robustValueOf(mvPlayer.getGender()));
@@ -213,7 +222,7 @@ public class DfvProfileLoader {
             LOGGER.error(String.format("failed to load player=%d", player.getDfvNumber()), e);
             return null;
         }
-
+        mvPlayer.setClub(player.getClub().getId());
         return mvPlayer;
     }
 
