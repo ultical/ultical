@@ -507,6 +507,10 @@ public class DataStore {
                 return false;
             }
 
+            if (player.getClub().getId() == 0) {
+                return true;
+            }
+
             if (name == null
                     || (name.getLastModified() != null && name.getLastModified().isAfter(player.getLastModified()))) {
                 // name has been modified after player has been modified. Thus,

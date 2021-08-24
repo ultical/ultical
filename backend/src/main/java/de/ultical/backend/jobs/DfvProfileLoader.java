@@ -201,7 +201,7 @@ public class DfvProfileLoader {
         player.setEmail(mvPlayer.getEmail());
 
         Club club = new Club();
-        club.setId(mvPlayer.getClub());
+        club.setId(mvName.getClub().getId());
         player.setClub(club);
     }
 
