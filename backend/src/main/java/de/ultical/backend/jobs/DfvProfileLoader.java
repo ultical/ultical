@@ -159,12 +159,12 @@ public class DfvProfileLoader {
         DfvMvName mvName = this.dataStore.getDfvMvName(updatedPlayer.getDfvNumber());
         DfvMvPlayer mvPlayer = this.getMvPlayer(updatedPlayer);
         if (mvName != null && mvPlayer != null) {
-            this.updatePlayer(updatedPlayer, mvName, mvPlayer);
             LOGGER.debug(
-                    "Updated player (id={}) to the following values: firstName={}, lastName={}, lastModified={}, eligible={}, gender={}, birthDate={}, email={}",
+                    "Updated player (id={}) to the following values: firstName={}, lastName={}, lastModified={}, eligible={}, gender={}, birthDate={}, email={}, clubId={}",
                     updatedPlayer.getId(), updatedPlayer.getFirstName(), updatedPlayer.getLastName(),
                     updatedPlayer.getLastModified(), updatedPlayer.isEligible(), updatedPlayer.getGender(),
-                    updatedPlayer.getBirthDate(), updatedPlayer.getEmail());
+                    updatedPlayer.getBirthDate(), updatedPlayer.getEmail(), updatedPlayer.getClub().getId());
+            this.updatePlayer(updatedPlayer, mvName, mvPlayer);
         } else if (updatedPlayer.isEligible()) {
             // for some reason we did not find a matching
             // player and the DfvPlayer is still eligible, so we deactivate the
