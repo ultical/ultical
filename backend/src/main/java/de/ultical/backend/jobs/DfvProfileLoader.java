@@ -75,11 +75,18 @@ public class DfvProfileLoader {
                             nullNames.stream()
                                     .map(DfvMvName::getDfvNumber)
                                     .map(String::valueOf)
+                                    .sorted()
                                     .collect(Collectors.joining(", ")));
 
                 this.dataStore.refreshDfvNames(response);
                 List<DfvPlayer> playersToUpdate = this.dataStore.getPlayersToUpdate();
                 if (playersToUpdate != null) {
+                    // TODO: debug do remove
+                    LOGGER.info("Updating players " + playersToUpdate.stream()
+                            .map(DfvPlayer::getDfvNumber)
+                            .map(String::valueOf)
+                            .sorted()
+                            .collect(Collectors.joining(", ")));
                     for (DfvPlayer player : playersToUpdate) {
                         this.updatePlayerData(player);
                         this.validateRosterParticipation(player);
@@ -159,7 +166,8 @@ public class DfvProfileLoader {
         DfvMvName mvName = this.dataStore.getDfvMvName(updatedPlayer.getDfvNumber());
         DfvMvPlayer mvPlayer = this.getMvPlayer(updatedPlayer);
         if (mvName != null && mvPlayer != null) {
-            LOGGER.debug(
+            // TODO: put back to debug
+            LOGGER.info(
                     "Updated player (id={}) to the following values: firstName={}, lastName={}, lastModified={}, eligible={}, gender={}, birthDate={}, email={}, clubId={}",
                     updatedPlayer.getId(), updatedPlayer.getFirstName(), updatedPlayer.getLastName(),
                     updatedPlayer.getLastModified(), updatedPlayer.isEligible(), updatedPlayer.getGender(),
@@ -169,7 +177,8 @@ public class DfvProfileLoader {
             // for some reason we did not find a matching
             // player and the DfvPlayer is still eligible, so we deactivate the
             // player we have
-            LOGGER.debug(
+            // TODO: put back to debug
+            LOGGER.info(
                     "Deactivated player in our DB with id={}, dfvnumber={} that could not be loaded from the dfv-mv database!",
                     updatedPlayer.getId(), updatedPlayer.getDfvNumber());
             final LocalDateTime eligibleUntil = mvName != null ? mvName.getLastModified() : LocalDateTime.now();
@@ -178,6 +187,8 @@ public class DfvProfileLoader {
             // conditions if it is re-activated right now
             updatedPlayer.setLastModified(LocalDateTime.now().minusHours(1));
         }
+        // TODO: debug do remove
+        LOGGER.info("Updating player {} - eligible {} - playerClub {} - mvPlayerClub {} - mvNameClub {}", updatedPlayer.getDfvNumber(), updatedPlayer.getEligibleUntil(), updatedPlayer.getClub().getId(), mvPlayer.getClub(), mvName.getClub().getId());
         this.dataStore.updateDfvPlayer(updatedPlayer);
         LOGGER.debug("stored updated player in db");
     }
