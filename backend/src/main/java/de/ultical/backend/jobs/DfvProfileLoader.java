@@ -55,8 +55,7 @@ public class DfvProfileLoader {
 
             Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 
-            List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {
-            });
+            List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {});
 
             if (response != null) {
                 Set<DfvMvName> nullNames = new HashSet<>();
@@ -70,13 +69,14 @@ public class DfvProfileLoader {
                     }
                 });
 
-                if (nullNames.size() > 0)
+                if (nullNames.size() > 0) {
                     LOGGER.warn("Found null entries in dfv-mv data: " +
                             nullNames.stream()
                                     .map(DfvMvName::getDfvNumber)
                                     .map(String::valueOf)
                                     .sorted()
                                     .collect(Collectors.joining(", ")));
+                }
 
                 this.dataStore.refreshDfvNames(response);
                 List<DfvPlayer> playersToUpdate = this.dataStore.getPlayersToUpdate();

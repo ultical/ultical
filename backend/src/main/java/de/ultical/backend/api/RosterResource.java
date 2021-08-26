@@ -180,8 +180,7 @@ public class RosterResource {
                 if (eligibility == Policy.Eligibility.ELIGIBLE) {
                  	dfvPlayer.setEligibleUntil(dfvMvName.getLastModified());
                 }
-                Club club = this.dataStore.getClub(dfvMvPlayer.getClub());
-                dfvPlayer.setClub(club);
+                dfvPlayer.setClub(dfvMvName.getClub());
 
                 player = dfvPlayer;
 

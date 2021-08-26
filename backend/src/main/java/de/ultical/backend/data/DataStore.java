@@ -507,7 +507,7 @@ public class DataStore {
                 return false;
             }
 
-            if (player.getClub().getId() == 0 && name.getFirstName() != null && name.getLastName() != null) {
+            if ((player.getClub() == null || player.getClub().getId() == 0) && name.getFirstName() != null && name.getLastName() != null) {
                 return true;
             }
 
