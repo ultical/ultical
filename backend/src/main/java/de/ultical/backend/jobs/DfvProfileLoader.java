@@ -188,7 +188,12 @@ public class DfvProfileLoader {
             updatedPlayer.setLastModified(LocalDateTime.now().minusHours(1));
         }
         // TODO: debug do remove
-        LOGGER.info("Updating player {} - eligible {} - playerClub {} - mvPlayerClub {} - mvNameClub {}", updatedPlayer.getDfvNumber(), updatedPlayer.getEligibleUntil(), updatedPlayer.getClub().getId(), mvPlayer.getClub(), mvName.getClub().getId());
+        LOGGER.info("Updating player {} - eligible {} - playerClub {} - mvPlayerClub {} - mvNameClub {}",
+                updatedPlayer.getDfvNumber(),
+                updatedPlayer.getEligibleUntil(),
+                updatedPlayer.getClub().getId(),
+                mvPlayer == null ? "null" : mvPlayer.getClub(),
+                mvName == null ? "null" : mvName.getClub().getId());
         this.dataStore.updateDfvPlayer(updatedPlayer);
         LOGGER.debug("stored updated player in db");
     }
