@@ -164,10 +164,8 @@ public class DfvProfileLoader {
 
     private void updatePlayerData(DfvPlayer updatedPlayer) {
         DfvMvName mvName = this.dataStore.getDfvMvName(updatedPlayer.getDfvNumber());
-        DfvMvPlayer mvPlayer = this.getMvPlayer(updatedPlayer);
-        // TODO: remove when club madness is resolved
-        mvPlayer.setClub(mvName.getClub().getId());
-        updatedPlayer.setClub(mvName.getClub());
+        DfvMvPlayer mvPlayer = this.getMvPlayer(updatedPlayer, mvName);
+
         if (mvName != null && mvPlayer != null) {
             // TODO: put back to debug
             LOGGER.info(
@@ -224,7 +222,7 @@ public class DfvProfileLoader {
         player.setClub(club);
     }
 
-    private DfvMvPlayer getMvPlayer(DfvPlayer player) {
+    private DfvMvPlayer getMvPlayer(DfvPlayer player, DfvMvName mvName) {
         /*
          * Would be great if the WebTarget could be saved as a template ...
          */
@@ -240,6 +238,9 @@ public class DfvProfileLoader {
         } catch (NotFoundException e) {
             LOGGER.error(String.format("failed to load player=%d", player.getDfvNumber()), e);
             return null;
+        }
+        if (mvName != null) {
+            mvPlayer.setClub(mvName.getClub().getId());
         }
         return mvPlayer;
     }
