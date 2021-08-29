@@ -502,10 +502,6 @@ public class DataStore {
             DfvPlayer player = pair.player;
             DfvMvName name = pair.name;
 
-            if (!player.isEligible()) {
-                return true;
-            }
-
             if (name == null && !player.isEligible()) {
                 // the player is 'deactivated' in our system AND in the DFV db
                 return false;
