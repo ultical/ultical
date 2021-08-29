@@ -502,13 +502,13 @@ public class DataStore {
             DfvPlayer player = pair.player;
             DfvMvName name = pair.name;
 
+            if (!player.isEligible()) {
+                return true;
+            }
+
             if (name == null && !player.isEligible()) {
                 // the player is 'deactivated' in our system AND in the DFV db
                 return false;
-            }
-
-            if ((player.getClub() == null || player.getClub().getId() == 0) && name.getFirstName() != null && name.getLastName() != null) {
-                return true;
             }
 
             if (name == null

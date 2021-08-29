@@ -177,7 +177,7 @@ public class RosterResource {
                 dfvPlayer.setLastModified(dfvMvName.getLastModified());
                 dfvPlayer.setPaid(dfvMvPlayer.isPaid());
                 eligibility = policy.getPlayerEligibility(dfvMvPlayer);
-                if (eligibility == Policy.Eligibility.ELIGIBLE) {
+                if (eligibility != Policy.Eligibility.ELIGIBLE) {
                  	dfvPlayer.setEligibleUntil(dfvMvName.getLastModified());
                 }
                 dfvPlayer.setClub(dfvMvName.getClub());
