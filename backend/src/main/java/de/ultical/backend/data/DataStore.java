@@ -551,7 +551,8 @@ public class DataStore {
             List<DfvPlayer> allPlayers = playerMapper.getAll();
             result = allPlayers.stream()
                     .map(player -> new PlayerMvNamePair(player, nameMapper.get(player.getDfvNumber())))
-                    .filter(PlayerNeedsUpdatePredicate::needsUpdate).map(pair -> pair.player)
+                    .filter(PlayerNeedsUpdatePredicate::needsUpdate)
+                    .map(pair -> pair.player)
                     .collect(Collectors.toList());
             return result;
         } finally {
@@ -622,6 +623,11 @@ public class DataStore {
          * A DfvPlayer has to be stored in two steps First Player (superclass)
          * then DfvPlayer (subclass)
          */
+
+        if (dfvPlayer.getFirstName() == null || dfvPlayer.getLastName() == null) {
+            return;
+        }
+
         boolean orgCloseSession = this.autoCloseSession;
         try {
             // only close session at the end

@@ -1,8 +1,15 @@
 package de.ultical.backend.jobs;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+import de.ultical.backend.api.transferClasses.DfvMvName;
+import de.ultical.backend.api.transferClasses.DfvMvPlayer;
+import de.ultical.backend.app.MailClient;
+import de.ultical.backend.app.UltiCalConfig;
+import de.ultical.backend.app.mail.SystemMessage;
+import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.policies.Policy;
+import de.ultical.backend.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
@@ -11,22 +18,12 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.ultical.backend.api.transferClasses.DfvMvName;
-import de.ultical.backend.api.transferClasses.DfvMvPlayer;
-import de.ultical.backend.app.MailClient;
-import de.ultical.backend.app.UltiCalConfig;
-import de.ultical.backend.app.mail.SystemMessage;
-import de.ultical.backend.data.DataStore;
-import de.ultical.backend.model.Club;
-import de.ultical.backend.model.DfvPlayer;
-import de.ultical.backend.model.DivisionAge;
-import de.ultical.backend.model.Gender;
-import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.User;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DfvProfileLoader {
 
@@ -58,18 +55,38 @@ public class DfvProfileLoader {
 
             Invocation.Builder invocationBuilder = target.request(MediaType.APPLICATION_JSON);
 
-            List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {
-            });
+            List<DfvMvName> response = invocationBuilder.get(new GenericType<List<DfvMvName>>() {});
 
             if (response != null) {
+                Set<DfvMvName> nullNames = new HashSet<>();
+
                 response.forEach(dfvMvName -> {
-                    dfvMvName.setFirstName(dfvMvName.getFirstName().trim());
-                    dfvMvName.setLastName(dfvMvName.getLastName().trim());
+                    if (dfvMvName.getFirstName() == null || dfvMvName.getLastName() == null) {
+                        nullNames.add(dfvMvName);
+                    } else {
+                        dfvMvName.setFirstName(dfvMvName.getFirstName().trim());
+                        dfvMvName.setLastName(dfvMvName.getLastName().trim());
+                    }
                 });
+
+                if (nullNames.size() > 0) {
+                    LOGGER.warn("Found null entries in dfv-mv data: " +
+                            nullNames.stream()
+                                    .map(DfvMvName::getDfvNumber)
+                                    .map(String::valueOf)
+                                    .sorted()
+                                    .collect(Collectors.joining(", ")));
+                }
 
                 this.dataStore.refreshDfvNames(response);
                 List<DfvPlayer> playersToUpdate = this.dataStore.getPlayersToUpdate();
                 if (playersToUpdate != null) {
+                    // TODO: debug do remove
+                    LOGGER.info("Updating players " + playersToUpdate.stream()
+                            .map(DfvPlayer::getDfvNumber)
+                            .map(String::valueOf)
+                            .sorted()
+                            .collect(Collectors.joining(", ")));
                     for (DfvPlayer player : playersToUpdate) {
                         this.updatePlayerData(player);
                         this.validateRosterParticipation(player);
@@ -147,19 +164,22 @@ public class DfvProfileLoader {
 
     private void updatePlayerData(DfvPlayer updatedPlayer) {
         DfvMvName mvName = this.dataStore.getDfvMvName(updatedPlayer.getDfvNumber());
-        DfvMvPlayer mvPlayer = this.getMvPlayer(updatedPlayer);
+        DfvMvPlayer mvPlayer = this.getMvPlayer(updatedPlayer, mvName);
+
         if (mvName != null && mvPlayer != null) {
-            this.updatePlayer(updatedPlayer, mvName, mvPlayer);
-            LOGGER.debug(
-                    "Updated player (id={}) to the following values: firstName={}, lastName={}, lastModified={}, eligible={}, gender={}, birthDate={}, email={}",
+            // TODO: put back to debug
+            LOGGER.info(
+                    "Updated player (id={}) to the following values: firstName={}, lastName={}, lastModified={}, eligible={}, gender={}, birthDate={}, email={}, clubId={}",
                     updatedPlayer.getId(), updatedPlayer.getFirstName(), updatedPlayer.getLastName(),
                     updatedPlayer.getLastModified(), updatedPlayer.isEligible(), updatedPlayer.getGender(),
-                    updatedPlayer.getBirthDate(), updatedPlayer.getEmail());
+                    updatedPlayer.getBirthDate(), updatedPlayer.getEmail(), updatedPlayer.getClub().getId());
+            this.updatePlayer(updatedPlayer, mvName, mvPlayer);
         } else if (updatedPlayer.isEligible()) {
             // for some reason we did not find a matching
             // player and the DfvPlayer is still eligible, so we deactivate the
             // player we have
-            LOGGER.debug(
+            // TODO: put back to debug
+            LOGGER.info(
                     "Deactivated player in our DB with id={}, dfvnumber={} that could not be loaded from the dfv-mv database!",
                     updatedPlayer.getId(), updatedPlayer.getDfvNumber());
             final LocalDateTime eligibleUntil = mvName != null ? mvName.getLastModified() : LocalDateTime.now();
@@ -168,6 +188,13 @@ public class DfvProfileLoader {
             // conditions if it is re-activated right now
             updatedPlayer.setLastModified(LocalDateTime.now().minusHours(1));
         }
+        // TODO: debug do remove
+        LOGGER.info("Updating player {} - eligible {} - playerClub {} - mvPlayerClub {} - mvNameClub {}",
+                updatedPlayer.getDfvNumber(),
+                updatedPlayer.getEligibleUntil(),
+                updatedPlayer.getClub().getId(),
+                mvPlayer == null ? "null" : mvPlayer.getClub(),
+                mvName == null ? "null" : mvName.getClub().getId());
         this.dataStore.updateDfvPlayer(updatedPlayer);
         LOGGER.debug("stored updated player in db");
     }
@@ -177,9 +204,10 @@ public class DfvProfileLoader {
         player.setLastName(mvName.getLastName());
         player.setLastModified(mvName.getLastModified());
         player.setPaid(mvPlayer.isPaid());
-        
-        // eligible should include active, dse and !idle
-        if (mvPlayer.isActive() && mvPlayer.hasDse() && !mvPlayer.isIdle() && mvPlayer.isPaid()) {
+
+        Policy policy = Policy.getPolicy("DFV", dataStore);
+
+        if (policy.getPlayerEligibility(mvPlayer) == Policy.Eligibility.ELIGIBLE) {
             player.setEligibleUntil(null);
         } else {
             player.setEligibleUntil(mvName.getLastModified());
@@ -190,11 +218,11 @@ public class DfvProfileLoader {
         player.setEmail(mvPlayer.getEmail());
 
         Club club = new Club();
-        club.setId(mvPlayer.getClub());
+        club.setId(mvName.getClub().getId());
         player.setClub(club);
     }
 
-    private DfvMvPlayer getMvPlayer(DfvPlayer player) {
+    private DfvMvPlayer getMvPlayer(DfvPlayer player, DfvMvName mvName) {
         /*
          * Would be great if the WebTarget could be saved as a template ...
          */
@@ -211,7 +239,9 @@ public class DfvProfileLoader {
             LOGGER.error(String.format("failed to load player=%d", player.getDfvNumber()), e);
             return null;
         }
-
+        if (mvName != null) {
+            mvPlayer.setClub(mvName.getClub().getId());
+        }
         return mvPlayer;
     }
 
