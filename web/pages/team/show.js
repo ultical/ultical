@@ -481,7 +481,7 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
       var lastBlockingDateBeforeToday = moment('1900-01-01');
 
       angular.forEach(blockingDates, function(blockingDateString) {
-        var blockingDate = moment(blockingDateString.string);
+        var blockingDate = moment(blockingDateString);
         if (!blockingDate.isAfter(today)) {
           roster.x.blocked = true;
 
