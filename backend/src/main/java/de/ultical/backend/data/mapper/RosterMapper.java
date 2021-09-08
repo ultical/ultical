@@ -1,8 +1,8 @@
 package de.ultical.backend.data.mapper;
 
-import java.time.LocalDate;
-import java.util.List;
-
+import de.ultical.backend.model.DfvPlayer;
+import de.ultical.backend.model.Player;
+import de.ultical.backend.model.Roster;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Many;
@@ -14,9 +14,8 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import de.ultical.backend.model.DfvPlayer;
-import de.ultical.backend.model.Player;
-import de.ultical.backend.model.Roster;
+import java.time.LocalDate;
+import java.util.List;
 
 public interface RosterMapper extends BaseMapper<Roster> {
 
@@ -107,7 +106,9 @@ public interface RosterMapper extends BaseMapper<Roster> {
     @Select({ "SELECT e.start_date AS blockingDate FROM EVENT e",
             "JOIN TOURNAMENT_EDITION te ON e.tournament_edition = te.id",
             "JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = te.id",
-            "JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id", "JOIN ROSTER r ON tr.roster = r.id",
+            "JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id",
+            "JOIN DIVISION_CONFIRMATION dc ON dc.division_registration = dr.id AND dc.event = e.id",
+            "JOIN ROSTER r ON tr.roster = r.id",
             "WHERE tr.status = 'CONFIRMED' AND tr.not_qualified = false AND r.id = #{rosterId}" })
     List<LocalDate> getBlockingDate(int rosterId);
 
