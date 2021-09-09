@@ -14,7 +14,7 @@ dfvApi:
   url: https://dfv-mv.de/api
  
 database:
-  driverClass: com.mysql.jdbc.Driver
+  driverClass: com.mysql.cj.jdbc.Driver
   url: jdbc:mysql://localhost/ultical
   user: ultical
   password: ultical
