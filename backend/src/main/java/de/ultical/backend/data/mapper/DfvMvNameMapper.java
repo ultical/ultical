@@ -15,7 +15,7 @@ import java.util.List;
 
 public interface DfvMvNameMapper {
 
-    final String SELECT_STMT = "SELECT dfv_number as dfvNumber, first_name as firstName, last_name as lastName, dse, club, last_modified as lastModified from DFV_MV_NAME";
+    final String SELECT_STMT = "SELECT dfv_number, first_name, last_name, dse, club, last_modified from DFV_MV_NAME";
 
     // INSERT
     @Insert("INSERT INTO DFV_MV_NAME (dfv_number, first_name, last_name, dse, club, last_modified) VALUES (#{dfvNumber, jdbcType=INTEGER},#{firstName, jdbcType=VARCHAR},#{lastName, jdbcType=VARCHAR},#{dse},#{club.id, jdbcType=INTEGER},#{lastModified, jdbcType=TIMESTAMP})")
@@ -55,11 +55,11 @@ public interface DfvMvNameMapper {
             "first_name LIKE #{namePart}", "OR", "last_name LIKE #{namePart}", "OR",
             "first_name LIKE _utf8 #{namePart} COLLATE utf8_general_ci", "OR",
             "last_name LIKE _utf8 #{namePart} COLLATE utf8_general_ci", ")", "</foreach>", "</script>" })
-    @Results({ @Result(column = "dfvNumber", property = "dfvNumber"),
-            @Result(column = "firstName", property = "firstName"),
-            @Result(column = "lastName", property = "lastName"), @Result(column = "dse", property = "dse"),
+    @Results({ @Result(column = "dfv_number", property = "dfvNumber"),
+            @Result(column = "first_name", property = "firstName"),
+            @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),
             @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
-            @Result(column = "lastModified", property = "lastModified") })
+            @Result(column = "last_modified", property = "lastModified") })
     List<DfvMvName> find(@Param("nameParts") final List<String> nameParts);
 
 }
