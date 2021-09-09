@@ -1,7 +1,7 @@
 package de.ultical.backend.data.mapper;
 
-import java.util.List;
-
+import de.ultical.backend.api.transferClasses.DfvMvName;
+import de.ultical.backend.model.Club;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.One;
@@ -11,8 +11,7 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.type.JdbcType;
 
-import de.ultical.backend.api.transferClasses.DfvMvName;
-import de.ultical.backend.model.Club;
+import java.util.List;
 
 public interface DfvMvNameMapper {
 
@@ -56,11 +55,11 @@ public interface DfvMvNameMapper {
             "first_name LIKE #{namePart}", "OR", "last_name LIKE #{namePart}", "OR",
             "first_name LIKE _utf8 #{namePart} COLLATE utf8_general_ci", "OR",
             "last_name LIKE _utf8 #{namePart} COLLATE utf8_general_ci", ")", "</foreach>", "</script>" })
-    @Results({ @Result(column = "dfv_number", property = "dfvNumber"),
-            @Result(column = "first_name", property = "firstName"),
-            @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),
+    @Results({ @Result(column = "dfvNumber", property = "dfvNumber"),
+            @Result(column = "firstName", property = "firstName"),
+            @Result(column = "lastName", property = "lastName"), @Result(column = "dse", property = "dse"),
             @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
-            @Result(column = "last_modified", property = "lastModified") })
+            @Result(column = "lastModified", property = "lastModified") })
     List<DfvMvName> find(@Param("nameParts") final List<String> nameParts);
 
 }
