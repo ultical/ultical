@@ -1,7 +1,14 @@
 package de.ultical.backend.api;
 
-import java.util.ArrayList;
-import java.util.List;
+import de.ultical.backend.api.transferClasses.DfvMvName;
+import de.ultical.backend.app.UltiCalConfig;
+import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
+import de.ultical.backend.model.User;
+import io.dropwizard.auth.Auth;
+import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -12,17 +19,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.ultical.backend.api.transferClasses.DfvMvName;
-import de.ultical.backend.app.UltiCalConfig;
-import de.ultical.backend.data.DataStore;
-import de.ultical.backend.data.DataStore.DataStoreCloseable;
-import de.ultical.backend.model.User;
-import io.dropwizard.auth.Auth;
-import org.apache.ibatis.exceptions.PersistenceException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("/dfvmvname")
 public class DfvMvNameResource {
@@ -52,6 +50,7 @@ public class DfvMvNameResource {
         for (String searchString : searchStringRaw.split("\\s|-")) {
             searchStrings.add("%" + searchString + "%");
         }
+
 
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
             result = this.dataStore.findDfvMvName(searchStrings);

@@ -1,5 +1,56 @@
 package de.ultical.backend.data;
 
+import de.ultical.backend.api.transferClasses.DfvMvName;
+import de.ultical.backend.data.mapper.AssociationMapper;
+import de.ultical.backend.data.mapper.BaseMapper;
+import de.ultical.backend.data.mapper.ClubMapper;
+import de.ultical.backend.data.mapper.ContactMapper;
+import de.ultical.backend.data.mapper.DfvMvNameMapper;
+import de.ultical.backend.data.mapper.DfvPlayerMapper;
+import de.ultical.backend.data.mapper.DivisionConfirmationMapper;
+import de.ultical.backend.data.mapper.DivisionRegistrationMapper;
+import de.ultical.backend.data.mapper.EventMapper;
+import de.ultical.backend.data.mapper.FeeMapper;
+import de.ultical.backend.data.mapper.LocationMapper;
+import de.ultical.backend.data.mapper.MailCodeMapper;
+import de.ultical.backend.data.mapper.PlayerMapper;
+import de.ultical.backend.data.mapper.RosterMapper;
+import de.ultical.backend.data.mapper.RosterPlayerMapper;
+import de.ultical.backend.data.mapper.SeasonMapper;
+import de.ultical.backend.data.mapper.TeamMapper;
+import de.ultical.backend.data.mapper.TeamRegistrationMapper;
+import de.ultical.backend.data.mapper.TournamentEditionMapper;
+import de.ultical.backend.data.mapper.TournamentFormatMapper;
+import de.ultical.backend.data.mapper.UserMapper;
+import de.ultical.backend.model.Association;
+import de.ultical.backend.model.Club;
+import de.ultical.backend.model.Contact;
+import de.ultical.backend.model.ContactType;
+import de.ultical.backend.model.DfvPlayer;
+import de.ultical.backend.model.DivisionConfirmation;
+import de.ultical.backend.model.DivisionRegistration;
+import de.ultical.backend.model.DivisionRegistrationPlayers;
+import de.ultical.backend.model.DivisionRegistrationTeams;
+import de.ultical.backend.model.Event;
+import de.ultical.backend.model.Identifiable;
+import de.ultical.backend.model.Location;
+import de.ultical.backend.model.MailCode;
+import de.ultical.backend.model.Player;
+import de.ultical.backend.model.Roster;
+import de.ultical.backend.model.Season;
+import de.ultical.backend.model.Team;
+import de.ultical.backend.model.TeamRegistration;
+import de.ultical.backend.model.TournamentEdition;
+import de.ultical.backend.model.TournamentFormat;
+import de.ultical.backend.model.User;
+import org.apache.ibatis.exceptions.PersistenceException;
+import org.apache.ibatis.session.SqlSession;
+import org.glassfish.jersey.process.internal.RequestScoped;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.ws.rs.client.Client;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -10,19 +61,6 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.ws.rs.client.Client;
-
-import de.ultical.backend.data.mapper.*;
-import de.ultical.backend.model.*;
-import org.apache.ibatis.exceptions.PersistenceException;
-import org.apache.ibatis.session.SqlSession;
-import org.glassfish.jersey.process.internal.RequestScoped;
-
-import de.ultical.backend.api.transferClasses.DfvMvName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * the cloud
@@ -461,7 +499,9 @@ public class DataStore {
             DfvMvNameMapper nameMapper = this.sqlSession.getMapper(DfvMvNameMapper.class);
             nameMapper.deleteAll();
             for (DfvMvName name : dfvNames) {
-                nameMapper.insert(name);
+                if (name.getFirstName() != null && name.getLastName() != null) {
+                    nameMapper.insert(name);
+                }
             }
             this.sqlSession.commit();
         } finally {
