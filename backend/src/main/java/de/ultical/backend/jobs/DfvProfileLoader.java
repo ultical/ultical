@@ -172,7 +172,7 @@ public class DfvProfileLoader {
                     "Updated player (id={}) to the following values: firstName={}, lastName={}, lastModified={}, eligible={}, gender={}, birthDate={}, email={}, clubId={}",
                     updatedPlayer.getId(), updatedPlayer.getFirstName(), updatedPlayer.getLastName(),
                     updatedPlayer.getLastModified(), updatedPlayer.isEligible(), updatedPlayer.getGender(),
-                    updatedPlayer.getBirthDate(), updatedPlayer.getEmail(), updatedPlayer.getClub().getId());
+                    updatedPlayer.getBirthDate(), updatedPlayer.getEmail(), updatedPlayer.getClub() != null ? updatedPlayer.getClub().getId() : "no club");
             this.updatePlayer(updatedPlayer, mvName, mvPlayer);
         } else if (updatedPlayer.isEligible()) {
             // for some reason we did not find a matching
