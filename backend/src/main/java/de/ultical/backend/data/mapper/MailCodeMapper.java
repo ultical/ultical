@@ -31,7 +31,7 @@ public interface MailCodeMapper {
     // SELECT
     @Select({ SELECT_STMT,
             "WHERE code = #{code} AND (mail_code_type != 'FORGOT_PASSWORD' OR time_created > (NOW() - INTERVAL 3 HOUR))" })
-    @Results({ @Result(column = "mail_code_type", property = "type"),
+    @Results({
             @Result(column = "ultical_user", property = "user", one = @One(select = "de.ultical.backend.data.mapper.UserMapper.get") ) })
     MailCode get(String code);
 
