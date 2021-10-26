@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
+import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -221,10 +222,10 @@ public class DataStore {
 
     public <T extends Identifiable> T get(Integer id, Class<T> clazz) {
         try {
-            T instance = clazz.newInstance();
+            T instance = clazz.getDeclaredConstructor().newInstance();
             BaseMapper<T> mapper = (BaseMapper<T>) this.sqlSession.getMapper(instance.getMapper());
             return mapper.get(id);
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             this.sqlSession.rollback();
             throw new PersistenceException(e);
         } finally {
@@ -236,7 +237,7 @@ public class DataStore {
 
     public <T extends Identifiable> void remove(Integer id, Class<T> clazz) {
         try {
-            T instance = clazz.newInstance();
+            T instance = clazz.getDeclaredConstructor().newInstance();
             BaseMapper<T> mapper = (BaseMapper<T>) this.sqlSession.getMapper(instance.getMapper());
             mapper.delete(id);
             this.sqlSession.commit();

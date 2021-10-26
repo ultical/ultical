@@ -19,7 +19,7 @@ import java.util.List;
 
 public interface RosterMapper extends BaseMapper<Roster> {
 
-    final String SELECT_STMT = "SELECT id, version, team, season, division_age as divisionAge, division_type as divisionType, name_addition as nameAddition, context FROM ROSTER";
+    String SELECT_STMT = "SELECT id, version, team, season, division_age, division_type, name_addition, context FROM ROSTER";
 
     // INSERT
     @Override
@@ -35,7 +35,7 @@ public interface RosterMapper extends BaseMapper<Roster> {
     @Update({
             "UPDATE ROSTER SET version = version + 1, team = #{team.id}, season = #{season.id}, division_age = #{divisionAge}, division_type = #{divisionType},",
             "name_addition = #{nameAddition, jdbcType=VARCHAR}, context = #{context.id, jdbcType=INTEGER}",
-            "WHERE id = #{id} AND version = #{version}" })
+            "WHERE id = #{id} AND version = #{version}"})
     Integer update(Roster entity);
 
     // DELETE
@@ -45,81 +45,81 @@ public interface RosterMapper extends BaseMapper<Roster> {
 
     // SELECT
     @Override
-    @Select({ SELECT_STMT, "WHERE id = #{id}" })
-    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
-            @Result(column = "division_age", property = "division_age"),
-            @Result(column = "division_type", property = "division_type"),
+    @Select({SELECT_STMT, "WHERE id = #{id}"})
+    @Results({@Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "divisionAge"),
+            @Result(column = "division_type", property = "divisionType"),
             @Result(column = "name_addition", property = "nameAddition"),
-            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get") ),
-            @Result(column = "team", property = "team", one = @One(select = "de.ultical.backend.data.mapper.TeamMapper.getForRoster") ),
-            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
-            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
+            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get")),
+            @Result(column = "team", property = "team", one = @One(select = "de.ultical.backend.data.mapper.TeamMapper.getForRoster")),
+            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get")),
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster"))})
     Roster get(int id);
 
     @Override
     @Select(SELECT_STMT)
-    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
-            @Result(column = "division_age", property = "division_age"),
-            @Result(column = "division_type", property = "division_type"),
+    @Results({@Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "divisionAge"),
+            @Result(column = "division_type", property = "divisionType"),
             @Result(column = "name_addition", property = "nameAddition"),
-            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get") ),
-            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
-            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
+            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get")),
+            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get")),
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster"))})
     List<Roster> getAll();
 
-    @Select({ SELECT_STMT, "WHERE team = #{teamId}" })
-    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
-            @Result(column = "division_age", property = "division_age"),
-            @Result(column = "division_type", property = "division_type"),
+    @Select({SELECT_STMT, "WHERE team = #{teamId}"})
+    @Results({@Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "divisionAge"),
+            @Result(column = "division_type", property = "divisionType"),
             @Result(column = "name_addition", property = "nameAddition"),
-            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get") ),
-            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
-            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
+            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get")),
+            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get")),
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster"))})
     List<Roster> getForTeam(Integer teamId);
 
     // get roster of a specific team in one season to check for
     // roster uniqueness
-    @Select({ "<script>", SELECT_STMT,
+    @Select({"<script>", SELECT_STMT,
             "WHERE team = #{roster.team.id} AND season = #{roster.season.id} AND division_age = #{roster.divisionAge} AND division_type = #{roster.divisionType}",
             "AND name_addition = #{roster.nameAddition}", "AND <choose><when test='roster.context == null'>",
             "context IS NULL", "</when>", "<otherwise>", "context = #{roster.context.id}", "</otherwise>", "</choose>",
-            "</script>" })
-    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version") })
+            "</script>"})
+    @Results({@Result(column = "id", property = "id"), @Result(column = "version", property = "version")})
     Roster getByTeamSeasonDivision(@Param("roster") Roster roster);
 
     // get roster that contains specific player in one season/division/context
-    @Select({ "<script>", SELECT_STMT, "r LEFT JOIN ROSTER_PLAYERS rp ON r.id = rp.roster",
+    @Select({"<script>", SELECT_STMT, "r LEFT JOIN ROSTER_PLAYERS rp ON r.id = rp.roster",
             "WHERE rp.player = #{playerId} AND r.season = #{roster.season.id} AND r.division_age = #{roster.divisionAge} AND r.division_type = #{roster.divisionType} AND ",
             "<choose><when test='roster.context == null'>", "context IS NULL", "</when>", "<otherwise>",
-            "context = #{roster.context.id}", "</otherwise>", "</choose>", "</script>" })
-    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
-            @Result(column = "division_age", property = "division_age"),
-            @Result(column = "division_type", property = "division_type"),
+            "context = #{roster.context.id}", "</otherwise>", "</choose>", "</script>"})
+    @Results({@Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "divisionAge"),
+            @Result(column = "division_type", property = "divisionType"),
             @Result(column = "name_addition", property = "nameAddition"),
-            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get") ),
-            @Result(column = "team", property = "team", one = @One(select = "de.ultical.backend.data.mapper.TeamMapper.getForRoster") ),
-            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
-            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
+            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get")),
+            @Result(column = "team", property = "team", one = @One(select = "de.ultical.backend.data.mapper.TeamMapper.getForRoster")),
+            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get")),
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster"))})
     List<Roster> getByPlayerSeasonDivision(@Param("playerId") Integer playerId, @Param("roster") Roster roster);
 
     // get blocking date for roster
-    @Select({ "SELECT e.start_date AS blockingDate FROM EVENT e",
+    @Select({"SELECT e.start_date AS blockingDate FROM EVENT e",
             "JOIN TOURNAMENT_EDITION te ON e.tournament_edition = te.id",
             "JOIN DIVISION_REGISTRATION dr ON dr.tournament_edition = te.id",
             "JOIN TEAM_REGISTRATION tr ON tr.division_registration = dr.id",
             "JOIN DIVISION_CONFIRMATION dc ON dc.division_registration = dr.id AND dc.event = e.id",
             "JOIN ROSTER r ON tr.roster = r.id",
-            "WHERE tr.status = 'CONFIRMED' AND tr.not_qualified = false AND r.id = #{rosterId}" })
+            "WHERE tr.status = 'CONFIRMED' AND tr.not_qualified = false AND r.id = #{rosterId}"})
     List<LocalDate> getBlockingDate(int rosterId);
 
-    @Select({ SELECT_STMT, " r LEFT JOIN ROSTER_PLAYERS rp ON r.id = rp.roster", " WHERE rp.player = #{id}" })
-    @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
-            @Result(column = "division_age", property = "division_age"),
-            @Result(column = "division_type", property = "division_type"),
+    @Select({SELECT_STMT, " r LEFT JOIN ROSTER_PLAYERS rp ON r.id = rp.roster", " WHERE rp.player = #{id}"})
+    @Results({@Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
+            @Result(column = "division_age", property = "divisionAge"),
+            @Result(column = "division_type", property = "divisionType"),
             @Result(column = "name_addition", property = "nameAddition"),
-            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get") ),
-            @Result(column = "team", property = "team", one = @One(select = "de.ultical.backend.data.mapper.TeamMapper.getForRoster") ),
-            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get") ),
-            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster") ) })
+            @Result(column = "context", property = "context", one = @One(select = "de.ultical.backend.data.mapper.ContextMapper.get")),
+            @Result(column = "team", property = "team", one = @One(select = "de.ultical.backend.data.mapper.TeamMapper.getForRoster")),
+            @Result(column = "season", property = "season", one = @One(select = "de.ultical.backend.data.mapper.SeasonMapper.get")),
+            @Result(column = "id", property = "players", many = @Many(select = "de.ultical.backend.data.mapper.RosterPlayerMapper.getByRoster"))})
     List<Roster> getRostersForPlayer(DfvPlayer player);
 }
