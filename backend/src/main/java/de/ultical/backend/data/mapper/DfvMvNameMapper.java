@@ -47,7 +47,7 @@ public interface DfvMvNameMapper {
             @Result(column = "first_name", property = "firstName"),
             @Result(column = "last_name", property = "lastName"), @Result(column = "dse", property = "dse"),
             @Result(column = "club", property = "club", javaType = Club.class, jdbcType = JdbcType.BIGINT, one = @One(select = "de.ultical.backend.data.mapper.ClubMapper.get") ),
-            @Result(column = "last_modified", property = "last_modified") })
+            @Result(column = "last_modified", property = "lastModified") })
     List<DfvMvName> getByName(@Param("firstname") String firstname, @Param("lastname") String lastname);
 
     @Select({ "<script>", SELECT_STMT, "WHERE dse=1 AND",
