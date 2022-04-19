@@ -4,20 +4,19 @@ import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.TeamRegistration;
 import de.ultical.backend.model.TournamentEdition;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class DfvPolicy implements Policy {
+public class DefaultPolicy implements Policy {
 
     private DataStore dataStore;
     private Map<String, String> parameters;
 
-    public DfvPolicy(DataStore dataStore) {
+    public DefaultPolicy(DataStore dataStore) {
         this.dataStore = dataStore;
         this.parameters = new HashMap<>();
     }
@@ -28,31 +27,14 @@ public class DfvPolicy implements Policy {
         List<Roster> rostersWithPlayer = this.dataStore.getRosterByPlayerSeasonDivision(player.getId(), roster);
 
         if (rostersWithPlayer.size() > 0) {
-            // we found this player already in rosters
-            // for each roster we check if it was registered for a tournament
-            // where the team did not qualify - this would release the roster
-            List<String> qualifiedTeamNamesWithPlayer = new ArrayList<>();
+            List<String> qualifiedTeamNames = rostersWithPlayer.stream()
+                    .map(ro -> ro.getNameAddition().isEmpty()
+                            ? ro.getTeam().getName()
+                            : ro.getTeam().getName() + " " + ro.getNameAddition())
+                    .collect(Collectors.toList());
 
-            for (Roster rosterWithPlayer : rostersWithPlayer) {
-                List<TeamRegistration> teamRegistrations = this.dataStore
-                        .getTeamRegistrationsByRoster(rosterWithPlayer);
-
-                boolean didQualify = teamRegistrations.stream()
-                        .noneMatch(TeamRegistration::isNotQualified);
-
-                if (didQualify) {
-                    String teamName = rosterWithPlayer.getTeam().getName();
-                    if (!rosterWithPlayer.getNameAddition().isEmpty()) {
-                        teamName += " " + rosterWithPlayer.getNameAddition();
-                    }
-                    qualifiedTeamNamesWithPlayer.add(teamName);
-                }
-            }
-
-            if (qualifiedTeamNamesWithPlayer.size() > 0) {
-                this.parameters.put("team_name", String.join(", ", qualifiedTeamNamesWithPlayer));
-                return Policy.ALREADY_IN_DIFFERENT_ROSTER;
-            }
+            this.parameters.put("team_name", String.join(", ", qualifiedTeamNames));
+            return Policy.ALREADY_IN_DIFFERENT_ROSTER;
         }
 
         return Policy.OK;

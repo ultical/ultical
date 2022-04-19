@@ -1,13 +1,13 @@
 package de.ultical.backend.data.policies;
 
-import java.util.Map;
-
 import de.ultical.backend.api.transferClasses.DfvMvPlayer;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.model.Context;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.TournamentEdition;
+
+import java.util.Map;
 
 public interface Policy {
 
@@ -27,14 +27,18 @@ public interface Policy {
     public Map<String, String> getErrorParameters();
 
     public static Policy getPolicy(Context context, DataStore dataStore) {
+        if (context == null) {
+            return new DefaultPolicy(dataStore);
+        }
         return getPolicy(context.getAcronym().toUpperCase(), dataStore);
     }
 
     public static Policy getPolicy(String contextName, DataStore dataStore) {
         switch (contextName) {
             case "DFV":
-            default:
                 return new DfvPolicy(dataStore);
+            default:
+                return new DefaultPolicy(dataStore);
         }
     }
 }
