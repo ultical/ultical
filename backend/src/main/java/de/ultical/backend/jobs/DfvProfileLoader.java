@@ -114,7 +114,7 @@ public class DfvProfileLoader {
                             roster.getSeason().getYear(), roster.getDivisionType(), roster.getDivisionAge(),
                             roster.getSeason().getSurface(), roster.getId());
                     String firstParagraph = this.buildParagraph(updatedPlayer, roster);
-                    String explainParagraph = "Die Gründe dafür können sein:\n\tDer:die Spieler:in wurde von seinem Verein noch nicht für das nächste Kalenderjahr gemeldet\n\tDer:die Spieler:in ist ab sofort passiv gemeldet\n\tDer:die Spieler:in hat seine Datenschutzerklärung zurück gezogen.\n\tDer:die Spieler:in ist in der DFV-Mitgliederverwaltung keiner oder der falschen Sparte zugeordnet\n\tDie Verbandsbeiträge für den:die Spieler:in wurden noch nicht bezahlt.";
+                    String explainParagraph = "Die Gründe dafür können sein:\n\tDer:die Spieler:in wurde von seinem:ihrem Verein noch nicht für das nächste Kalenderjahr gemeldet\n\tDer:die Spieler:in ist ab sofort passiv gemeldet\n\tDer:die Spieler:in hat die Datenschutzerklärung zurück gezogen.\n\tDer:die Spieler:in ist in der DFV-Mitgliederverwaltung keiner oder der falschen Sparte zugeordnet\n\tDie Verbandsbeiträge für den:die Spieler:in wurden noch nicht bezahlt.";
 
                     for (User admin : roster.getTeam().getAdmins()) {
                         this.sendMailToAdmin(firstParagraph, explainParagraph, admin);

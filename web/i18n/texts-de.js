@@ -375,8 +375,8 @@ TRANSLATIONS['de'] = {
 				newPlayerPlaceholder: 'Name des Spielers',
 				playerAlreadyInRoster: 'Der:die Spieler:in ist bereits für diese Saison und Division bei {{ teamName }} gemeldet',
 				playerWrongGender: 'Der:die Spieler:in ist aufgrund des angegebenen Geschlechts in dieser Division nicht startberechtigt. Ist diese Information fehlerhaft, wende dich an euren Vereinsadmin, um die Angabe beim DFV zu korrigieren.',
-				playerWrongAge: 'Der:die Spieler:in ist aufgrund seines Alters in dieser Division in diesem Jahr nicht spielberechtigt. Ist diese Information fehlerhaft, wende dich an euren Vereinsadmin, um die Angabe beim DFV zu korrigieren.',
-				playerBlocked: 'Der:die Spieler:in war Teil dieses Rosters während eines offiziellen Turniers. Er ist für diese Saison festgespielt und kann nicht entfernt werden.',
+				playerWrongAge: 'Der:die Spieler:in ist aufgrund seines:ihres Alters in dieser Division in diesem Jahr nicht spielberechtigt. Ist diese Information fehlerhaft, wende dich an euren Vereinsadmin, um die Angabe beim DFV zu korrigieren.',
+				playerBlocked: 'Der:die Spieler:in war Teil dieses Rosters während eines offiziellen Turniers. Er:sie ist für diese Saison festgespielt und kann nicht entfernt werden.',
 				rosterBlocked: 'Das Team ist über dieses Roster bei einem oder mehreren Turnieren gemeldet, daher kann es nicht gelöscht werden.',
 				playerNotEligible: {
 				  general: 'Der:die Spieler:in ist nicht spielberechtigt. Das kann daran liegen, dass nur eine passiv-Meldung vorliegt, dass die Datenschutzerklärung nicht unterzeichnet wurde oder dass die Meldegebühren von Seiten des Vereins nicht bezahlt wurden.',
