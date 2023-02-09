@@ -383,7 +383,7 @@ TRANSLATIONS['de'] = {
 				  notPaid: 'Der:die Spieler:in ist nicht spielberechtigt. Das liegt daran, dass die Meldegebühren von Seiten des Vereins nicht bezahlt wurden.',
 				  noDse: 'Der:die Spieler:in ist nicht spielberechtigt. Das liegt daran, dass die Datenschutzerklärung nicht unterzeichnet wurde.',
 				  notActive: 'Der:die Spieler:in ist nicht spielberechtigt. Das liegt daran, dass nur eine passiv-Meldung vorliegt.',
-				  idle: 'Der:die Spieler:in ist nicht spielberechtigt. Das liegt daran, dass er auf "ruht" gesetzt wurde in der Meldung.',
+				  idle: 'Der:die Spieler:in ist nicht spielberechtigt. Das liegt daran, dass er:sie auf "ruht" gesetzt wurde in der Meldung.',
 				},
 				rosterDuplicated: 'Es existiert bereits ein Roster für die gleiche Saison und Division mit der gleichen Ergänzung zum Teamnamen und mit überlappenden Gültigkeitsbereichen.',
 				removePlayerTooltip: 'Spieler:in aus Roster entfernen',

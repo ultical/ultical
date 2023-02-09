@@ -157,7 +157,7 @@ public class DfvProfileLoader {
             sb.append(roster.getDivisionAge()).append(' ');
         }
         sb.append(roster.getSeason().getSurface()).append(' ');
-        sb.append("entfernt, da er die Vorraussetzungen für eine Spielberechtigung im DFV nicht mehr erfüllt.");
+        sb.append("entfernt, da er:sie die Vorraussetzungen für eine Spielberechtigung im DFV nicht mehr erfüllt.");
         String firstParagraph = sb.toString();
         return firstParagraph;
     }
