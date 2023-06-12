@@ -13,6 +13,7 @@ public class DfvMvPlayer {
     private int dfvNumber;
     private String gender;
     private boolean dse;
+    private boolean av;
     private String email;
     
     @JsonAlias("beitrag_bezahlt")
@@ -44,5 +45,8 @@ public class DfvMvPlayer {
 
     public boolean hasDse() {
         return this.isDse();
+    }
+    public boolean hasAv() {
+        return this.isAv();
     }
 }

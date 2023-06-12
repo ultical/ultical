@@ -29,9 +29,15 @@ public class DfvPlayer extends Player {
         this.setBirthDate(LocalDate.parse(dfvPlayer.getDobString()));
         this.setDfvNumber(dfvPlayer.getDfvNumber());
         this.setGender(Gender.robustValueOf(dfvPlayer.getGender()));
+        this.setAv(dfvPlayer.hasAv());
     }
 
     private int dfvNumber;
+    private boolean av;
+
+    public boolean hasAv() {
+        return this.isAv();
+    }
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)

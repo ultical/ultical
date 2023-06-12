@@ -14,6 +14,7 @@ public class DfvMvName {
     private String lastName;
     private String firstName;
     private boolean dse;
+    private boolean av;
     private int dfvNumber;
     private Club club;
     private boolean active;
