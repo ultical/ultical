@@ -13,7 +13,7 @@
 			"addressCountry": "{{ event.location.countryCode }}",
 			"addressLocality": "{{ event.location.city }}",
 			"postalCode": "{{ event.location.zipCode }}",
-			"streetAddress": "{{ event.location.street }}",
+			"streetAddress": "{{ event.location.street }}"
 		},
 		"description": "{{ format.description }}",
 		"organizer": {
@@ -369,7 +369,12 @@
 																		<span ng-if="((event | isEmpty) || eventIsFuture) && regTeam.team.x.own">({{ 'event.rosterEditOnTeamPage' | translate }})</span>
 																	</div>
 																	<div class="margin-left-small" ng-if="rosterPlayers.length > 0 && loggedIn()">
-																		<div ng-repeat="rosterPlayer in rosterPlayers | orderBy : 'player.lastName'">{{ rosterPlayer.player | playername : true : true }}</div>
+																		<div ng-repeat="rosterPlayer in rosterPlayers | orderBy : 'player.lastName'">{{
+                                                                            rosterPlayer.player | playername : true : true }}
+                                                                            <span ng-if="event.x.own || format.x.own">
+                                                                                <small class="faded" ng-if="rosterPlayer.player.av">&nbsp;AV</small>
+                                                                            </span>
+                                                                        </div>
 																	</div>
 																	<div ng-if="loggedIn() && rosterPlayers.length == 0">{{ 'team.roster.empty' | translate }}</div>
 																	<div ng-if="!loggedIn()">{{ 'team.roster.notLoggedIn' | translate }}</div>
@@ -513,7 +518,9 @@
 
 				<div class="row" ng-class="{'margin-bottom-huge': $last, highlight: $index % 2 == 1}" ng-repeat="rosterPlayer in getRelevantPlayers(regTeam, division, edition.season, event) | orderBy : 'player.lastName'">
 					<div ng-if="$index % 5 == 0" class="col-xs-12 border-bottom-light"></div>
-					<div class="col-xs-4 hard-limit">{{ rosterPlayer.player | playername : true }}</div>
+					<div class="col-xs-4 hard-limit">{{ rosterPlayer.player | playername : true }}
+                        <small class="faded" ng-if="rosterPlayer.player.av">&nbsp;AV</small>
+                    </div>
 					<div class="col-xs-6 hard-limit">{{ rosterPlayer.player.club.name }}</div>
 					<div class="col-xs-2">
 						<span class="pull-right"> {{ rosterPlayer.dateAdded | amDateFormat : ('general.amDateFormat' | translate) }}</span>

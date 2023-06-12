@@ -707,3 +707,7 @@ textarea.resizable {
   margin-left: 10px;
   font-weight: 100;
 }
+
+.faded {
+  opacity: 0.5;
+}
