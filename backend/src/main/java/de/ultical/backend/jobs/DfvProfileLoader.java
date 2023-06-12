@@ -169,10 +169,12 @@ public class DfvProfileLoader {
         if (mvName != null && mvPlayer != null) {
             // TODO: put back to debug
             LOGGER.info(
-                    "Updated player (id={}) to the following values: firstName={}, lastName={}, lastModified={}, eligible={}, gender={}, birthDate={}, email={}, clubId={}",
+                    "Updated player (id={}) to the following values: firstName={}, lastName={}, lastModified={}, eligible={}, gender={}, birthDate={}, email={}, clubId={}, av={}",
                     updatedPlayer.getId(), updatedPlayer.getFirstName(), updatedPlayer.getLastName(),
                     updatedPlayer.getLastModified(), updatedPlayer.isEligible(), updatedPlayer.getGender(),
-                    updatedPlayer.getBirthDate(), updatedPlayer.getEmail(), updatedPlayer.getClub() != null ? updatedPlayer.getClub().getId() : "no club");
+                    updatedPlayer.getBirthDate(), updatedPlayer.getEmail(),
+                    updatedPlayer.getClub() != null ? updatedPlayer.getClub().getId() : "no club",
+                    updatedPlayer.hasAv());
             this.updatePlayer(updatedPlayer, mvName, mvPlayer);
         } else if (updatedPlayer.isEligible()) {
             // for some reason we did not find a matching
@@ -197,6 +199,7 @@ public class DfvProfileLoader {
         player.setLastName(mvName.getLastName());
         player.setLastModified(mvName.getLastModified());
         player.setPaid(mvPlayer.isPaid());
+        player.setAv(mvPlayer.hasAv());
 
         Policy policy = Policy.getPolicy("DFV", dataStore);
 

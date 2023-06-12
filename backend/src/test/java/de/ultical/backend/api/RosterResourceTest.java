@@ -229,6 +229,7 @@ public class RosterResourceTest {
 
         DfvMvPlayer unpaidPlayer = new DfvMvPlayer();
         unpaidPlayer.setDse(true);
+        unpaidPlayer.setAv(true);
         unpaidPlayer.setActive(true);
         unpaidPlayer.setDfvnr(DFV_NUMBER_UNPAID_PLAYER);
         unpaidPlayer.setGender("männlich");

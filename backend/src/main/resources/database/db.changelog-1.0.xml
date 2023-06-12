@@ -1149,4 +1149,24 @@
 	<changeSet id="bas-20191122-002" author="bas">
 		<tagDatabase tag="v1.21"></tagDatabase>
 	</changeSet>
+	<changeSet id="bas-20230609-001" author="bas">
+		<addColumn tableName="DFV_MV_NAME">
+			<column name="av" type="BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="bas-20230609-002" author="bas">
+		<tagDatabase tag="v1.22"/>
+	</changeSet>
+	<changeSet id="bas-20230611-001" author="bas">
+		<addColumn tableName="DFV_PLAYER">
+			<column name="av" type="BOOLEAN" defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet id="bas-20230611-002" author="bas">
+		<tagDatabase tag="v1.23"/>
+	</changeSet>
 </databaseChangeLog>

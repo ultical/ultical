@@ -34,6 +34,7 @@ public class DfvMvMapperTest {
         this.dfvMvName.setVorname(VORNAME);
         this.dfvMvName.setNachname(NACHNAME);
         this.dfvMvName.setDse(true);
+        this.dfvMvName.setAv(true);
         this.dfvMvName.setLastModified(LocalDateTime.now());
         this.mapper = DBRULE.getSession().getMapper(DfvMvNameMapper.class);
     }
@@ -47,6 +48,7 @@ public class DfvMvMapperTest {
         assertEquals(VORNAME, found.getFirstName());
         assertEquals(NACHNAME, found.getLastName());
         assertEquals(true, found.isDse());
+        assertEquals(true, found.isAv());
 
         DfvMvName other = new DfvMvName();
         other.setDfvnr(41234568);
