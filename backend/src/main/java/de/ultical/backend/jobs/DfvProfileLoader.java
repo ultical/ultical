@@ -114,7 +114,7 @@ public class DfvProfileLoader {
                             roster.getSeason().getYear(), roster.getDivisionType(), roster.getDivisionAge(),
                             roster.getSeason().getSurface(), roster.getId());
                     String firstParagraph = this.buildParagraph(updatedPlayer, roster);
-                    String explainParagraph = "Die Gründe dafür können sein:\n\tDer Spieler wurde von seinem Verein noch nicht für das nächste Kalenderjahr gemeldet\n\tDer Spieler ist ab sofort passiv gemeldet\n\tDer Spieler hat seine Datenschutzerklärung zurück gezogen.\n\tDer Spieler ist in der DFV-Mitgliederverwaltung keiner oder der falschen Sparte zugeordnet\n\tDie Verbandsbeiträge für den Spieler wurden noch nicht bezahlt.";
+                    String explainParagraph = "Die Gründe dafür können sein:\n\tDer:die Spieler:in wurde von seinem:ihrem Verein noch nicht für das nächste Kalenderjahr gemeldet\n\tDer:die Spieler:in ist ab sofort passiv gemeldet\n\tDer:die Spieler:in hat die Datenschutzerklärung zurück gezogen.\n\tDer:die Spieler:in ist in der DFV-Mitgliederverwaltung keiner oder der falschen Sparte zugeordnet\n\tDie Verbandsbeiträge für den:die Spieler:in wurden noch nicht bezahlt.";
 
                     for (User admin : roster.getTeam().getAdmins()) {
                         this.sendMailToAdmin(firstParagraph, explainParagraph, admin);
@@ -136,14 +136,14 @@ public class DfvProfileLoader {
         sm.addParagraph(explainParagraph);
         sm.addRecipient(admin.getEmail(), admin.getDfvPlayer().getFirstName(),
                 admin.getDfvPlayer().getFirstName() + " " + admin.getDfvPlayer().getLastName());
-        sm.setSubject("dfv-turniere.de - Spieler ohne Spielberechtigung");
+        sm.setSubject("dfv-turniere.de - Spieler:in ohne Spielberechtigung");
         this.mailClient.sendMail(sm);
         LOGGER.debug("... mail sent");
     }
 
     private String buildParagraph(DfvPlayer updatedPlayer, Roster roster) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Der Spieler ").append(updatedPlayer.getFirstName()).append(' ').append(updatedPlayer.getLastName())
+        sb.append("Der:die Spieler:in ").append(updatedPlayer.getFirstName()).append(' ').append(updatedPlayer.getLastName())
                 .append(" (Dfv-Nummer: ").append(updatedPlayer.getDfvNumber()).append(')');
         sb.append(" wurde für die ggf. noch ausstehenden Turniere aus dem Roster ").append(roster.getTeam().getName())
                 .append(' ');
@@ -157,7 +157,7 @@ public class DfvProfileLoader {
             sb.append(roster.getDivisionAge()).append(' ');
         }
         sb.append(roster.getSeason().getSurface()).append(' ');
-        sb.append("entfernt, da er die Vorraussetzungen für eine Spielberechtigung im DFV nicht mehr erfüllt.");
+        sb.append("entfernt, da er:sie die Vorraussetzungen für eine Spielberechtigung im DFV nicht mehr erfüllt.");
         String firstParagraph = sb.toString();
         return firstParagraph;
     }
