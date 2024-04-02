@@ -174,7 +174,7 @@ public class DfvProfileLoader {
                     updatedPlayer.getLastModified(), updatedPlayer.isEligible(), updatedPlayer.getGender(),
                     updatedPlayer.getBirthDate(), updatedPlayer.getEmail(),
                     updatedPlayer.getClub() != null ? updatedPlayer.getClub().getId() : "no club",
-                    updatedPlayer.hasAv());
+                    mvPlayer.hasAv());
             this.updatePlayer(updatedPlayer, mvName, mvPlayer);
         } else if (updatedPlayer.isEligible()) {
             // for some reason we did not find a matching
