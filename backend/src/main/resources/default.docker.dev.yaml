@@ -1,0 +1,62 @@
+debugMode:
+  enabled: false
+  mailCatcher: debugging@example.com
+server:
+  applicationConnectors:
+    - type: http
+      port: 8765
+  adminConnectors:
+    - type: http
+      port: 8766
+dfvApi: 
+  token: token
+  secret: secret
+  url: http://host.docker.internal:8080
+ 
+database:
+  driverClass: com.mysql.cj.jdbc.Driver
+  url: jdbc:mysql://db:3306/ultical?useLegacyDatetimeCode=false&serverTimezone=Europe/Amsterdam
+  user: ultical
+  password: ultical
+  
+mail:
+  # set environment variables accordingly or replace with your own values
+  smtpHost: ${EMAIL_HOST}
+  smtpPort: ${EMAIL_PORT}
+  smtpUser: ${EMAIL_USER}
+  smtpPassword: ${EMAIL_PASSWORD}
+  smtpSender: no-reply@example.com
+
+# for development; replace with your frontend url in production
+frontendUrl: http://localhost:8742
+# frontendUrl: http://example.com:1234/front
+corsFilterEnabled: true
+
+#jobs:
+#  dfvMvSyncEnabled: true
+
+reCaptcha:
+  url: https://www.google.com/recaptcha/api/siteverify
+  secret: mv-secret
+
+logging:
+  level: INFO
+  appenders:
+    - type: file
+      currentLogFilename: ./logs/ultical.log
+      archive: true
+      archivedLogFilenamePattern: ./logs/ultical-%d.log.gz
+      archivedFileCount: 7
+      threshold: INFO
+      logFormat: '%-5p [%d{ISO8601,CET}] %c{5}:%-15X{remoteIp} %m%n%rEx'
+    - type: file
+      currentLogFilename: ./logs/ultical-err.log
+      archive: true
+      archivedLogFilenamePattern: ./logs/ultical-err-%d.log.gz
+      archivedFileCount: 14
+      threshold: ERROR
+      logFormat: '%-5p [%d{ISO8601,CET}] %c{5}:%-15X{remoteIp} %m%n%rEx'
+
+overallAdmins:
+  # you can add more than one admin
+  - admin@example.com

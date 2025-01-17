@@ -1,0 +1,31 @@
+# syntax=docker/dockerfile:1
+FROM alpine AS build
+RUN apk add npm
+RUN npm install -g bower
+WORKDIR /app
+COPY . .
+#RUN adduser --disabled-password noob
+#USER noob
+RUN bower --allow-root install
+
+
+FROM php:8.2-apache
+COPY --from=build ./app /var/www/html
+
+# Copy app files from the app directory.
+#COPY . /var/www/html
+
+#COPY ./etc/apache-docker.conf /etc/apache2/sites-available/000-default.conf
+#COPY ./etc/apache-ports.conf /etc/apache2/ports.conf
+#RUN a2enmod proxy
+#RUN a2enmod proxy_http
+#RUN a2enmod rewrite
+
+# Use the default production configuration for PHP runtime arguments, see
+# https://github.com/docker-library/docs/tree/master/php#configuration
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+RUN apachectl restart
+
+# Switch to a non-privileged user (defined in the base image) that the app will run under.
+# See https://docs.docker.com/go/dockerfile-user-best-practices/
+#	USER www-data

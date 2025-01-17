@@ -1,0 +1,100 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "ultical".
+# This service is built from the Dockerfile in the specified directories.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+name: ultical
+
+services:
+  # Web service definition
+  web:
+    # Build the Docker image from the Dockerfile in the 'web' directory
+    build:
+      context: web
+      dockerfile: Dockerfile.dev
+    # Specify dependencies; the 'web' service depends on the 'backend' service
+    depends_on:
+      - backend
+      - db
+    # Map port 8742 on the host to port 80 in the container
+    ports:
+      - 8742:80
+    networks:
+      - ultical-network
+    # entrypoint: [ "./wait-for-it.sh", "db:3306", "--", "java", "-jar", "/app/your-app.jar" ]
+
+
+    # Backend service definition
+  backend:
+    # Build the Docker image from the Dockerfile in the 'backend' directory
+    build:
+      context: backend
+      dockerfile: Dockerfile.dev
+
+    # Specify dependencies; the 'backend' service depends on the 'db' service
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+
+    # Map port 8765 on the host to port 8765 in the container
+    ports:
+      - 8765:8765
+    # Expose port 8765 to linked services but not to the host machine
+    expose:
+      - "8765"
+    networks:
+      - ultical-network
+    environment:
+      EMAIL_HOST: mailhog
+      EMAIL_PORT: 1025
+      EMAIL_USER: "ultimail"
+      EMAIL_PASSWORD: "ultimail"
+
+  # Database service definition
+  db:
+    # Use the official MySQL 8.0 image from Docker Hub
+    image: mysql:8.0
+    # Always restart the container unless it is explicitly stopped
+    restart: always
+    # Set environment variables for the database
+    environment:
+      MYSQL_DATABASE: ultical
+      MYSQL_USER: ultical
+      MYSQL_PASSWORD: ultical
+      MYSQL_ROOT_PASSWORD: rootpassword
+    # Mount a volume to persist database data
+    volumes:
+      - db-data:/var/lib/mysql
+    # Map port 3307 on the host to port 3306 in the container
+    ports:
+      - 3307:3306
+    # Configure a health check to ensure the database is ready
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -u ultical --password=ultical" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - ultical-network
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - ultical-network
+
+# Define named volumes to persist data
+volumes:
+  db-data:
+
+
+networks:
+  ultical-network:
+    driver: bridge
