@@ -32,8 +32,8 @@ frontendUrl: http://localhost:8742
 # frontendUrl: http://example.com:1234/front
 corsFilterEnabled: true
 
-#jobs:
-#  dfvMvSyncEnabled: true
+jobsConf:
+  dfvMvSyncEnabled: true
 
 reCaptcha:
   url: https://www.google.com/recaptcha/api/siteverify

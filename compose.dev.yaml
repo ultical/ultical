@@ -76,9 +76,9 @@ services:
     # Configure a health check to ensure the database is ready
     healthcheck:
       test: [ "CMD-SHELL", "mysqladmin ping -u ultical --password=ultical" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      interval: 3s
+      timeout: 3s
+      retries: 10
     networks:
       - ultical-network
 
@@ -89,6 +89,17 @@ services:
       - "1025:1025"
     networks:
       - ultical-network
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.1
+    restart: always
+    networks:
+      - ultical-network
+    ports:
+      - 8750:80
+    environment:
+      - PMA_ARBITRARY=1
+      - UPLOAD_LIMIT=300M
 
 # Define named volumes to persist data
 volumes:
