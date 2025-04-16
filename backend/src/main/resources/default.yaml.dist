@@ -28,7 +28,7 @@ mail:
 frontendUrl: http://example.com:1234/front
 corsFilterEnabled: false
 
-jobs:
+jobsConf:
   dfvMvSyncEnabled: false
 reCaptcha:
   url: https://www.google.com/recaptcha/api/siteverify
