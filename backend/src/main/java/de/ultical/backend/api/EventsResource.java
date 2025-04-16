@@ -195,7 +195,7 @@ public class EventsResource {
         if (event.getLocations() != null && !event.getLocations().isEmpty()) {
             Location location = event.getLocations().get(0);
 
-            if (location.getCity() != null && !location.getCity().isEmpty()) {
+            if (location != null && location.getCity() != null && !location.getCity().isEmpty()) {
                 if (location.getId() == 0) {
                     location = this.dataStore.addNew(event.getLocations().get(0));
                     event.getLocations().set(0, location);
@@ -255,7 +255,7 @@ public class EventsResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{eventId}/divisions")
     public DivisionRegistration addDivision(@PathParam("eventId") Integer eventId, DivisionRegistration div,
-                                            @Auth @NotNull User currentUser) {
+            @Auth @NotNull User currentUser) {
         this.checkDatatStore();
 
         /*
@@ -279,7 +279,7 @@ public class EventsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{eventId}/divisions/{divisionId}")
     public void updateDivsion(@PathParam("eventId") Integer eventId, DivisionRegistration div,
-                              @PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser) {
+            @PathParam("divisionId") Integer divId, @Auth @NotNull User currentUser) {
         this.checkDatatStore();
         if (!Integer.valueOf(div.getId()).equals(divId)) {
             throw new WebApplicationException("Request URL and payload do not match!", Status.NOT_ACCEPTABLE);

@@ -230,7 +230,7 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
 			var eventToSend = angular.copy(event);
 
 			// prevent bad requests if the backend tries to parse a string into a location objects
-			if (!angular.isObject(event.locations[0])) {
+			if (event.locations == null || !angular.isObject(event.locations[0])) {
 				eventToSend.locations[0] = null;
 			} else {
 			}
