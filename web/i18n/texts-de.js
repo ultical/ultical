@@ -194,6 +194,7 @@ TRANSLATIONS['de'] = {
 		event: {
 			list: {
 				title: 'Turniere',
+				empty: 'Keine Turniere',
 			},
 			youAreEventAdmin: 'Du bist Administrator dieses Turniers',
 			youAreFormatAdmin: 'Du bist Administrator dieses Turnierformats',

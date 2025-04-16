@@ -16,6 +16,32 @@ angular.module('ultical.events', [])
     actionBar.clearActions();
 		$scope.events = data;
 
+    if ((data == null || data.length < 1) && authorizer.loggedIn()) {
+      $state.go('app.eventEdit', {eventId: 'new'});
+      return;
+    }
+
+    var first = null;
+    var last = null;
+
+    angular.forEach($scope.events, function(event) {
+      if (first == null || moment(event.startDate).isBefore(first))
+        first = moment(event.startDate);
+      if (last == null || moment(event.endDate).isAfter(last))
+        last = moment(event.endDate);
+    });
+
+    var noww = last == null ? moment() : (last.isBefore(moment()) ? last : (first.isAfter(moment()) ? first : moment()));
+    $scope.current = {
+      now: noww,
+      first: first == null ? moment().year() : first.year(),
+      january: noww.month(0).format('M'),
+      thisYear: noww.format('YYYY'),
+      lastMonth: noww.subtract(1, 'months'),
+      dayMinus3: noww.subtract(3, 'days'),
+    };
+
+
     if (authorizer.loggedIn()) {
     	var isFormatAdmin = false;
       var loggedInUserId = authorizer.getUser().id;
@@ -53,14 +79,6 @@ angular.module('ultical.events', [])
     year: {},
   };
 
-  $scope.current = {
-    january: moment().date(1).month(0),
-    now: moment(),
-    thisYear: moment().format('YYYY'),
-    lastMonth: moment().date(1).subtract(1, 'months'),
-    dayMinus3: moment().subtract(3, 'days'),
-  };
-
   $scope.eventFilter = function(event, index, array) {
     var eventStartDate = moment(event.startDate);
     var eventEndDate = moment(event.endDate);
@@ -69,7 +87,7 @@ angular.module('ultical.events', [])
         return true;
     }
     // show all events of this year if the corresponding button is clicked
-    if (eventStartDate.isSame($scope.current.now, 'year') && $scope.show.beginningOfYear) {
+    if (eventStartDate.isAfter(moment().year($scope.current.thisYear)) && $scope.show.beginningOfYear) {
       return true;
     }
     if (eventStartDate.format('YYYY') in $scope.show.year) {
