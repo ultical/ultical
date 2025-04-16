@@ -14,7 +14,7 @@ public class MailHealthCheck extends HealthCheck {
 
             @Override
             public String getSubject() {
-                return "[ultical] helth check message";
+                return "[ultical] health check message";
             }
 
             @Override
