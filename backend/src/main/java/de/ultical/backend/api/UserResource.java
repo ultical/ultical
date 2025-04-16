@@ -35,7 +35,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public User getSeasonById(@PathParam("userId") Integer id, @Auth @NotNull User user) {
         if (this.dataStore == null) {
-            throw new WebApplicationException("Dependency Injectino for data store failed!",
+            throw new WebApplicationException("Dependency Injection for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
 
@@ -56,7 +56,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public List<User> getAllSeasons(@QueryParam("search") String searchString, @Auth @NotNull User user) {
         if (this.dataStore == null) {
-            throw new WebApplicationException("Dependency Injectino for data store failed!",
+            throw new WebApplicationException("Dependency Injection for data store failed!",
                     Status.INTERNAL_SERVER_ERROR);
         }
         List<User> result = null;
