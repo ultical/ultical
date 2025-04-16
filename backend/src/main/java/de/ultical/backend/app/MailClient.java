@@ -164,6 +164,9 @@ public class MailClient {
             }
             LOGGER.error("ReplyTo: " + replyToString);
 
+            LOGGER.error("Host: " + this.config.getMail().getSmtpHost() + ":" + this.config.getMail().getSmtpPort());
+            LOGGER.error("User: " + this.config.getMail().getSmtpUser());
+
             LOGGER.error("Exception was", me);
 
             return false;
