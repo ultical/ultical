@@ -1,6 +1,7 @@
 package de.ultical.backend.jobs;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.ws.rs.client.Client;
@@ -25,8 +26,12 @@ public class DfvAssociationLoader {
     private DataStore dataStore;
 
     public boolean getAssociations() {
+        boolean dfvMvSyncEnabled = Optional.ofNullable(config)
+                .map(c -> c.getJobsConf())
+                .map(jobsConf -> jobsConf.isDfvMvSyncEnabled())
+                .orElse(false);
 
-        if (!this.config.getJobsConf().isDfvMvSyncEnabled()) {
+        if (!dfvMvSyncEnabled) {
             return false;
         }
 
