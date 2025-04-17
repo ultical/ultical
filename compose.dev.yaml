@@ -76,9 +76,9 @@ services:
     # Configure a health check to ensure the database is ready
     healthcheck:
       test: [ "CMD-SHELL", "mysqladmin ping -u ultical --password=ultical" ]
-      interval: 3s
-      timeout: 3s
-      retries: 10
+      interval: 2s
+      timeout: 2s
+      retries: 20
     networks:
       - ultical-network
 

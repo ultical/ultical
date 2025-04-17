@@ -50,7 +50,7 @@ public class UltiCalConfig extends Configuration implements JobConfiguration {
 
     private ReCaptcha reCaptcha;
 
-    private JobsConfig jobsConf = new JobsConfig();
+    private JobsConfig jobsConf;
 
     @NotNull
     private DataSourceFactory database;
