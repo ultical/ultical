@@ -1,8 +1,24 @@
 package de.ultical.backend.api;
 
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
+import de.ultical.backend.api.transferClasses.DfvMvName;
+import de.ultical.backend.api.transferClasses.DfvMvPlayer;
+import de.ultical.backend.app.Authenticator;
+import de.ultical.backend.app.UltiCalConfig;
+import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
+import de.ultical.backend.data.policies.Policy;
+import de.ultical.backend.model.DfvPlayer;
+import de.ultical.backend.model.DivisionAge;
+import de.ultical.backend.model.DivisionType;
+import de.ultical.backend.model.Gender;
+import de.ultical.backend.model.Player;
+import de.ultical.backend.model.Roster;
+import de.ultical.backend.model.RosterPlayer;
+import de.ultical.backend.model.User;
+import io.dropwizard.auth.Auth;
+import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -20,28 +36,9 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
-
-import org.apache.ibatis.exceptions.PersistenceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.ultical.backend.api.transferClasses.DfvMvName;
-import de.ultical.backend.api.transferClasses.DfvMvPlayer;
-import de.ultical.backend.app.Authenticator;
-import de.ultical.backend.app.UltiCalConfig;
-import de.ultical.backend.data.DataStore;
-import de.ultical.backend.data.DataStore.DataStoreCloseable;
-import de.ultical.backend.data.policies.Policy;
-import de.ultical.backend.model.Club;
-import de.ultical.backend.model.DfvPlayer;
-import de.ultical.backend.model.DivisionAge;
-import de.ultical.backend.model.DivisionType;
-import de.ultical.backend.model.Gender;
-import de.ultical.backend.model.Player;
-import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.RosterPlayer;
-import de.ultical.backend.model.User;
-import io.dropwizard.auth.Auth;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 @Path("/roster")
 public class RosterResource {
@@ -280,11 +277,6 @@ public class RosterResource {
                 // women masters can be 3 years younger than their male
                 // counterparts
                 age += 3;
-            } else if (roster.getDivisionAge() == DivisionAge.U17 && player.getGender() == Gender.FEMALE) {
-                // women are allowed to play U17 one year longer then male
-                // players.
-                // i.e. 18yo women are allowed to play U17
-                age -= 1;
             }
             wrongAge = (roster.getDivisionAge().isHasToBeOlder() && age < roster.getDivisionAge().getAgeDifference())
                     || (!roster.getDivisionAge().isHasToBeOlder() && age > roster.getDivisionAge().getAgeDifference());
