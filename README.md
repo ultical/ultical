@@ -23,7 +23,7 @@ Remove the .dist of the following files and change the values according to your 
 
 ## Backend
 
-The Java Backend can be build with Maven:
+The Java Backend can be built with Maven:
 
 `mvn package`
 

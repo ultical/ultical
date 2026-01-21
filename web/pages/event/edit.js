@@ -39,10 +39,11 @@ angular.module('ultical.events')
     $scope.seasons = seasons;
   });
 
+  $scope.newLocation = {obj:""};
+
   $scope.action = {
     formatIdChosen: -1,
     editionIdChosen: -1,
-    locationToEdit: { city: ''},
   };
 
   var feeIdCounter = 0;
@@ -111,7 +112,7 @@ angular.module('ultical.events')
       headService.setTitle($translate.instant('event.edit.editTitle') + event.name);
       prepareDateDiff(event);
       $scope.locationClone = angular.copy(event.locations[0]);
-      $scope.action.locationToEdit = angular.copy(event.locations[0]);
+      // $scope.action.locationToEdit = angular.copy(event.locations[0]);
       event.matchdayNumber += '';
 
       $scope.event = event;
@@ -260,11 +261,13 @@ angular.module('ultical.events')
             });
       return;
     }
+    /*
     if (!angular.isObject($scope.action.locationToEdit) || isEmpty($scope.action.locationToEdit)) {
       event.locations = null;
     } else {
       event.locations[0] = $scope.action.locationToEdit;
     }
+    */
 
     if (isEmpty(event.localOrganizer) || isEmpty(event.localOrganizer.name)) {
       event.localOrganizer = null;
@@ -289,6 +292,24 @@ angular.module('ultical.events')
     $state.go('app.eventShow', {eventId: event.id, eventSlug: 'slug'});
   }
 
+  $scope.removeLocation = function(i) {
+    // TODO delete event.locations[i]
+  }
+
+  $scope.addLocation = function(newLocation) {
+    if (isEmpty(newLocation)) {
+      return;
+    }
+
+    if (!angular.isObject(newLocation)) {
+      return;
+    }
+
+    $scope.event.locations.push(newLocation);
+
+    $scope.newLocation.obj = "";
+  }
+
   $scope.addAdmin = function(newAdmin) {
     if (isEmpty(newAdmin)) {
       return;
@@ -298,20 +319,17 @@ angular.module('ultical.events')
       return;
     }
 
-    if (newAdmin.obj == "") {
-      return;
-    }
-
-    // check if admin is already in the list
-    var alreadyAdmin = false;
-    angular.forEach($scope.event.admins, function(admin) {
-      if (admin.id == newAdmin.id) {
-        alreadyAdmin = true;
+    if (newAdmin.hasOwnProperty('id') || newAdmin.id >= 0) {
+      var alreadyAdmin = false;
+      // check if admin is already in the list
+      angular.forEach($scope.event.admins, function(admin) {
+        if (admin.id == newAdmin.id) {
+          alreadyAdmin = true;
+        }
+      });
+      if (!alreadyAdmin) {
+        $scope.event.admins.push(newAdmin);
       }
-    });
-
-    if (!alreadyAdmin) {
-      $scope.event.admins.push(newAdmin);
     }
 
     $scope.newAdmin.obj = "";

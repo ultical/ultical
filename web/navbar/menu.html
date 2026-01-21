@@ -1,5 +1,6 @@
 <!-- EVENTS -->
 <ul abs-collapse-toggle class="nav navbar-nav">
+  <!-- FIXME why XXXbs-dropdown? -->
   <li data-animation="am-flip-x" XXXbs-dropdown="eventDropdown" aria-haspopup="true" aria-expanded="false">
     <a ui-sref="app.eventsList({locale: activeLang })" class="navbar-text">{{ 'nav.eventDropdown.label' | translate }}</a>
   </li>
@@ -8,7 +9,7 @@
 <!-- TEAMS -->
 <ul class="nav navbar-nav">
   <li>
-    <a  ui-sref="app.teamsList({locale: activeLang })" class="navbar-text">{{ 'nav.teams' | translate }}</a>
+    <a ui-sref="app.teamsList({locale: activeLang })" class="navbar-text">{{ 'nav.teams' | translate }}</a>
   </li>
 </ul>
 
@@ -21,7 +22,7 @@
 
 <ul class="menu-aside dropdown-menu" role="menu">
   <li><a ui-sref="app.teamsOwn({locale: activeLang })">{{ 'nav.profileDropdown.ownTeams' | translate }}</a></li>
-<!-- 				<li><a ui-sref="app.eventsList">{{ 'nav.profileDropdown.ownEvents' | translate }}</a></li> -->
+  <!-- 				<li><a ui-sref="app.eventsList">{{ 'nav.profileDropdown.ownEvents' | translate }}</a></li> -->
   <li class="divider"></li>
   <li><a href="#" ng-click="logOut()">{{ 'nav.profileDropdown.logout' | translate }}</a></li>
 </ul>

@@ -21,11 +21,10 @@
 					<span class="strong ">{{ 'event.edit.chooseFormat' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<button type="button" class="btn btn-default" ng-model="action.formatIdChosen"
-							data-multiple="0" data-animation="am-flip-x" data-max-length="1"
-							ng-change="chooseFormat()"
-							bs-options="format.id as format.name + ' - ' + format.association.acronym for format in formatList"
-							bs-select></button>
+					<button type="button" class="btn btn-default" ng-model="action.formatIdChosen" data-multiple="0"
+						data-animation="am-flip-x" data-max-length="1" ng-change="chooseFormat()"
+						bs-options="format.id as format.name + ' - ' + format.association.acronym for format in formatList"
+						bs-select></button>
 				</div>
 			</div>
 		</div>
@@ -72,7 +71,9 @@
 		<div ng-if="formatChosen">
 			<div class="row margin-bottom">
 				<div class="col-md-12">
-					<h3>{{ 'general.tournamentEdition' | translate }}<a href="#" class="edit-in-title" ng-click="editEdition()" ng-show="format.x.own && !editionEdit && edition.id > 0">{{ 'event.edit.editEdition' | translate }}</a></h3>
+					<h3>{{ 'general.tournamentEdition' | translate }}<a class="edit-in-title" ng-click="editEdition()"
+							ng-show="format.x.own && !editionEdit && edition.id > 0">{{ 'event.edit.editEdition' | translate }}</a>
+					</h3>
 				</div>
 			</div>
 		</div>
@@ -87,16 +88,16 @@
 				<div class="col-md-10">
 					<div class="row">
 						<div class="col-md-12">
-							<button type="button" class="btn btn-default" ng-model="action.editionIdChosen"
-								data-multiple="0" data-animation="am-flip-x" data-max-length="1"
-								ng-change="chooseEdition()"
+							<button type="button" class="btn btn-default" ng-model="action.editionIdChosen" data-multiple="0"
+								data-animation="am-flip-x" data-max-length="1" ng-change="chooseEdition()"
 								bs-options="edition.id as (edition.season | season : true) + ' - ' + edition.name for edition in editionList | orderBy : ['-season.year', '-season.plusOneYear', 'name']"
 								bs-select></button>
 						</div>
 					</div>
 					<div class="row margin-top-small">
 						<div class="col-md-12">
-							<button type="button" ng-click="createEdition()" class="btn btn-primary btn-ultical">{{ 'event.edit.createNewEdition' | translate }}</button>
+							<button type="button" ng-click="createEdition()" class="btn btn-primary btn-ultical">{{
+								'event.edit.createNewEdition' | translate }}</button>
 						</div>
 					</div>
 				</div>
@@ -125,10 +126,12 @@
 					<span>{{ edition.season | season : true}}</span>
 				</div>
 				<div class="col-md-2" ng-if="format.x.own && editionEdit && edition.id == -1">
-					<select class="form-control short margin-right" ng-model="season.surface" ng-options="surface as ('season.surface.' + surface | translate) for surface in getSeasonSurfaces()"></select>
+					<select class="form-control short margin-right" ng-model="season.surface"
+						ng-options="surface as ('season.surface.' + surface | translate) for surface in getSeasonSurfaces()"></select>
 				</div>
 				<div class="col-md-2" ng-if="format.x.own && editionEdit && edition.id == -1">
-					<select class="form-control short" ng-model="season.yearObject" ng-options="year as year.yearString for year in seasonYears"></select>
+					<select class="form-control short" ng-model="season.yearObject"
+						ng-options="year as year.yearString for year in seasonYears"></select>
 				</div>
 			</div>
 
@@ -143,18 +146,22 @@
 				<div class="col-md-10" ng-if="format.x.own && editionEdit">
 					<div class="row">
 						<div class="col-md-9">
-							<select class="form-control" ng-model="edition.organizer" ng-options="contact as contact | contact for contact in editionContacts track by contact.id"></select>
+							<select class="form-control" ng-model="edition.organizer"
+								ng-options="contact as contact | contact for contact in editionContacts track by contact.id"></select>
 						</div>
 					</div>
 					<div class="row margin-top" ng-if="edition.organizer.id == -1">
 						<div class="col-md-4">
-							<input class="form-control" ng-model="newOrganizer.name" placeholder="{{ 'event.edit.localOrganizerNameLabel' | translate }}">
+							<input class="form-control" ng-model="newOrganizer.name"
+								placeholder="{{ 'event.edit.localOrganizerNameLabel' | translate }}">
 						</div>
 						<div class="col-md-3">
-							<input class="form-control" ng-model="newOrganizer.email" placeholder="{{ 'event.edit.localOrganizerEmailLabel' | translate }}">
+							<input class="form-control" ng-model="newOrganizer.email"
+								placeholder="{{ 'event.edit.localOrganizerEmailLabel' | translate }}">
 						</div>
 						<div class="col-md-2">
-							<input class="form-control" ng-model="newOrganizer.phone" placeholder="{{ 'event.edit.localOrganizerPhoneLabel' | translate }}">
+							<input class="form-control" ng-model="newOrganizer.phone"
+								placeholder="{{ 'event.edit.localOrganizerPhoneLabel' | translate }}">
 						</div>
 					</div>
 				</div>
@@ -166,13 +173,18 @@
 					<span class="strong ">{{ 'event.edit.registrationPeriodLabel' | translate }}</span>
 				</div>
 				<div class="col-md-10" ng-if="!format.x.own || !editionEdit">
-					<span>{{ edition.registrationStart | amDateFormat : ('general.amDateFormat' | translate) }} - {{ edition.registrationEnd | amDateFormat : ('general.amDateFormat' | translate) }}</span>
+					<span>{{ edition.registrationStart | amDateFormat : ('general.amDateFormat' | translate) }} - {{
+						edition.registrationEnd | amDateFormat : ('general.amDateFormat' | translate) }}</span>
 				</div>
 				<div class="col-md-2" ng-if="format.x.own && editionEdit">
-					<input ng-model="edition.registrationStart" class="form-control short" data-date-type="string" data-model-date-format="yyyy-MM-dd" data-date-format="dd.MM.yyyy" data-autoclose="1" bs-datepicker data-container="#registrationdatepicker" />
+					<input ng-model="edition.registrationStart" class="form-control short" data-date-type="string"
+						data-model-date-format="yyyy-MM-dd" data-date-format="dd.MM.yyyy" data-autoclose="1" bs-datepicker
+						data-container="#registrationdatepicker" />
 				</div>
 				<div class="col-md-8" ng-if="format.x.own && editionEdit">
-					<input ng-model="edition.registrationEnd" class="form-control short" data-date-type="string" data-model-date-format="yyyy-MM-dd" data-date-format="dd.MM.yyyy" data-autoclose="1" bs-datepicker data-container="#registrationdatepicker" />
+					<input ng-model="edition.registrationEnd" class="form-control short" data-date-type="string"
+						data-model-date-format="yyyy-MM-dd" data-date-format="dd.MM.yyyy" data-autoclose="1" bs-datepicker
+						data-container="#registrationdatepicker" />
 				</div>
 			</div>
 
@@ -183,7 +195,8 @@
 				</div>
 				<div class="col-md-2">
 					<span ng-if="!format.x.own || !editionEdit">{{ event | matchdayname }}</span>
-					<span ng-if="format.x.own && editionEdit"><input ng-model="edition.alternativeMatchdayName" class="form-control" placeholder="{{ 'event.matchday' | translate }}"></span>
+					<span ng-if="format.x.own && editionEdit"><input ng-model="edition.alternativeMatchdayName"
+							class="form-control" placeholder="{{ 'event.matchday' | translate }}"></span>
 				</div>
 			</div>
 
@@ -193,8 +206,11 @@
 					<span class="strong ">{{ 'event.edit.contextLabel' | translate }}</span>
 				</div>
 				<div class="col-md-4">
-					<span ng-if="!format.x.own || !editionEdit || edition.id != -1">{{ edition.context.acronym }} - {{ edition.context.name }}</span>
-					<select ng-if="format.x.own && editionEdit && edition.id == -1" class="form-control" ng-model="edition.context" ng-options="context as context.name + ' (' + context.acronym + ')' for context in allContexts"></select>
+					<span ng-if="!format.x.own || !editionEdit || edition.id != -1">{{ edition.context.acronym }} - {{
+						edition.context.name }}</span>
+					<select ng-if="format.x.own && editionEdit && edition.id == -1" class="form-control"
+						ng-model="edition.context"
+						ng-options="context as context.name + ' (' + context.acronym + ')' for context in allContexts"></select>
 				</div>
 			</div>
 
@@ -209,7 +225,8 @@
 								<span ng-if="edition.id == -1">{{ 'general.save' | translate }}</span>
 								<span ng-if="edition.id != -1">{{ 'general.saveEdits' | translate }}</span>
 							</button>
-							<button ng-click="cancelNewEdition()" class="btn btn-default btn-ultical margin-left-small">{{ 'general.cancel' | translate }}</button>
+							<button ng-click="cancelNewEdition()" class="btn btn-default btn-ultical margin-left-small">{{
+								'general.cancel' | translate }}</button>
 						</div>
 					</div>
 				</div>
@@ -228,29 +245,34 @@
 								<span ng-click="addDivision(newDivision)" class="cursor-pointer input-group-addon">
 									<span class="glyphicon glyphicon-plus"></span>
 								</span>
-								<input class="form-control" ng-disabled="editionEdit" ng-model="newDivision.divisionIdentifier" placeholder="{{ 'event.edit.divisionIdentifierPlaceholder' | translate }}">
+								<input class="form-control" ng-disabled="editionEdit" ng-model="newDivision.divisionIdentifier"
+									placeholder="{{ 'event.edit.divisionIdentifierPlaceholder' | translate }}">
 							</div>
 						</div>
 						<div class="col-md-2">
-							<select class="form-control" ng-disabled="editionEdit" ng-model="newDivision.divisionType" ng-options="type as 'division.' + type | translate for type in getDivisionTypes()"></select>
+							<select class="form-control" ng-disabled="editionEdit" ng-model="newDivision.divisionType"
+								ng-options="type as 'division.' + type | translate for type in getDivisionTypes()"></select>
 						</div>
 						<div class="col-md-2">
-							<select class="form-control" ng-disabled="editionEdit" ng-model="newDivision.divisionAge" ng-options="age as 'division.' + age | translate for age in getDivisionAges()"></select>
+							<select class="form-control" ng-disabled="editionEdit" ng-model="newDivision.divisionAge"
+								ng-options="age as 'division.' + age | translate for age in getDivisionAges()"></select>
 						</div>
 						<div class="col-md-2">
-							<select class="form-control" ng-disabled="editionEdit" ng-model="newDivision.numberSpots" ng-options="spot.value as spot.name for spot in selectNumberOfSpots"></select>
+							<select class="form-control" ng-disabled="editionEdit" ng-model="newDivision.numberSpots"
+								ng-options="spot.value as spot.name for spot in selectNumberOfSpots"></select>
 						</div>
 					</div>
 					<div class="row margin-bottom">
 						<div class="col-md-12">
 							<div class="form-control-static">
-								<div class="editable-list" ng-repeat="division in edition.divisionRegistrations | orderBy : divisionOrder">
+								<div class="editable-list"
+									ng-repeat="division in edition.divisionRegistrations | orderBy : divisionOrder">
 									<div class="editable-list-item no-remove">{{ division | division }}</div>
-<!--									<div ng-if="format.x.own" ng-click="removeDivision(division.id)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'event.edit.divisionRemoveTooltip' | translate }}" bs-tooltip>-->
-<!--										<span class="fa-stack fa-lg">-->
-<!--											<i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x fa-inverse"></i>-->
-<!--										</span>-->
-<!--									</div>-->
+									<!--									<div ng-if="format.x.own" ng-click="removeDivision(division.id)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'event.edit.divisionRemoveTooltip' | translate }}" bs-tooltip>-->
+									<!--										<span class="fa-stack fa-lg">-->
+									<!--											<i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x fa-inverse"></i>-->
+									<!--										</span>-->
+									<!--									</div>-->
 								</div>
 							</div>
 						</div>
@@ -286,10 +308,12 @@
 					<div ng-if="format.x.own">
 						<select id="slim-edit-2" class="form-control short" ng-model="event.matchdayNumber">
 							<option value="-1">{{ 'event.singleEvent' | translate }}</option>
-							<option ng-repeat="i in [] | range : 14" value="{{ i + 1}}">{{ i + 1}}. {{ event | matchdayname }}</option>
+							<option ng-repeat="i in [] | range : 14" value="{{ i + 1}}">{{ i + 1}}. {{ event | matchdayname }}
+							</option>
 						</select>
 					</div>
-					<span ng-if="!format.x.own && event.matchdayNumber != -1">{{ event.matchdayNumber }} {{ event | matchdayname }}</span>
+					<span ng-if="!format.x.own && event.matchdayNumber != -1">{{ event.matchdayNumber }} {{ event | matchdayname
+						}}</span>
 					<span ng-if="!format.x.own && event.matchdayNumber == -1">{{ 'event.singleEvent' | translate }}</span>
 				</div>
 			</div>
@@ -310,7 +334,9 @@
 				</div>
 				<div class="col-md-10">
 					<span ng-if="!format.x.own">{{ event.startDate | amDateFormat : ('general.amDateFormat' | translate) }}</span>
-					<span ng-if="format.x.own"><input ng-model="event.startDate" class="form-control short" data-date-type="string" data-model-date-format="yyyy-MM-dd" data-date-format="dd.MM.yyyy" data-autoclose="1" bs-datepicker></span>
+					<span ng-if="format.x.own"><input ng-model="event.startDate" class="form-control short"
+							data-date-type="string" data-model-date-format="yyyy-MM-dd" data-date-format="dd.MM.yyyy"
+							data-autoclose="1" bs-datepicker></span>
 				</div>
 			</div>
 
@@ -334,29 +360,60 @@
 					<span class="strong ">{{ 'event.edit.locationLabel' | translate }}</span>
 				</div>
 				<div class="col-md-10">
-					<div class="form-group has-feedback" ng-class="{'has-error': (inputForm.location.$touched && (action.locationToEdit.city | isEmpty)) || locationIsMissing}">
+					<div class="form-group has-feedback">
 
-					<input class="form-control" typeahead-min-length="3" typeahead-wait-ms="400" name="location" required="required" type="text" id="tteCity" class="form-control" ng-model="action.locationToEdit" typeahead-select-on-blur="true" typeahead-select-on-exact="true"
-							   autocomplete="off" uib-typeahead="location | locationObject as location | location for location in getLocations($viewValue)" typeahead-wait-ms="300" placeholder="{{ 'event.edit.locationLabel' | translate }}" />
-						<span ng-show="action.locationToEdit.city != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
-						<span ng-if="(inputForm.location.$touched && (action.locationToEdit.city | isEmpty)) || locationIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'event.edit.locationMissing' | translate }}</span>
+						<input class="form-control" typeahead-min-length="3" typeahead-wait-ms="400" name="location" type="text"
+							id="tteCity" class="form-control" ng-model="newLocation.obj" typeahead-select-on-blur="true"
+							typeahead-select-on-exact="true" autocomplete="off"
+							uib-typeahead="location | locationObject as location | location for location in getLocations($viewValue)"
+							typeahead-wait-ms="300" placeholder="{{ 'event.edit.locationLabel' | translate }}"
+							typeahead-on-select="addLocation($item | locationObject)" />
+						<span ng-show="action.locationToEdit.city != null"
+							class="glyphicon glyphicon-ok form-control-feedback"></span>
 					</div>
-					<div>
-						<div ng-class="{'strong': action.locationToEdit.main }" ng-if="action.locationToEdit.title | notEmpty">
-							<span>{{ action.locationToEdit.title }}</span>
-						</div>
-						<div ng-class="{'strong': action.locationToEdit.main }" ng-if="action.locationToEdit.street | notEmpty">
-							<span>{{ action.locationToEdit.street }}</span>
-						</div>
-						<div ng-class="{'strong': action.locationToEdit.main }" ng-if="(action.locationToEdit.zipCode | notEmpty) || (action.locationToEdit.city | notEmpty)">
-							<span ng-show="action.locationToEdit.zipCode | notEmpty">{{ action.locationToEdit.zipCode }}</span>
-							<span ng-show="action.locationToEdit.city | notEmpty">{{ action.locationToEdit.city }}</span>
-						</div>
-						<div ng-class="{'strong': action.locationToEdit.main }" ng-if="action.locationToEdit.country | notEmpty">{{ action.locationToEdit | countryname }}</div>
 
-						<div ng-if="action.locationToEdit.additionalInfo | notEmpty" class="margin-top-small">{{ action.locationToEdit.additionalInfo }}</div>
-						<div ng-if="!$last" class="margin-bottom"></div>
+					<div class="row margin-top">
+						<div class="col-md-12">
+							<div class="form-control-static">
+								<div class="editable-list" ng-repeat="i in [] | range : event.locations.length">
+									<div class="editable-list-item">
+
+										<div>
+											<div ng-class="{'strong':  event.locations[i].main }"
+												ng-if=" event.locations[i].title | notEmpty">
+												<span>{{ event.locations[i].title }}</span>
+											</div>
+											<div ng-class="{'strong':  event.locations[i].main }"
+												ng-if=" event.locations[i].street | notEmpty">
+												<span>{{ event.locations[i].street }}</span>
+											</div>
+											<div ng-class="{'strong':  event.locations[i].main }"
+												ng-if="( event.locations[i].zipCode | notEmpty) || ( event.locations[i].city | notEmpty)">
+												<span ng-show=" event.locations[i].zipCode | notEmpty">{{ event.locations[i].zipCode }}</span>
+												<span ng-show=" event.locations[i].city | notEmpty">{{ event.locations[i].city }}</span>
+											</div>
+											<div ng-class="{'strong':  event.locations[i].main }"
+												ng-if=" event.locations[i].country | notEmpty">{{ event.locations[i] | countryname }}</div>
+
+											<div ng-if=" event.locations[i].additionalInfo | notEmpty" class="margin-top-small">{{
+												event.locations[i].additionalInfo }}</div>
+											<div ng-if="!$last" class="margin-bottom"></div>
+										</div>
+
+									</div>
+									<div ng-click="removeLocation(i)" class="ffade editable-list-remove cursor-pointer"
+										data-title="{{ 'team.edit.locationsRemoveTooltip' | translate }}" bs-tooltip>
+										<span class="fa-stack fa-lg">
+											<i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x fa-inverse"></i>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
+
+
+
 				</div>
 			</div>
 
@@ -367,8 +424,9 @@
 				</div>
 				<div class="col-md-10">
 					<button ng-if="format.x.own" type="button" class="btn btn-default" ng-model="event.x.divisionIds"
-							data-multiple="1" data-animation="am-flip-x" data-max-length="16" data-order="divisionOrder"
-							bs-options="division.id as division | division : 'full' for division in edition.divisionRegistrations" bs-select></button>
+						data-multiple="1" data-animation="am-flip-x" data-max-length="16" data-order="divisionOrder"
+						bs-options="division.id as division | division : 'full' for division in edition.divisionRegistrations"
+						bs-select></button>
 					<div ng-if="!format.x.own" ng-repeat="division in edition.divisionRegistrations | orderBy : divisionOrder">
 						<span>{{ division | division }}</span>
 					</div>
@@ -387,11 +445,10 @@
 								<span ng-click="addAdmin(newAdmin)" class="cursor-pointer input-group-addon">
 									<span class="glyphicon glyphicon-plus"></span>
 								</span>
-								<input typeahead-min-length="3" type="text" id="tteAdmins" class="form-control"
-								   ng-model="newAdmin.obj" typeahead-select-on-blur="true" typeahead-wait-ms="400"
-								   autocomplete="off" uib-typeahead="user as user.fullName for user in getUsers($viewValue)"
-								   placeholder="{{ 'team.edit.adminsPlaceholder' | translate }}"
-								   typeahead-on-select="addAdmin($item)" />
+								<input typeahead-min-length="3" type="text" id="tteAdmins" class="form-control" ng-model="newAdmin.obj"
+									typeahead-select-on-blur="true" typeahead-wait-ms="400" autocomplete="off"
+									uib-typeahead="user as user.fullName for user in getUsers($viewValue)"
+									placeholder="{{ 'team.edit.adminsPlaceholder' | translate }}" typeahead-on-select="addAdmin($item)" />
 							</div>
 						</div>
 					</div>
@@ -399,8 +456,10 @@
 						<div class="col-md-12">
 							<div class="form-control-static">
 								<div class="editable-list" ng-repeat="admin in event.admins | orderBy : ['dfvPlayer.lastName']">
-									<div class="editable-list-item">{{ admin.dfvPlayer != null ? admin.dfvPlayer.firstName + ' ' + admin.dfvPlayer.lastName : admin.email }}</div>
-									<div ng-click="removeAdmin(admin.id)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'team.edit.adminsRemoveTooltip' | translate }}" bs-tooltip>
+									<div class="editable-list-item">{{ admin.dfvPlayer != null ? admin.dfvPlayer.firstName + ' ' +
+										admin.dfvPlayer.lastName : admin.email }}</div>
+									<div ng-click="removeAdmin(admin.id)" class="ffade editable-list-remove cursor-pointer"
+										data-title="{{ 'team.edit.adminsRemoveTooltip' | translate }}" bs-tooltip>
 										<span class="fa-stack fa-lg">
 											<i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x fa-inverse"></i>
 										</span>
@@ -418,13 +477,16 @@
 					<span class="strong ">{{ 'event.localOrganizer' | translate }}</span>
 				</div>
 				<div class="col-md-2">
-					<input class="form-control" ng-model="event.localOrganizer.name" placeholder="{{ 'event.edit.localOrganizerNameLabel' | translate }}">
+					<input class="form-control" ng-model="event.localOrganizer.name"
+						placeholder="{{ 'event.edit.localOrganizerNameLabel' | translate }}">
 				</div>
 				<div class="col-md-4">
-					<input class="form-control" ng-model="event.localOrganizer.email" placeholder="{{ 'event.edit.localOrganizerEmailLabel' | translate }}">
+					<input class="form-control" ng-model="event.localOrganizer.email"
+						placeholder="{{ 'event.edit.localOrganizerEmailLabel' | translate }}">
 				</div>
 				<div class="col-md-2">
-					<input class="form-control" ng-model="event.localOrganizer.phone" placeholder="{{ 'event.edit.localOrganizerPhoneLabel' | translate }}">
+					<input class="form-control" ng-model="event.localOrganizer.phone"
+						placeholder="{{ 'event.edit.localOrganizerPhoneLabel' | translate }}">
 				</div>
 			</div>
 
@@ -437,7 +499,8 @@
 						</div>
 						<div class="col-md-10">
 							<span ng-if="!event.x.own && !format.x.own">{{ event.info }}</span>
-							<span ng-if="event.x.own || format.x.own"><textarea rows="5" class="resizable form-control" ng-model="event.info"></textarea></span>
+							<span ng-if="event.x.own || format.x.own"><textarea rows="5" class="resizable form-control"
+									ng-model="event.info"></textarea></span>
 						</div>
 					</div>
 				</div>
@@ -463,9 +526,11 @@
 											<option value="0">{{ 'event.edit.feeNotMultiple' | translate }}</option>
 										</select>
 										<input class="form-control very-short" ng-model="newFee.amount" type="number" step="0.01" min="0">
-										<input class="form-control extra-short" disabled="disabled" value="{{ 'currencySymbol.' + newFee.currency | translate }} {{ 'event.edit.feeFor' | translate }}"/>
+										<input class="form-control extra-short" disabled="disabled"
+											value="{{ 'currencySymbol.' + newFee.currency | translate }} {{ 'event.edit.feeFor' | translate }}" />
 										<select class="form-control very-short" ng-model="newFee.type">
-											<option ng-repeat="type in getFeeTypes()" value="{{ type }}">{{ ('event.fee.' + (type | lowercase)) | translate }}</option>
+											<option ng-repeat="type in getFeeTypes()" value="{{ type }}">{{ ('event.fee.' + (type |
+												lowercase)) | translate }}</option>
 										</select>
 										<input ng-if="newFee.type == 'OTHER'" class="form-control short" ng-model="newFee.otherName">
 										<select class="form-control very-short" ng-model="newFee.perPerson">
@@ -485,7 +550,8 @@
 									<div class="form-control-static">
 										<div class="editable-list" ng-repeat="fee in event.fees | filter : { tournamentEdition: null }">
 											<div class="editable-list-item">{{ fee | fee }}</div>
-											<div ng-click="removeFee(fee.id)" class="ffade editable-list-remove cursor-pointer" data-title="{{ 'team.edit.feeRemoveTooltip' | translate }}" bs-tooltip>
+											<div ng-click="removeFee(fee.id)" class="ffade editable-list-remove cursor-pointer"
+												data-title="{{ 'team.edit.feeRemoveTooltip' | translate }}" bs-tooltip>
 												<span class="fa-stack fa-lg">
 													<i class="fa fa-circle fa-stack-2x"></i> <i class="fa fa-times fa-stack-1x fa-inverse"></i>
 												</span>
@@ -498,7 +564,7 @@
 					</div>
 				</div>
 			</div>
-<!--
+			<!--
 			&lt;!&ndash; attachments - edit &ndash;&gt;
 			<div class="row">
 				<div class="col-md-12">
@@ -523,11 +589,15 @@
 						<div class="col-md-2">
 						</div>
 						<div class="col-md-5">
-							<button ng-click="saveEvent(event)" class="btn btn-primary btn-ultical">{{ 'general.save' | translate }}</button>
-							<button ng-click="cancel()" class="btn btn-default btn-ultical margin-left-small">{{ 'general.cancel' | translate }}</button>
+							<button ng-click="saveEvent(event)" class="btn btn-primary btn-ultical">{{ 'general.save' | translate
+								}}</button>
+							<button ng-click="cancel()" class="btn btn-default btn-ultical margin-left-small">{{ 'general.cancel' |
+								translate }}</button>
 						</div>
 						<div class="col-md-5" ng-if="format.x.own">
-							<button ng-if="event.id > 0" ng-click="checkDelete()" class="pull-right btn btn-danger btn-ultical margin-left-small">{{ 'general.delete' | translate }}</button>
+							<button ng-if="event.id > 0" ng-click="checkDelete()"
+								class="pull-right btn btn-danger btn-ultical margin-left-small">{{ 'general.delete' | translate
+								}}</button>
 						</div>
 					</div>
 				</div>

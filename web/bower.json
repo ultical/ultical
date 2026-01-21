@@ -21,23 +21,28 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "*",
-    "angular-ui-router": "*",
-    "angular-translate": "*",
-    "angular-translate-interpolation-messageformat": "*",
-    "angular-sanitize": "*",
+    "angular": "1.6.5",
+    "angular-ui-router": "1.0.5",
+    "angular-translate": "2.15",
+    "angular-translate-interpolation-messageformat": "2.15",
+    "angular-sanitize": "1.6.5",
     "angular-strap": "*",
-    "angular-animate": "*",
+    "angular-animate": "1.6.5",
     "angular-motion": "*",
     "angular-bootstrap": "*",
-    "angular-filter": "*",
-    "angular-recaptcha": "*",
-    "bootstrap": "*",
+    "angular-filter": "0.5.16",
+    "angular-recaptcha": "4.1",
+    "bootstrap": "3.3",
     "respond": "*",
-    "fontawesome": "*",
-    "angular-moment": ">=1.0.0-beta.1",
+    "fontawesome": "4.7",
+    "angular-moment": "1.0.1",
     "angular-slugify": "*",
     "jsog": "*",
-    "ng-device-detector": "*"
-  }
+    "ng-device-detector": "4.0",
+    "moment": "2.18",
+    "jquery": "3.2"
+  },
+  "keywords": [
+    "ultimate"
+  ]
 }

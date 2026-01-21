@@ -672,9 +672,9 @@ footer {
 
 #slim-edit-1,
 #slim-edit-2 {
-  #padding: 0 2px;
-  #padding-top: 1px;
-  #padding-bottom: 1px;
+  padding: 0 2px;
+  padding-top: 1px;
+  padding-bottom: 1px;
   border-radius: 0px;
 }
 

@@ -474,12 +474,12 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
           oldEvent = null;
         } else {
           oldEvent = event;
-          if (!angular.isObject(event.locations[0])) {
+          /*if (!angular.isObject(event.locations[0])) {
             event.locations[0] = {
                 id: oldEvent.locations[0].id,
                 version: oldEvent.locations[0].version,
             }
-          }
+          }*/
         }
         serverApi.saveEvent(event, oldEvent, function(savedEvent) {
           that.events.push(savedEvent);

@@ -15,13 +15,14 @@
 			<div class="row margin-top event-list">
 				<div class="col-md-12">
 
+			<div ng-if="events | isEmpty"><span>{{ 'event.list.empty' | translate }}</span></div>
 
 			<div ng-if="0" class="row" ng-repeat-start="event in (orderedEvents = (events | filter : eventFilter | orderBy : sortKey : sortOrderDesc))"></div>
 
 			<!-- year -->
 			<div class="row" ng-class="{'margin-top-big' : $index != 0}" ng-if="$index == 0 || (((event.startDate | amDateFormat : 'YYYY') != (orderedEvents[$index - 1].startDate | amDateFormat : 'YYYY')))">
 				<div class="col-md-9">
-					<span ng-if="$index == 0"><a href="#" ng-click="show.year[(event.startDate | amDateFormat : 'YYYY') - 1] = true; show.beginningOfYear = true"><i class="fa fa-caret-right dropdown-caret-padding-right"></i>{{ (event.startDate | amDateFormat : 'YYYY') - 1 }}</a></span>
+					<span ng-if="$index == 0 && current.first < current.thisYear"><a href="#" ng-click="current.thisYear = current.thisYear - 1; show.year[current.thisYear] = true; show.beginningOfYear = true"><i class="fa fa-caret-right dropdown-caret-padding-right"></i>{{ current.thisYear - 1 }}</a></span>
 					<h4>{{ event.startDate | amDateFormat : 'YYYY' }}</h4>
 				</div>
 			</div>
