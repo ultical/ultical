@@ -58,6 +58,10 @@ public class RosterResourceTest {
     private static final int DFV_NUMBER_UNPAID_PLAYER = 567890;
     private static final int DFV_NUMBER_DIVERSE = 1234571;
     private static final int DFV_NUMBER_DIVERSE_30YO = 1234572;
+    private static final int DFV_NUMBER_DIVERSE_37YO = 1234573;
+    private static final int DFV_NUMBER_DIVERSE_45YO = 1234574;
+    private static final int DFV_NUMBER_MALE_37YO = 1234575;
+    private static final int DFV_NUMBER_MALE_45YO = 1234576;
 
     private final static int ROSTER_ID_MASTER = 123;
     private final static int ROSTER_ID_JUNIOR = 124;
@@ -66,6 +70,8 @@ public class RosterResourceTest {
     private final static int ROSTER_ID_OPEN_REG_B = 127;
     private final static int ROSTER_ID_OPEN_U17 = 128;
     private final static int ROSTER_ID_MIXED = 129;
+    private final static int ROSTER_ID_GRANDMASTERS = 130;
+    private final static int ROSTER_ID_GREATGRAND = 131;
 
     private final static int TEAM_REG_A = 2245;
 
@@ -123,6 +129,26 @@ public class RosterResourceTest {
     DfvPlayer playerDiverse30yo;
     @Mock
     DfvMvName dfvNameDiverse30yo;
+    @Mock
+    Roster rosterGrandmasters;
+    @Mock
+    Roster rosterGreatgrand;
+    @Mock
+    DfvPlayer playerDiverse37yo;
+    @Mock
+    DfvMvName dfvNameDiverse37yo;
+    @Mock
+    DfvPlayer playerDiverse45yo;
+    @Mock
+    DfvMvName dfvNameDiverse45yo;
+    @Mock
+    DfvPlayer playerMale37yo;
+    @Mock
+    DfvMvName dfvNameMale37yo;
+    @Mock
+    DfvPlayer playerMale45yo;
+    @Mock
+    DfvMvName dfvNameMale45yo;
 
     private RosterResource resource;
 
@@ -206,6 +232,7 @@ public class RosterResourceTest {
         when(this.dataStore.getDfvMvName(DFV_NUMBER_JUNIOR)).thenReturn(this.dfvNameJunior);
         when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_JUNIOR)).thenReturn(this.playerJuniors);
         when(this.playerJuniors.getBirthDate()).thenReturn(LocalDate.of(1995, 5, 1));
+        when(this.playerJuniors.getGender()).thenReturn(Gender.MALE);
         when(this.playerJuniors.isEligible()).thenReturn(Boolean.TRUE);
 
         when(this.dfvNameWoman.getDfvNumber()).thenReturn(Integer.valueOf(DFV_NUMBER_WOMAN));
@@ -275,6 +302,32 @@ public class RosterResourceTest {
         when(this.rosterMixed.getTeam()).thenReturn(this.teamA);
         when(this.dataStore.get(eq(ROSTER_ID_MIXED), eq(Roster.class))).thenReturn(this.rosterMixed);
 
+        when(this.rosterGrandmasters.getId()).thenReturn(ROSTER_ID_GRANDMASTERS);
+        when(this.rosterGrandmasters.getSeason()).thenReturn(this.season);
+        when(this.rosterGrandmasters.getDivisionType()).thenReturn(DivisionType.OPEN);
+        when(this.rosterGrandmasters.getDivisionAge()).thenReturn(DivisionAge.GRANDMASTERS);
+        when(this.rosterGrandmasters.getTeam()).thenReturn(this.teamA);
+        when(this.dataStore.get(eq(ROSTER_ID_GRANDMASTERS), eq(Roster.class))).thenReturn(this.rosterGrandmasters);
+
+        when(this.rosterGreatgrand.getId()).thenReturn(ROSTER_ID_GREATGRAND);
+        when(this.rosterGreatgrand.getSeason()).thenReturn(this.season);
+        when(this.rosterGreatgrand.getDivisionType()).thenReturn(DivisionType.OPEN);
+        when(this.rosterGreatgrand.getDivisionAge()).thenReturn(DivisionAge.GREATGRAND);
+        when(this.rosterGreatgrand.getTeam()).thenReturn(this.teamA);
+        when(this.dataStore.get(eq(ROSTER_ID_GREATGRAND), eq(Roster.class))).thenReturn(this.rosterGreatgrand);
+
+        // Bonus-tier test players. Calendar age in 2016 season = 2016 - birth year.
+        // GRANDMASTERS threshold is 40, GREATGRAND is 48. With the +3 bonus,
+        // FEMALE/DIVERSE qualify at calendar age 37 / 45; MALE/NA don't.
+        setupPlayerAndName(this.playerDiverse37yo, this.dfvNameDiverse37yo, DFV_NUMBER_DIVERSE_37YO,
+                Gender.DIVERSE, LocalDate.of(1979, 6, 15));
+        setupPlayerAndName(this.playerDiverse45yo, this.dfvNameDiverse45yo, DFV_NUMBER_DIVERSE_45YO,
+                Gender.DIVERSE, LocalDate.of(1971, 6, 15));
+        setupPlayerAndName(this.playerMale37yo, this.dfvNameMale37yo, DFV_NUMBER_MALE_37YO,
+                Gender.MALE, LocalDate.of(1979, 6, 15));
+        setupPlayerAndName(this.playerMale45yo, this.dfvNameMale45yo, DFV_NUMBER_MALE_45YO,
+                Gender.MALE, LocalDate.of(1971, 6, 15));
+
         when(this.dfvNameDiverse.getDfvNumber()).thenReturn(DFV_NUMBER_DIVERSE);
         when(this.dfvNameDiverse.isDse()).thenReturn(Boolean.TRUE);
         when(this.playerDiverse.getGender()).thenReturn(Gender.DIVERSE);
@@ -302,6 +355,17 @@ public class RosterResourceTest {
     @After
     public void tearDown() {
         // Mockito.reset(this.dataStore);
+    }
+
+    private void setupPlayerAndName(DfvPlayer player, DfvMvName name, int dfvNumber, Gender gender,
+            LocalDate birthDate) {
+        when(name.getDfvNumber()).thenReturn(dfvNumber);
+        when(name.isDse()).thenReturn(Boolean.TRUE);
+        when(player.getGender()).thenReturn(gender);
+        when(player.getBirthDate()).thenReturn(birthDate);
+        when(player.isEligible()).thenReturn(Boolean.TRUE);
+        when(this.dataStore.getDfvMvName(dfvNumber)).thenReturn(name);
+        when(this.dataStore.getPlayerByDfvNumber(dfvNumber)).thenReturn(player);
     }
 
     @Test
@@ -433,5 +497,41 @@ public class RosterResourceTest {
         // FEMALE players, so they are allowed in the masters division.
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_MASTER, this.dfvNameDiverse30yo);
         verify(this.dataStore).addPlayerToRoster(this.rosterMaster, this.playerDiverse30yo);
+    }
+
+    @Test
+    public void testAddDiverseGrandmasterGetsAgeBonus() throws Exception {
+        // 37yo DIVERSE: below the GRANDMASTERS threshold of 40, but inside it
+        // with the +3 bonus (37 + 3 = 40).
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_GRANDMASTERS, this.dfvNameDiverse37yo);
+        verify(this.dataStore).addPlayerToRoster(this.rosterGrandmasters, this.playerDiverse37yo);
+    }
+
+    @Test
+    public void testAddMale37yoToGrandmastersFails() throws Exception {
+        // Same age as the diverse case above, but MALE gets no bonus and is
+        // therefore rejected.
+        this.expected.expect(WebApplicationException.class);
+        this.expected.expectMessage("age does not match");
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_GRANDMASTERS, this.dfvNameMale37yo);
+        verify(this.dataStore, never()).addPlayerToRoster(any(), any());
+    }
+
+    @Test
+    public void testAddDiverseGreatgrandGetsAgeBonus() throws Exception {
+        // 45yo DIVERSE: below the GREATGRAND threshold of 48, but inside it
+        // with the +3 bonus (45 + 3 = 48).
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_GREATGRAND, this.dfvNameDiverse45yo);
+        verify(this.dataStore).addPlayerToRoster(this.rosterGreatgrand, this.playerDiverse45yo);
+    }
+
+    @Test
+    public void testAddMale45yoToGreatgrandFails() throws Exception {
+        // Same age as the diverse case above, but MALE gets no bonus and is
+        // therefore rejected.
+        this.expected.expect(WebApplicationException.class);
+        this.expected.expectMessage("age does not match");
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_GREATGRAND, this.dfvNameMale45yo);
+        verify(this.dataStore, never()).addPlayerToRoster(any(), any());
     }
 }

@@ -1,24 +1,10 @@
 package de.ultical.backend.api;
 
-import de.ultical.backend.api.transferClasses.DfvMvName;
-import de.ultical.backend.api.transferClasses.DfvMvPlayer;
-import de.ultical.backend.app.Authenticator;
-import de.ultical.backend.app.UltiCalConfig;
-import de.ultical.backend.data.DataStore;
-import de.ultical.backend.data.DataStore.DataStoreCloseable;
-import de.ultical.backend.data.policies.Policy;
-import de.ultical.backend.model.DfvPlayer;
-import de.ultical.backend.model.DivisionAge;
-import de.ultical.backend.model.DivisionType;
-import de.ultical.backend.model.Gender;
-import de.ultical.backend.model.Player;
-import de.ultical.backend.model.Roster;
-import de.ultical.backend.model.RosterPlayer;
-import de.ultical.backend.model.User;
-import io.dropwizard.auth.Auth;
-import org.apache.ibatis.exceptions.PersistenceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -36,9 +22,28 @@ import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
+
+import org.apache.ibatis.exceptions.PersistenceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.ultical.backend.api.transferClasses.DfvMvName;
+import de.ultical.backend.api.transferClasses.DfvMvPlayer;
+import de.ultical.backend.app.Authenticator;
+import de.ultical.backend.app.UltiCalConfig;
+import de.ultical.backend.data.DataStore;
+import de.ultical.backend.data.DataStore.DataStoreCloseable;
+import de.ultical.backend.data.policies.Policy;
+import de.ultical.backend.model.Club;
+import de.ultical.backend.model.DfvPlayer;
+import de.ultical.backend.model.DivisionAge;
+import de.ultical.backend.model.DivisionType;
+import de.ultical.backend.model.Gender;
+import de.ultical.backend.model.Player;
+import de.ultical.backend.model.Roster;
+import de.ultical.backend.model.RosterPlayer;
+import de.ultical.backend.model.User;
+import io.dropwizard.auth.Auth;
 
 @Path("/roster")
 public class RosterResource {
@@ -239,6 +244,18 @@ public class RosterResource {
     }
 
     /**
+     * Genders eligible to play in each division:
+     *   - OPEN, MIXED: everyone
+     *   - WOMEN: only FEMALE and DIVERSE
+     *
+     * Historical note: players with gender NA (unknown) are treated like MALE
+     * and therefore blocked from the WOMEN division.
+     */
+    private static final Set<Gender> ALLOWED_GENDERS_IN_OPEN = EnumSet.of(Gender.MALE, Gender.FEMALE, Gender.DIVERSE, Gender.NA);
+    private static final Set<Gender> ALLOWED_GENDERS_IN_MIXED = EnumSet.of(Gender.MALE, Gender.FEMALE, Gender.DIVERSE, Gender.NA);
+    private static final Set<Gender> ALLOWED_GENDERS_IN_WOMEN = EnumSet.of(Gender.FEMALE, Gender.DIVERSE);
+
+    /**
      * throws an exception if either the player's gender does not match with the
      * division's requirements or if the player is too old or too young for the
      * respective division. In case the player is eligible to player in the
@@ -248,41 +265,42 @@ public class RosterResource {
      * @param player
      */
     private void checkPlayerEligibility(Roster roster, DfvPlayer player) {
-        // check if gender matches with divison
-        boolean wrongGender = false;
-        if (Gender.MALE.equals(player.getGender())) {
-            if (DivisionType.WOMEN.equals(roster.getDivisionType())) {
-                wrongGender = true;
-            }
-        } else if (Gender.NA.equals(player.getGender())) {
-            if (DivisionType.WOMEN.equals(roster.getDivisionType())) {
-                wrongGender = true;
-            }
+        checkGenderMatchesDivision(roster.getDivisionType(), player.getGender());
+        checkAgeMatchesDivision(roster, player);
+    }
+
+    private void checkGenderMatchesDivision(DivisionType division, Gender gender) {
+        final Set<Gender> allowedGenders;
+        switch (division) {
+            case OPEN:
+                allowedGenders = ALLOWED_GENDERS_IN_OPEN;
+                break;
+            case MIXED:
+                allowedGenders = ALLOWED_GENDERS_IN_MIXED;
+                break;
+            case WOMEN:
+                allowedGenders = ALLOWED_GENDERS_IN_WOMEN;
+                break;
+            default:
+                throw new WebApplicationException("Unknown division type: " + division, Status.INTERNAL_SERVER_ERROR);
         }
-        if (wrongGender) {
+        if (!allowedGenders.contains(gender)) {
             throw new WebApplicationException("e102-Player has wrong gender for this Division", Status.CONFLICT);
         }
+    }
 
-        // check player's age
-        boolean wrongAge = false;
-        if (roster.getDivisionAge() != DivisionAge.REGULAR) {
-            final LocalDate birthDate = player.getBirthDate();
-            if (birthDate == null) {
-                throw new WebApplicationException("A player, registered at the dfv, should have a valid birthdate",
-                        Status.CONFLICT);
-            }
-            int age = roster.getSeason().getYear() - birthDate.getYear();
-
-            if (roster.getDivisionAge() == DivisionAge.MASTERS
-                    && (player.getGender() == Gender.FEMALE || player.getGender() == Gender.DIVERSE)) {
-                // women masters can be 3 years younger than their male
-                // counterparts; diverse players are treated like women here
-                age += 3;
-            }
-            wrongAge = (roster.getDivisionAge().isHasToBeOlder() && age < roster.getDivisionAge().getAgeDifference())
-                    || (!roster.getDivisionAge().isHasToBeOlder() && age > roster.getDivisionAge().getAgeDifference());
+    private void checkAgeMatchesDivision(Roster roster, DfvPlayer player) {
+        final DivisionAge divisionAge = roster.getDivisionAge();
+        if (divisionAge == DivisionAge.REGULAR) {
+            return;
         }
-        if (wrongAge) {
+        final LocalDate birthDate = player.getBirthDate();
+        if (birthDate == null) {
+            throw new WebApplicationException("A player, registered at the dfv, should have a valid birthdate",
+                    Status.CONFLICT);
+        }
+        final int calendarAge = roster.getSeason().getYear() - birthDate.getYear();
+        if (!divisionAge.isAgeEligible(calendarAge, player.getGender())) {
             throw new WebApplicationException("e103-Player's age does not match division's regulations",
                     Status.CONFLICT);
         }
