@@ -56,6 +56,8 @@ public class RosterResourceTest {
     private static final int DFV_NUMBER_WOMAN = 1234569;
     private static final int DFV_NUMBER_17YO_WOMAN = 1234570;
     private static final int DFV_NUMBER_UNPAID_PLAYER = 567890;
+    private static final int DFV_NUMBER_DIVERSE = 1234571;
+    private static final int DFV_NUMBER_DIVERSE_30YO = 1234572;
 
     private final static int ROSTER_ID_MASTER = 123;
     private final static int ROSTER_ID_JUNIOR = 124;
@@ -63,6 +65,7 @@ public class RosterResourceTest {
     private final static int ROSTER_ID_OPEN_REG_A = 126;
     private final static int ROSTER_ID_OPEN_REG_B = 127;
     private final static int ROSTER_ID_OPEN_U17 = 128;
+    private final static int ROSTER_ID_MIXED = 129;
 
     private final static int TEAM_REG_A = 2245;
 
@@ -110,6 +113,16 @@ public class RosterResourceTest {
     DfvMvName dfvNamePassive;
     @Mock
     DfvMvName dfvUnpaidPlayer;
+    @Mock
+    Roster rosterMixed;
+    @Mock
+    DfvPlayer playerDiverse;
+    @Mock
+    DfvMvName dfvNameDiverse;
+    @Mock
+    DfvPlayer playerDiverse30yo;
+    @Mock
+    DfvMvName dfvNameDiverse30yo;
 
     private RosterResource resource;
 
@@ -255,6 +268,31 @@ public class RosterResourceTest {
         dfvApi.setSecret("dfdfd");
 		conf.setDfvApi(dfvApi);
 
+        when(this.rosterMixed.getId()).thenReturn(ROSTER_ID_MIXED);
+        when(this.rosterMixed.getSeason()).thenReturn(this.season);
+        when(this.rosterMixed.getDivisionType()).thenReturn(DivisionType.MIXED);
+        when(this.rosterMixed.getDivisionAge()).thenReturn(DivisionAge.REGULAR);
+        when(this.rosterMixed.getTeam()).thenReturn(this.teamA);
+        when(this.dataStore.get(eq(ROSTER_ID_MIXED), eq(Roster.class))).thenReturn(this.rosterMixed);
+
+        when(this.dfvNameDiverse.getDfvNumber()).thenReturn(DFV_NUMBER_DIVERSE);
+        when(this.dfvNameDiverse.isDse()).thenReturn(Boolean.TRUE);
+        when(this.playerDiverse.getGender()).thenReturn(Gender.DIVERSE);
+        when(this.playerDiverse.getBirthDate()).thenReturn(LocalDate.of(1990, 6, 15));
+        when(this.playerDiverse.isEligible()).thenReturn(Boolean.TRUE);
+        when(this.dataStore.getDfvMvName(DFV_NUMBER_DIVERSE)).thenReturn(this.dfvNameDiverse);
+        when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_DIVERSE)).thenReturn(this.playerDiverse);
+
+        // 30 years old in the 2016 test season: below masters cutoff for male,
+        // but inside it once the female/diverse +3 year bonus is applied.
+        when(this.dfvNameDiverse30yo.getDfvNumber()).thenReturn(DFV_NUMBER_DIVERSE_30YO);
+        when(this.dfvNameDiverse30yo.isDse()).thenReturn(Boolean.TRUE);
+        when(this.playerDiverse30yo.getGender()).thenReturn(Gender.DIVERSE);
+        when(this.playerDiverse30yo.getBirthDate()).thenReturn(LocalDate.of(1986, 6, 15));
+        when(this.playerDiverse30yo.isEligible()).thenReturn(Boolean.TRUE);
+        when(this.dataStore.getDfvMvName(DFV_NUMBER_DIVERSE_30YO)).thenReturn(this.dfvNameDiverse30yo);
+        when(this.dataStore.getPlayerByDfvNumber(DFV_NUMBER_DIVERSE_30YO)).thenReturn(this.playerDiverse30yo);
+
         this.resource = new RosterResource();
         this.resource.dataStore = this.dataStore;
         this.resource.client = client;
@@ -346,13 +384,54 @@ public class RosterResourceTest {
     }
 
     @Test
-    public void test17yoWomanCanPlayU17() throws Exception {
+    public void test17yoWomanCannotPlayU17() throws Exception {
+        this.expected.expect(WebApplicationException.class);
+        this.expected.expectMessage("age does not match");
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_U17, this.dfvName17yoWoman);
-        verify(this.dataStore).addPlayerToRoster(this.rosterU17Open, this.player17yoWoman);
+        verify(this.dataStore, never()).addPlayerToRoster(any(), any());
     }
     
     @Test(expected = WebApplicationException.class)
     public void testUnpaidPlayerCannotPlay() throws Exception {
     	this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG_A, this.dfvUnpaidPlayer);
+    }
+
+    @Test
+    public void testAddDiverseToOpen() throws Exception {
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_OPEN_REG_A, this.dfvNameDiverse);
+        verify(this.dataStore).addPlayerToRoster(this.rosterOpenRegularA, this.playerDiverse);
+    }
+
+    @Test
+    public void testAddDiverseToMixed() throws Exception {
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_MIXED, this.dfvNameDiverse);
+        verify(this.dataStore).addPlayerToRoster(this.rosterMixed, this.playerDiverse);
+    }
+
+    @Test
+    public void testAddDiverseToWomen() throws Exception {
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_WOMEN, this.dfvNameDiverse);
+        verify(this.dataStore).addPlayerToRoster(this.rosterWomen, this.playerDiverse);
+    }
+
+    @Test
+    public void testAddMaleToMixed() throws Exception {
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_MIXED, this.dfvNameMaster);
+        verify(this.dataStore).addPlayerToRoster(this.rosterMixed, this.playerMasters);
+    }
+
+    @Test
+    public void testAddWomanToMixed() throws Exception {
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_MIXED, this.dfvNameWoman);
+        verify(this.dataStore).addPlayerToRoster(this.rosterMixed, this.playerWoman);
+    }
+
+    @Test
+    public void testAddDiverseMasterGetsAgeBonus() throws Exception {
+        // Player is 30 in the 2016 season: a MALE at that age would fail the
+        // masters cut-off, but DIVERSE players get the same +3 year bonus as
+        // FEMALE players, so they are allowed in the masters division.
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_MASTER, this.dfvNameDiverse30yo);
+        verify(this.dataStore).addPlayerToRoster(this.rosterMaster, this.playerDiverse30yo);
     }
 }

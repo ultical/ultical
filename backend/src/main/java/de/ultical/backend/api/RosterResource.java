@@ -273,9 +273,10 @@ public class RosterResource {
             }
             int age = roster.getSeason().getYear() - birthDate.getYear();
 
-            if (roster.getDivisionAge() == DivisionAge.MASTERS && player.getGender() == Gender.FEMALE) {
+            if (roster.getDivisionAge() == DivisionAge.MASTERS
+                    && (player.getGender() == Gender.FEMALE || player.getGender() == Gender.DIVERSE)) {
                 // women masters can be 3 years younger than their male
-                // counterparts
+                // counterparts; diverse players are treated like women here
                 age += 3;
             }
             wrongAge = (roster.getDivisionAge().isHasToBeOlder() && age < roster.getDivisionAge().getAgeDifference())

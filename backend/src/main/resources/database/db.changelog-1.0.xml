@@ -1185,4 +1185,7 @@
 			ALTER TABLE PLAYER MODIFY last_name CHAR(64) CHARACTER SET utf8mb4
 		</sql>
 	</changeSet>
+	<changeSet id="bas-20260419-001" author="bas">
+		<modifyDataType tableName="PLAYER" columnName="gender" newDataType="VARCHAR(8)"/>
+	</changeSet>
 </databaseChangeLog>
