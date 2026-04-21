@@ -2,6 +2,7 @@ package de.ultical.backend.api;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -9,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 
 import javax.ws.rs.WebApplicationException;
@@ -37,6 +39,7 @@ import de.ultical.backend.model.DivisionAge;
 import de.ultical.backend.model.DivisionType;
 import de.ultical.backend.model.Gender;
 import de.ultical.backend.model.Roster;
+import de.ultical.backend.model.RosterPlayer;
 import de.ultical.backend.model.Season;
 import de.ultical.backend.model.Team;
 import de.ultical.backend.model.TeamRegistration;
@@ -533,5 +536,157 @@ public class RosterResourceTest {
         this.expected.expectMessage("age does not match");
         this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_GREATGRAND, this.dfvNameMale45yo);
         verify(this.dataStore, never()).addPlayerToRoster(any(), any());
+    }
+
+    // --- Under-age exception: 2 players may be 1 year younger in
+    // Masters/Grandmasters/Greatgrand. MIXED treats MALE/NA and FEMALE as
+    // fixed slots; DIVERSE fits whichever slot has room.
+
+    private DfvMvName registerUnderAgePlayer(int dfvNumber, LocalDate birthDate, Gender gender) {
+        DfvMvName name = mock(DfvMvName.class);
+        when(name.getDfvNumber()).thenReturn(dfvNumber);
+        when(name.isDse()).thenReturn(Boolean.TRUE);
+        DfvPlayer player = mock(DfvPlayer.class);
+        when(player.getBirthDate()).thenReturn(birthDate);
+        when(player.getGender()).thenReturn(gender);
+        when(player.isEligible()).thenReturn(Boolean.TRUE);
+        when(this.dataStore.getDfvMvName(dfvNumber)).thenReturn(name);
+        when(this.dataStore.getPlayerByDfvNumber(dfvNumber)).thenReturn(player);
+        return name;
+    }
+
+    private RosterPlayer rosterPlayerWith(LocalDate birthDate, Gender gender) {
+        DfvPlayer player = mock(DfvPlayer.class);
+        when(player.getBirthDate()).thenReturn(birthDate);
+        when(player.getGender()).thenReturn(gender);
+        RosterPlayer rp = mock(RosterPlayer.class);
+        when(rp.getPlayer()).thenReturn(player);
+        return rp;
+    }
+
+    private Roster stubMastersRoster(int rosterId, DivisionType type) {
+        Roster r = mock(Roster.class);
+        when(r.getId()).thenReturn(rosterId);
+        when(r.getSeason()).thenReturn(this.season);
+        when(r.getDivisionType()).thenReturn(type);
+        when(r.getDivisionAge()).thenReturn(DivisionAge.MASTERS);
+        when(r.getTeam()).thenReturn(this.teamA);
+        when(this.dataStore.get(eq(rosterId), eq(Roster.class))).thenReturn(r);
+        return r;
+    }
+
+    @Test
+    public void testOneYearYoungerMaleAllowedInMastersOpen() throws Exception {
+        // 32yo male in the 2016 season — 1 year under the Masters minimum of 33.
+        DfvMvName name = registerUnderAgePlayer(9001, LocalDate.of(1984, 6, 1), Gender.MALE);
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_MASTER, name);
+        verify(this.dataStore).addPlayerToRoster(eq(this.rosterMaster), any(DfvPlayer.class));
+    }
+
+    @Test
+    public void testThirdOneYearYoungerRejectedInMastersOpen() throws Exception {
+        RosterPlayer rp1 = rosterPlayerWith(LocalDate.of(1984, 3, 1), Gender.MALE);
+        RosterPlayer rp2 = rosterPlayerWith(LocalDate.of(1984, 8, 1), Gender.MALE);
+        when(this.rosterMaster.getPlayers()).thenReturn(Arrays.asList(rp1, rp2));
+        DfvMvName name = registerUnderAgePlayer(9002, LocalDate.of(1984, 11, 1), Gender.MALE);
+        this.expected.expect(WebApplicationException.class);
+        this.expected.expectMessage("e109");
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_MASTER, name);
+        verify(this.dataStore, never()).addPlayerToRoster(any(), any());
+    }
+
+    @Test
+    public void testTwoYearsYoungerRejectedInMasters() throws Exception {
+        // 31yo male — outside the 1-year tolerance.
+        DfvMvName name = registerUnderAgePlayer(9003, LocalDate.of(1985, 6, 1), Gender.MALE);
+        this.expected.expect(WebApplicationException.class);
+        this.expected.expectMessage("age does not match");
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_MASTER, name);
+        verify(this.dataStore, never()).addPlayerToRoster(any(), any());
+    }
+
+    @Test
+    public void testTwentyNineYearOldWomanAllowedInMastersOpen() throws Exception {
+        // 29yo woman — with the +3 masters-tier bonus, her effective age is 32,
+        // which is 1 year under the 33 threshold. So she fits the exception.
+        DfvMvName name = registerUnderAgePlayer(9004, LocalDate.of(1987, 5, 1), Gender.FEMALE);
+        this.resource.addPlayerToRoster(this.currentUser, ROSTER_ID_MASTER, name);
+        verify(this.dataStore).addPlayerToRoster(eq(this.rosterMaster), any(DfvPlayer.class));
+    }
+
+    @Test
+    public void testMastersMixedAllowsMalePlusFemaleUnderAge() throws Exception {
+        final int rosterId = 9100;
+        Roster mixedMasters = stubMastersRoster(rosterId, DivisionType.MIXED);
+        RosterPlayer existing = rosterPlayerWith(LocalDate.of(1984, 2, 1), Gender.MALE);
+        when(mixedMasters.getPlayers()).thenReturn(Collections.singletonList(existing));
+
+        // 29yo woman fits the still-empty female slot
+        DfvMvName name = registerUnderAgePlayer(9005, LocalDate.of(1987, 9, 1), Gender.FEMALE);
+        this.resource.addPlayerToRoster(this.currentUser, rosterId, name);
+        verify(this.dataStore).addPlayerToRoster(eq(mixedMasters), any(DfvPlayer.class));
+    }
+
+    @Test
+    public void testMastersMixedRejectsSecondUnderAgeMale() throws Exception {
+        final int rosterId = 9101;
+        Roster mixedMasters = stubMastersRoster(rosterId, DivisionType.MIXED);
+        RosterPlayer existing = rosterPlayerWith(LocalDate.of(1984, 2, 1), Gender.MALE);
+        when(mixedMasters.getPlayers()).thenReturn(Collections.singletonList(existing));
+
+        DfvMvName name = registerUnderAgePlayer(9006, LocalDate.of(1984, 7, 1), Gender.MALE);
+        this.expected.expect(WebApplicationException.class);
+        this.expected.expectMessage("e109");
+        this.resource.addPlayerToRoster(this.currentUser, rosterId, name);
+        verify(this.dataStore, never()).addPlayerToRoster(any(), any());
+    }
+
+    @Test
+    public void testMastersMixedDiverseTakesRemainingSlot() throws Exception {
+        // 1 under-age male already on the roster — DIVERSE should flex into
+        // the female slot.
+        final int rosterId = 9102;
+        Roster mixedMasters = stubMastersRoster(rosterId, DivisionType.MIXED);
+        RosterPlayer existing = rosterPlayerWith(LocalDate.of(1984, 2, 1), Gender.MALE);
+        when(mixedMasters.getPlayers()).thenReturn(Collections.singletonList(existing));
+
+        // 29yo DIVERSE — effective age 32, 1 under the 33 threshold.
+        DfvMvName name = registerUnderAgePlayer(9007, LocalDate.of(1987, 4, 1), Gender.DIVERSE);
+        this.resource.addPlayerToRoster(this.currentUser, rosterId, name);
+        verify(this.dataStore).addPlayerToRoster(eq(mixedMasters), any(DfvPlayer.class));
+    }
+
+    @Test
+    public void testMastersMixedDiverseRejectedWhenBothSlotsFixed() throws Exception {
+        // Both a fixed male and a fixed female under-age player are already
+        // on the roster — a DIVERSE under-age player would need a third slot.
+        final int rosterId = 9103;
+        Roster mixedMasters = stubMastersRoster(rosterId, DivisionType.MIXED);
+        RosterPlayer existingMale = rosterPlayerWith(LocalDate.of(1984, 2, 1), Gender.MALE);
+        RosterPlayer existingFemale = rosterPlayerWith(LocalDate.of(1987, 5, 1), Gender.FEMALE);
+        when(mixedMasters.getPlayers()).thenReturn(Arrays.asList(existingMale, existingFemale));
+
+        DfvMvName name = registerUnderAgePlayer(9008, LocalDate.of(1987, 10, 1), Gender.DIVERSE);
+        this.expected.expect(WebApplicationException.class);
+        this.expected.expectMessage("e109");
+        this.resource.addPlayerToRoster(this.currentUser, rosterId, name);
+        verify(this.dataStore, never()).addPlayerToRoster(any(), any());
+    }
+
+    @Test
+    public void testUnderAgeExceptionAppliesToGrandmasters() throws Exception {
+        // 39yo male is 1 year under the Grandmasters threshold of 40.
+        final int rosterId = 9104;
+        Roster grandmasters = mock(Roster.class);
+        when(grandmasters.getId()).thenReturn(rosterId);
+        when(grandmasters.getSeason()).thenReturn(this.season);
+        when(grandmasters.getDivisionType()).thenReturn(DivisionType.OPEN);
+        when(grandmasters.getDivisionAge()).thenReturn(DivisionAge.GRANDMASTERS);
+        when(grandmasters.getTeam()).thenReturn(this.teamA);
+        when(this.dataStore.get(eq(rosterId), eq(Roster.class))).thenReturn(grandmasters);
+
+        DfvMvName name = registerUnderAgePlayer(9009, LocalDate.of(1977, 4, 1), Gender.MALE);
+        this.resource.addPlayerToRoster(this.currentUser, rosterId, name);
+        verify(this.dataStore).addPlayerToRoster(eq(grandmasters), any(DfvPlayer.class));
     }
 }

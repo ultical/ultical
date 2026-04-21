@@ -289,6 +289,16 @@ public class RosterResource {
         }
     }
 
+    /**
+     * Up to {@value #UNDER_AGE_EXCEPTION_CAP} players one year under the
+     * division minimum may play in a masters-tier division (see
+     * {@link DivisionAge#isWithinUnderAgeTolerance}). In MIXED rosters the
+     * quota is also constrained per gender-slot: MALE/NA take the "male" slot
+     * and FEMALE the "female" slot; DIVERSE players fit either.
+     */
+    private static final int UNDER_AGE_EXCEPTION_CAP = 2;
+    private static final int UNDER_AGE_EXCEPTION_CAP_PER_MIXED_SLOT = 1;
+
     private void checkAgeMatchesDivision(Roster roster, DfvPlayer player) {
         final DivisionAge divisionAge = roster.getDivisionAge();
         if (divisionAge == DivisionAge.REGULAR) {
@@ -300,10 +310,71 @@ public class RosterResource {
                     Status.CONFLICT);
         }
         final int calendarAge = roster.getSeason().getYear() - birthDate.getYear();
-        if (!divisionAge.isAgeEligible(calendarAge, player.getGender())) {
+        if (divisionAge.isAgeEligible(calendarAge, player.getGender())) {
+            return;
+        }
+        if (!divisionAge.isWithinUnderAgeTolerance(calendarAge, player.getGender())) {
             throw new WebApplicationException("e103-Player's age does not match division's regulations",
                     Status.CONFLICT);
         }
+        if (!hasUnderAgeSlotAvailable(roster, player)) {
+            throw new WebApplicationException(
+                    "e109-Under-age exception quota already used for this roster", Status.CONFLICT);
+        }
+    }
+
+    /**
+     * Assuming {@code candidate} is within the under-age tolerance, tells
+     * whether adding them would fit inside the roster's exception quota.
+     */
+    private boolean hasUnderAgeSlotAvailable(Roster roster, DfvPlayer candidate) {
+        final DivisionAge divisionAge = roster.getDivisionAge();
+        final int seasonYear = roster.getSeason().getYear();
+
+        int maleFixed = 0;
+        int femaleFixed = 0;
+        int flexible = 0;
+        final List<RosterPlayer> existing = roster.getPlayers();
+        if (existing != null) {
+            for (RosterPlayer rp : existing) {
+                final Player p = rp.getPlayer();
+                if (!(p instanceof DfvPlayer)) continue;
+                final LocalDate bd = ((DfvPlayer) p).getBirthDate();
+                if (bd == null) continue;
+                final int age = seasonYear - bd.getYear();
+                if (!divisionAge.isWithinUnderAgeTolerance(age, p.getGender())) continue;
+                switch (slotKindFor(p.getGender())) {
+                    case MALE_FIXED: maleFixed++; break;
+                    case FEMALE_FIXED: femaleFixed++; break;
+                    case FLEXIBLE: flexible++; break;
+                }
+            }
+        }
+        switch (slotKindFor(candidate.getGender())) {
+            case MALE_FIXED: maleFixed++; break;
+            case FEMALE_FIXED: femaleFixed++; break;
+            case FLEXIBLE: flexible++; break;
+        }
+
+        final int total = maleFixed + femaleFixed + flexible;
+        if (total > UNDER_AGE_EXCEPTION_CAP) {
+            return false;
+        }
+        if (DivisionType.MIXED.equals(roster.getDivisionType())) {
+            // DIVERSE (flexible) absorb into whichever fixed slot has room; the
+            // assignment is feasible iff neither fixed slot is overfilled.
+            return maleFixed <= UNDER_AGE_EXCEPTION_CAP_PER_MIXED_SLOT
+                    && femaleFixed <= UNDER_AGE_EXCEPTION_CAP_PER_MIXED_SLOT;
+        }
+        return true;
+    }
+
+    private enum SlotKind { MALE_FIXED, FEMALE_FIXED, FLEXIBLE }
+
+    private static SlotKind slotKindFor(Gender gender) {
+        if (gender == Gender.FEMALE) return SlotKind.FEMALE_FIXED;
+        if (gender == Gender.DIVERSE) return SlotKind.FLEXIBLE;
+        return SlotKind.MALE_FIXED; // MALE and NA
     }
 
     @DELETE

@@ -426,6 +426,12 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
               duration: 10
             });
             break;
+          case 'e109':
+            alerter.error('', 'team.roster.underAgeExceptionUsed', {
+              container: '#add-player-error',
+              duration: 10
+            });
+            break;
         }
       }
       $scope.editRosterBlock = false;

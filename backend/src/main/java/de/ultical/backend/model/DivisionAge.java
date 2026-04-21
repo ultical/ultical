@@ -8,10 +8,10 @@ public enum DivisionAge {
     U17(16),
     U20(19),
     U23(23),
-    REGULAR(0, true, false),
-    MASTERS(33, true, true),
-    GRANDMASTERS(40, true, true),
-    GREATGRAND(48, true, true);
+    REGULAR(0, true, false, 0),
+    MASTERS(33, true, true, 1),
+    GRANDMASTERS(40, true, true, 1),
+    GREATGRAND(48, true, true, 1);
 
     /**
      * In masters-tier divisions (MASTERS, GRANDMASTERS, GREATGRAND),
@@ -24,15 +24,22 @@ public enum DivisionAge {
     private final int ageThreshold;
     private final boolean hasToBeOlder;
     private final boolean mastersTierBonus;
+    /**
+     * Years of tolerance below {@link #ageThreshold} granted on a per-roster
+     * quota basis (see RosterResource). Zero means no under-age exception.
+     */
+    private final int underAgeToleranceYears;
 
     private DivisionAge(final int ageThreshold) {
-        this(ageThreshold, false, false);
+        this(ageThreshold, false, false, 0);
     }
 
-    private DivisionAge(final int ageThreshold, final boolean hasToBeOlder, final boolean mastersTierBonus) {
+    private DivisionAge(final int ageThreshold, final boolean hasToBeOlder, final boolean mastersTierBonus,
+            final int underAgeToleranceYears) {
         this.ageThreshold = ageThreshold;
         this.hasToBeOlder = hasToBeOlder;
         this.mastersTierBonus = mastersTierBonus;
+        this.underAgeToleranceYears = underAgeToleranceYears;
     }
 
     /**
@@ -43,6 +50,20 @@ public enum DivisionAge {
     public boolean isAgeEligible(final int calendarAge, final Gender gender) {
         final int effectiveAge = effectiveAge(calendarAge, gender);
         return this.hasToBeOlder ? effectiveAge >= this.ageThreshold : effectiveAge <= this.ageThreshold;
+    }
+
+    /**
+     * Tells whether the player is not eligible per {@link #isAgeEligible} but
+     * is within {@link #underAgeToleranceYears} of the threshold. Callers must
+     * still enforce the per-roster quota.
+     */
+    public boolean isWithinUnderAgeTolerance(final int calendarAge, final Gender gender) {
+        if (!this.hasToBeOlder || this.underAgeToleranceYears == 0) {
+            return false;
+        }
+        final int effectiveAge = effectiveAge(calendarAge, gender);
+        return effectiveAge < this.ageThreshold
+                && effectiveAge >= this.ageThreshold - this.underAgeToleranceYears;
     }
 
     private int effectiveAge(final int calendarAge, final Gender gender) {

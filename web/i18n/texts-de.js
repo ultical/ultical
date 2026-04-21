@@ -377,6 +377,7 @@ TRANSLATIONS['de'] = {
 				playerAlreadyInRoster: 'Der:die Spieler:in ist bereits für diese Saison und Division bei {{ teamName }} gemeldet',
 				playerWrongGender: 'Der:die Spieler:in ist aufgrund des angegebenen Geschlechts in dieser Division nicht startberechtigt. Ist diese Information fehlerhaft, wende dich an euren Vereinsadmin, um die Angabe beim DFV zu korrigieren.',
 				playerWrongAge: 'Der:die Spieler:in ist aufgrund seines:ihres Alters in dieser Division in diesem Jahr nicht spielberechtigt. Ist diese Information fehlerhaft, wende dich an euren Vereinsadmin, um die Angabe beim DFV zu korrigieren.',
+				underAgeExceptionUsed: 'Für dieses Roster wurde die Ausnahmeregel für ein Jahr jüngere Spieler:innen bereits ausgeschöpft. In Masters, Grandmasters und Greatgrand dürfen maximal zwei Spieler:innen ein Jahr jünger sein als das Divisionsminimum (in Mixed jeweils eine:r pro Geschlechts-Slot).',
 				playerBlocked: 'Der:die Spieler:in war Teil dieses Rosters während eines offiziellen Turniers. Er:sie ist für diese Saison festgespielt und kann nicht entfernt werden.',
 				rosterBlocked: 'Das Team ist über dieses Roster bei einem oder mehreren Turnieren gemeldet, daher kann es nicht gelöscht werden.',
 				playerNotEligible: {
