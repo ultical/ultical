@@ -1169,12 +1169,12 @@
 	<changeSet id="bas-20230611-002" author="bas">
 		<tagDatabase tag="v1.23"/>
 	</changeSet>
-	<changeSet id="bas-20250417-001" author="bas">
+	<changeSet id="bas-20250417-001" author="bas" dbms="mysql">
 		<sql>
 			ALTER TABLE DFV_MV_NAME MODIFY first_name CHAR(255) CHARACTER SET utf8mb4
 		</sql>
 	</changeSet>
-	<changeSet id="bas-20250417-002" author="bas">
+	<changeSet id="bas-20250417-002" author="bas" dbms="mysql">
 		<sql>
 			ALTER TABLE DFV_MV_NAME MODIFY last_name CHAR(255) CHARACTER SET utf8mb4
 		</sql>
