@@ -145,14 +145,8 @@ public class TournamentResource {
 
             TournamentEdition edition = this.dataStore.getEditionByTeamRegistration(teamRegistration.getId());
 
-            if (eventId > 0) {
-                if (!edition.isAllowEventTeamRegManagement()) {
-                    throw new WebApplicationException("You are not allowed to make those changes", Status.FORBIDDEN);
-                }
-                Authenticator.assureEventAdmin(this.dataStore, eventId, currentUser);
-            } else {
-                Authenticator.assureEditionAdmin(this.dataStore, edition.getId(), currentUser);
-            }
+            boolean statusChanged = this.changesRegistrationStatus(teamRegistration);
+            this.assureRegistrationUpdateAuthorized(edition, eventId, statusChanged, currentUser);
 
             this.dataStore.update(teamRegistration);
 
@@ -177,14 +171,14 @@ public class TournamentResource {
 
             TournamentEdition edition = this.dataStore.getEditionByTeamRegistration(teamRegistrations.get(0).getId());
 
-            if (eventId > 0) {
-                if (!edition.isAllowEventTeamRegManagement()) {
-                    throw new WebApplicationException("You are not allowed to make those changes", Status.FORBIDDEN);
+            boolean statusChanged = false;
+            for (TeamRegistration teamRegistration : teamRegistrations) {
+                if (this.changesRegistrationStatus(teamRegistration)) {
+                    statusChanged = true;
+                    break;
                 }
-                Authenticator.assureEventAdmin(this.dataStore, eventId, currentUser);
-            } else {
-                Authenticator.assureEditionAdmin(this.dataStore, edition.getId(), currentUser);
             }
+            this.assureRegistrationUpdateAuthorized(edition, eventId, statusChanged, currentUser);
 
             this.dataStore.updateAll(teamRegistrations);
 
@@ -194,5 +188,32 @@ public class TournamentResource {
         }
 
         return true;
+    }
+
+    /**
+     * Whether the given update would change the registration's stored status.
+     */
+    private boolean changesRegistrationStatus(TeamRegistration teamRegistration) {
+        DivisionRegistrationStatus storedStatus = this.dataStore.getTeamRegistrationStatus(teamRegistration.getId());
+        return storedStatus != teamRegistration.getStatus();
+    }
+
+    /**
+     * Authorizes an update to one or more team registrations. Changing a team's registration status is reserved for
+     * admins of the tournament format; event ("tournament") admins may only manage the remaining fields, and only when
+     * event-level team registration management is enabled for the edition.
+     */
+    private void assureRegistrationUpdateAuthorized(TournamentEdition edition, Integer eventId, boolean statusChanged,
+            User currentUser) {
+        if (statusChanged) {
+            Authenticator.assureEditionAdmin(this.dataStore, edition.getId(), currentUser);
+        } else if (eventId > 0) {
+            if (!edition.isAllowEventTeamRegManagement()) {
+                throw new WebApplicationException("You are not allowed to make those changes", Status.FORBIDDEN);
+            }
+            Authenticator.assureEventAdmin(this.dataStore, eventId, currentUser);
+        } else {
+            Authenticator.assureEditionAdmin(this.dataStore, edition.getId(), currentUser);
+        }
     }
 }

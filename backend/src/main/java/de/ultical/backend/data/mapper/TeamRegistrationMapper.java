@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import de.ultical.backend.model.DivisionRegistration.DivisionRegistrationStatus;
 import de.ultical.backend.model.DivisionRegistrationTeams;
 import de.ultical.backend.model.Roster;
 import de.ultical.backend.model.TeamRegistration;
@@ -82,6 +83,9 @@ public interface TeamRegistrationMapper extends BaseMapper<TeamRegistration> {
             @Result(column = "not_qualified", property = "notQualified"),
             @Result(column = "team_name", property = "teamName"), @Result(column = "comment", property = "comment") })
     List<TeamRegistration> getByRosters(@Param("rosters") List<Roster> rosters);
+
+    @Select("SELECT status FROM TEAM_REGISTRATION WHERE id=#{id}")
+    DivisionRegistrationStatus getStatus(int id);
 
     @Select({ SELECT_STMT, "FROM TEAM_REGISTRATION", "WHERE roster= #{roster.id}" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),

@@ -355,6 +355,17 @@ public class DataStore {
         }
     }
 
+    public DivisionRegistration.DivisionRegistrationStatus getTeamRegistrationStatus(int teamRegistrationId) {
+        try {
+            TeamRegistrationMapper trMapper = this.sqlSession.getMapper(TeamRegistrationMapper.class);
+            return trMapper.getStatus(teamRegistrationId);
+        } finally {
+            if (this.sqlSession != null && this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public List<Roster> getRosterByPlayerSeasonDivision(int playerId, Roster roster) {
         try {
             RosterMapper rosterMapper = this.sqlSession.getMapper(RosterMapper.class);

@@ -189,7 +189,10 @@ angular.module('ultical.events')
       $scope.eventIsFuture = ($scope.show.event && $scope.event.x.timing == 'future')
       || ($scope.show.edition && !isEmpty(lastEvent) && lastEvent.x.timing == 'future');
 
-      $scope.enableTeamRegistrationManagement = (($scope.show.event && $scope.eventIsFuture) || ($scope.show.edition && !$scope.editionHasStarted)) && ($scope.format.x.own || ($scope.show.event && $scope.event.x.own && $scope.edition.allowEventTeamRegManagement));
+      // Changing a team registration's status (confirm/decline/waiting list) is reserved for admins of the
+      // tournament format (which are also the edition admins). Event ("tournament") admins may manage other
+      // registration fields (e.g. standings), but not the status - mirrors the backend authorization.
+      $scope.enableTeamRegistrationManagement = (($scope.show.event && $scope.eventIsFuture) || ($scope.show.edition && !$scope.editionHasStarted)) && $scope.format.x.own;
       $scope.enableTeamStandingManagement = (($scope.show.event && !$scope.eventIsFuture) || ($scope.show.edition && $scope.editionHasStarted)) && ($scope.format.x.own || ($scope.show.event && $scope.event.x.own && $scope.edition.allowEventTeamRegManagement));
 
       $scope.show.registration = $scope.show.registration && $scope.edition.x.registrationTime != 'never' &&
