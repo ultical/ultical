@@ -113,6 +113,10 @@ public class TeamResource {
                 throw new WebApplicationException("Location must be specified", Status.EXPECTATION_FAILED);
             }
 
+            if (preparedTeam.getClub() == null || preparedTeam.getClub().getId() <= 0) {
+                throw new WebApplicationException("Club must be specified", Status.PRECONDITION_FAILED);
+            }
+
             this.dataStore.addNew(newTeam.getLocation());
 
             try {
@@ -177,6 +181,10 @@ public class TeamResource {
             if (updatedTeam.getLocation() == null || updatedTeam.getLocation().getCity() == null
                     || updatedTeam.getLocation().getCity().isEmpty()) {
                 throw new WebApplicationException(Status.EXPECTATION_FAILED);
+            }
+
+            if (updatedTeam.getClub() == null || updatedTeam.getClub().getId() <= 0) {
+                throw new WebApplicationException("Club must be specified", Status.PRECONDITION_FAILED);
             }
 
             this.dataStore.update(updatedTeam.getLocation());

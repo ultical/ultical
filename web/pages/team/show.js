@@ -161,12 +161,22 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
       return;
     }
 
+    if (!angular.isObject(team.club) || !team.club.id) {
+      $scope.clubIsMissing = true;
+      alerter.error('', 'team.edit.clubMissing', {
+        container: '#team-edit-error' + team.id,
+        duration: 10
+      });
+      return;
+    }
+
     $scope.addEmail($scope.newEmail);
 
     storage.saveTeam(team, function(savedTeam) {
         $scope.team = savedTeam;
         $scope.editing = false;
         $scope.locationIsMissing = false;
+        $scope.clubIsMissing = false;
         if ($stateParams.createNew) {
           $state.go('app.teamShow', {teamId: savedTeam.id, teamSlug: ""})
         }
@@ -174,6 +184,8 @@ function(CONFIG, $scope, $stateParams, storage, headService, actionBar, $filter,
         // probably a validation error
         if (errorResponse.status == 417) {
           $scope.locationIsMissing = true;
+        } else if (errorResponse.status == 412) {
+          $scope.clubIsMissing = true;
         }
       });
   };

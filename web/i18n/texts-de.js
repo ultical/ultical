@@ -425,6 +425,7 @@ TRANSLATIONS['de'] = {
 				locationMissing: 'Bitte gib eine Stadt oder ein Land ein, um dein Team zuzuordnen.',
 				clubLabel: 'Verein',
 				clubPlaceholder: 'Name des Vereins',
+				clubMissing: 'Bitte wähle einen Verein aus.',
 			},
 			remove: {
 				tooltip: 'Team löschen',

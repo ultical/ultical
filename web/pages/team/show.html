@@ -221,11 +221,12 @@
 
           <div class="row">
             <div class="col-md-12">
-              <div class="form-group has-feedback">
+              <div class="form-group has-feedback" ng-class="{'has-error': (inputForm.club.$touched && !teamToEdit.club.id) || clubIsMissing}">
                 <label for="tteClub">{{ 'team.edit.clubLabel' | translate }}</label>
-                <input typeahead-min-length="3" id="tteClub" type="text" class="form-control" ng-model="teamToEdit.club" uib-typeahead="club as club.name for club in getAllClubs() | filter: { name:$viewValue} | limitTo:8"
+                <input typeahead-min-length="3" name="club" required="required" id="tteClub" type="text" class="form-control" ng-model="teamToEdit.club" uib-typeahead="club as club.name for club in getAllClubs() | filter: { name:$viewValue} | limitTo:8"
                 placeholder="{{ 'team.edit.clubPlaceholder' | translate }}" typeahead-show="true" typeahead-select-on-blur="true" typeahead-select-on-exact="true" />
                 <span ng-show="teamToEdit.club.id != null" class="glyphicon glyphicon-ok form-control-feedback"></span>
+                <span ng-if="(inputForm.club.$touched && !teamToEdit.club.id) || clubIsMissing" class="ani-fade ani-vslide ani-short help-block">{{ 'team.edit.clubMissing' | translate }}</span>
               </div>
             </div>
           </div>
