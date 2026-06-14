@@ -121,6 +121,7 @@ TRANSLATIONS['de'] = {
 		},
 
 		division: {
+			u12: 'U12',
 			u14: 'U14',
 			u17: 'U17',
 			u20: 'U20',

@@ -17,6 +17,13 @@ public class DivisionAgeTest {
 
     @Test
     public void uDivisionsCapAtTheirThresholdRegardlessOfGender() {
+        // U12 allows calendar age 0..11
+        assertTrue(DivisionAge.U12.isAgeEligible(11, Gender.MALE));
+        assertTrue(DivisionAge.U12.isAgeEligible(11, Gender.FEMALE));
+        assertTrue(DivisionAge.U12.isAgeEligible(11, Gender.DIVERSE));
+        assertFalse(DivisionAge.U12.isAgeEligible(12, Gender.MALE));
+        assertFalse(DivisionAge.U12.isAgeEligible(12, Gender.FEMALE));
+        assertFalse(DivisionAge.U12.isAgeEligible(12, Gender.DIVERSE));
         // U17 allows calendar age 0..16
         assertTrue(DivisionAge.U17.isAgeEligible(16, Gender.MALE));
         assertTrue(DivisionAge.U17.isAgeEligible(16, Gender.FEMALE));

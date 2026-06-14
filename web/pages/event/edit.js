@@ -379,7 +379,7 @@ angular.module('ultical.events')
   };
 
   $scope.getDivisionAges = function() {
-    return ['u14', 'u17', 'u20', 'u23', 'regular', 'masters', 'grandmasters', 'greatgrand'];
+    return ['u12', 'u14', 'u17', 'u20', 'u23', 'regular', 'masters', 'grandmasters', 'greatgrand'];
   };
 
   $scope.cancel = function() {

@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public enum DivisionAge {
+    U12(11),
     U14(13),
     U17(16),
     U20(19),
