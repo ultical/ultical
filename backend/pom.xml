@@ -108,6 +108,14 @@
       <version>8.0.16</version>
       <scope>runtime</scope>
     </dependency>
+    <!-- PostgreSQL JDBC driver so the database type can be chosen via config
+         (MySQL or PostgreSQL). 42.7.x is the last line that still targets Java 8. -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.7.4</version>
+      <scope>runtime</scope>
+    </dependency>
     <dependency>
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-auth</artifactId>
@@ -272,6 +280,14 @@
 	    <groupId>mysql</groupId>
 	    <artifactId>mysql-connector-java</artifactId>
 	    <version>8.0.16</version>
+	  </dependency>
+	  <!-- PostgreSQL driver on the plugin classpath so `mvn liquibase:update`
+	       can run migrations against PostgreSQL as well (e.g. when overriding
+	       the connection with -Dliquibase.url=jdbc:postgresql://...). -->
+	  <dependency>
+	    <groupId>org.postgresql</groupId>
+	    <artifactId>postgresql</artifactId>
+	    <version>42.7.4</version>
 	  </dependency>
 	</dependencies>
     </plugin>

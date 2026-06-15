@@ -35,6 +35,8 @@ import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -50,6 +52,13 @@ public class Application extends io.dropwizard.Application<UltiCalConfig> {
     @Override
     public void initialize(Bootstrap<UltiCalConfig> bootstrap) {
         super.initialize(bootstrap);
+
+        // Allow ${ENV_VAR:-default} substitution in the YAML config so a single
+        // build can be pointed at MySQL or PostgreSQL (and any other deployment
+        // setting) purely through environment variables. Non-strict mode leaves
+        // unset variables (without a default) untouched instead of failing.
+        bootstrap.setConfigurationSourceProvider(new SubstitutingSourceProvider(
+                bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false)));
 
         ObjectMapper objectMapper = bootstrap.getObjectMapper();
         objectMapper.addMixIn(LocalDate.class, LocalDateMixIn.class);

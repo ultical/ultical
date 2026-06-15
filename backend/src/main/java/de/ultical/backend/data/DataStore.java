@@ -57,6 +57,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -817,7 +818,9 @@ public class DataStore {
     public MailCode getMailCode(String code) {
         try {
             MailCodeMapper mcMapper = this.sqlSession.getMapper(MailCodeMapper.class);
-            return mcMapper.get(code);
+            // FORGOT_PASSWORD codes expire after 3 hours; the cutoff is computed
+            // here so the mapper query stays database-agnostic.
+            return mcMapper.get(code, LocalDateTime.now().minusHours(3));
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

@@ -955,6 +955,23 @@
 			tr.id = tr2.id)
 		</sql>
 	</changeSet>
+	<changeSet author="bas" id="pg-bas76" dbms="postgresql">
+		<comment>PostgreSQL variant of bas76 (the MySQL changeset above is skipped on PostgreSQL). PostgreSQL permits referencing the updated table directly in the sub-select, so the MySQL derived-table workaround is dropped.</comment>
+		<sql>
+			UPDATE TEAM_REGISTRATION tr2 SET roster = (
+			SELECT r.id
+			FROM ROSTER r
+			LEFT JOIN TEAM t ON r.team = t.id
+			LEFT JOIN TEAM_REGISTRATION tr ON tr.team = t.id
+			LEFT JOIN DIVISION_REGISTRATION dr ON tr.division_registration = dr.id
+			LEFT JOIN TOURNAMENT_EDITION te ON dr.tournament_edition = te.id
+			WHERE dr.division_type = r.division_type
+			AND dr.division_age = r.division_age
+			AND te.season = r.season
+			AND r.name_addition = ''
+			AND tr.id = tr2.id)
+		</sql>
+	</changeSet>
 	<changeSet author="bas" id="bas77">
 		<tagDatabase tag="bas_v1.14" />
 	</changeSet>
@@ -972,11 +989,21 @@
 			<column name="acronym" value="DFV" />
 		</insert>
 	</changeSet>
+	<changeSet dbms="postgresql" author="bas" id="pg-bas78">
+		<insert tableName="CONTEXT">
+			<column name="id" valueNumeric="1" />
+			<column name="name" value="Deutscher Frisbeesport-Verband" />
+			<column name="acronym" value="DFV" />
+		</insert>
+	</changeSet>
 	<changeSet author="bas" id="bas79">
 		<sql dbms="mysql" endDelimiter=";">
 			UPDATE ROSTER r SET context = 1
 			WHERE context IS NULL
 		</sql>
+	</changeSet>
+	<changeSet author="bas" id="pg-bas79" dbms="postgresql">
+		<sql>UPDATE ROSTER SET context = 1 WHERE context IS NULL</sql>
 	</changeSet>
 	<changeSet author="bas" id="bas80">
 		<tagDatabase tag="bas_v1.15" />
@@ -1021,6 +1048,9 @@
 			= alternative_name
 		</sql>
 	</changeSet>
+	<changeSet author="bas" id="pg-bas-editionshow-2" dbms="postgresql">
+		<sql>UPDATE TOURNAMENT_EDITION SET name = alternative_name</sql>
+	</changeSet>
 	<changeSet author="bas" id="bas-editionshow-3">
 		<dropColumn tableName="TOURNAMENT_EDITION" columnName="alternative_name" />
 	</changeSet>
@@ -1034,6 +1064,9 @@
 			UPDATE EVENT SET name = (SELECT
 			name FROM TOURNAMENT_EDITION WHERE id = EVENT.tournament_edition)
 		</sql>
+	</changeSet>
+	<changeSet author="bas" id="pg-bas-editionshow-5" dbms="postgresql">
+		<sql>UPDATE EVENT SET name = (SELECT name FROM TOURNAMENT_EDITION WHERE id = EVENT.tournament_edition)</sql>
 	</changeSet>
 	<changeSet author="bas" id="bas-editionshow-6">
 		<tagDatabase tag="bas_editionshow_v.1.16" />
@@ -1125,6 +1158,10 @@
 			ROSTER.name_addition) FROM TEAM LEFT JOIN ROSTER ON ROSTER.team =
 			TEAM.id WHERE ROSTER.id = TEAM_REGISTRATION.roster)));
 		</sql>
+	</changeSet>
+	<changeSet id="pg-bas-team-renames-2" author="bas" dbms="postgresql">
+		<comment>PostgreSQL variant of bas-team-renames-2. TRIM and CONCAT_WS both exist in PostgreSQL, so the body matches the MySQL one.</comment>
+		<sql>UPDATE TEAM_REGISTRATION SET team_name = TRIM((SELECT CONCAT_WS(' ', TEAM.name, ROSTER.name_addition) FROM TEAM LEFT JOIN ROSTER ON ROSTER.team = TEAM.id WHERE ROSTER.id = TEAM_REGISTRATION.roster))</sql>
 	</changeSet>
 	<changeSet id="bb-20181212-tagbefore" author="bb">
 		<tagDatabase tag="v1.19"></tagDatabase>
@@ -1233,6 +1270,10 @@
 	</changeSet>
 	<changeSet id="bas-20260615-003" author="bas" dbms="mysql">
 		<comment>Wire the seeded DFV context to the DFV association if one exists; otherwise it stays a universal (NULL) context.</comment>
+		<sql>UPDATE CONTEXT SET association = (SELECT id FROM ASSOCIATION WHERE acronym = 'DFV' LIMIT 1) WHERE acronym = 'DFV'</sql>
+	</changeSet>
+	<changeSet id="pg-bas-20260615-003" author="bas" dbms="postgresql">
+		<comment>PostgreSQL variant of bas-20260615-003. LIMIT in a sub-select is valid PostgreSQL, so the body matches the MySQL one.</comment>
 		<sql>UPDATE CONTEXT SET association = (SELECT id FROM ASSOCIATION WHERE acronym = 'DFV' LIMIT 1) WHERE acronym = 'DFV'</sql>
 	</changeSet>
 </databaseChangeLog>

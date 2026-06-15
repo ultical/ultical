@@ -1,0 +1,61 @@
+# Container / Runway configuration for the UltiCal backend.
+#
+# Every value can be overridden with an environment variable using the
+# ${VAR:-default} syntax (env substitution is enabled in Application.initialize).
+# Defaults target a PostgreSQL database (e.g. Runway's managed Postgres). To run
+# against MySQL instead, override the database vars at deploy time — no rebuild:
+#   DB_DRIVER=com.mysql.cj.jdbc.Driver
+#   DB_URL=jdbc:mysql://db:3306/ultical?useLegacyDatetimeCode=false&serverTimezone=Europe/Amsterdam
+
+debugMode:
+  enabled: ${DEBUG_ENABLED:-false}
+  mailCatcher: ${MAIL_CATCHER:-ultical@knallbude.de}
+
+server:
+  applicationConnectors:
+    - type: http
+      port: ${PORT:-8765}
+  adminConnectors:
+    - type: http
+      port: ${ADMIN_PORT:-8766}
+
+dfvApi:
+  token: ${DFV_API_TOKEN:-teamdb}
+  secret: ${DFV_API_SECRET:-}
+  url: ${DFV_API_URL:-https://dfv-mv.de/api}
+
+# Database connection. Driver + URL pick the database engine; both the MySQL and
+# PostgreSQL JDBC drivers are bundled in the image, so this is purely config.
+database:
+  driverClass: ${DB_DRIVER:-org.postgresql.Driver}
+  url: ${DB_URL:-jdbc:postgresql://localhost:5432/ultical}
+  user: ${DB_USER:-ultical}
+  password: ${DB_PASSWORD:-ultical}
+
+mail:
+  smtpHost: ${SMTP_HOST:-localhost}
+  smtpPort: ${SMTP_PORT:-587}
+  smtpUser: ${SMTP_USER:-}
+  smtpPassword: ${SMTP_PASSWORD:-}
+  smtpSender: ${SMTP_SENDER:-no-reply@example.com}
+
+frontendUrl: ${FRONTEND_URL:-http://localhost:8742}
+corsFilterEnabled: ${CORS_ENABLED:-true}
+
+jobsConf:
+  dfvMvSyncEnabled: ${DFV_SYNC_ENABLED:-false}
+
+reCaptcha:
+  url: ${RECAPTCHA_URL:-https://www.google.com/recaptcha/api/siteverify}
+  secret: ${RECAPTCHA_SECRET:-}
+
+overallAdmins:
+  - ${ADMIN_EMAIL:-admin@example.com}
+
+# Log to stdout so the platform (Runway / Docker) captures application logs.
+logging:
+  level: ${LOG_LEVEL:-INFO}
+  appenders:
+    - type: console
+      threshold: ALL
+      logFormat: '%-5p [%d{ISO8601,UTC}] %c{5}: %m%n%rEx'
