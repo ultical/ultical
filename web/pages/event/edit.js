@@ -458,6 +458,29 @@ angular.module('ultical.events')
   }
 
   $scope.saveEdition = function() {
+    if (isEmpty($scope.edition.name)) {
+      alerter.error('', 'event.edit.editionNameMissing', {
+        container: '#edition-edit-error',
+        duration: 10
+      });
+      return;
+    }
+    if ($scope.edition.organizer.id == -1 && isEmpty($scope.newOrganizer.name)) {
+      alerter.error('', 'event.edit.editionOrganizerMissing', {
+        container: '#edition-edit-error',
+        duration: 10
+      });
+      return;
+    }
+    if (isEmpty($scope.edition.registrationStart) || isEmpty($scope.edition.registrationEnd)
+        || moment($scope.edition.registrationEnd).isBefore(moment($scope.edition.registrationStart))) {
+      alerter.error('', 'event.edit.editionRegistrationPeriodInvalid', {
+        container: '#edition-edit-error',
+        duration: 10
+      });
+      return;
+    }
+
     if ($scope.edition.id == -1) {
       $scope.edition.season = {
         year: $scope.season.yearObject.year,

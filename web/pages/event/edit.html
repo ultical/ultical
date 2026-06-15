@@ -71,7 +71,8 @@
 		<div ng-if="formatChosen">
 			<div class="row margin-bottom">
 				<div class="col-md-12">
-					<h3>{{ 'general.tournamentEdition' | translate }}<a class="edit-in-title" ng-click="editEdition()"
+					<h3>{{ 'general.tournamentEdition' | translate }}
+						<small class="text-muted" ng-if="event.id == -1">{{ 'event.edit.editionStep' | translate }}</small><a class="edit-in-title" ng-click="editEdition()"
 							ng-show="format.x.own && !editionEdit && edition.id > 0">{{ 'event.edit.editEdition' | translate }}</a>
 					</h3>
 				</div>
@@ -106,10 +107,19 @@
 
 		<div ng-if="editionChosen || editionEdit">
 
+			<!-- required-fields legend + two-step hint (only while editing the edition as TF admin) -->
+			<div class="row margin-bottom" ng-if="format.x.own && editionEdit">
+				<div class="col-md-2"></div>
+				<div class="col-md-10">
+					<span class="text-muted">{{ 'general.requiredFieldsHint' | translate }}</span>
+					<div class="margin-top-small alert alert-info" ng-if="edition.id == -1">{{ 'event.edit.editionSaveHint' | translate }}</div>
+				</div>
+			</div>
+
 			<!-- edition name - always edit (only TF admin) -->
 			<div class="row margin-bottom">
 				<div class="col-md-2">
-					<span class="strong ">{{ 'event.edit.nameLabel' | translate }}</span>
+					<span class="strong ">{{ 'event.edit.nameLabel' | translate }}<span class="text-danger" ng-if="format.x.own && editionEdit">*</span></span>
 				</div>
 				<div class="col-md-10">
 					<span ng-if="!format.x.own || !editionEdit">{{ edition.name }}</span>
@@ -120,7 +130,7 @@
 			<!-- edition season - edit on create (only TF admin) -->
 			<div class="row margin-bottom">
 				<div class="col-md-2">
-					<span class="strong ">{{ 'season.season' | translate }}</span>
+					<span class="strong ">{{ 'season.season' | translate }}<span class="text-danger" ng-if="format.x.own && editionEdit && edition.id == -1">*</span></span>
 				</div>
 				<div class="col-md-10" ng-if="!format.x.own || !editionEdit || edition.id != -1">
 					<span>{{ edition.season | season : true}}</span>
@@ -138,7 +148,7 @@
 			<!-- organizer - always edit (only TF admin) -->
 			<div class="row margin-bottom">
 				<div class="col-md-2">
-					<span class="strong ">{{ 'event.organizer' | translate }}</span>
+					<span class="strong ">{{ 'event.organizer' | translate }}<span class="text-danger" ng-if="format.x.own && editionEdit">*</span></span>
 				</div>
 				<div class="col-md-10" ng-if="!format.x.own || !editionEdit">
 					<span>{{ edition.organizer | contact }}</span>
@@ -170,7 +180,7 @@
 			<!-- registration period - always edit (only TF admin) -->
 			<div class="row margin-bottom" id="registrationdatepicker">
 				<div class="col-md-2">
-					<span class="strong ">{{ 'event.edit.registrationPeriodLabel' | translate }}</span>
+					<span class="strong ">{{ 'event.edit.registrationPeriodLabel' | translate }}<span class="text-danger" ng-if="format.x.own && editionEdit">*</span></span>
 				</div>
 				<div class="col-md-10" ng-if="!format.x.own || !editionEdit">
 					<span>{{ edition.registrationStart | amDateFormat : ('general.amDateFormat' | translate) }} - {{
@@ -203,7 +213,7 @@
 			<!-- context - edit on create only -->
 			<div class="row margin-bottom">
 				<div class="col-md-2">
-					<span class="strong ">{{ 'event.edit.contextLabel' | translate }}</span>
+					<span class="strong ">{{ 'event.edit.contextLabel' | translate }}<span class="text-danger" ng-if="format.x.own && editionEdit && edition.id == -1">*</span></span>
 				</div>
 				<div class="col-md-4">
 					<span ng-if="!format.x.own || !editionEdit || edition.id != -1">{{ edition.context.acronym }} - {{
@@ -214,6 +224,12 @@
 				</div>
 			</div>
 
+			<!-- edition validation errors -->
+			<div class="row" ng-if="editionEdit">
+				<div class="col-md-2"></div>
+				<div class="col-md-10" id="edition-edit-error"></div>
+			</div>
+
 			<!-- save button -->
 			<div class="row margin-top margin-bottom" ng-if="format.x.own || event.x.own">
 				<div class="col-md-12">
@@ -222,7 +238,7 @@
 						</div>
 						<div class="col-md-5" ng-if="editionEdit">
 							<button ng-click="saveEdition()" class="btn btn-primary btn-ultical">
-								<span ng-if="edition.id == -1">{{ 'general.save' | translate }}</span>
+								<span ng-if="edition.id == -1">{{ 'event.edit.saveEditionAndContinue' | translate }}</span>
 								<span ng-if="edition.id != -1">{{ 'general.saveEdits' | translate }}</span>
 							</button>
 							<button ng-click="cancelNewEdition()" class="btn btn-default btn-ultical margin-left-small">{{
@@ -285,14 +301,23 @@
 		<div ng-if="formatChosen && editionChosen && !editionEdit">
 			<div class="row margin-bottom">
 				<div class="col-md-12">
-					<h3>{{ 'general.event' | translate }}</h3>
+					<h3>{{ 'general.event' | translate }}
+						<small class="text-muted" ng-if="event.id == -1">{{ 'event.edit.eventStep' | translate }}</small></h3>
+				</div>
+			</div>
+
+			<!-- required-fields legend + two-step hint (only for TF admin) -->
+			<div class="row margin-bottom" ng-if="format.x.own">
+				<div class="col-md-12">
+					<span class="text-muted">{{ 'general.requiredFieldsHint' | translate }}</span>
+					<div class="margin-top-small alert alert-info" ng-if="event.id == -1">{{ 'event.edit.eventStepHint' | translate }}</div>
 				</div>
 			</div>
 
 			<!-- Title - edit (only TF admin) -->
 			<div class="row margin-bottom">
 				<div class="col-md-2">
-					<span class="strong ">{{ 'event.edit.nameLabel' | translate }}</span>
+					<span class="strong ">{{ 'event.edit.nameLabel' | translate }}<span class="text-danger" ng-if="format.x.own">*</span></span>
 				</div>
 				<div class="col-md-10">
 					<span ng-if="!format.x.own">{{ event.name }}</span>
@@ -330,7 +355,7 @@
 			<!-- Date - edit (only TF admin) -->
 			<div class="row margin-bottom">
 				<div class="col-md-2">
-					<span class="strong ">{{ 'event.edit.eventDateLabel' | translate }}</span>
+					<span class="strong ">{{ 'event.edit.eventDateLabel' | translate }}<span class="text-danger" ng-if="format.x.own">*</span></span>
 				</div>
 				<div class="col-md-10">
 					<span ng-if="!format.x.own">{{ event.startDate | amDateFormat : ('general.amDateFormat' | translate) }}</span>
@@ -342,7 +367,7 @@
 
 			<div class="row margin-bottom">
 				<div class="col-md-2">
-					<span class="strong ">{{ 'event.edit.numberOfDaysLabel' | translate }}</span>
+					<span class="strong ">{{ 'event.edit.numberOfDaysLabel' | translate }}<span class="text-danger" ng-if="format.x.own">*</span></span>
 				</div>
 				<div class="col-md-10">
 					<span ng-if="!format.x.own">{{ event.x.eventNumOfDays }}</span>
@@ -420,7 +445,7 @@
 			<!-- division-confirmation - edit (only TF admin) -->
 			<div class="row margin-bottom">
 				<div class="col-md-2">
-					<span class="strong ">{{ 'event.edit.divisionRegistrationLabel' | translate }}</span>
+					<span class="strong ">{{ 'event.edit.divisionRegistrationLabel' | translate }}<span class="text-danger" ng-if="format.x.own">*</span></span>
 				</div>
 				<div class="col-md-10">
 					<button ng-if="format.x.own" type="button" class="btn btn-default" ng-model="event.x.divisionIds"
@@ -589,7 +614,7 @@
 						<div class="col-md-2">
 						</div>
 						<div class="col-md-5">
-							<button ng-click="saveEvent(event)" class="btn btn-primary btn-ultical">{{ 'general.save' | translate
+							<button ng-click="saveEvent(event)" class="btn btn-primary btn-ultical">{{ 'event.edit.saveEvent' | translate
 								}}</button>
 							<button ng-click="cancel()" class="btn btn-default btn-ultical margin-left-small">{{ 'general.cancel' |
 								translate }}</button>
