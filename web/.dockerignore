@@ -1,0 +1,8 @@
+bower_components/
+node_modules/
+.git/
+.idea/
+.settings/
+.project
+Dockerfile
+.dockerignore
