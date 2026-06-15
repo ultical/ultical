@@ -1212,8 +1212,9 @@
 		<sql>ALTER TABLE CONTACT MODIFY name VARCHAR(100) CHARACTER SET utf8mb4</sql>
 		<!-- CLUB -->
 		<sql>ALTER TABLE CLUB MODIFY name VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL</sql>
-		<!-- ASSOCIATION (name carries unique index uk_association_name; MODIFY leaves the index intact) -->
-		<sql>ALTER TABLE ASSOCIATION MODIFY name VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL</sql>
+		<!-- ASSOCIATION (name carries unique index uk_association_name; capped at 191 so the
+		     utf8mb4 index stays within the 767-byte InnoDB prefix limit: 191 * 4 = 764 bytes) -->
+		<sql>ALTER TABLE ASSOCIATION MODIFY name VARCHAR(191) CHARACTER SET utf8mb4 NOT NULL</sql>
 		<!-- ROSTER -->
 		<sql>ALTER TABLE ROSTER MODIFY name_addition VARCHAR(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT ''</sql>
 		<!-- FEE -->
