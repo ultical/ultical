@@ -1188,4 +1188,37 @@
 	<changeSet id="bas-20260419-001" author="bas">
 		<modifyDataType tableName="PLAYER" columnName="gender" newDataType="VARCHAR(8)"/>
 	</changeSet>
+	<changeSet id="bas-20260615-001" author="bas" dbms="mysql">
+		<comment>Convert user-facing text columns to utf8mb4 for full unicode support. Each MODIFY keeps the column's existing type, NOT NULL and DEFAULT so no constraint is dropped.</comment>
+		<!-- LOCATION -->
+		<sql>ALTER TABLE LOCATION MODIFY city VARCHAR(255) CHARACTER SET utf8mb4</sql>
+		<sql>ALTER TABLE LOCATION MODIFY street VARCHAR(255) CHARACTER SET utf8mb4</sql>
+		<sql>ALTER TABLE LOCATION MODIFY country VARCHAR(255) CHARACTER SET utf8mb4</sql>
+		<sql>ALTER TABLE LOCATION MODIFY additional_info TEXT CHARACTER SET utf8mb4</sql>
+		<sql>ALTER TABLE LOCATION MODIFY title VARCHAR(100) CHARACTER SET utf8mb4</sql>
+		<!-- EVENT -->
+		<sql>ALTER TABLE EVENT MODIFY info TEXT CHARACTER SET utf8mb4</sql>
+		<sql>ALTER TABLE EVENT MODIFY name VARCHAR(200) CHARACTER SET utf8mb4</sql>
+		<!-- TEAM -->
+		<sql>ALTER TABLE TEAM MODIFY description TEXT CHARACTER SET utf8mb4</sql>
+		<sql>ALTER TABLE TEAM MODIFY name VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL</sql>
+		<!-- TOURNAMENT_EDITION -->
+		<sql>ALTER TABLE TOURNAMENT_EDITION MODIFY alternative_matchday_name VARCHAR(100) CHARACTER SET utf8mb4</sql>
+		<sql>ALTER TABLE TOURNAMENT_EDITION MODIFY name VARCHAR(200) CHARACTER SET utf8mb4</sql>
+		<!-- TOURNAMENT_FORMAT -->
+		<sql>ALTER TABLE TOURNAMENT_FORMAT MODIFY name VARCHAR(256) CHARACTER SET utf8mb4 NOT NULL</sql>
+		<sql>ALTER TABLE TOURNAMENT_FORMAT MODIFY description TEXT CHARACTER SET utf8mb4</sql>
+		<!-- CONTACT -->
+		<sql>ALTER TABLE CONTACT MODIFY name VARCHAR(100) CHARACTER SET utf8mb4</sql>
+		<!-- CLUB -->
+		<sql>ALTER TABLE CLUB MODIFY name VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL</sql>
+		<!-- ASSOCIATION (name carries unique index uk_association_name; MODIFY leaves the index intact) -->
+		<sql>ALTER TABLE ASSOCIATION MODIFY name VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL</sql>
+		<!-- ROSTER -->
+		<sql>ALTER TABLE ROSTER MODIFY name_addition VARCHAR(10) CHARACTER SET utf8mb4 NOT NULL DEFAULT ''</sql>
+		<!-- FEE -->
+		<sql>ALTER TABLE FEE MODIFY other_name VARCHAR(100) CHARACTER SET utf8mb4</sql>
+		<!-- CONTEXT -->
+		<sql>ALTER TABLE CONTEXT MODIFY name VARCHAR(50) CHARACTER SET utf8mb4 NOT NULL</sql>
+	</changeSet>
 </databaseChangeLog>
