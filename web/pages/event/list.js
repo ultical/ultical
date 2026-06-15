@@ -43,30 +43,25 @@ angular.module('ultical.events', [])
 
 
     if (authorizer.loggedIn()) {
-    	var isFormatAdmin = false;
-      var loggedInUserId = authorizer.getUser().id;
-
-      angular.forEach($scope.events, function(event) {
-        angular.forEach(event.tournamentEdition.tournamentFormat.admins, function(admin) {
-          if (admin.id == loggedInUserId) {
-            isFormatAdmin = true;
-          }
-        });
+      // Show the "create tournament" button whenever the user administers at least
+      // one tournament format - regardless of whether that format currently has an
+      // event in the displayed list. storage.getFormatList() is backed by the
+      // 'format/own' endpoint, which returns exactly the formats the user admins.
+      storage.getFormatList(function(ownFormats) {
+        if (ownFormats != null && ownFormats.length > 0) {
+          actionBar.addAction({
+            group: 'event-new',
+            needLogIn: true,
+            button: {
+              text: 'event.edit.createButtonLabel',
+              click: function() {
+                $scope.createEvent();
+              }
+            },
+            separator: true,
+          });
+        }
       });
-
-      if (isFormatAdmin) {
-        actionBar.addAction({
-          group: 'event-new',
-          needLogIn: true,
-          button: {
-            text: 'event.edit.createButtonLabel',
-            click: function() {
-              $scope.createEvent();
-            }
-          },
-          separator: true,
-        });
-      }
     }
 	});
 
