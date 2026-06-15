@@ -1222,4 +1222,17 @@
 		<!-- CONTEXT -->
 		<sql>ALTER TABLE CONTEXT MODIFY name VARCHAR(50) CHARACTER SET utf8mb4 NOT NULL</sql>
 	</changeSet>
+	<changeSet id="bas-20260615-002" author="bas">
+		<comment>Link contexts to an association so the edition context choice can be restricted to the format's association. A NULL association means a universal context available to every format.</comment>
+		<addColumn tableName="CONTEXT">
+			<column name="association" type="BIGINT" />
+		</addColumn>
+		<addForeignKeyConstraint constraintName="fk_context_association"
+			referencedTableName="ASSOCIATION" baseColumnNames="association"
+			baseTableName="CONTEXT" referencedColumnNames="id" />
+	</changeSet>
+	<changeSet id="bas-20260615-003" author="bas" dbms="mysql">
+		<comment>Wire the seeded DFV context to the DFV association if one exists; otherwise it stays a universal (NULL) context.</comment>
+		<sql>UPDATE CONTEXT SET association = (SELECT id FROM ASSOCIATION WHERE acronym = 'DFV' LIMIT 1) WHERE acronym = 'DFV'</sql>
+	</changeSet>
 </databaseChangeLog>

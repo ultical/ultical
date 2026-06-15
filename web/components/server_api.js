@@ -108,6 +108,10 @@ app.factory('serverApi', ['CONFIG', '$http', 'Base64', 'authorizer', '$filter',
       get('context', callback);
     },
 
+    getContextsForFormat: function(formatId, callback) {
+      get('context/format/' + formatId, callback);
+    },
+
     getContactsForEdition: function(callback) {
       get('contact/TOURNAMENT_EDITION', callback);
     },

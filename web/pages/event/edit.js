@@ -165,7 +165,8 @@ angular.module('ultical.events')
       yearObject: $scope.seasonYears[2],
     };
 
-    storage.getContexts(function(contexts) {
+    // only offer contexts that match the format's association (plus universal ones)
+    storage.getContextsForFormat($scope.format.id, function(contexts) {
       $scope.allContexts = contexts;
       $scope.edition.context = contexts[0];
     });

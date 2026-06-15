@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.Context;
+import de.ultical.backend.model.TournamentFormat;
 
 @Path("/context")
 public class ContextResource {
@@ -57,6 +58,34 @@ public class ContextResource {
         }
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
             return this.dataStore.getAll(Context.class);
+        } catch (PersistenceException pe) {
+            LOGGER.error("Database access failed!", pe);
+            throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Returns the contexts selectable for the given tournament format: those
+     * tied to the format's association plus universal (association-less) ones.
+     * If the format has no association, all contexts are returned.
+     */
+    @GET
+    @Path("/format/{formatId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Context> getContextsForFormat(@PathParam("formatId") Integer formatId) {
+        if (this.dataStore == null) {
+            throw new WebApplicationException("Dependency Injection for data store failed!",
+                    Status.INTERNAL_SERVER_ERROR);
+        }
+        try (DataStoreCloseable c = this.dataStore.getClosable()) {
+            TournamentFormat format = this.dataStore.get(formatId, TournamentFormat.class);
+            if (format == null) {
+                throw new WebApplicationException(Status.NOT_FOUND);
+            }
+            if (format.getAssociation() == null) {
+                return this.dataStore.getAll(Context.class);
+            }
+            return this.dataStore.getContextsByAssociation(format.getAssociation().getId());
         } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);

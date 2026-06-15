@@ -19,6 +19,7 @@ import de.ultical.backend.data.mapper.RosterPlayerMapper;
 import de.ultical.backend.data.mapper.SeasonMapper;
 import de.ultical.backend.data.mapper.TeamMapper;
 import de.ultical.backend.data.mapper.TeamRegistrationMapper;
+import de.ultical.backend.data.mapper.ContextMapper;
 import de.ultical.backend.data.mapper.TournamentEditionMapper;
 import de.ultical.backend.data.mapper.TournamentFormatMapper;
 import de.ultical.backend.data.mapper.UserMapper;
@@ -26,6 +27,7 @@ import de.ultical.backend.model.Association;
 import de.ultical.backend.model.Club;
 import de.ultical.backend.model.Contact;
 import de.ultical.backend.model.ContactType;
+import de.ultical.backend.model.Context;
 import de.ultical.backend.model.DfvPlayer;
 import de.ultical.backend.model.DivisionConfirmation;
 import de.ultical.backend.model.DivisionRegistration;
@@ -1086,6 +1088,17 @@ public class DataStore {
         try {
             TournamentEditionMapper mapper = this.sqlSession.getMapper(TournamentEditionMapper.class);
             return mapper.getEditionListingByFormat(formatId);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
+    public List<Context> getContextsByAssociation(final int associationId) {
+        try {
+            ContextMapper mapper = this.sqlSession.getMapper(ContextMapper.class);
+            return mapper.getByAssociation(associationId);
         } finally {
             if (this.autoCloseSession) {
                 this.sqlSession.close();

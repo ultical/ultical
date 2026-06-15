@@ -50,6 +50,7 @@ public class TournamentEditionResource {
 
             TournamentFormat format = dataStore.get(edition.getTournamentFormat().getId(), TournamentFormat.class);
             Authenticator.assureFormatAdmin(format, currentUser);
+            this.assureContextMatchesAssociation(edition, format);
 
             edition.setSeason(dataStore.getOrCreateSeason(edition.getSeason()));
 
@@ -81,6 +82,7 @@ public class TournamentEditionResource {
         try (DataStore.DataStoreCloseable c = this.dataStore.getClosable()) {
             TournamentFormat format = dataStore.get(edition.getTournamentFormat().getId(), TournamentFormat.class);
             Authenticator.assureFormatAdmin(format, currentUser);
+            this.assureContextMatchesAssociation(edition, format);
 
             if (edition.getOrganizer().getId() == -1) {
                 edition.getOrganizer().setType(ContactType.TOURNAMENT_EDITION);
@@ -105,6 +107,30 @@ public class TournamentEditionResource {
     private void checkDataStore() {
         if (this.dataStore == null) {
             throw new WebApplicationException("Dependency injection failed!", Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Ensures the edition's context is selectable for the format's association.
+     * A context with no association is universal and always allowed; otherwise
+     * the context's association must equal the format's association.
+     */
+    private void assureContextMatchesAssociation(TournamentEdition edition, TournamentFormat format) {
+        if (edition.getContext() == null) {
+            return;
+        }
+        Context context = this.dataStore.get(edition.getContext().getId(), Context.class);
+        if (context == null) {
+            throw new WebApplicationException("The selected context does not exist", Status.NOT_ACCEPTABLE);
+        }
+        if (context.getAssociation() == null) {
+            return;
+        }
+        if (format.getAssociation() == null
+                || format.getAssociation().getId() != context.getAssociation().getId()) {
+            throw new WebApplicationException(
+                    "The selected context does not belong to the tournament format's association",
+                    Status.NOT_ACCEPTABLE);
         }
     }
 }

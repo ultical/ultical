@@ -253,6 +253,14 @@ app.factory('storage', ['$filter', 'serverApi', 'authorizer', 'moment',
 				}
 			},
 
+      // contexts selectable for a format (its association's contexts + universal ones);
+      // not cached as the result depends on the format
+      getContextsForFormat: function(formatId, callback) {
+				serverApi.getContextsForFormat(formatId, function(contexts) {
+					return callback(angular.copy(contexts));
+				});
+			},
+
       // fetch only once
       getClubs: function(callback) {
 				var that = this;
