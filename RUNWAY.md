@@ -62,6 +62,11 @@ already on the plugin classpath.
 
 ```bash
 cd backend
+# liquibase.properties is gitignored; the plugin still needs the file to exist.
+# Seed it from the template (the -D flags below override its values anyway).
+cp -n src/main/resources/database/liquibase.properties.dist \
+      src/main/resources/database/liquibase.properties
+
 mvn liquibase:update \
   -Dliquibase.driver=org.postgresql.Driver \
   -Dliquibase.url="jdbc:postgresql://HOST:PORT/DBNAME" \

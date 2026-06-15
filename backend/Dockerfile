@@ -2,6 +2,11 @@ FROM maven:3-amazoncorretto-8 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
+# jdbc.properties is gitignored, so a clean checkout only ships the .dist
+# template. MyBatis loads it from the classpath at startup, so it must be inside
+# the jar. Its values are inert at runtime (the Dropwizard datasource in
+# default.docker.yaml overrides the connection), so the template is safe.
+RUN cp -n src/main/resources/jdbc.properties.dist src/main/resources/jdbc.properties || true
 RUN mvn clean package -DskipTests
 
 FROM openjdk:8-jre-alpine
