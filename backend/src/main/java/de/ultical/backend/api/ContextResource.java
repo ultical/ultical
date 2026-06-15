@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import de.ultical.backend.data.DataStore;
 import de.ultical.backend.data.DataStore.DataStoreCloseable;
 import de.ultical.backend.model.Context;
-import de.ultical.backend.model.TournamentFormat;
 
 @Path("/context")
 public class ContextResource {
@@ -78,14 +77,15 @@ public class ContextResource {
                     Status.INTERNAL_SERVER_ERROR);
         }
         try (DataStoreCloseable c = this.dataStore.getClosable()) {
-            TournamentFormat format = this.dataStore.get(formatId, TournamentFormat.class);
-            if (format == null) {
-                throw new WebApplicationException(Status.NOT_FOUND);
-            }
-            if (format.getAssociation() == null) {
+            // Read only the association id; hydrating the full format would
+            // eagerly pull in every edition and its sub-graph (see #perf).
+            Integer associationId = this.dataStore.getFormatAssociationId(formatId);
+            if (associationId == null) {
+                // format has no association (or does not exist): every context
+                // is selectable
                 return this.dataStore.getAll(Context.class);
             }
-            return this.dataStore.getContextsByAssociation(format.getAssociation().getId());
+            return this.dataStore.getContextsByAssociation(associationId);
         } catch (PersistenceException pe) {
             LOGGER.error("Database access failed!", pe);
             throw new WebApplicationException("Accessing the database failed", Status.INTERNAL_SERVER_ERROR);

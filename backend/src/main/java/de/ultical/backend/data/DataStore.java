@@ -1109,6 +1109,22 @@ public class DataStore {
         }
     }
 
+    /**
+     * Returns the id of the given format's association, or <code>null</code> if
+     * the format has none (or does not exist). Reads only the association
+     * column, avoiding the full format object graph.
+     */
+    public Integer getFormatAssociationId(final int formatId) {
+        try {
+            TournamentFormatMapper mapper = this.sqlSession.getMapper(TournamentFormatMapper.class);
+            return mapper.getAssociationId(formatId);
+        } finally {
+            if (this.autoCloseSession) {
+                this.sqlSession.close();
+            }
+        }
+    }
+
     public void addLocationToEvent(final Event event, final Location location) {
         Objects.requireNonNull(event);
         Objects.requireNonNull(location);

@@ -62,6 +62,15 @@ public interface TournamentFormatMapper extends BaseMapper<TournamentFormat> {
             @Result(column = "id", property = "admins", many = @Many(select = "de.ultical.backend.data.mapper.UserMapper.getAdminsForFormat") ) })
     TournamentFormat getForEdition(int id);
 
+    /**
+     * Returns just the id of the format's association (or <code>null</code> if
+     * the format has no association or does not exist). Avoids hydrating the
+     * full format object graph (editions, admins, ...) when only the
+     * association is needed.
+     */
+    @Select({ "SELECT association FROM TOURNAMENT_FORMAT WHERE id = #{id}" })
+    Integer getAssociationId(int id);
+
     @Override
     @Select({ "SELECT id, version, name, description, url FROM", "TOURNAMENT_FORMAT" })
     @Results({ @Result(column = "id", property = "id"), @Result(column = "version", property = "version"),
