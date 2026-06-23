@@ -24,6 +24,11 @@ public class LocalDateTimeHandler implements TypeHandler<LocalDateTime> {
             throws SQLException {
         if (ps != null) {
             if (parameter != null) {
+                // A bare #{x} binding (no jdbcType) passes null here; switching
+                // on a null enum would NPE. Default such bindings to TIMESTAMP.
+                if (jdbcType == null) {
+                    jdbcType = JdbcType.TIMESTAMP;
+                }
                 switch (jdbcType) {
 
                 case DATE:

@@ -31,12 +31,12 @@ public interface MailCodeMapper {
     // The cutoff timestamp is computed in Java (caller passes now() minus the
     // expiry window) so the query stays portable across MySQL/PostgreSQL/Derby
     // instead of relying on the MySQL-only "NOW() - INTERVAL" syntax.
-    @Delete("DELETE FROM MAIL_CODE WHERE mail_code_type = 'FORGOT_PASSWORD' AND time_created < #{cutoff}")
+    @Delete("DELETE FROM MAIL_CODE WHERE mail_code_type = 'FORGOT_PASSWORD' AND time_created < #{cutoff, jdbcType=TIMESTAMP}")
     void deleteOldEntries(@Param("cutoff") LocalDateTime cutoff);
 
     // SELECT
     @Select({ SELECT_STMT,
-            "WHERE code = #{code} AND (mail_code_type != 'FORGOT_PASSWORD' OR time_created > #{cutoff})" })
+            "WHERE code = #{code} AND (mail_code_type != 'FORGOT_PASSWORD' OR time_created > #{cutoff, jdbcType=TIMESTAMP})" })
     @Results({
             @Result(column = "ultical_user", property = "user", one = @One(select = "de.ultical.backend.data.mapper.UserMapper.get") ) })
     MailCode get(@Param("code") String code, @Param("cutoff") LocalDateTime cutoff);
